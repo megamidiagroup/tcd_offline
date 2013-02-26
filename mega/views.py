@@ -40,6 +40,7 @@ from mobile import get_mobile
 from dlog import LOGGER
 from captcha.fields import CaptchaField
 from email.mime.text import MIMEText
+from cpf import CPF as _cpf
 
 import simplejson as json
 import os
@@ -172,9 +173,21 @@ def _prepare_vars(request, rede=None, p={}):
     p['interno'] = False
     p['class']   = 'home'
 
-    p['list_certificado_account']    = Certificado.objects.filter( Q(rede = p['rede']), Q(visible=True) ).order_by('-date')
+    p['list_certificado_account']         = Certificado.objects.filter( Q(rede = p['rede']) & Q(visible = True) & Q(treinamento__visible = True) & Q(treinamento__category__visible = True) ).order_by('-date')
     
-    p['list_aproveitamento_account'] = Treinamento.objects.filter( Q(rede = p['rede']), Q(visible=True) ).distinct().order_by('-date')
+    try:
+        if request.user.infouser.filial:
+            p['list_certificado_account'] = p['list_certificado_account'].filter( Q(treinamento__category__filial__isnull = True) | Q(treinamento__category__filial = request.user.infouser.filial) ).distinct()
+    except:
+        pass
+    
+    p['list_aproveitamento_account']      = Treinamento.objects.filter( Q(rede = p['rede']) & Q(visible = True) & Q(category__visible = True) ).distinct().order_by('-date')
+    
+    try:
+        if request.user.infouser.filial:
+            p['list_aproveitamento_account'] = p['list_aproveitamento_account'].filter( Q(treinamento__category__filial__isnull = True) | Q(category__filial = request.user.infouser.filial) ).distinct()
+    except:
+        pass
 
     try:
         p['is_access'] = request.user.infouser.access
@@ -187,6 +200,15 @@ def _prepare_vars(request, rede=None, p={}):
         pass
 
     p = _set_enquete(request, p)
+    
+    p['first'], p['first_cpf'], p['btns_disabled'] = False, False, False
+    
+    try:
+        if not request.user.email or not len(request.user.email) > 3:
+            p['first']         = True
+            p['btns_disabled'] = True
+    except:
+        pass
 
     return p
 
@@ -199,9 +221,6 @@ def home(request, rede=None):
 
     if not p['rede']:
         return HttpResponseRedirect('/login/')
-    
-    if not request.user.email or not len(request.user.email) > 3:
-        return HttpResponseRedirect(reverse('conta_edit', args=(p['rede'].link,)) + '?edit=first')
 
     p['list_category'] = Category.objects.filter( Q(visible = True), Q(rede = p['rede']), Q(parent__isnull = True), Q(home = True) ).order_by('order', 'name')
     p['list_banner']   = Banner.objects.filter( Q(visible = True), Q(rede = p['rede']), ( Q(home = True) or Q(category__isnull = True) ) ).order_by('order', 'name')
@@ -213,7 +232,7 @@ def home(request, rede=None):
 
     # regras para quem está em uma filial
     if p['is_filial']:
-        p['list_category'] = p['list_category'].filter( Q(filial = p['is_filial']) ).order_by('order', 'name')
+        p['list_category'] = p['list_category'].filter( Q(filial__isnull = True) | Q(filial = p['is_filial']) ).order_by('order', 'name')
 
     p['url_logo'] = p['rede'].logo.url
 
@@ -245,8 +264,8 @@ def category(request, rede=None, cat_id=None):
 
     # regras para quem está em uma filial
     if p['is_filial']:
-        p['list_category'] = p['list_category'].filter( Q(filial = p['is_filial']) ).order_by('order', 'name')
-        if not list_category.filter( Q(id = int(cat_id)), Q(filial = p['is_filial']) ):
+        p['list_category'] = p['list_category'].filter( Q(filial__isnull = True) | Q(filial = p['is_filial']) ).order_by('order', 'name')
+        if not list_category.filter( Q(id = int(cat_id)) & ( Q(filial__isnull = True) | Q(filial = p['is_filial']) ) ):
             return HttpResponseRedirect('/%s/' % p['rede'].link)
 
     p['url_logo'] = p['rede'].logo.url
@@ -281,7 +300,7 @@ def treinamento(request, rede=None, video_id=None):
 
     # regras para quem está em uma filial
     if p['is_filial']:
-        if p['list_video'] and not p['list_video'].filter( Q(category__filial = p['is_filial']) ):
+        if p['list_video'] and not p['list_video'].filter( Q(category__filial__isnull = True) | Q(category__filial = p['is_filial']) ):
             return HttpResponseRedirect('/%s/' % p['rede'].link)
         
     if p['list_video'] and p['list_video'].count() > 0:
@@ -375,10 +394,10 @@ def elearning(request, rede=None, video_id=None):
 
     # regras para quem está em uma filial
     if p['is_filial']:
-        if p['list_video'] and not p['list_video'].filter( Q(category__filial = p['is_filial']) ):
+        if p['list_video'] and not p['list_video'].filter( Q(category__filial__isnull = True) | Q(category__filial = p['is_filial']) ):
             return HttpResponseRedirect('/%s/' % p['rede'].link)
         
-    dir = settings.UPLOAD_STORAGE_DIR + 'uploads/elearning/'
+    dir   = settings.MEDIA_ROOT + settings.UPLOAD_STORAGE_DIR + 'uploads/elearning/'
     
     elear = Elearning.objects.filter( Q(rede = p['rede']), Q(visible=True), Q(treinamento__in = p['list_video']) )
     
@@ -422,7 +441,7 @@ def live(request, rede=None, video_id=None):
 
     # regras para quem está em uma filial
     if p['is_filial']:
-        if p['list_video'] and not p['list_video'].filter( Q(category__filial = p['is_filial']) ):
+        if p['list_video'] and not p['list_video'].filter( Q(filial__isnull = True) | Q(category__filial = p['is_filial']) ):
             return HttpResponseRedirect('/%s/' % p['rede'].link)
         
     p['history'] = WebChat.objects.filter( Q(rede = p['rede']), Q(live__id = int(video_id)) ).count() > 0
@@ -740,7 +759,7 @@ def questionario(request, rede=None, video_id=None):
 
             # regras para quem está em uma filial
             if p['is_filial']:
-                if p['list_question'] and not p['list_question'].filter( Q(treinamento__category__filial = p['is_filial']) ):
+                if p['list_question'] and not p['list_question'].filter( Q(treinamento__category__filial__isnull = True) | Q(treinamento__category__filial = p['is_filial']) ):
                     return HttpResponseRedirect('/%s/' % p['rede'].link)
 
             if request.REQUEST.get('csrfmiddlewaretoken', False):
@@ -917,9 +936,11 @@ def conta_edit(request, rede=None):
 
     p = {}
 
-    p['user']  = request.REQUEST.get('user'  , '')
-    p['key']   = request.REQUEST.get('key'   , '')
-    p['edit']  = request.REQUEST.get('edit'  , '')
+    p['user']   = request.REQUEST.get('user'  , '')
+    p['key']    = request.REQUEST.get('key'   , '')
+    p['edit']   = request.REQUEST.get('edit'  , '')
+    p['msg']    = request.REQUEST.get('msg'   , '')
+    p['estado'] = ''
 
     p['is_pass'] = True
 
@@ -950,57 +971,88 @@ def conta_edit(request, rede=None):
     if request.REQUEST.get('csrfmiddlewaretoken', False):
         list = ['txt_name', 'txt_email', 'txt_cpf', 'txt_endereco', 'txt_bairro', 'txt_cep', 'estado',
                     'cidade', 'txt_fone_com', 'txt_fone_res', 'txt_fone_cel', 'ch_receber', 'ch_envia', 'txt_pass',
-                        'txt_newpass', 'txt_confirm', 'sel_filial', 'txt_cnpj']
+                        'txt_newpass', 'txt_confirm', 'sel_filial', 'txt_cnpj', 'is_cnpj']
 
         for i in list:
             p[i] = request.REQUEST.get(i, '')
             
-        if not _is_valid_email(p['txt_email']):
-            return HttpResponseRedirect('/%s/conta/edit/?edit=false' % p['rede'].link)
+        msg, p['msg'], usermail = '', '', None
+            
+        if not len(p['txt_name'].split(' ')) > 1 or not p['txt_name'].split(' ')[0] or not p['txt_name'].split(' ')[1] or not _cpf(p['txt_cpf']).isValid() or not _is_valid_email(p['txt_email']) or _cpf(p['user'].username).isValid():
+            if not len(p['txt_name'].split(' ')) > 1 or not p['txt_name'].split(' ')[0] or not p['txt_name'].split(' ')[1]:
+                msg = u'Digite o nome completo.'
+            elif not p['is_cnpj'] and not p['txt_cpf']:
+                msg = u'Digite o CPF.'
+            elif not p['is_cnpj'] and not _cpf(p['txt_cpf']).isValid():
+                msg = u'CPF inválido.'
+            elif not p['txt_email']:
+                msg = u'Digite seu e-mail.'
+            elif not _is_valid_email(p['txt_email']):
+                msg = u'E-mail inválido.'
+            elif _cpf(p['user'].username).isValid():
+                if UserAdmin.objects.filter( Q(username__exact=p['txt_email']) ).count() > 0:
+                    msg      = u'E-mail já existe, tente outro.'
+                else:
+                    usermail = p['txt_email']
+            p['msg'] = msg
 
-        iu   = p['infouser']
-        user = p['user']
-        user.first_name = p['txt_name'].split(' ')[0]
-        try:
-            user.last_name = ' '.join(n for n in p['txt_name'].split(' ')[1:])
-        except:
-            user.last_name = ''
-        user.email   = p['txt_email']
-        iu.cpf       = p['txt_cpf']
-        iu.cnpj      = p['txt_cnpj']
-        iu.endereco  = p['txt_endereco']
-        iu.bairro    = p['txt_bairro']
-        iu.cep       = p['txt_cep']
-        iu.filial_id = p['sel_filial']
-        iu.estado_id = p['estado']
-        iu.cidade_id = p['cidade']
-        iu.fone_com  = p['txt_fone_com']
-        iu.fone_res  = p['txt_fone_res']
-        iu.fone_cel  = p['txt_fone_cel']
-        iu.receber   = p['ch_receber']
-        iu.envia     = p['ch_envia']
+        if msg:
+            p['edit'] = 'false'
+        else:
+            iu   = p['infouser']
+            user = p['user']
+            user.first_name = p['txt_name'].split(' ')[0]
+            try:
+                user.last_name = ' '.join(n for n in p['txt_name'].split(' ')[1:])
+            except:
+                user.last_name = ''
+            user.email   = p['txt_email']
+            iu.cpf       = p['txt_cpf']
+            iu.cnpj      = p['txt_cnpj']
+            iu.endereco  = p['txt_endereco']
+            iu.bairro    = p['txt_bairro']
+            iu.cep       = p['txt_cep']
+            iu.filial_id = p['sel_filial']
+            iu.estado_id = p['estado']
+            iu.cidade_id = p['cidade']
+            iu.fone_com  = p['txt_fone_com']
+            iu.fone_res  = p['txt_fone_res']
+            iu.fone_cel  = p['txt_fone_cel']
+            iu.receber   = p['ch_receber']
+            iu.envia     = p['ch_envia']
+    
+            if p['is_pass'] == False and len(p['txt_newpass']) > 0 and len(p['txt_confirm']) > 0 and p['txt_newpass'] == p['txt_confirm']:
+                user.set_password(p['txt_newpass'])
+            elif len(p['txt_pass']) > 0 and len(p['txt_newpass']) > 0 and len(p['txt_confirm']) > 0 and authenticate(username=user, password=p['txt_pass']) and p['txt_newpass'] == p['txt_confirm']:
+                user.set_password(p['txt_newpass'])
+                
+            if usermail:
+                user.username = usermail
 
-        if p['is_pass'] == False and len(p['txt_newpass']) > 0 and len(p['txt_confirm']) > 0 and p['txt_newpass'] == p['txt_confirm']:
-            user.set_password(p['txt_newpass'])
-        elif len(p['txt_pass']) > 0 and len(p['txt_newpass']) > 0 and len(p['txt_confirm']) > 0 and authenticate(username=user, password=p['txt_pass']) and p['txt_newpass'] == p['txt_confirm']:
-            user.set_password(p['txt_newpass'])
-
-        user.save()
-        iu.save()
-
-        p['to_mail'] = user.email
-        p['name']    = user.get_full_name()
-        p['link']    = '?user=%s&action=%s&key=%s' % (user.username, '/conta/edit/', user.password)
-
-        if not p['key'] and _send_email_user(p, request):
-            return HttpResponseRedirect('/%s/conta/?edit=true' % p['rede'].link)
+            user.save()
+            iu.save()
+    
+            p['to_mail'] = user.email
+            p['name']    = user.get_full_name()
+            p['link']    = '?user=%s&action=%s&key=%s' % (user.username, '/conta/edit/', user.password)
+    
+            if not p['key'] and _send_email_user(p, request):
+                return HttpResponseRedirect('/%s/conta/?edit=true' % p['rede'].link)
 
     try:
-        p['list_state']  = State.objects.all()
-        p['list_city']   = City.objects.filter(state = p['infouser'].estado)
-        p['list_filial'] = Filial.objects.filter( Q(visible = True), Q(rede = p['rede']) ).order_by('name')
+        p['list_state']    = State.objects.all()
+        if p['estado'] and p['estado'].isdigit() and int(p['estado']) > 0:
+            p['list_city'] = City.objects.filter( state__id = int(p['estado']) )
+        else:
+            p['list_city'] = City.objects.filter( state = p['infouser'].estado )
+        p['list_filial']   = Filial.objects.filter( Q(visible = True), Q(rede = p['rede']) ).order_by('name')
     except:
         pass
+    
+    p['first'] = False
+    
+    if request.user.username and _cpf(request.user.username).isValid():
+        p['first_cpf'] = True
 
     return render_to_response('%s/conta_edit.html' % p['get_tipo_template'], p, context_instance=RequestContext(request))
 
@@ -1197,7 +1249,7 @@ def faq(request, rede=None):
 
     # regras para quem está em uma filial
     if p['is_filial']:
-        p['list_faq'] = p['list_faq'].filter( Q(filial = p['is_filial']) ).order_by('order', 'pergunta')
+        p['list_faq'] = p['list_faq'].filter( Q(filial__isnull = True) | Q(filial = p['is_filial']) ).order_by('order', 'pergunta')
 
     return render_to_response('%s/faq.html' % p['get_tipo_template'], p, context_instance=RequestContext(request))
 
@@ -1211,11 +1263,11 @@ def busca(request, rede=None):
     p['q'] = request.REQUEST.get('q', '')
 
     p['total']  = 0
-    p['total'] += Treinamento.objects.filter( Q(rede = p['rede']), Q(visible=True) ).count()
-    p['total'] += Category.objects.filter( Q(rede = p['rede']), Q(visible=True) ).count()
+    p['total'] += Treinamento.objects.filter( Q(rede = p['rede']) & Q(visible = True) & Q(category__visible = True) ).count()
+    p['total'] += Category.objects.filter( Q(rede = p['rede']) & Q(visible = True) ).count()
 
-    p['list_treinamento'] = Treinamento.objects.filter( Q(rede = p['rede']), Q(name__icontains = p['q'].strip()), Q(visible=True) ).order_by('name')
-    p['list_category']    = Category.objects.filter( Q(rede = p['rede']), Q(name__icontains = p['q'].strip()), Q(visible=True) ).order_by('name')
+    p['list_treinamento'] = Treinamento.objects.filter( Q(rede = p['rede']) & Q(category__visible = True) & Q(name__icontains = p['q'].strip()) & Q(visible = True) ).order_by('name')
+    p['list_category']    = Category.objects.filter( Q(rede = p['rede']) & Q(name__icontains = p['q'].strip()) & Q(visible = True) ).order_by('name')
 
     # regras para usuário restrito
     if not p['is_access']:
@@ -1224,8 +1276,8 @@ def busca(request, rede=None):
 
     # regras para quem está em uma filial
     if p['is_filial']:
-        p['list_treinamento'] = p['list_treinamento'].filter( Q(category__filial = p['is_filial']) ).order_by('name')
-        p['list_category']    = p['list_category'].filter( Q(filial = p['is_filial']) ).order_by('name')
+        p['list_treinamento'] = p['list_treinamento'].filter( Q(category__filial__isnull = True) | Q(category__filial = p['is_filial']) ).order_by('name')
+        p['list_category']    = p['list_category'].filter( Q(filial__isnull = True) | Q(filial = p['is_filial']) ).order_by('name')
 
     p['list_busca']  = [['treinamento', i.id, i.name, i.desc] for i in p['list_treinamento']]
 
@@ -1495,6 +1547,12 @@ def login(request, rede=None):
 
     p['repass']   = request.REQUEST.get('repass' , '')
     p['add']      = request.REQUEST.get('add'    , '')
+    
+    try:
+        if not p['rede'].is_login:
+            return HttpResponseRedirect('/login/')
+    except:
+        pass
 
     if len(p['repass']) > 0:
 

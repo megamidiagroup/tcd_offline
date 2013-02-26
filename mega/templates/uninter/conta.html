@@ -64,21 +64,17 @@
                 {% endif %}
                 
                 <div class="wrap">
-	
-	                <p><b>Nome: 				</b>{{ user.get_full_name }}</p>
-	                <p><b>CPF: 					</b>{{ infouser.cpf }}</p>
-	                <p><b>E-mail: 				</b>{{ user.email }}</p>
-	                <p><b>Endereço:     		</b>{{ infouser.endereco }}</p>
-	                <p><b>Bairro:       		</b>{{ infouser.bairro }}</p>
-	                <p><b>CEP:          		</b>{{ infouser.cep }}</p>
-	                <p><b>Estado:       		</b>{{ infouser.estado }}</p>
-	                <p><b>Cidade:       		</b>{{ infouser.cidade }}</p>
-	                <p><b>Telefone Comercial: 	</b>{{ infouser.fone_com }}</p>
-	                <p><b>Telefone Celular: 	</b>{{ infouser.fone_cel }}</p>
-	                <p><b style="font-size: 12px;">Aceito receber mensagens gratuitas pelo celular:
-						</b>{{ infouser.receber|humanizeboolean }}</p>
-	                <p><b style="font-size: 12px;">Aceito receber revista eletrônica: 
-	                	</b>{{ infouser.envia|humanizeboolean }}</p>
+                	
+                	<p><b>Nome:       			</b>{{ user.get_full_name }}</p>
+	                <p><b>CPF:        			</b>{% if infouser.cpf %}{{ infouser.cpf }}{% endif %}</p>
+	                <p><b>E-mail:     			</b>{{ user.email }}</p>
+	                <p><b>Endereço: 			</b>{% if infouser.endereco %}{{ infouser.endereco }}{% endif %}</p>
+	                <p><b>Bairro: 				</b>{% if infouser.bairro %}{{ infouser.bairro }}{% endif %}</p>
+	                <p><b>CEP: 				    </b>{% if infouser.cep %}{{ infouser.cep }}{% endif %}</p>
+	                <p><b>Estado: 			    </b>{% if infouser.estado %}{{ infouser.estado }}{% endif %}</p>
+	                <p><b>Cidade:				</b>{% if infouser.cidade %}{{ infouser.cidade }}{% endif %}</p>
+	                <p><b>Telefone Comercial: 	</b>{% if infouser.fone_com %}{{ infouser.fone_com }}{% endif %}</p>
+	                <p><b>Telefone Celular: 	</b>{% if infouser.fone_cel %}{{ infouser.fone_cel }}{% endif %}</p>
 
 					<div class="center">
 	               		<a class="buttom" href="{% url home %}{{ rede.link }}/conta/edit/" >Editar conta</a>

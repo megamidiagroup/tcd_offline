@@ -5,6 +5,7 @@ from django.template import Library
 from django.conf import settings
 from django.conf.urls.defaults import include, patterns, url
 from django.contrib.auth.models import User as UserAdmin
+from django.template.defaultfilters import date as default_date
 
 from mega.models import *
 
@@ -12,19 +13,40 @@ from datetime import datetime, timedelta
 
 import base64
  
-register  = Library()
+register = Library()
 
 
 @register.filter()
-def count_aluno(rede):
+def count_aluno(rede, user=None):
     
-    return UserAdmin.objects.filter( Q(is_active = True), Q(is_staff = False), Q(is_superuser = False), Q(infouser__rede = rede), Q(infouser__visible = True) ).count()
+    ua = UserAdmin.objects.filter( Q(is_active = True), Q(is_staff = False), Q(is_superuser = False), Q(infouser__rede = rede), Q(infouser__visible = True) )
+    
+    if user and user.infouser.filial:
+        return ua.filter(infouser__filial = user.infouser.filial).count()
+    
+    return ua.count()
 
 
 @register.filter()
-def count_treinamento(rede):
+def count_treinamento(rede, user=None):
     
-    return Treinamento.objects.filter( Q(visible = True), Q(rede = rede) ).count()
+    t = Treinamento.objects.filter( Q(category__visible = True) & Q(visible = True) & Q(rede = rede) )
+    
+    if user and user.infouser.filial:
+        return t.filter( Q(category__filial = user.infouser.filial )).count()
+    
+    return t.count()
+
+
+@register.filter()
+def date_last_user_access(rede, user=None):
+    
+    ua = UserAdmin.objects.filter( Q(is_active = True), Q(is_staff = False), Q(is_superuser = False), Q(infouser__rede = rede), Q(infouser__visible = True) ).order_by('-last_login')
+    
+    if user and user.infouser.filial:
+        ua = ua.filter(infouser__filial = user.infouser.filial).order_by('-last_login')
+
+    return u'%s (%s)' % ( default_date(ua[0].last_login, 'd/m/Y à\s H:i'), ua[0].username )
 
 
 @register.filter()

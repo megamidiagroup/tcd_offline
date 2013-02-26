@@ -45,20 +45,22 @@
             <div id="changelist-filter">
                 <h2>Filtro</h2>
 
-                <h3>Por Filial</h3>
-                <ul>
-                    <li class="{% if not filial__exact %}selected{% endif %}">
-                        <a href="?">Todos</a>
-                    </li>
-                    <li class="{% if filial__exact == 'null' %}selected{% endif %}">
-                        <a href="?filial__exact=null">(nenhum)</a>
-                    </li>
-                    {% for i in list_filial %}
-                        <li class="{% if filial__exact == i.id|safe %}selected{% endif %}">
-                            <a href="?filial__exact={{ i.id }}">{{ i.name }}</a>
-                        </li>
-                    {% endfor %}
-                </ul>
+				{% if list_filial %}
+	                <h3>Por Filial</h3>
+	                <ul>
+	                    <li class="{% if not filial__exact %}selected{% endif %}">
+	                        <a href="?">Todos</a>
+	                    </li>
+	                    <li class="{% if filial__exact == 'null' %}selected{% endif %}">
+	                        <a href="?filial__exact=null&q={{ q }}&de={{ de }}&ate={{ ate }}">(nenhum)</a>
+	                    </li>
+	                    {% for i in list_filial %}
+	                        <li class="{% if filial__exact == i.id|safe %}selected{% endif %}">
+	                            <a href="?filial__exact={{ i.id }}&q={{ q }}&de={{ de }}&ate={{ ate }}">{{ i.name }}</a>
+	                        </li>
+	                    {% endfor %}
+	                </ul>
+                {% endif %}
 
                 <h3>Por Habilitado</h3>
                 <ul>
@@ -66,10 +68,10 @@
                         <a href="?">Todos</a>
                     </li>
                     <li class="{% if visible__exact == '1' %}selected{% endif %}">
-                        <a href="?visible__exact=1">Sim</a>
+                        <a href="?visible__exact=1&q={{ q }}&de={{ de }}&ate={{ ate }}">Sim</a>
                     </li>
                     <li class="{% if visible__exact == '0' %}selected{% endif %}">
-                        <a href="?visible__exact=0">Não</a>
+                        <a href="?visible__exact=0&q={{ q }}&de={{ de }}&ate={{ ate }}">Não</a>
                     </li>
                 </ul>
 
@@ -104,26 +106,31 @@
                                 <input type="checkbox" id="action-toggle" style="display: inline;">
                             </th>
                             <th scope="col">
-                                <a href="?ot=asc&amp;o=name">
+                                <a href="?ot=asc&amp;o=name&q={{ q }}&de={{ de }}&ate={{ ate }}">
                                     Rede
                                 </a>
                             </th>
                             <th scope="col">
-                                Nº Alunos
+                                Nº Usuários
                             </th>
                             <th scope="col">
                                 Nº Treinamentos
                             </th>
+                            {% if not user.infouser.filial %}
+	                            <th scope="col">
+	                                Filiais
+	                            </th>
+                            {% endif %}
                             <th scope="col">
-                                Filiais
-                            </th>
-                            <th scope="col">
-                                <a href="?ot=asc&amp;o=date">
-                                    Data de criação
+                                <a href="?ot=asc&amp;o=-date&q={{ q }}&de={{ de }}&ate={{ ate }}">
+                                    Data de criação da Rede
                                 </a>
                             </th>
+                            <th scope="col">
+                            	Último Acesso
+                            </th>
                             <th class="sorted ascending" scope="col">
-                                <a href="?ot=asc&amp;o=visible">
+                                <a href="?ot=asc&amp;o=visible&q={{ q }}&de={{ de }}&ate={{ ate }}">
                                     Habilitado
                                 </a>
                             </th>
@@ -138,10 +145,13 @@
                                 <td>
                                     <a href="/admin/auth/user/{{ i.id }}/">{{ i.name }}</a>
                                 </td>
-                                <td class="nowrap">{{ i|count_aluno }}</td>
-                                <td class="nowrap">{{ i|count_treinamento }}</td>
-                                <td class="nowrap">{{ i|list_filial|safe }}</td>
-                                <td>{{ i.date|date:'d/m/Y' }}</td>
+                                <td class="nowrap">{{ i|count_aluno:user }}</td>
+                                <td class="nowrap">{{ i|count_treinamento:user }}</td>
+                                {% if not user.infouser.filial %}
+                                	<td class="nowrap">{{ i|list_filial|safe }}</td>
+                                {% endif %}
+                                <td>{{ i.date|date:'d/m/Y à\s H:i' }}</td>
+                                <td>{{ i|date_last_user_access:user }}</td>
                                 <td>
                                     {% if i.visible %}
                                         <img alt="Sim" src="{{ ADMIN_MEDIA_PREFIX }}img/admin/icon-yes.gif" border="0" />
@@ -157,6 +167,15 @@
                 </div>
 
                 <p class="paginator">{{ result_list.count }} Aluno{{ result_list.count|pluralize }} Cadastrado{{ result_list.count|pluralize }}</p>
+                
+                <input type="hidden" name="o" value="{{ o }}" />
+                <input type="hidden" name="ot" value="{{ ot }}" />
+                <input type="hidden" name="rede__exact" value="{{ rede__exact }}" />
+                <input type="hidden" name="filial__exact" value="{{ filial__exact }}" />
+                <input type="hidden" name="visible__exact" value="{{ visible__exact }}" />
+                <input type="hidden" name="q" value="{{ q }}" />
+                <input type="hidden" name="de" value="{{ de }}" />
+                <input type="hidden" name="ate" value="{{ ate }}" />
 
             </form>
         </div>

@@ -108,17 +108,13 @@
 	                {% endif %}
 	
 	                <p><b>Nome:       			</b>{{ user.get_full_name }}</p>
-	                <p><b>CNPJ:        			</b>{{ infouser.cnpj }}</p>
+	                <p><b>CNPJ:        			</b>{% if infouser.cnpj %}{{ infouser.cnpj }}{% endif %}</p>
 	                <p><b>Franquia:   			</b>{{ infouser.filial|default:'(Geral)' }}</p>
 	                <p><b>E-mail:     			</b>{{ user.email }}</p>
-	                <p><b>Endereço Comercial:	</b>{{ infouser.endereco }}</p>
-	                <p><b>Telefone Comercial: 	</b>{{ infouser.fone_com }}</p>
-	                <p><b>Telefone Residencial: </b>{{ infouser.fone_res }}</p>
-	                <p><b>Telefone Celular: 	</b>{{ infouser.fone_cel }}</p>
-	                <p><b style="font-size: 12px;">Aceito receber mensagens gratuitas pelo celular: 	
-	                	</b>{{ infouser.receber|humanizeboolean }}</p>
-	                <p><b style="font-size: 12px;">Aceito receber e-mail: 				
-	                	</b>{{ infouser.envia|humanizeboolean }}</p>
+	                <p><b>Endereço Comercial:	</b>{% if infouser.endereco %}{{ infouser.endereco }}{% endif %}</p>
+	                <p><b>Telefone Comercial: 	</b>{% if infouser.fone_com %}{{ infouser.fone_com }}{% endif %}</p>
+	                <p><b>Telefone Residencial: </b>{% if infouser.fone_res %}{{ infouser.fone_res }}{% endif %}</p>
+	                <p><b>Telefone Celular: 	</b>{% if infouser.fone_cel %}{{ infouser.fone_cel }}{% endif %}</p>
 	                	
 	                <a class="buttom" href="{% url home %}{{ rede.link }}/conta/edit/" >Editar conta</a>
 

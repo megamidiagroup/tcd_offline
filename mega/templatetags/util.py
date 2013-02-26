@@ -226,11 +226,11 @@ def kaltura(rede, code, id, w='640', h='360'):
 
 
 @register.inclusion_tag('templatetags/megavideo.html')
-def megavideo(rede, code, id, w='640', h='360'):
+def megavideo(rede, code, id, w='640', h='360', logo_url='', logo_link=''):
     
     base_url = [settings.MEGAVIDEO_CONF.get('base_url', ''), 'https://www.treinandoequipes.com.br/megavideo/'][settings.DEBUG]
 
-    return {'rede' : rede, 'code' : code, 'id' : id, 'w' : w, 'h' : h, 'base_url' : base_url}
+    return {'rede' : rede, 'code' : code, 'id' : id, 'w' : w, 'h' : h, 'base_url' : base_url, 'logo_url' : settings.STATIC_URL + logo_url, 'logo_link' : logo_link}
 
 
 @register.inclusion_tag('templatetags/live.html')
@@ -774,6 +774,17 @@ def filter_search(value, rep=''):
     
     try:
         return value.replace('%s', '%s' % rep)
+    except:
+        pass
+    
+    return value
+
+
+@register.filter()
+def replace(value, rep=''):
+    
+    try:
+        return value.replace('%s' % rep, '')
     except:
         pass
     

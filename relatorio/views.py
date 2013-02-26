@@ -19,7 +19,7 @@ except:
 from models import *
 from mega.models import *
 from mega.templatetags.relatorio import certificadorealizado, treinamentorealizado, counttreinamentorealizado, \
-                                            count_aluno, count_treinamento, list_filial
+                                            count_aluno, count_treinamento, list_filial, date_last_user_access
 from datetime import datetime, timedelta
 
 import csv
@@ -77,8 +77,14 @@ def alunocadastrado(request):
     p['de']  = request.REQUEST.get('de' , '')
     p['ate'] = request.REQUEST.get('ate', '')
 
-    p['result_list'] = UserAdmin.objects.filter( Q(is_superuser = False), Q(is_staff = False) )
+    p['result_list'] = UserAdmin.objects.filter( Q(is_superuser = False), Q(is_staff = False), Q(infouser__isnull = False) )
     
+    if p['ot'] == 'desc' and 'o' in p and not p['o'].count('-') > 0:
+        p['o'] = '-' + p['o']
+
+    if request.user.infouser.filial:
+        p['result_list'] = p['result_list'].filter(infouser__filial = request.user.infouser.filial)
+
     if len(p['q'].strip()) > 0:
         p['result_list'] = p['result_list'].filter( Q(first_name__in = p['q'].strip().split(' ')) | Q(last_name__in = p['q'].strip().split(' ')) | Q(username__icontains = p['q'].strip()) )
     
@@ -111,20 +117,39 @@ def alunocadastrado(request):
 
         p['result_list'] = p['result_list'].filter( Q(id__in = p['_selected_action']) ).order_by('%s' % p['o'])
 
-        response = HttpResponse(mimetype='text/csv')
+        response  = HttpResponse(mimetype='text/csv')
         response['Content-Disposition'] = 'attachment; filename=relatorio_alunos_cadastrados_%s.csv' % (default_date(datetime.now(), 'd_m_Y'))
 
-        writer = csv.writer(response)
-        writer.writerow(['Nome', 'Usuário', 'Rede', 'E-mail', 'Filial', 'Data de Cadastro', 'Habilitado'])
+        writer    = csv.writer(response)
+        
+        itens_csv = ['Nome', 'Usuário']
+        if request.user.is_superuser:
+            itens_csv += ['Rede']
+        if request.user.infouser.filial:
+            itens_csv += ['E-mail', 'Data de Cadastro', 'Último Acesso', 'Habilitado']
+        else:
+            itens_csv += ['E-mail', 'Filial', 'Data de Cadastro', 'Último Acesso', 'Habilitado']
+
+        writer.writerow(itens_csv)
 
         for i in p['result_list']:
             res    = u'Não'
             filial = u'(nenhum)'
+            
             if i.is_active:
                 res    = u'Sim'
+                
             if i.infouser.filial:
                 filial = i.infouser.filial.name
-            list = ['%s' % i.get_full_name(), '%s' % i.username, '%s' % i.infouser.rede.name, '%s' % i.email, '%s' % filial, '%s' % default_date(i.infouser.date, 'd/m/Y'), '%s' % res]
+                
+            list = ['%s' % i.get_full_name().encode('utf-8'), '%s' % i.username]
+            if request.user.is_superuser:
+                list += ['%s' % i.infouser.rede.name.encode('utf-8')]
+            if request.user.infouser.filial:
+                list += ['%s' % i.email, '%s' % default_date(i.date_joined, 'd/m/Y à\s H:i').encode('utf-8'), '%s' % default_date(i.last_login, 'd/m/Y à\s H:i').encode('utf-8'), '%s' % res.encode('utf-8')]
+            else:
+                list += ['%s' % i.email, '%s' % filial.encode('utf-8'), '%s' % default_date(i.date_joined, 'd/m/Y à\s H:i').encode('utf-8'), '%s' % default_date(i.last_login, 'd/m/Y à\s H:i').encode('utf-8'), '%s' % res.encode('utf-8')]
+
             writer.writerow( list )
 
         ac.set_extrato(p)
@@ -147,6 +172,9 @@ def alunocadastrado(request):
         p['result_list'] = p['result_list'].filter( Q(infouser__rede = request.rede) )
 
     ac.set_acesso(p)
+    
+    if request.user.infouser.filial:
+        p['list_filial'] = []
 
     return render_to_response('relatorio/alunocadastrado.html', p, context_instance=RequestContext(request))
 
@@ -171,7 +199,10 @@ def alunocertificado(request, rede=None):
     p['de']  = request.REQUEST.get('de' , '')
     p['ate'] = request.REQUEST.get('ate', '')
 
-    p['result_list'] = UserAdmin.objects.filter( Q(is_superuser = False), Q(is_staff = False) )
+    p['result_list'] = UserAdmin.objects.filter( Q(is_superuser = False), Q(is_staff = False), Q(infouser__isnull = False) )
+    
+    if request.user.infouser.filial:
+        p['result_list'] = p['result_list'].filter(infouser__filial = request.user.infouser.filial)
     
     if len(p['q'].strip()) > 0:
         p['result_list'] = p['result_list'].filter( Q(first_name__in = p['q'].strip().split(' ')) | Q(last_name__in = p['q'].strip().split(' ')) | Q(username__icontains = p['q'].strip()) )
@@ -209,16 +240,37 @@ def alunocertificado(request, rede=None):
         response['Content-Disposition'] = 'attachment; filename=relatorio_alunos_certificados_%s.csv' % (default_date(datetime.now(), 'd_m_Y'))
 
         writer = csv.writer(response)
-        writer.writerow(['Nome', 'Usuário', 'Rede', 'Filial', 'Certificados realizados (%)', 'Aproveitamento (%)', 'Habilitado'])
+        
+        itens_csv = ['Nome', 'Usuário']
+        
+        if request.user.is_superuser:
+            itens_csv += ['Rede']
+
+        if request.user.infouser.filial:
+            itens_csv += ['Certificados realizados (%)', 'Aproveitamento (%)', 'Habilitado']
+        else:
+            itens_csv += ['Filial', 'Certificados realizados (%)', 'Aproveitamento (%)', 'Habilitado']
+            
+        writer.writerow(itens_csv)
 
         for i in p['result_list']:
             res    = u'Não'
             filial = u'(nenhum)'
             if i.is_active:
-                res    = u'Sim'
+                res = u'Sim'
             if i.infouser.filial:
                 filial = i.infouser.filial.name
-            list = ['%s' % i.get_full_name(), '%s' % i.username, '%s' % i.infouser.rede.name, '%s' % filial, '%s' % certificadorealizado(i, i.infouser.rede), '%s' % treinamentorealizado(i, i.infouser.rede), '%s' % res]
+                
+            list = ['%s' % i.get_full_name().encode('utf-8'), '%s' % i.username]
+                
+            if request.user.is_superuser:
+                list += ['%s' % i.infouser.rede.name.encode('utf-8')]
+
+            if request.user.infouser.filial:
+                list += ['%s' % certificadorealizado(i, i.infouser.rede), '%s' % treinamentorealizado(i, i.infouser.rede), '%s' % res.encode('utf-8')]
+            else:
+                list += ['%s' % filial.encode('utf-8'), '%s' % certificadorealizado(i, i.infouser.rede), '%s' % treinamentorealizado(i, i.infouser.rede), '%s' % res.encode('utf-8')]
+                
             writer.writerow( list )
 
         ac.set_extrato(p)
@@ -241,6 +293,9 @@ def alunocertificado(request, rede=None):
         p['result_list'] = p['result_list'].filter( Q(infouser__rede = request.rede) )
 
     ac.set_acesso(p)
+    
+    if request.user.infouser.filial:
+        p['list_filial'] = []
 
     return render_to_response('relatorio/alunocertificado.html', p, context_instance=RequestContext(request))
 
@@ -265,7 +320,10 @@ def treinamentoconcluido(request, rede=None):
     p['de']  = request.REQUEST.get('de' , '')
     p['ate'] = request.REQUEST.get('ate', '')
 
-    p['result_list'] = UserAdmin.objects.filter( Q(is_superuser = False), Q(is_staff = False) )
+    p['result_list'] = UserAdmin.objects.filter( Q(is_superuser = False), Q(is_staff = False), Q(infouser__isnull = False) )
+    
+    if request.user.infouser.filial:
+        p['result_list'] = p['result_list'].filter(infouser__filial = request.user.infouser.filial)
     
     if len(p['q'].strip()) > 0:
         p['result_list'] = p['result_list'].filter( Q(first_name__in = p['q'].strip().split(' ')) | Q(last_name__in = p['q'].strip().split(' ')) | Q(username__icontains = p['q'].strip()) )
@@ -303,16 +361,39 @@ def treinamentoconcluido(request, rede=None):
         response['Content-Disposition'] = 'attachment; filename=relatorio_treinamentos_concluidos_%s.csv' % (default_date(datetime.now(), 'd_m_Y'))
 
         writer = csv.writer(response)
-        writer.writerow(['Nome', 'Usuário', 'Rede', 'Filial', 'Treinamentos Concluidos', 'Habilitado'])
+        
+        itens_csv = ['Usuário', 'Nome Cpmpleto']
+        
+        if request.user.is_superuser:
+            itens_csv += ['Rede']
+
+        if request.user.infouser.filial:
+            itens_csv += ['Treinamentos Concluidos e Aprovados', 'Habilitado']
+        else:
+            itens_csv += ['Filial', 'Treinamentos Concluidos e Aprovados', 'Habilitado']
+        
+        writer.writerow(itens_csv)
 
         for i in p['result_list']:
             res    = u'Não'
             filial = u'(nenhum)'
+            
             if i.is_active:
-                res    = u'Sim'
+                res = u'Sim'
+                
             if i.infouser.filial:
                 filial = i.infouser.filial.name
-            list = ['%s' % i.get_full_name(), '%s' % i.username, '%s' % i.infouser.rede.name, '%s' % filial, '%s' % counttreinamentorealizado(i, i.infouser.rede), '%s' % res]
+                
+            list = ['%s' % i.username, '%s' % i.get_full_name().encode('utf-8')]
+            
+            if request.user.is_superuser:
+                list += ['%s' % i.infouser.rede.name.encode('utf-8')]
+                
+            if request.user.infouser.filial:
+                list += ['%s' % counttreinamentorealizado(i, i.infouser.rede), '%s' % res.encode('utf-8')]
+            else:
+                list += ['%s' % filial.encode('utf-8'), '%s' % counttreinamentorealizado(i, i.infouser.rede), '%s' % res.encode('utf-8')]
+
             writer.writerow( list )
 
         tc.set_extrato(p)
@@ -335,6 +416,9 @@ def treinamentoconcluido(request, rede=None):
         p['result_list'] = p['result_list'].filter( Q(infouser__rede = request.rede) )
 
     tc.set_acesso(p)
+    
+    if request.user.infouser.filial:
+        p['list_filial'] = []
 
     return render_to_response('relatorio/treinamentoconcluido.html', p, context_instance=RequestContext(request))
 
@@ -359,10 +443,13 @@ def pontuacaoaluno(request, rede=None):
     p['de']  = request.REQUEST.get('de' , '')
     p['ate'] = request.REQUEST.get('ate', '')
 
-    p['result_list'] = UserAdmin.objects.filter( Q(is_superuser = False), Q(is_staff = False) )
+    p['result_list'] = UserAdmin.objects.filter( Q(is_superuser = False), Q(is_staff = False), Q(infouser__isnull = False) )
+    
+    if request.user.infouser.filial:
+        p['result_list'] = p['result_list'].filter(infouser__filial = request.user.infouser.filial)
     
     if len(p['q'].strip()) > 0:
-        p['result_list'] = p['result_list'].filter( Q(first_name__in = p['q'].strip().split(' ')) | Q(last_name__in = p['q'].strip().split(' ')) | Q(username__icontains = p['q'].strip()) )
+        p['result_list'] = p['result_list'].filter( Q(first_name__icontains = p['q'].strip()) | Q(last_name__icontains = p['q'].strip()) | Q(username__icontains = p['q'].strip()) )
     
     if len(p['de']) >= 10:
         try:
@@ -397,16 +484,39 @@ def pontuacaoaluno(request, rede=None):
         response['Content-Disposition'] = 'attachment; filename=relatorio_pontuacao_alunos_%s.csv' % (default_date(datetime.now(), 'd_m_Y'))
 
         writer = csv.writer(response)
-        writer.writerow(['Nome', 'Usuário', 'Rede', 'Filial', 'Pontuação', 'Habilitado'])
+        
+        itens_csv = ['Usuário', 'Nome Cpmpleto']
+        
+        if request.user.is_superuser:
+            itens_csv += ['Rede']
+
+        if request.user.infouser.filial:
+            itens_csv += ['Pontuação', 'Habilitado']
+        else:
+            itens_csv += ['Filial', 'Pontuação', 'Habilitado']
+        
+        writer.writerow(itens_csv)
 
         for i in p['result_list']:
             res    = u'Não'
             filial = u'(nenhum)'
+            
             if i.is_active:
-                res    = u'Sim'
+                res = u'Sim'
+                
             if i.infouser.filial:
                 filial = i.infouser.filial.name
-            list = ['%s' % i.get_full_name(), '%s' % i.username, '%s' % i.infouser.rede.name, '%s' % filial, '%s' % i.infouser.pontos, '%s' % res]
+                
+            list = ['%s' % i.username, '%s' % i.get_full_name().encode('utf-8')]
+            
+            if request.user.is_superuser:
+                list += ['%s' % i.infouser.rede.name.encode('utf-8')]
+                
+            if request.user.infouser.filial:
+                list += ['%s' % i.infouser.pontos, '%s' % res.encode('utf-8')]
+            else:
+                list += ['%s' % filial.encode('utf-8'), '%s' % i.infouser.pontos, '%s' % res.encode('utf-8')]
+
             writer.writerow( list )
 
         pa.set_extrato(p)
@@ -429,6 +539,9 @@ def pontuacaoaluno(request, rede=None):
         p['result_list'] = p['result_list'].filter( Q(infouser__rede = request.rede) )
 
     pa.set_acesso(p)
+    
+    if request.user.infouser.filial:
+        p['list_filial'] = []
 
     return render_to_response('relatorio/pontuacaoaluno.html', p, context_instance=RequestContext(request))
 
@@ -455,7 +568,7 @@ def treinamentocadastrado(request, rede=None):
     p['result_list'] = Rede.objects.all().order_by('name')
     
     if len(p['q'].strip()) > 0:
-        p['result_list'] = p['result_list'].filter( Q(name__in = p['q'].strip().split(' ')) | Q(link__in = p['q'].strip().split(' ')) )
+        p['result_list'] = p['result_list'].filter( Q(name__icontains = p['q'].strip()) | Q(link__in = p['q'].strip().split(' ')) )
     
     if len(p['de']) >= 10:
         try:
@@ -478,7 +591,7 @@ def treinamentocadastrado(request, rede=None):
     elif p['visible__exact'] != '':
         p['result_list'] = p['result_list'].filter( Q(visible = bool(int(p['visible__exact']))) )
 
-    p['result_list'] = p['result_list'].order_by('%s' % p['o'])
+    p['result_list'] = p['result_list'].order_by('%s' % p['o']).distinct()
 
     if p['action'] == 'export_selected':
 
@@ -487,15 +600,29 @@ def treinamentocadastrado(request, rede=None):
         response = HttpResponse(mimetype='text/csv')
         response['Content-Disposition'] = 'attachment; filename=relatorio_treinamentos_cadastrados_%s.csv' % (default_date(datetime.now(), 'd_m_Y'))
 
-        writer = csv.writer(response)
-        writer.writerow(['Rede', 'Nº Alunos', 'Nº Treinamentos', 'Filiais', 'Data de criação', 'Habilitado'])
+        writer    = csv.writer(response)
+        
+        itens_csv = ['Rede', 'Nº Usuários', 'Nº Treinamentos']
+
+        if request.user.infouser.filial:
+            itens_csv += ['Data de criação da Rede', 'Último Acesso', 'Habilitado']
+        else:
+            itens_csv += ['Filiais', 'Data de criação da Rede', 'Último Acesso', 'Habilitado']
+        
+        writer.writerow(itens_csv)
 
         for i in p['result_list']:
-            res    = u'Não'
+            res     = u'Não'
             if i.visible:
-                res    = u'Sim'
+                res = u'Sim'
+                
+            list = ['%s' % i.name.encode('utf-8'), '%s' % count_aluno(i, p['user']), '%s' % count_treinamento(i, p['user'])]
             
-            list = ['%s' % i.name, '%s' % count_aluno(i), '%s' % count_treinamento(i), '%s' % list_filial(i, '\n'), '%s' % i.date, '%s' % res]
+            if request.user.infouser.filial:
+                list += ['%s' % default_date(i.date, 'd/m/Y à\s H:i').encode('utf-8'), '%s' % date_last_user_access(i, p['user']).encode('utf-8'), '%s' % res.encode('utf-8')]
+            else:
+                list += ['%s' % list_filial(i, '\n'), '%s' % default_date(i.date, 'd/m/Y à\s H:i').encode('utf-8'), '%s' % date_last_user_access(i, p['user']).encode('utf-8'), '%s' % res.encode('utf-8')]
+
             writer.writerow( list )
 
         tc.set_extrato(p)
@@ -508,13 +635,16 @@ def treinamentocadastrado(request, rede=None):
     if not request.user.is_superuser:
         redes            = [i.id for i in request.user.rede_set.filter( Q(visible=True) )]
         p['list_filial'] = Filial.objects.filter( Q(rede__user = request.user) ).order_by('name')
-        p['result_list'] = p['result_list'].filter( Q(id__in = redes) )
+        p['result_list'] = p['result_list'].filter( Q(id__in = redes) ).distinct()
         
     if request.rede:
         p['list_filial'] = Filial.objects.filter( Q(rede = request.rede) ).order_by('name')
-        p['result_list'] = p['result_list'].filter( Q(id = request.rede.id) )
+        p['result_list'] = p['result_list'].filter( Q(id = request.rede.id) ).distinct()
 
     tc.set_acesso(p)
+    
+    if request.user.infouser.filial:
+        p['list_filial'] = []
 
     return render_to_response('relatorio/treinamentocadastrado.html', p, context_instance=RequestContext(request))
 
@@ -557,6 +687,9 @@ def relatoriografico(request, rede=None):
         
     if not redes == None:
         q = q.filter(rede__id__in = redes)
+        
+    if request.user.infouser.filial:
+        q = q.filter(treinamento__category__filial = request.user.infouser.filial)
         
     if len(p['de']) >= 10:
         try:
@@ -602,13 +735,16 @@ def relatoriografico(request, rede=None):
     p['notfizeram'] = len(tmp_not)
     p['num_q']      = len(tmp)
     
-    ra = RelatorioAcoes.objects.filter().order_by('complete')
-    
+    ra = RelatorioAcoes.objects.all().order_by('complete')
+
     if p['rede_id'] and int(p['rede_id']) > 0:
         ra = ra.filter(rede__id = int(p['rede_id']))
         
     if not redes == None:
         ra = ra.filter(rede__id__in = redes)
+        
+    if request.user.infouser.filial:
+        ra = ra.filter( Q(user__infouser__filial = request.user.infouser.filial) & Q(video__category__filial = request.user.infouser.filial) )
     
     if len(p['de']) >= 10:
         try:
@@ -695,13 +831,16 @@ def relatoriografico(request, rede=None):
     
     ################# -------------------------- ##################
     
-    result_list_user      = UserAdmin.objects.filter( Q(is_active = True), Q(is_staff = False), Q(is_superuser = False) )
+    result_list_user      = UserAdmin.objects.filter( Q(is_active = True), Q(is_staff = False), Q(is_superuser = False), Q(infouser__isnull = False) )
     
     if p['rede_id'] and int(p['rede_id']) > 0:
         result_list_user  = result_list_user.filter(infouser__rede__id = int(p['rede_id']))
         
     if not redes == None:
         result_list_user  = result_list_user.filter(infouser__rede__id__in = redes)
+        
+    if request.user.infouser.filial:
+        result_list_user  = result_list_user.filter(infouser__filial = request.user.infouser.filial)
     
     p['result_list_user'] = result_list_user.order_by('username')
     

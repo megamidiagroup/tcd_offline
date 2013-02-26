@@ -116,10 +116,6 @@
 	                <p><b>Cidade:				</b>{% if infouser.cidade %}{{ infouser.cidade }}{% endif %}</p>
 	                <p><b>Telefone Comercial: 	</b>{% if infouser.fone_com %}{{ infouser.fone_com }}{% endif %}</p>
 	                <p><b>Telefone Celular: 	</b>{% if infouser.fone_cel %}{{ infouser.fone_cel }}{% endif %}</p>
-	                <p><b style="font-size: 12px;">Aceito receber mensagens gratuitas pelo celular: 	
-	                	</b>{{ infouser.receber|humanizeboolean }}</p>
-	                <p><b style="font-size: 12px;">Aceito receber revista eletrônica: 				
-	                	</b>{{ infouser.envia|humanizeboolean }}</p>
 
 	                <a class="buttom" href="{% url home %}{{ rede.link }}/conta/edit/" >Editar conta</a>
 

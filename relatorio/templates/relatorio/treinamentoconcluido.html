@@ -53,26 +53,28 @@
 	                    </li>
 	                    {% for i in list_rede %}
 	                        <li class="{% if rede__exact == i.id|safe %}selected{% endif %}">
-	                            <a href="?rede__exact={{ i.id }}">{{ i.name }}</a>
+	                            <a href="?rede__exact={{ i.id }}&q={{ q }}&de={{ de }}&ate={{ ate }}">{{ i.name }}</a>
 	                        </li>
 	                    {% endfor %}
 	                </ul>
                 {% endif %}
 
-                <h3>Por Filial</h3>
-                <ul>
-                    <li class="{% if not filial__exact %}selected{% endif %}">
-                        <a href="?">Todos</a>
-                    </li>
-                    <li class="{% if filial__exact == 'null' %}selected{% endif %}">
-                        <a href="?filial__exact=null">(nenhum)</a>
-                    </li>
-                    {% for i in list_filial %}
-                        <li class="{% if filial__exact == i.id|safe %}selected{% endif %}">
-                            <a href="?filial__exact={{ i.id }}">{{ i.name }}</a>
-                        </li>
-                    {% endfor %}
-                </ul>
+				{% if list_filial %}
+	                <h3>Por Filial</h3>
+	                <ul>
+	                    <li class="{% if not filial__exact %}selected{% endif %}">
+	                        <a href="?">Todos</a>
+	                    </li>
+	                    <li class="{% if filial__exact == 'null' %}selected{% endif %}">
+	                        <a href="?filial__exact=null&q={{ q }}&de={{ de }}&ate={{ ate }}">(nenhum)</a>
+	                    </li>
+	                    {% for i in list_filial %}
+	                        <li class="{% if filial__exact == i.id|safe %}selected{% endif %}">
+	                            <a href="?filial__exact={{ i.id }}&q={{ q }}&de={{ de }}&ate={{ ate }}">{{ i.name }}</a>
+	                        </li>
+	                    {% endfor %}
+	                </ul>
+	            {% endif %}
 
                 <h3>Por Habilitado</h3>
                 <ul>
@@ -80,10 +82,10 @@
                         <a href="?">Todos</a>
                     </li>
                     <li class="{% if visible__exact == '1' %}selected{% endif %}">
-                        <a href="?visible__exact=1">Sim</a>
+                        <a href="?visible__exact=1&q={{ q }}&de={{ de }}&ate={{ ate }}">Sim</a>
                     </li>
                     <li class="{% if visible__exact == '0' %}selected{% endif %}">
-                        <a href="?visible__exact=0">Não</a>
+                        <a href="?visible__exact=0&q={{ q }}&de={{ de }}&ate={{ ate }}">Não</a>
                     </li>
                 </ul>
 
@@ -118,30 +120,34 @@
                                 <input type="checkbox" id="action-toggle" style="display: inline;">
                             </th>
                             <th scope="col">
-                                <a href="?ot=asc&amp;o=first_name">
-                                    Nome
-                                </a>
-                            </th>
-                            <th scope="col">
-                                <a href="?ot=asc&amp;o=username">
+                                <a href="?ot=asc&amp;o=username&q={{ q }}&de={{ de }}&ate={{ ate }}">
                                     Usuário
                                 </a>
                             </th>
                             <th scope="col">
-                                <a href="?ot=asc&amp;o=infouser__rede">
-                                    Rede
+                                <a href="?ot=asc&amp;o=first_name&q={{ q }}&de={{ de }}&ate={{ ate }}">
+                                    Nome Completo
                                 </a>
                             </th>
-                            <th scope="col">
-                                <a href="?ot=asc&amp;o=infouser__filial">
-                                    Filial
-                                </a>
+                            {% if user.is_superuser %}
+	                            <th scope="col">
+	                                <a href="?ot=asc&amp;o=infouser__rede&q={{ q }}&de={{ de }}&ate={{ ate }}">
+	                                    Rede
+	                                </a>
+	                            </th>
+                            {% endif %}
+                            {% if not user.infouser.filial %}
+	                            <th scope="col">
+	                                <a href="?ot=asc&amp;o=infouser__filial&q={{ q }}&de={{ de }}&ate={{ ate }}">
+	                                    Filial
+	                                </a>
+	                            </th>
+                            {% endif %}
+                            <th class="sorted ascending" scope="col">
+                                Treinamentos Concluidos e Aprovados
                             </th>
                             <th class="sorted ascending" scope="col">
-                                Treinamentos Concluidos
-                            </th>
-                            <th class="sorted ascending" scope="col">
-                                <a href="?ot=asc&amp;o=is_active">
+                                <a href="?ot=asc&amp;o=is_active&q={{ q }}&de={{ de }}&ate={{ ate }}">
                                     Habilitado
                                 </a>
                             </th>
@@ -153,12 +159,16 @@
                                 <td class="action-checkbox" style="text-align: left;">
                                     <input type="checkbox" name="_selected_action" value="{{ i.id }}" class="action-select">
                                 </td>
+                                <td class="nowrap">{{ i.username }}</td>
                                 <td>
                                     <a href="/admin/auth/user/{{ i.id }}/">{{ i.get_full_name }}</a>
                                 </td>
-                                <td class="nowrap">{{ i.username }}</td>
-                                <td class="nowrap">{{ i.infouser.rede }}</td>
-                                <td>{{ i.infouser.filial|default:'(nenhum)' }}</td>
+                                {% if user.is_superuser %}
+                                	<td class="nowrap">{{ i.infouser.rede }}</td>
+                                {% endif %}
+                                {% if not user.infouser.filial %}
+                                	<td>{{ i.infouser.filial|default:'(nenhum)' }}</td>
+                                {% endif %}
                                 <td>{{ i|counttreinamentorealizado:i.infouser.rede }}</td>
                                 <td>
                                     {% if i.is_active %}
@@ -175,6 +185,15 @@
                 </div>
 
                 <p class="paginator">{{ result_list.count }} Aluno{{ result_list.count|pluralize }} Cadastrado{{ result_list.count|pluralize }}</p>
+                
+                <input type="hidden" name="o" value="{{ o }}" />
+                <input type="hidden" name="ot" value="{{ ot }}" />
+                <input type="hidden" name="rede__exact" value="{{ rede__exact }}" />
+                <input type="hidden" name="filial__exact" value="{{ filial__exact }}" />
+                <input type="hidden" name="visible__exact" value="{{ visible__exact }}" />
+                <input type="hidden" name="q" value="{{ q }}" />
+                <input type="hidden" name="de" value="{{ de }}" />
+                <input type="hidden" name="ate" value="{{ ate }}" />
 
             </form>
         </div>

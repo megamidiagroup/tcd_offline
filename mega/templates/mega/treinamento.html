@@ -94,7 +94,11 @@
                         {% endifequal %}
 
                         {% ifequal list_video.0.tipo 'M' %}
-                            {% megavideo rede.link list_video.0.code list_video.0.id %}
+                        	{% if rede.link == 'boticario' or rede.link == 'oboticario' %}
+                            	{% megavideo rede.link list_video.0.code list_video.0.id 640 360 'mega/images/logo_oi.png' 'http://www.oi.com.br' %}
+							{% else %}                            
+                            	{% megavideo rede.link list_video.0.code list_video.0.id %}
+                            {% endif %}
                         {% endifequal %}
 
                     </div>

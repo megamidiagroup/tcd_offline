@@ -248,7 +248,7 @@
 								
 							{% else %}
 							
-								<span style="margin: 5px;display: block;">Rede: <b>{{ result_list_rede.name }}</b></span>
+								<span style="margin: 5px;display: block;">Rede: <b>{{ result_list_rede.name }} {% if user.infouser.filial %} - {{ user.infouser.filial.name }}{% endif %}</b></span>
 								
 							{% endif %}
 						</td>

@@ -91,15 +91,27 @@
             	<div class="bar">Meus dados</div>
             	
             	<div class="wrap">
+            		
+            		{% if edit == 'false' %}
+	            		<p style="display: block; color: red; font-size: 20px; margin: 15px 0;">Preencha todos os campos obrigatórios *: {{ msg }}</p>
+	            	{% endif %}
+	            	
+	            	{% if edit == 'first' %}
+	            		<p style="display: block; color: red; font-size: 20px; margin: 15px 0;">Seja bem vindo, este é seu primeiro acesso e os seus dados precisam ser preenchidos antes de utilizá-lo. Se a sua senha foi gerada automaticamente, aproveite e atualize.</p>
+	            	{% endif %}
+	            	
+	            	{% if btns_disabled %}
+	            		<script type="text/javascript">$(function() {$('a, button').attr('href', 'javascript:void(0);');$('#account-widget, #search, #enquete-widget').remove()});</script>
+	            	{% endif %}
 
 	                <form name="form" action="./" method="post" enctype="multipart/form-data">
 	
 	                    {% csrf_token %}
-	                    
-	                    {% set_keyboard_buttom get_tipo_template 'top:80px; right:521px;' 'keyboard2' %}
-	
-	                    <p><b>Nome: 	 </b><input type="text" name="txt_name" value="{{ user.get_full_name }}" /></p>
-	                    <p><b>CNPJ:  	 </b><input type="text" name="txt_cnpj" value="{{ infouser.cnpj }}" size="10" /></p>
+
+	                    <p><b>Nome Completo *: 	</b><input type="text" name="txt_name" value="{% if txt_name %}{{ txt_name }}{% else %}{{ user.get_full_name }}{% endif %}" style="width: 225px;" /></p>
+	                    {% set_keyboard_buttom get_tipo_template 'left:432px;' 'keyboard2' %}
+	                    <p><b>CNPJ:  	        </b><input type="text" name="txt_cnpj" value="{% if txt_cnpj %}{{ txt_cnpj }}{% else %}{{ infouser.cnpj }}{% endif %}" style="width: 200px;" /></p>
+	                    <input type="hidden" name="is_cnpj" value="1" />
 	                    <p><b>Franquia: </b>
 	                        <select name="sel_filial">
 	                        	<option value="">(Geral)</option>
@@ -112,25 +124,11 @@
 	                        	{% endfor %}
 	                        </select>
 	                    </p>
-	                    <p><b>E-mail: </b><input type="text" name="txt_email" value="{{ user.email }}" /></p>
-	                    <p><b>Endereço Comercial: </b><input type="text" name="txt_endereco" value="{{ infouser.endereco }}" /></p>
-	                    <p><b>Telefone Comercial: </b><input type="text" name="txt_fone_com" value="{{ infouser.fone_com }}" size="12" /></p>
-	                    <p><b>Telefone Residencial: </b><input type="text" name="txt_fone_res" value="{{ infouser.fone_res }}" size="12" /></p>
-	                    <p><b>Telefone Celular: </b><input type="text" name="txt_fone_cel" value="{{ infouser.fone_cel }}" size="12" /></p>
-	
-	                    <p>
-	                    	<label>
-		                        <input type="checkbox" name="ch_receber" {% if infouser.receber %}checked="checked"{% endif %} />
-		                        <span>Aceito receber mensagens gratuitas pelo celular</span>
-	                        </label>
-	                    </p>
-	
-	                    <p>
-	                    	<label>
-		                        <input type="checkbox" name="ch_envia" {% if infouser.envia %}checked="checked"{% endif %} />
-		                        <span>Aceito receber e-mail</span>
-	                        </label>
-	                    </p>
+	                    <p><b>E-mail *:      	    </b><input type="text" name="txt_email" value="{% if txt_email %}{{ txt_email }}{% else %}{{ user.email }}{% endif %}" style="width: 225px;" /></p>
+	                    <p><b>Endereço Comercial:   </b><input type="text" name="txt_endereco" value="{% if txt_endereco %}{{ txt_endereco }}{% else %}{% if infouser.endereco %}{{ infouser.endereco }}{% endif %}{% endif %}" style="width: 225px;" /></p>
+	                    <p><b>Telefone Comercial:   </b><input type="text" name="txt_fone_com" value="{% if txt_fone_com %}{{ txt_fone_com }}{% else %}{{ infouser.fone_com }}{% endif %}" style="width: 200px;" /></p>
+	                    <p><b>Telefone Residencial: </b><input type="text" name="txt_fone_res" value="{% if txt_fone_res %}{{ txt_fone_res }}{% else %}{{ infouser.fone_res }}{% endif %}" style="width: 200px;" /></p>
+	                    <p><b>Telefone Celular:     </b><input type="text" name="txt_fone_cel" value="{% if txt_fone_cel %}{{ txt_fone_cel }}{% else %}{{ infouser.fone_cel }}{% endif %}" style="width: 200px;" /></p>
 
 	                    <a class="buttom" href="javascript:void(0);" onclick="$('form').submit();">Salvar</a>
 	
