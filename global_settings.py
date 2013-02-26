@@ -110,7 +110,7 @@ INSTALLED_APPS = (
     'state',
     'tcd_offline.mega',
     'tcd_offline.relatorio',
-    #'south',
+    'south',
     'django_mobile',
     'captcha',
 )

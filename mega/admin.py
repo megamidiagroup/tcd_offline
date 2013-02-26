@@ -55,7 +55,7 @@ class RedeAdmin(admin.ModelAdmin):
     
     fieldsets = (
         (None, {
-            'fields': ('name', 'link', 'logo', 'visible', 'user', 'is_faq',)
+            'fields': ('name', 'link', 'logo', 'visible', 'user', 'is_faq', 'is_login',)
         }),
         ('Agendamento de envio de Sugestões ou Dúvidas', {
             #'classes': ('collapse',),
@@ -702,18 +702,31 @@ class InfoUserForm(ModelForm):
 
 
 class InfoUserAdmin(admin.ModelAdmin):
-    list_display = ('nome', 'user', 'rede', 'filial', 'visible', 'pontos')
-    list_filter  = ('visible',)
+    list_display  = ('nome', 'user', 'rede', 'filial', 'visible', 'pontos')
+    list_filter   = ('visible',)
+    search_fields = ('user__username', 'user__first_name', 'user__last_name')
 
     ## para limitar a lista por nivel de usuário
     def queryset(self, request, *args, **kwargs):
         qs   = super(InfoUserAdmin, self).queryset(request)
+        
         rede = request.user.rede_set.filter( Q(visible=True) )
+            
+        if request.user.is_superuser and request.rede:
+            self.list_display = ('nome', 'user', 'filial', 'visible', 'pontos')
+
         if request.user.is_superuser:
-            if request.rede:
+            if request.rede:  
                 return qs.filter(rede = request.rede)
             return qs.all()
-        return qs.filter( Q(user__is_superuser = False) & Q(rede__in = rede) )
+        
+        ca = qs.filter( Q(user__is_superuser = False) & Q(rede__in = rede) )
+        if request.user.infouser.filial:
+            self.list_display = ('nome', 'user', 'visible', 'pontos')
+            ca = ca.filter(filial = request.user.infouser.filial)
+
+        return ca
+    
     ### end custom
 
     ## para limitar os combo das redes
@@ -722,16 +735,16 @@ class InfoUserAdmin(admin.ModelAdmin):
             if request.rede:
                 self.fields = ['filial', 'visible', 'nasc', 'sexo', 'rg', 'cpf', 'endereco', \
                                     'numero', 'complem', 'bairro', 'cep', 'estado', 'cidade', 'fone_com', \
-                                            'fone_res', 'fone_cel', 'receber', 'access', 'envia', 'matricul']
+                                            'fone_res', 'fone_cel', 'access', 'matricul']
             else:
                 self.fields = ['rede', 'filial', 'visible', 'nasc', 'sexo', 'rg', 'cpf', 'endereco', \
                                     'numero', 'complem', 'bairro', 'cep', 'estado', 'cidade', 'fone_com', \
-                                            'fone_res', 'fone_cel', 'receber', 'access', 'envia', 'matricul']
+                                            'fone_res', 'fone_cel', 'access', 'matricul']
             self.form   = InfoUserAdminForm
         else:
             self.fields = ['filial', 'visible', 'nasc', 'sexo', 'rg', 'cpf', 'endereco', \
                                     'numero', 'complem', 'bairro', 'cep', 'estado', 'cidade', 'fone_com', \
-                                            'fone_res', 'fone_cel', 'receber', 'access', 'envia', 'matricul']
+                                            'fone_res', 'fone_cel', 'access', 'matricul']
             self.form   = InfoUserForm
         return super(InfoUserAdmin, self).get_form(request, obj=None, **kwargs)
     
@@ -955,7 +968,11 @@ class UserAdminCustom(admin.ModelAdmin):
             if request.rede:
                 return qs.filter(infouser__rede = request.rede)
             return qs.all()
-        return qs.filter( (Q(is_superuser = False) & Q(username = request.user.username)) | (Q(is_superuser = False) & Q(infouser__rede__in = rede)) )
+        ca = qs.filter( (Q(is_superuser = False) & Q(username = request.user.username)) | (Q(is_superuser = False) & Q(infouser__rede__in = rede)) )
+        
+        if request.user.infouser.filial:
+            ca = ca.filter(infouser__filial = request.user.infouser.filial)
+        return ca
     ### end custom
 
     def get_fieldsets(self, request, obj=None):
