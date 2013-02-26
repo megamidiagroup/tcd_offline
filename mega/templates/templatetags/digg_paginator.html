@@ -1,0 +1,21 @@
+{% if content_list.object_list %}
+
+	<div class="pagination">
+		
+		{% if content_list.has_previous %}
+			<span><a href="{{ url }}{{ content_list.previous_page_number }}/" title="Anterior">anterior</a></span>
+		{% else %}
+        	<span class="inative">anterior</span>
+		{% endif %}
+		
+        	<span class="linha">&nbsp;</span>
+		
+		{% if content_list.has_next %}
+			<span><a href="{{ url }}{{ content_list.next_page_number }}/" title="Próxima">próxima</a></span>
+		{% else %}
+        	<span class="inative">próxima</span>
+		{% endif %}
+		
+    </div>
+	
+{% endif %}

@@ -1,0 +1,101 @@
+﻿{% extends 'mega/main.html' %}
+
+{% load util keyboard %}
+
+{% block account %}{% endblock account %}
+
+{% block enquete %}{% endblock enquete %}
+
+{% block content %}
+
+    <div id="header">
+        <div class="container">
+            <div id="logo">
+            	<a href="{% url home %}{{ rede.link }}/">
+            		<img src="{{ rede|logo }}" border="0" />
+            	</a>
+            </div>
+        </div>
+    </div>
+    
+    {% block bloco %}
+
+        <div id="content">
+            <div class="container">
+            	
+            	<h2>Segue abaixo as listas das perguntas e respostas, você pode editar, adicionar ou remover e por fim clique em Salvar.</h2>
+
+            	{% if error %}
+            		<br /><br />
+            		<h1 style="color: #006600;">{{ error }}</h1>
+            	{% endif %}
+            	
+            	<br /><br />
+            	
+            	<form action="./?key={{ key }}" method="post" enctype="multipart/form-data" style="width: 100%;">
+            		
+            		{% csrf_token %}
+            		
+            		<ul>
+            			{% for lf in list_faq %}
+            				<li>
+            					<h3>Pergunta {{ forloop.counter }}:</h3>
+            					<p style="float: right; margin-top: -30px;">
+            						<label>
+	            						<input type="text" value="{{ lf.order }}" name="order_{{ forloop.counter }}" style="width: 20px;" />
+	            						Ordem
+            						</label>
+            						&nbsp;&nbsp;&nbsp;
+            						<label>
+	            						<input type="checkbox" name="remove_{{ forloop.counter }}" value="1" />
+	            						Remover
+            						</label>
+            					</p>
+            					<textarea name="pergunta_{{ forloop.counter }}" style="width: 100%; height: 50px;">{{ lf.pergunta }}</textarea>
+            					<h5>Resposta {{ forloop.counter }}:</h5>
+            					<textarea name="resposta_{{ forloop.counter }}" style="width: 100%; height: 50px;">{{ lf.resposta }}</textarea>
+            					<input type="hidden" name="hidden_id_{{ forloop.counter }}" value="{{ lf.id }}" />
+            					<br /><br />
+            				</li>
+            			{% endfor %}
+            			<li class="novo_btn" style="{% if not list_faq.count > 0 %}display: none{% endif %}">
+            				<h3>&nbsp;</h3>
+        					<p style="float: right; margin-top: -30px;">
+        						<label>
+	        						<input type="checkbox" name="" onchange="$('.novo').css('display', 'block');$('.novo_btn').css('display', 'none')" />
+	        						Adicionar
+        						</label>
+        					</p>
+        				</li>
+            			<li class="novo" style="{% if list_faq.count > 0 %}display: none{% endif %}">
+        					<h3>Nova Pergunta:</h3>
+        					<p style="float: right; margin-top: -30px;">
+        						<label>
+	        						<input type="text" value="{{ list_faq.count|add:1 }}" name="add_order" style="width: 20px;" />
+	        						Ordem
+        						</label>
+        						&nbsp;&nbsp;&nbsp;
+        						<label>
+	        						<input type="checkbox" name="" onchange="$('.novo').css('display', 'none');$('.novo_btn').css('display', 'block'); $('.newcampo').val('');" />
+	        						Remover
+        						</label>
+        					</p>
+        					<textarea class="newcampo" name="add_pergunta" style="width: 100%; height: 50px;"></textarea>
+        					<h5>Nova Resposta:</h5>
+        					<textarea class="newcampo" name="add_resposta" style="width: 100%; height: 50px;"></textarea>
+        					<br /><br />
+        				</li>
+            		</ul>
+					
+					<input type="hidden" value="{{ key }}" name="key" />
+					
+					<input class="bar" type="submit" value="Salvar" name="salvar" style="padding: 4px 8px; cursor: pointer; float: left" /> 
+            		
+            	</form>
+
+            </div>
+        </div>
+
+    {% endblock bloco %}
+
+{% endblock content %}

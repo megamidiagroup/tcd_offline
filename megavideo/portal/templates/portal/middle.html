@@ -1,0 +1,142 @@
+{% load extra_filter %}
+
+<div id="video_description">
+	
+	<span class="stars">
+		
+		{% if video %}
+		
+			<div class="mid_vote"> 
+
+				  <input type='hidden' value='{{ video.id }}' name='id_video' id='id_video_hidden' />   	
+				  {% if not safe_voted %} 	
+	
+					  {% for i in vote %}
+					  <input type="radio" class="vote-star" name="api-readonly-test" value="{{ i }}" />
+					  {% endfor %}
+				  
+				  {% else %}
+					  	
+					  {% for i in vote %}
+					  		<input type="radio" class="vote-star" name="api-readonly-test" value="{{ i }}"
+							{% ifequal safe_voted i %}
+								checked='checked'
+							{% endifequal %} />
+					  {% endfor %}
+				  	  
+				  {% endif %}
+				  
+				  <div id='captcha'></div>
+
+			</div>
+		
+		{% endif %}
+		
+	</span>
+	
+	<span class="title">{{ video|get_meta:'name' }}</span>
+	
+	<span class="public_date">Publicado {{ video.date|date:"d \d\e N Y \à\s H:i" }}</span>
+	
+	<br /><br />
+	
+	<span class="description">{{ video|get_meta:"description" }}</span>
+	
+	<span class="copy">
+		<div>
+			<span>Incorporar</span> 
+			<blockquote></blockquote>
+		</div>
+		<div class="btn_incorporar">
+			<span>URL</span>
+			<blockquote>
+				<input name="incorporar" class="selectall" type="text" value="{{ base_url }}v/{{ video.id }}/{{ video|get_meta:'name'|slugify }}" title="{{ base_url }}v/{{ video.id }}/{{ video|get_meta:'name'|slugify }}" />
+			</blockquote>
+		</div>
+		<div class="btn_incorporar" style="border: none;">
+			<span>Embed</span> 
+			<blockquote style="display: block;">
+				<input name="embed" class="selectall" type="text" value="{{ video|get_embed:'640x360' }}" title="{{ video|get_embed:'640x360' }}" />
+			</blockquote>
+		</div>
+	</span>
+	
+	<span class="transcodes">
+		{% for i in video.videotranscode_set.all %}
+			{% ifequal i.transcode.name 'iPhone' %}
+				<a href="{{request.channel_url}}video/get/{{ video.id }}/{{ i.transcode.name }}/" class="mouseover" open="true" title="Download em formato iPhone.">
+					<img src="{{STATIC_URL}}/static/portal/images/btn_iphone.png" width="70" height="74" border="0" />
+				</a>
+			{% endifequal %}
+			{% ifequal i.transcode.name '3gp' %}
+				<a href="{{request.channel_url}}video/get/{{ video.id }}/{{ i.transcode.name }}/" class="mouseover" open="true" title="Download em formato 3GP.">
+					<img src="{{STATIC_URL}}/static/portal/images/btn_3gp.png" width="70" height="74" border="0" />
+				</a>
+			{% endifequal %}
+		{% endfor %}
+	</span>
+	
+	<br /><br /><br />
+	
+	<span class="box_comentarios">
+		
+		<label class="btn_comment">
+			<a href="javascript:void(0);" class="opencomment mouseover" onclick="open_form_comment('.send_form', this);" open="true" title="Faça seu comentário.">
+				<img src="{{STATIC_URL}}/static/portal/images/btn_comente.png" width="94" height="38" border="0" />
+			</a>
+		</label>
+		
+		<label class="comentarios">
+			<a href="javascript:void(0);" onclick="all_comment('{{ video.id }}', '{{ video.videocomment_set.all.count }}');" title="Clique aqui para ver todos!">
+				<i>comentários (<span class="countcomment">{{ video.get_num_comment }}</span>)</i>
+			</a>
+		</label>
+		
+		<br />
+		
+		<span class="send_form" style="{% if video.videocomment_set.all.count %}display: none;{% else %}display: block;{% endif %}">
+		
+			<form id="form" name="form" action="{{ action }}" method="post">
+			
+				<label class="campos left">
+					<input name="nome" type="text" value="Nome" class="croptext" val="Nome" />
+				</label>
+				<label class="campos left">
+					<input name="email" type="text" value="E-mail" class="croptext" val="E-mail" style="float: right;" />
+				</label>
+				
+				<label class="campos">
+					<textarea name="msg" val=""></textarea>
+				</label>
+				
+				<label class="campos error">
+					<i>&nbsp;</i>
+				</label>
+				
+				<label class="campos enviar">
+					<a href="javascript:void(0);" onclick="send_form('#form');" title="Enviar Comentário?">
+						<img src="{{STATIC_URL}}/static/portal/images/btn_enviar_comment.png" width="104" height="45" border="0" />
+					</a>
+				</label>
+				
+				<input type="hidden" name="video_id" value="{{ video.id }}" />
+			
+			</form>
+		
+		</span>
+		
+		<span class="list_comments" action="{{request.channel_url}}ajax_itens_comment/">
+			{% include 'portal/list_comments.html' %}
+		</span>
+		
+		<div class="buttom_seta">
+			{% if video.videocomment_set.all.count %}
+				<a href="javascript:void(0);" class="more" onclick="set_list_coment('{{ video.id }}', 'bottom', this);" title="Mais comentários." page="2">
+					<img src="{{STATIC_URL}}/static/portal/images/setDownWhite.png" width="39" height="23" border="0" />
+				</a>
+			{% endif %}
+		</div>
+		
+	</span>
+	
+</div>

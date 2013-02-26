@@ -1,0 +1,29 @@
+{% load util %}
+
+<!DOCTYPE html>
+<!--[if lt IE 7]> <html class="no-js ie6 oldie" lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:og="http://ogp.me/ns#" xmlns:fb="http://www.facebook.com/2008/fbml"> <![endif]-->
+<!--[if IE 7]>    <html class="no-js ie7 oldie" lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:og="http://ogp.me/ns#" xmlns:fb="http://www.facebook.com/2008/fbml"> <![endif]-->
+<!--[if IE 8]>    <html class="no-js ie8 oldie" lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:og="http://ogp.me/ns#" xmlns:fb="http://www.facebook.com/2008/fbml"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" xmlns="https://www.w3.org/1999/xhtml" xmlns:og="https://ogp.me/ns#" xmlns:fb="http://www.facebook.com/2008/fbml"> <!--<![endif]-->
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <title>SALA#04</title>
+    </head>
+  <body>
+  	{% if video %}
+  		<table width="100%" cellpadding="5">
+  			<tr>
+  				<td align="center">{{ video|get_certificado }}</td>
+  			</tr>
+  			<tr>
+  				<td align="center">
+  					<img src="{{ video|get_certificado:'image' }}" border="0" align="center" />
+  				</td>
+  			</tr>
+  		</table>
+  	{% else %}
+  		Retornou nenhum resultado.
+  	{% endif %}
+  </body>
+ </html>

@@ -1,0 +1,142 @@
+{% extends 'manager/form.html' %}
+
+
+{% block js %}
+    <script type="text/javascript" src="{{STATIC_URL}}/static/manager/js/jquery-1.3.2.min.js"> </script>
+    <script type="text/javascript" src="{{STATIC_URL}}/static/manager/js/jquery.corner.js"> </script>
+
+    {# files for load swf #}
+
+    <script type="text/javascript" src="{{STATIC_URL}}/static/manager/js/swfobject.js"> </script>
+    <script type="text/javascript" src="{{STATIC_URL}}/static/manager/js/swffit.js"> </script>
+
+    <script type="text/javascript" src="{{STATIC_URL}}/static/manager/js/script_manager.js"> </script>
+
+    <script type="text/javascript" src="{{STATIC_URL}}/static/js/datapicker/ui.core.js"> </script>
+    <script type="text/javascript" src="{{STATIC_URL}}/static/js/datapicker/ui.datepicker-pt-BR.js"> </script>
+    <script type="text/javascript" src="{{STATIC_URL}}/static/js/datapicker/ui.datepicker.js"> </script>
+    <script type="text/javascript" src="{{STATIC_URL}}/static/js/datapicker/config.js"> </script>
+
+{% endblock %}
+
+
+{% block form_title %}
+    <h2>Gerar Player</h2>
+{% endblock %}
+
+{% block tag_list %}
+{% endblock %}
+
+{% block form_colum %}
+
+    <script type="text/javascript">
+        var flashvars = {
+          title: "{{update.get_name}}",
+          /* titulo do audio */
+          url: "/video/get/{{update.id}}/Mp3Web/",
+          /* caminho do audio */
+          repeat: 'false',
+          /* true para ficar repetindo o mesmo audio quando termina */
+          playAuto: 'false',
+          /* true para o audio iniciar tocando */
+          restricted: '{{update.restricted}}',
+          /* true para o audio iniciar tocando */
+        };
+        swfobject.embedSWF("{{STATIC_URL}}/static/manager/swf/player.swf", "flashPlayer", "100", "90", "9.0.0", "", flashvars);
+    </script>
+
+    <div id="flashPlayer">
+        <a href="http://www.adobe.com/go/getflashplayer"><img src="http://www.adobe.com/images/shared/download_buttons/get_flash_player.gif" alt="Get Adobe Flash player" title="Get Adobe Flash player" /></a>
+        <br/>
+        Tecnologia Flash 9 <a href="http://www.adobe.com/go/getflashplayer">Baixar Plugin</a>
+        Software gratu&iacute;to.
+    </div>
+
+{% endblock %}
+
+{% block form_list %}
+<form>
+    <ul>
+         {% for i in metas %}
+       <li>
+            <label>
+                {% ifequal i.validate "checkbox" %}
+                    <input class="metaInput" type='checkbox'
+
+                    {% ifequal i.embed 1 %}
+                        checked='checked'
+                    {% endifequal %}
+
+                    value='{{ i.value|escape }}' name='{{ i.metaname }}' />
+                {% endifequal %}
+                {{ i.name }}
+            </label>
+
+            {% ifequal i.validate "text" %}
+                <input class="metaInput" type='text' value='{{ i.value|escape }}' name='{{ i.metaname }}' />
+            {% endifequal %}
+
+            {% ifequal i.validate "date" %}
+                <input class="metaInput" type='text' value='{{ i.value|escape }}'  name='{{ i.metaname }}' style="width:200px;" id="datepicker" />
+            {% endifequal %}
+
+            {% ifequal i.validate "longtext" %}
+                <textarea class="metaInput" name='{{ i.metaname }}'>{{ i.value }}</textarea>
+            {% endifequal %}
+
+            {% ifequal i.validate "file" %}
+                 <input class="metaInput" type='file' value='{{ i.value|escape }}' name='{{ i.metaname }}' />
+
+                     {% for j in i.value %}
+                        <div class='filedownload line_{{ update.id }}'>
+                            <img src='/megavideo/static/manager/images/bt_remove.gif' id='line_{{ update.id }}' class='exclude' target='{{ request.channel_url }}manager/program/deldoc/' target_id='{{ update.id }}' title='Excluir' msg='Gostaria de excluir esse arquivo?' />
+                            <a href='/storage/{{ j.filename }}' target='_blank'> {{ j.filename }} </a>
+                        </div>
+                    {% endfor %}
+
+            {% endifequal %}
+        </li>
+        {% endfor %}
+    </ul>
+    <div>
+        {% if form_error %}
+        <ul class='error'>
+            {% for i in form_error %}
+                <li> {{ i.msg }} </li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+        <br/>
+        <br/>
+        <input type='image' src='/megavideo/static/manager/images/bt_embedG.gif' style="width:150px; height:30px" value='submit' name='addValue' />
+
+        {% if embed %}
+        <br/>
+        <br/>
+
+        {% if embed.restricted %}
+
+        <textarea style='width:650px'><object codebase="http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=9,0,124,0" width="366" height="124" >
+                <param name="movie" value="{{ embed.base_swf }}embed.swf?idCategory={{ embed.idCategory }}&idContent={{ embed.idContent }}&playAuto={{ embed.idContent }}&repeat={{ embed.repeat }}&base_url={{ embed.base_url }}&restricted=true" />
+                <param name="allowFullScreen" value="true" />
+                <param name="allowScriptAccess" value="always" />
+                <embed src="{{ embed.base_swf }}embed.swf?idCategory={{ embed.idCategory }}&idContent={{ embed.idContent }}&playAuto={{ embed.playAuto }}&repeat={{ embed.repeat }}&base_url={{ embed.base_url }}&restricted=true" allowFullScreen="true" type="application/x-shockwave-flash" pluginspage="http://www.macromedia.com/go/getflashplayer"  width="366" height="124" allowScriptAccess='always'></embed>
+        </object></textarea>
+
+        {% else %}
+
+        <textarea style='width:650px'><object codebase="http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=9,0,124,0" width="366" height="124" >
+                <param name="movie" value="{{ embed.base_swf }}embed.swf?idCategory={{ embed.idCategory }}&idContent={{ embed.idContent }}&playAuto={{ embed.idContent }}&repeat={{ embed.repeat }}&base_url={{ embed.base_url }}" />
+                <param name="allowFullScreen" value="true" />
+                <param name="allowScriptAccess" value="always" />
+                <embed src="{{ embed.base_swf }}embed.swf?idCategory={{ embed.idCategory }}&idContent={{ embed.idContent }}&playAuto={{ embed.playAuto }}&repeat={{ embed.repeat }}&base_url={{ embed.base_url }}" allowFullScreen="true" type="application/x-shockwave-flash" pluginspage="http://www.macromedia.com/go/getflashplayer"  width="366" height="124" allowScriptAccess='always'></embed>
+        </object></textarea>
+
+        {% endif %}
+
+         {% endif %}
+    <div>
+</form>
+
+
+{% endblock %}

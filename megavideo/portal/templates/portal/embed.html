@@ -1,0 +1,8 @@
+<object width="{{dimensao.width}}" height="{{dimensao.height}}" codebase="http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=9,0,28,0">
+	<param name="movie" value="{{request.channel_url}}video/player/{{ video.id }}/?base_url={{request.channel_url}}&idContent={{video.id}}" />
+	{% if playAuto %} <param name="playAuto" value="true" /> {% else %} <param name="playAuto" value="false" /> {% endif %}
+	<param name="allowScriptAccess" value="always" />
+    <param name="allowFullScreen" value="true" />
+    <embed src="{{request.channel_url}}video/player/{{ video.id }}/?base_url={{request.channel_url}}&idContent={{video.id}}" width="{{dimensao.width}}" height="{{dimensao.height}}" allowScriptAccess="always" 
+    allowFullScreen="true" type="application/x-shockwave-flash" pluginspage="http://www.adobe.com/go/getflashplayer"></embed>
+</object>

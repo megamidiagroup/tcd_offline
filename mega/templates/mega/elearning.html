@@ -1,0 +1,109 @@
+﻿{% extends 'mega/main.html' %}
+
+{% load util keyboard %}
+
+{% block content %}
+
+	<script type="text/javascript">
+		function complete()
+		{
+			$('.buttom').css('display', 'block');
+		}
+	</script>
+
+    <div id="header">
+        <div class="container">
+            <div id="logo"><a href="{% url home %}{{ rede.link }}/"><img src="{{ rede|logo }}" border="0" /></a></div>
+            <div id="header-text">{% for i in list_menu %}{% if i.tipo == 'D' %}{{ i.name|safe }}{% endif %}{% endfor %}</div>
+
+            {% for i in list_menu %}
+                {% if i.tipo == 'S' %}
+                    <div id="search">
+                        <form method="get" id="search-form" action="{% url busca rede.link %}">
+                            <div class="form-item">
+                                <input type="text" value="{{ q|default:'' }}" name="q" class="busca" />
+                                {% set_keyboard_buttom get_tipo_template 'top:10px; right:36px;' %}
+                                <button id="search-submit">
+                                    <span>Buscar</span>
+                                </button>
+                            </div>
+                        </form>
+                        <span class="sub_pesquisa">Pesquisa de vídeos</span>
+                    </div>
+                {% endif %}
+            {% endfor %}
+
+            <div id="menu">
+                <div class="user-button">
+                	{% aproveitamento_count_append list_aproveitamento_account user %}
+                </div>
+                <div class="menu-button">MENU</div>
+                {% if list_menu|tipobusca %}<div class="search-button"></div>{% endif %}
+                <ul>
+                    {% for i in list_menu %}
+                        {% if i.tipo == 'B' %}
+                        	{% if i.name|lower == 'sair' %}
+                            	<li><a class="btn_logout" href="{% url home %}{{ rede.link }}/{{ i.url }}">{{ i.name|upper }}</a></li>
+                            {% else %}
+                            	<li><a href="{% url home %}{{ rede.link }}/{{ i.url }}">{{ i.name|upper }}</a></li>
+                            {% endif %}
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+    {% if list_banner.count > 0 %}
+        <div id="highlights">
+            <div class="container">
+                <div class="full-banner">
+                    <div class="flexslider">
+                        <ul class="slides">
+                            {% for i in list_banner %}
+                                <li>
+                                    {% if i.url %}<a href="{{ i.url }}" title="Clique aqui para acessar o link" {% if i.blank %}target="_blank"{% endif %}>{% endif %}
+                                    <img src="{{ i|get_image }}" border="0" />
+                                    {% if i.url %}</a>{% endif %}
+                                    {% if i.legend %}
+                                    <p class="flex-caption">{{ i.name }}</p>
+                                    {% endif %}
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
+    {% block bloco %}
+
+        <div id="content">
+            <div class="container">
+
+                {% if list_video %}
+                    <div class="path">
+                        {% sub_menu_treinamento list_video rede %}
+                    </div>
+                {% endif %}
+
+                <div class="bar">{{ list_video.0.name }}</div>
+
+                <div class="video">
+                    	
+                    <iframe class="elearning" src="{{ elearning }}"></iframe>
+                        
+                </div>
+                
+                {% if list_video.0|is_question:user  %}
+                	<a class="buttom" href="{% url questionario rede.link list_video.0.id %}" style="display: none;float: right;margin-top: 20px;">IR PARA O TESTE</a>
+               	{% else %}
+               		<a class="buttom" href="{% url home rede.link %}" style="display: none;float: right;margin-top: 20px;">Finalizar</a>
+                {% endif %}
+                
+            </div>
+        </div>
+
+    {% endblock bloco %}
+
+{% endblock content %}

@@ -1,0 +1,167 @@
+<link rel="stylesheet" href="{{ STATIC_URL }}{{ get_tipo_template }}/css/keyboard.css" type="text/css" />
+
+<script src="{{ STATIC_URL }}{{ get_tipo_template }}/js/jquery-ui-1.8.22.custom.min.js"></script>
+
+<script type="text/javascript">
+	
+	var itens{{ classe }}    = Array();
+	var $write{{ classe }}   = Object();
+	var	shift{{ classe }}    = false;
+	var capslock{{ classe }} = false;
+	
+	$(function(){
+		itens{{ classe }}  = $('.{{ classe }}').attr('target').split('|');
+		$write{{ classe }} = $(itens{{ classe }}[0]);
+		
+		set_key_{{ classe }}();
+		
+		$('.{{ classe }} #cron').parent().draggable({ containment: "document", scroll: false }).droppable();  
+		
+		$('.{{ classe }} .closetia').click(function(e){
+			$('.{{ classe }}').fadeOut();
+			set_mask(true);
+		});
+		
+		for (var i=0;i<itens{{ classe }}.length;i++)
+		{
+			$(itens{{ classe }}[i]).click(function(e){
+				$write{{ classe }} = $(this);
+			}).blur(function(e){
+				$write{{ classe }} = $(this);
+			}).focus(function(e){
+				$write{{ classe }} = $(this);
+			});
+		}        
+		
+	});
+	
+	function set_key_{{ classe }}()
+	{
+		$('.{{ classe }} #keyboard li').click(function(){
+			var $this{{ classe }} = $(this),
+				character{{ classe }} = $this{{ classe }}.html(); // If it's a lowercase letter, nothing happens to this variable
+			
+			// Shift keys
+			if ($this{{ classe }}.hasClass('left-shift') || $this{{ classe }}.hasClass('right-shift')) {
+				$('.{{ classe }} .letter').toggleClass('uppercase');
+				$('.{{ classe }} .symbol span').toggle();
+				
+				shift{{ classe }} = (shift{{ classe }} === true) ? false : true;
+				capslock{{ classe }} = false;
+				return false;
+			}
+			
+			// Caps lock
+			if ($this{{ classe }}.hasClass('capslock')) {
+				$('.{{ classe }} .letter').toggleClass('uppercase');
+				capslock{{ classe }} = true;
+				return false;
+			}
+			
+			// Delete
+			if ($this{{ classe }}.hasClass('delete')) {
+				var html{{ classe }} = $write{{ classe }}.val();
+				
+				$write{{ classe }}.val(html{{ classe }}.substr(0, html{{ classe }}.length - 1));
+				return false;
+			}
+			
+			// Special characters
+			if ($this{{ classe }}.hasClass('symbol')) character{{ classe }} = $('span:visible', $this{{ classe }}).html();
+			if ($this{{ classe }}.hasClass('space')) character{{ classe }} = ' ';
+			if ($this{{ classe }}.hasClass('tab')) character{{ classe }} = "\t";
+			if ($this{{ classe }}.hasClass('return')) character{{ classe }} = "\n";
+			
+			// Uppercase letter
+			if ($this{{ classe }}.hasClass('uppercase')) character{{ classe }} = character{{ classe }}.toUpperCase();
+			
+			// Remove shift once a key is clicked.
+			if (shift{{ classe }} === true) {
+				$('.{{ classe }} .symbol span').toggle();
+				if (capslock{{ classe }} === false) $('.{{ classe }} .letter').toggleClass('uppercase');
+				
+				shift{{ classe }} = false;
+			}
+			// Add the character
+			$write{{ classe }}.val($write{{ classe }}.val() + character{{ classe }});
+			
+		});
+	}
+	
+	function get_tia_{{ classe }}(obj)
+	{
+		if ( $('.{{ classe }}').css('display') == 'none' )
+		{
+			$('.{{ classe }}').attr('style', 'bottom: 20px; right: 10px;').fadeIn();
+			set_mask(false);
+		} else {
+			$('.{{ classe }}').fadeOut();
+			set_mask(true);
+		}
+	}
+	
+</script>
+
+<div class="keyboard {{ classe }}" style="display: none;" target="{{ target|default:'#user|#pass' }}">
+	<ul id='cron'>
+        <li>português brasileiro</li>
+        <li class="closetia">X</li>
+        <div class="clear"></div>
+    </ul>
+	<ul id="keyboard" class="clearfix">
+		<li class="symbol"><span class="off">@</span><span class="on">~</span></li>
+		<li class="symbol"><span class="off">1</span><span class="on">!</span></li>
+		<li class="symbol"><span class="off">2</span><span class="on">`</span></li>
+		<li class="symbol"><span class="off">3</span><span class="on">#</span></li>
+		<li class="symbol"><span class="off">4</span><span class="on">$</span></li>
+		<li class="symbol"><span class="off">5</span><span class="on">%</span></li>
+		<li class="symbol"><span class="off">6</span><span class="on">^</span></li>
+		<li class="symbol"><span class="off">7</span><span class="on">&amp;</span></li>
+		<li class="symbol"><span class="off">8</span><span class="on">*</span></li>
+		<li class="symbol"><span class="off">9</span><span class="on">(</span></li>
+		<li class="symbol"><span class="off">0</span><span class="on">)</span></li>
+		<li class="symbol"><span class="off">-</span><span class="on">_</span></li>
+		<li class="symbol"><span class="off">=</span><span class="on">+</span></li>
+		<li class="delete lastitem">delete</li>
+		<li class="tab">tab</li>
+		<li class="letter">q</li>
+		<li class="letter">w</li>
+		<li class="letter">e</li>
+		<li class="letter">r</li>
+		<li class="letter">t</li>
+		<li class="letter">y</li>
+		<li class="letter">u</li>
+		<li class="letter">i</li>
+		<li class="letter">o</li>
+		<li class="letter">p</li>
+		<li class="symbol"><span class="off">[</span><span class="on">{</span></li>
+		<li class="symbol"><span class="off">]</span><span class="on">}</span></li>
+		<li class="symbol lastitem"><span class="off">\</span><span class="on">|</span></li>
+		<li class="capslock">caps lock</li>
+		<li class="letter">a</li>
+		<li class="letter">s</li>
+		<li class="letter">d</li>
+		<li class="letter">f</li>
+		<li class="letter">g</li>
+		<li class="letter">h</li>
+		<li class="letter">j</li>
+		<li class="letter">k</li>
+		<li class="letter">l</li>
+		<li class="letter">ç</li>
+		<li class="symbol"><span class="off">'</span><span class="on">&quot;</span></li>
+		<li class="return lastitem">return</li>
+		<li class="left-shift">shift</li>
+		<li class="letter">z</li>
+		<li class="letter">x</li>
+		<li class="letter">c</li>
+		<li class="letter">v</li>
+		<li class="letter">b</li>
+		<li class="letter">n</li>
+		<li class="letter">m</li>
+		<li class="symbol"><span class="off">,</span><span class="on">&lt;</span></li>
+		<li class="symbol"><span class="off">.</span><span class="on">&gt;</span></li>
+		<li class="symbol"><span class="off">/</span><span class="on">?</span></li>
+		<li class="right-shift lastitem">shift</li>
+		<li class="space lastitem">&nbsp;</li>
+	</ul>
+</div>

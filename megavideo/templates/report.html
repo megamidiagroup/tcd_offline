@@ -1,0 +1,308 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+    <title>{% block title %} {{ title }} {% endblock %}</title>
+<head>
+<link rel="stylesheet" type="text/css" href="../../static/css/aurel.css" />
+
+<style type="text/css">
+
+
+
+</style>
+
+
+
+
+</head>  
+	 <body> 
+	 
+	 
+	 <div id ="divlastdays">
+
+        {% block commun %}
+
+		{% for u in days %}
+	    	
+	    	  <div id="lastdays">
+	    	<a href ="{{base_url}}stat/report/?day={{ u.day }}&num={{u.num}}"> {{u.day}}</a>
+	    		</div>
+
+	    	
+		{% endfor %}
+		{% endblock %}
+	
+	  </div>
+
+
+
+<div id ="titre_separator"> Informacoes gerais  </div>
+
+<div class="radar" >
+
+<object classid="clsid:d27cdb6e-ae6d-11cf-96b8-444553540000"
+                codebase="http://fpdownload.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=9,0,115,0"
+                width="100%" height="100%" id="chart" align="middle">
+            <param name="allowScriptAccess" value="sameDomain"/>
+
+            <param name="movie" value="/flashes/OFC.swf"/>
+            <param name="FlashVars" value="data-file=/line"/>
+            <param name="quality" value="high"/>
+            <param name="bgcolor" value="#FFFFFF"/>
+            <embed src="../../static/swf/OFC.swf" FlashVars="data-file=/stat/radar/" quality="high" bgcolor="#FFFFFF"
+                   width='100% 'height='100%' name="chart" align="middle" allowScriptAccess="sameDomain"
+                   type="application/x-shockwave-flash" pluginspage="http://www.macromedia.com/go/getflashplayer"/>
+        </object>
+
+</div>
+
+	
+<div class="top">
+	
+	 
+{% block info_geral %}
+        <TABLE  id="rounded-corner">	
+        <caption>Sumario </caption>
+	    <thead>
+    		<tr>
+    			<th scope="col" class="rounded-company">Video</th>
+    			<th scope="col" class="rounded-q1"> <center>Play</center></th>
+    			<th scope="col" class="rounded-q4"> <center>Commentarios </center></th>
+    		</tr>
+   		 </thead>
+             <tfoot> <tr>	<td colspan="2" class="rounded-foot-left"><em> {{base_url}}</em></td>        	
+        					<td class="rounded-foot-right">&nbsp;</td></tr> 
+        </tfoot>
+    <tbody>    
+					<tr>	
+					<td>{{total_video}}</td>
+					<td><center>{{total_play}}</center></td>
+					<td> <center>{{total_com}}</center></td>
+					</tr>
+    	
+   </tbody>
+	
+	 	</TABLE>
+{% endblock %}
+</div>
+
+
+	
+<div class="top">
+	
+	<table id="rounded-corner" >
+		<caption> Embed </caption>
+
+    <thead>
+    		<tr>
+    			<th scope="col" class="rounded-company">Dominio</th>
+    			<th scope="col" class="rounded-q1"> Numero do video</th>
+    			<th scope="col" class="rounded-q2"> Hits </th>
+    			<th scope="col" class="rounded-q4"> % </th>
+    		</tr>
+    </thead>
+        <tfoot> <tr>	<td colspan="3" class="rounded-foot-left"><em>VflowStat</em></td>        	
+        					<td class="rounded-foot-right">&nbsp;</td></tr> 
+        </tfoot>
+        
+    <tbody>    
+    {% for u in topembed %}	    	
+					<tr>	
+					<td><a href ='http://{{u.dom}}' target="blank">{{u.dom}}</a></td>
+					<td><center>	<a href =" {{base_url}}stat/embeddetalhes/?video={{u.vid}}">{{u.nbvid}} </a></center></td>
+					<td> {{u.val}}</td>
+					<td> {{u.pourcent}}</td>
+					</tr>
+	{% endfor %}
+    	
+    </tbody>
+</table>
+</div>
+
+
+	
+
+	
+	
+	
+	<div id ="titre_separator"> Audiencia Video </div>
+	
+	
+<div class ="tab_audiencia">
+	<div class="top">
+	
+<TABLE id="hor-minimalist-b"  >
+	<caption> Geral </caption>
+
+    <thead>
+			<tr> 
+				<th scope="col">Video</th>
+				<th scope="col"> Nome </th>
+				<th scope="col"> Hits </th>
+				<th scope="col"> % </th>
+			</tr>
+    	
+    </thead>
+    
+    <tbody> 
+    		{% for u in top %}	    		
+    	<tr>		<td>{{u.id}}</td>
+					<td> {{u.name}}</td>
+					<td> {{u.hit}}</td>
+					<td> {{u.pourcent}}</td>	
+		</tr>
+         	{% endfor %}
+    </tbody>
+
+</TABLE>
+</div>
+
+
+
+	
+	
+		<div class="top">
+	
+	<TABLE id="hor-minimalist-b"  >
+	<caption> Mes </caption>
+    <thead>
+			<tr> 
+				<th scope="col">Video</th>
+				<th scope="col"> Nome </th>
+				<th scope="col"> Hits </th>
+				<th scope="col"> % </th>
+			</tr>
+    	
+    </thead>
+    
+    <tbody> 
+    		{% for u in topmes %}	    		
+    	<tr>		<td>{{u.id}}</td>
+					<td> {{u.name}}</td>
+					<td> {{u.hit}}</td>
+					<td> {{u.pourcent}}</td>	
+		</tr>
+         	{% endfor %}
+    </tbody>
+
+</TABLE>
+	</div>
+
+
+
+	<div class="top">
+	
+		<TABLE id="hor-minimalist-b"  >
+			<caption> Hoje : {{today}} </caption>
+
+    <thead>
+			<tr> 
+				<th scope="col">Video</th>
+				<th scope="col"> Nome </th>
+				<th scope="col"> Hits </th>
+				<th scope="col"> % </th>
+			</tr>
+    	
+    </thead>
+    
+    <tbody> 
+    		{% for u in toptoday %}	    		
+    	<tr>		<td>{{u.id}}</td>
+					<td> {{u.name}}</td>
+					<td> {{u.hit}}</td>
+					<td> {{u.pourcent}}</td>	
+		</tr>
+         	{% endfor %}
+    </tbody>
+
+</TABLE>
+	</div>
+
+	
+	</div>
+
+	
+<!--
+
+<div style="width: 600px; ">
+
+<object classid="clsid:d27cdb6e-ae6d-11cf-96b8-444553540000"
+                codebase="http://fpdownload.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=9,0,115,0"
+                width="100%" height="400" id="chart" align="middle">
+            <param name="allowScriptAccess" value="sameDomain"/>
+
+            <param name="movie" value="/flashes/OFC.swf"/>
+            <param name="FlashVars" value="data-file=/line"/>
+            <param name="quality" value="high"/>
+            <param name="bgcolor" value="#FFFFFF"/>
+            <embed src="../../static/swf/OFC.swf" FlashVars="data-file=http://igdev.vflow/stat/rendu/?ind={{ind}}" quality="high" bgcolor="#FFFFFF"
+                   width=100% height=400 name="chart" align="middle" allowScriptAccess="sameDomain"
+                   type="application/x-shockwave-flash" pluginspage="http://www.macromedia.com/go/getflashplayer"/>
+        </object>
+
+</div>
+-->
+
+
+
+  
+  <div  >
+
+<object classid="clsid:d27cdb6e-ae6d-11cf-96b8-444553540000"
+                codebase="http://fpdownload.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=9,0,115,0"
+                width="100%" height="400" id="chart" align="middle">
+            <param name="allowScriptAccess" value="sameDomain"/>
+
+            <param name="movie" value="/flashes/OFC.swf"/>
+            <param name="FlashVars" value="data-file=/line"/>
+            <param name="quality" value="high"/>
+            <param name="bgcolor" value="#FFFFFF"/>
+            <embed src="../../static/swf/OFC.swf" FlashVars="data-file=/stat/graph_sumario/" quality="high" bgcolor="#FFFFFF"
+                   width=100% height=400 name="chart" align="middle" allowScriptAccess="sameDomain"
+                   type="application/x-shockwave-flash" pluginspage="http://www.macromedia.com/go/getflashplayer"/>
+        </object>
+
+</div>
+
+
+<div>
+
+<object classid="clsid:d27cdb6e-ae6d-11cf-96b8-444553540000"
+                codebase="http://fpdownload.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=9,0,115,0"
+                width="100%" height="200" id="chart" align="middle">
+            <param name="allowScriptAccess" value="sameDomain"/>
+
+            <param name="movie" value="/flashes/OFC.swf"/>
+            <param name="FlashVars" value="data-file=/line"/>
+            <param name="quality" value="high"/>
+            <param name="bgcolor" value="#FFFFFF"/>
+            <embed src="../../static/swf/OFC.swf" FlashVars="data-file=/stat/nbvideosent/" quality="high" bgcolor="#FFFFFF"
+                   width=100% height=200 name="chart" align="middle" allowScriptAccess="sameDomain"
+                   type="application/x-shockwave-flash" pluginspage="http://www.macromedia.com/go/getflashplayer"/>
+        </object>
+
+</div>
+  
+  
+<div >
+
+<object classid="clsid:d27cdb6e-ae6d-11cf-96b8-444553540000"
+                codebase="http://fpdownload.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=9,0,115,0"
+                width="100%" height="200" id="chart" align="middle">
+            <param name="allowScriptAccess" value="sameDomain"/>
+
+            <param name="movie" value="/flashes/OFC.swf"/>
+            <param name="FlashVars" value="data-file=/line"/>
+            <param name="quality" value="high"/>
+            <param name="bgcolor" value="#FFFFFF"/>
+            <embed src="../../static/swf/OFC.swf" FlashVars="data-file=/stat/nbcom/" quality="high" bgcolor="#FFFFFF"
+                   width=100% height=200 name="chart" align="middle" allowScriptAccess="sameDomain"
+                   type="application/x-shockwave-flash" pluginspage="http://www.macromedia.com/go/getflashplayer"/>
+        </object>
+
+</div>
+
+
+
+</body>
+    </html>

@@ -1,0 +1,124 @@
+﻿{% extends 'uninter/main.html' %}
+
+{% load util keyboard %}
+
+{% block content %}
+
+    {% block bloco %}
+
+        <div id="content">
+            <div class="container">
+
+                {% if list_video %}
+                    <div class="path">
+                        {% sub_menu_treinamento list_video rede %}
+                    </div>
+                {% endif %}
+
+                <div class="bar"><span>Central de Treinamento</span></div>
+
+                {% if sucesso == 'true' %}
+
+                    <div class="wrap">
+                        <img src="{{ STATIC_URL }}{{ get_tipo_template }}/images/success.png" border="0" />
+                        <br /><br />
+                        <h3>Parabéns!</h3>
+                        <p>Você acertou <strong>{{ porcent }}%</strong> das respostas e a pontuação do teste foi atingida.</p>
+                        <p>Com esse treinamento você conquistou mais um passo importante em sua carreira profissional.</p>
+                        <p>Coloque os conhecimentos em prática e boa sorte!</p>
+                    </div>
+                    
+                    <table width="100%">
+                    	{% for lq in list_question %}
+                        	<tr style="color: {% if lq|is_responder:respostas %}#198c1b{% else %}#de0425{% endif %}">
+                        		<td width="10%" style="font-size: 24px;font-weight: bold;">{{ forloop.counter }}</td>
+                        		<td>{{ lq.text|safe }}</td>
+                        		<td>{% if lq|is_responder:respostas %}Parabéns você acertou,{% else %}Infelizmente você errou,{% endif %} essa questão vale {{ lq.pontos }} pontos.</td>
+                        	</tr>
+                    	{% endfor %}
+                    </table>
+                    
+                    <table width="100%">
+                    	<tr>
+                    		<td colspan="3" align="right">Você acabou de ganhar mais {{ list_question|total_pontos }} pontos.&nbsp;&nbsp;</td>
+                    	</tr>
+                    </table>
+
+                    <input type="button" value="Concluído" class="buttom" onclick="window.location='{% url home rede.link %}'" style="cursor: pointer;" />
+
+                {% else %}
+
+                    {% if sucesso == 'false' %}
+
+                        <div class="wrap">
+                            <img src="{{ STATIC_URL }}{{ get_tipo_template }}/images/fail.png" border="0" />
+                            <br /><br />
+                            <h3>Desculpe...</h3>
+                            <p>Infelizmente você acertou somente <strong>{{ porcent }}%</strong> das respostas e a pontuação do teste não foi atingida.</p>
+                            <p>Mas não desista, tente novamente e boa sorte!</p>
+                        </div>
+                        
+                        <table width="100%">
+                        	{% for lq in list_question %}
+	                        	<tr style="color: {% if lq|is_responder:respostas %}#198c1b{% else %}#de0425{% endif %}">
+	                        		<td width="10%" style="font-size: 24px;font-weight: bold;">{{ forloop.counter }}</td>
+	                        		<td>{{ lq.text|safe }}</td>
+	                        		<td>{% if lq|is_responder:respostas %}Parabéns você acertou,{% else %}Infelizmente você errou,{% endif %} essa questão vale {{ lq.pontos }} pontos.</td>
+	                        	</tr>
+                        	{% endfor %}
+                        </table>
+                        
+                        <table width="100%">
+                        	<tr>
+                        		<td colspan="3" align="right">Não desista, ainda há tempo para ganhar {{ list_question|total_pontos }} pontos.&nbsp;&nbsp;</td>
+                        	</tr>
+                        </table>
+
+                        <input type="button" value="Assistir o vídeo e tentar novamente" class="buttom" onclick="window.location='{% url treinamento rede.link list_video.0.id %}'" style="cursor: pointer;" />
+
+                    {% else %}
+                    
+                    	<div class="wrap">
+		                	{% if porcent_quiz < 100 %}
+		                		<p>Para ser aprovado neste treinamento você deverá acertar pelo menos <strong>{{ porcent_quiz }}%</strong> das questões, boa sorte! Lembrando que quanto <strong>mais</strong> acertar mais pontos irá ganhar.</p>
+		                	{% else %}
+		                		<p>Para ser aprovado neste treinamento você deverá acertar <strong>todas</strong> as questões abaixo, boa sorte!</p>
+		                	{% endif %}
+		                </div>
+
+                        <form id="questions" method="post" action="./">
+
+                            {% csrf_token %}
+
+                            {% for lq in list_question %}
+
+                                <p class="number">{{ forloop.counter }}</p>
+                                <p class="question">{{ lq.text|safe }}</p>
+
+                                <div class="responses">
+                                    {% for glr in lq.get_list_response %}
+                                        <p>
+                                            <label>
+                                                <input type="radio" name="resposta_{{ lq.id }}" value="{{ glr.id }}" />
+                                                {{ glr.text }}
+                                            </label>
+                                        </p>
+                                    {% endfor %}
+                                </div>
+
+                            {% endfor %}
+
+                            <input type="submit" class="buttom" title="Certificação" value="Finalizar" style="cursor: pointer;" />
+
+                        </form>
+
+                    {% endif %}
+
+                {% endif %}
+
+            </div>
+        </div>
+
+    {% endblock bloco %}
+
+{% endblock content %}

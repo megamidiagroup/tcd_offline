@@ -1,0 +1,80 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="pt-br" dir= "ltr">
+    <head>
+        <meta name="generator" content= "HTML Tidy, see www.w3.org" />
+        <title></title>
+        <meta http-equiv="Content-Type" content= "text/html; charset=utf-8" />
+        <meta name="author" content="Anonymous" />
+        <meta name="description" content="" />
+        <meta name="keywords" content="" />
+        <title>Vflow</title>
+        <link href="{{STATIC_URL}}/static/manager/css/main.css" rel="stylesheet" type="text/css" media="screen" />
+    </head>
+    <body>
+        {% block js %} 
+        <script type="text/javascript" src= "{{STATIC_URL}}/static/manager/js/jquery-1.3.2.min.js">
+        </script>
+        <script type="text/javascript" src= "{{STATIC_URL}}/static/manager/js/jquery.corner.js">
+        </script>
+        <script type="text/javascript" src= "{{STATIC_URL}}/static/manager/js/script_manager.js">
+        </script>
+        {% endblock %} 
+        <div id="loginbox">
+            <img alt="" src='{{STATIC_URL}}/static/manager/images/logo_megamidia.gif' border='0' class='top' align='center' style='margin: 20px 0 0 90px;' />
+            <form action='{{ request.channel_url }}manager/{% if next %}?next={{ next }}{% endif %}' method='POST'>
+            	
+            	{% csrf_token %}
+            	
+                <table style="border: 0px; width: 200px; margin: 0 auto;">
+                    <tr>
+                        <td>
+                        	<label>Usuário</label>
+                            <input name='username' type='text'/>
+                        </td>
+                    </tr>
+                    <tr>
+                           
+                        <td>
+                        	<label>Senha</label>
+                            <input name='password' type='password' />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td align="right">
+                            <input type='image' src="{{STATIC_URL}}/static/manager/images/bt_login.png" value='submit'/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div>
+                                <a href='#' onclick='esqueciMinhaSenha()' class='black'>Esqueci a minha senha</a>
+                                <div id='esqueciMinhaSenha' style='display:none'>
+                                    <ul class='recuperarSenha'>
+                                        <li>
+                                            <label>
+                                                Seu e-mail:
+                                            </label>
+                                            <input name='email' type='text' />
+											<input name='createpass' id='createpass' value='0' type= 'hidden' />
+                                        </li>
+                                        <li>
+                                            <input type='submit' value= 'Recuperar senha' />
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                </table> 
+				{% if msg %} 
+                <div class='msg_error'>
+                    {{ msg }}
+                </div>
+                {% endif %}
+                <br/>
+                <div class='bottom'>
+                </div>
+            </form>
+        </div>
+    </body>
+</html>

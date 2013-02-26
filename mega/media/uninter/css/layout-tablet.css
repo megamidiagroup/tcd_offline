@@ -1,0 +1,32 @@
+.container {width:100%; margin:0 auto; position:relative;}
+.buttom{padding:11px 20px 10px;}
+
+#header{ padding:0 20px;}
+
+#highlights {width:auto;padding:10px 20px;}
+
+#content{padding:20px; width:auto;}
+
+#content ul.category li{width:240px;}
+
+#content .video{width:100%;}
+#content .video .player{width:520px; height:330px; margin:0 auto 10px; float:none;}
+#content .video .player object{width:520px; height:330px;}
+#content .video .description{width:100%; height:auto; margin-bottom:10px; float:none;}
+#content .video .description div {padding: 10px 20px;}
+#content .video iframe.elearning{width: 90%}
+
+#content ul.videos li {padding:10px; height:auto; min-height:70px;}
+#content ul.videos li div {margin:0px; width:30%;}
+#content ul.videos li h2 {font-size:2.6em; line-height:100%; width:67%; float:right;}
+#content ul.videos li span {width:67%; float:right;}
+
+#content form {width:100%; text-align:left;}
+#content form .buttom {margin-left:270px;width: 120px;}
+
+#account-widget{top:170px;}
+#account-widget #account{top:-80px;}
+#account-widget #account .arrow{top:114px;}
+
+#footer {padding:20px 0; width:auto; margin:0 20px;}
+.tia {display: none;}

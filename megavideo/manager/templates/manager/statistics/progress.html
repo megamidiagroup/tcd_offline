@@ -1,0 +1,125 @@
+{% extends 'manager/main.html' %}
+{% load miniature %}
+
+{% block css_script %}
+<link href="{{STATIC_URL}}/static/manager/css/main.css" rel="stylesheet" type="text/css" media="screen" />
+
+<link href="{{STATIC_URL}}/static/manager/css/digg.css" rel="stylesheet" type="text/css" media="screen" />
+
+
+
+
+<link href="{{STATIC_URL}}/static/manager/css/jtips.css" rel="stylesheet" type="text/css" media="screen" />
+<link href="{{STATIC_URL}}/static/manager/css/sortListUI.css" rel="stylesheet" type="text/css" media="screen" />
+<link href="{{STATIC_URL}}/static/manager/css/jquery-ui-1.7.1.custom.css" rel="stylesheet" type="text/css" media="screen" />
+<link href="{{STATIC_URL}}/static/css/vflowstat/report.css" rel="stylesheet" type="text/css" />
+
+<link href="{{STATIC_URL}}/static/manager/css/datePicker.css" rel="stylesheet" type="text/css" />
+
+{% endblock %}
+
+{% block js_script %}
+<script type="text/javascript" src="{{STATIC_URL}}/static/manager/js/jquery-1.3.2.min.js"> </script>
+<script type="text/javascript" src="{{STATIC_URL}}/static/manager/js/jquery.corner.js"> </script>
+<script type="text/javascript" src="{{STATIC_URL}}/static/manager/js/swfobject.js"> </script>
+<script type="text/javascript" src="{{STATIC_URL}}/static/manager/js/jquery.pngFix.pack.js"> </script>
+<script type="text/javascript" src="{{STATIC_URL}}/static/manager/js/date.js"> </script>
+<script type="text/javascript" src="{{STATIC_URL}}/static/manager/js/jquery.datePicker.js"> </script>
+<script type="text/javascript" src="{{STATIC_URL}}/static/manager/js/jtip.js"> </script>
+<script type="text/javascript" src="{{STATIC_URL}}/static/manager/js/statistic.js"> </script>
+{% endblock %}
+
+{% block content%}
+<!-- Script no carragamento da pagina -->
+<script>
+    $(document).ready(function(){
+    $("#btevo").css({ color: "#CAC9D5" });
+    $("#bt").hide();
+
+    $("#graph_sumario2").resizable();
+    document.getElementById('data1').value = 0;
+    $(".ui-resizable-se").css({bottom:"-13px"});
+
+    $(".mytab").tablesorter({
+            // sort on the third columnn, order des
+            sortList: [[1,1]]
+        });
+    });
+
+    swfobject.embedSWF("{{STATIC_URL}}/static/swf/vflowstat/OFC.swf", "progressvis","950", "300", "9.0.0", "expressInstall.swf",     {"data-file":"/stat/statvisityear/?ano={{ano}}"},{wmode:"transparent"} );
+    swfobject.embedSWF("{{STATIC_URL}}/static/swf/vflowstat/OFC.swf", "progressvid","950", "300", "9.0.0", "expressInstall.swf",     {"data-file":"/stat/statvidyear/?ano={{ano}}"},{wmode:"transparent"} );
+    swfobject.embedSWF("{{STATIC_URL}}/static/swf/vflowstat/OFC.swf", "statbrowser","50%", "240", "9.0.0", "expressInstall.swf",     {"data-file":"/stat/statbrowser/"},{wmode:"transparent"} );
+
+</script>
+<ul style='padding-left:10px'>
+
+    <li>
+        <h3>Software <a href="{{ request.channel_url }}manager/statistic/ajaxsoftware/?width=375" class="jTip" id="ajax_software" name="Software"><img src='/megavideo/static/manager/images/ico_question.gif'></a> </h3>
+    </li>
+
+    <li>
+        <div id="tabos">
+        <TABLE class="mytab tabsort"  >
+            <caption> Sistemas </caption>
+            <thead>
+                    <tr>
+                        <th scope="col">Sistemas Operacionais</th>
+                        <th scope="col"> Visitantes </th>
+                    </tr>
+            </thead>
+            <tbody>
+              {% for u in sistema %}
+
+
+                    <tr >
+                         <td><img  class="os" src="{{STATIC_URL}}/static/images/vflowstat/{{u.sis}}.gif" width=14 height=14>{{u.sis}}</td>
+                          <td>{{u.val}}</td>
+                    </tr>
+
+
+             {% endfor %}
+            </tbody>
+        </table>
+        </div>
+
+        <div id="statbrowser">
+        </div>
+
+        <div id="pie">
+        </div>
+
+    </li>
+
+    <li>
+        <h3>Evolução do site <a href="{{ request.channel_url }}manager/statistic/ajaxprogress/?width=375" class="jTip" id="ajax_progress" name="Evolução do site "><img src='/megavideo/static/manager/images/ico_question.gif'></a> </h3>
+        <br><br><br>
+    </li>
+
+    <li>
+
+        <FORM method=get action="{{ request.channel_url }}manager/statistic/evolution/">
+
+        <div class="titleselect" style='text-align:left; padding-left:10px'> Ano </div>
+
+            <SELECT NAME="ano" id="domain">
+                <OPTION VALUE='-1'>Todos &nbsp;</OPTION>
+                  {% for u in period %}
+                     <OPTION VALUE={{u}} {% ifequal u ano %} selected='selected' {% endifequal %}> {{u}} &nbsp; </OPTION>
+                 {% endfor %}
+            </SELECT>
+
+             <INPUT type="submit" id ="btselect" value="Aplicar" onclick="carregar(); " >
+        </FORM>
+
+        <div id="progressvis">
+
+        </div>
+
+        <div id="progressvid">
+
+        </div>
+
+    </li>
+
+</ul>
+{% endblock %}

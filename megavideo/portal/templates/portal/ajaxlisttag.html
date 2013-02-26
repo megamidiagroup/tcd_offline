@@ -1,0 +1,5 @@
+{% for j in videotag %}
+	<li class='recipe_tags_list'>
+		<a href='{{request.channel_url}}search/tag/{{ j|slugify }}/'>{{ j }}</a>
+	</li>
+{% endfor %}

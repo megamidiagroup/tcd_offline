@@ -1,0 +1,142 @@
+<html>
+	<head>
+		<script language="javascript" src="{{STATIC_URL}}/static/js/jquery-1.2.3.min.js"></script>
+		<script language="javascript" src="{{STATIC_URL}}/static/js/jquery.dimensions.js"></script>
+		<script language="javascript" src="{{STATIC_URL}}/static/js/ui.mouse.js"></script>
+		<script language="javascript" src="{{STATIC_URL}}/static/js/ui.draggable.js"></script>
+		<script language="javascript" src="{{STATIC_URL}}/static/js/ui.draggable.ext.js"></script>
+		<script language="javascript" src="{{STATIC_URL}}/static/js/ui.droppable.js"></script>
+		<script language="javascript" src="{{STATIC_URL}}/static/js/ui.droppable.ext.js"></script>
+		<script language="javascript" src="{{STATIC_URL}}/static/js/vflow.js"></script>
+		<link rel="stylesheet" media="screen" href="{{STATIC_URL}}/static/css/vflow.css"/>
+		<link rel="stylesheet" media="screen" href="{{STATIC_URL}}/static/css/debug.css"/>
+		<title>Vflow Administration</title>
+	</head>
+	<body>
+		<div id="general">
+			<div id="header">
+				{% block header %}
+
+				<img src="{{STATIC_URL}}/static/images/logo.jpg" id="biglogo"/>
+				<div id="loading">Carregando ...</div>
+
+				<div class="header-box">
+					<object  id="globalnav-object" classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000" codebase="http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=8,0,0,0" width="268" height="99" >
+						<param name="movie" value="{{STATIC_URL}}/static/swf/upload.swf?uploadUrl={{base_url}}/vflow/upload/" />
+    <param name="menu" value="false" />
+    <param name="quality" value="high" />
+    <param name="wmode" value="transparent" />
+    <param name="allowFullScreen" value="true" />
+    <param name="playAuto" value="false" />
+    <embed src="{{STATIC_URL}}/static/swf/upload.swf?&uploadUrl=/vflow/upload/" allowFullScreen="true" type="application/x-shockwave-flash" pluginspage="http://www.macromedia.com/go/getflashplayer" playAuto="False" FlashVars="" menu="false" quality="high" id="player_flash" width="268" height="99"></embed>
+</object>
+				</div>
+
+				<div class="header-box bordered-box">
+					<div class="header-box-title">Busca</div>
+					<div id="busca-left">
+						<!--Título do vídeo :<br/--> 
+						<input id='search-input' type='text'></input><br/>
+
+						<select id='search-cats' >
+							<option value='0'>Vídeos por categoria</option>
+                            {% for i in all_categories %}
+                            <option value='{{ i.id }}'>{{ i.name }}</option>
+                            {% endfor %}
+
+
+						</select> 
+					</div>
+
+					<div id="busca-right">
+                        <input id='search-validate' type='button' class='button' value='Buscar'></input><br/>
+                        <input id='all-videos' type='button' class='button' value='Ver Todos' />
+					</div>
+
+				</div>
+				<div class="header-box bordered-box">
+					<div class="header-box-title">Menu</div>
+					<div class="busca-left">
+						<input type='button' class='button' value='Painel' id='show-panel'/>
+						<!--input type='button' class='button' value='Estatísticas' id='show-stats'/-->
+						<a href="/vflow/logout/"><input type='button' class='button' value='Sair' id='exit_buton'/></a>
+					</div>
+
+					<div class="busca-right">
+                        <!--input id='most-voted' type='button' class='button' value=' + votados' /-->
+                        <!--input id='best-voted' type='button' class='button' value=' + bem votados' /-->
+			Canal ativo:<br/>
+			<select  id='select_channel'>
+
+                
+			    {% for i in all_channels %}
+			     {% ifequal i.name request.get_full_path %}
+                            <option value='{{ i.id }}' selected='select'>{{ i.name }}</option>
+			    {% endifequal %}
+
+			    {% ifnotequal i.name request.get_full_path %}
+                            <option value='{{ i.id }}'>{{ i.name }}</option>
+			    {% endifnotequal %}
+                            {% endfor %}
+		    	</select>
+
+		
+		</div>
+
+
+	</div>
+
+				{% endblock %}
+			</div>
+
+			<div id="menu">
+				{% block menu %}
+				Busca <input type="text" id="search-input" />
+				<select> <option value="0">Categorias</option></select>
+				<input type="button" class='button' id="search-button" value="Busca"/>
+				<input type="button" class='button' id="upload-button" value="Upload"/>
+				{% endblock %}
+			</div>
+
+			<!--div id="upload" class="uploadLayer">
+				{% include 'upload.html' %}
+			</div-->
+
+			<div id="content">
+					{% block left %}
+					<div id="bar-player">
+						<div id="bar-player-edit" class="barItem">
+							<img src="{{STATIC_URL}}/static/images/bt_editar.gif" />
+						</div>
+						<div id="bar-player-stats" class="barItem">
+							<img src="{{STATIC_URL}}/static/images/bt_estatisticas.gif" />
+						</div>
+						<div id="bar-player-coms" class="barItem">
+							<img src="{{STATIC_URL}}/static/images/bt_comentarios.gif" />
+						</div>
+						<div id="bar-player-3" class="barItem">
+						</div>
+						<div id="bar-player-3" class="barItem">
+						</div>
+					</div>
+
+					<div id="left"> 
+					{% include 'vflow/left-content.html' %}
+					</div>
+
+					{% endblock %}
+
+					<div id='right-hidden'> </div>
+				<div id="right">
+				{% block right %}
+				{% endblock %}
+				</div>
+			</div>
+			<div id="footer">
+				{% block footer %}
+				<b>{{ totalviews }}</b> views em <b>{{ totalvideos }}</b> vídeos servidos nessa plataforma | <a href='http://vflow.com.br/'>Vflow (2008)</a>
+				{% endblock %}
+				</div>
+		</div>
+	</body>
+</html>

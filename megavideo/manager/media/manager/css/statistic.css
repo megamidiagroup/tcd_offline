@@ -1,0 +1,298 @@
+div#warp div#content {
+   background-color: #EAEAEA;
+   padding:10px;
+}
+
+
+ul#statistic hr.line {
+    clear: both;
+    border: 1px solid #ccc;
+    height: 0px;
+    margin: 0px;
+    padding: 0px;
+}
+
+ul#statistic {
+  margin: 0px;
+}
+
+ul#statistic li.header ol {
+  background: #fff;
+  margin-left:25px;
+}
+
+ul#statistic li.header ol li {
+  float:left;
+  margin-right: 10px;
+}
+
+ul#statistic li.header ol li.last {
+  margin: 0px;
+  padding: 0px;
+}
+
+ul#statistic li.header ol li table tr td table.graficos tr td div.visualize {
+  padding:50px 30px 80px;
+  background:none;
+  border:0px;
+  margin:0px;
+}
+
+ul#statistic li.header ol li table tr td table.graficos tr td div.visualize canvas {
+  background: none;
+  border: 0px;
+}
+
+ul#statistic li.header ol li table tr td table.graficos tr td div.visualize-title {
+  font-size: 14px;
+}
+
+
+div#content ul#statistic li#geral {
+  margin-top:40px;
+  padding-left:15px;
+}
+
+
+ul#statistic li.grafico{
+  clear: both;
+}
+
+ul#statistic li.header ol li table.box tr th {
+  background: url(../images/bg_th_statistic.png) repeat-x top left;
+  color:#92989C;
+  font-size: 16px;
+  height:79px;
+  border-left:1px solid #cfcfcf;
+  border-right:1px solid #cfcfcf;
+  padding:0px 5px;
+}
+
+ul#statistic li.header ol li table.box tr td {
+  background: url(../images/bg_td_statistic.png) repeat-x top left;
+  padding:10px 0px 10px 40px; 
+}
+
+ul#statistic li.header ol li table.box tr td table.graficos tr td {
+  padding:0px;
+}
+
+ul#statistic li.header ol li table tr td table.graficos  {
+  background: none;
+  padding:0px;
+}
+
+ul#statistic li.header ol li table tr td table.graficos tr td.tranf_blue {
+  color:#56a2b4;
+  font-weight: bolder;
+  background: none;
+}
+
+
+ul#statistic li.header ol li table tr td.no_bg {
+  padding: 0px;
+  margin: 0px;
+} 
+
+ul#statistic li.header ol li table tr td table.graficos tr td.tranf_black, ul#statistic li.header ol li table tr td table.graficos tr td{
+  color:#000;
+  font-weight: bolder;
+  background: none;
+}
+
+ul#statistic li.header ol li table tr td h4 , #warp #content ol li table tr td h4 {
+  color:#578495;
+}
+
+ul#statistic li.header ol li table tr td h1 {
+  color:#596064;
+  font-size: 30px;
+}
+
+
+ul#statistic li#filtro {
+    background: #D8DBE2;
+    width: 900px;
+    display: block;
+    margin: 25px 5px 5px 5px;
+    padding: 10px;
+}
+
+ul#statistic li#filtro p.cornertop {
+    display: block;
+    position: absolute;
+    margin: -20px 0 0 5px;
+    background: #12234E;
+    color: #ffffff;
+    padding: 0 10px 0 10px;
+}
+
+ul#statistic li#filtro ul li {
+    float: left;
+}
+
+ul#statistic li#filtro ul li.dominio {
+    margin-left: 10px;
+}
+
+ul#statistic li#filtro ul li.categoria {
+    margin-left: 60px;
+}
+
+ul#statistic li#filtro ul li.datainicio {
+    margin-left: 145px;
+}
+
+ul#statistic li#filtro ul li.datafinal {
+    margin-left: 10px;
+}
+
+ul#statistic li#filtro ul li.filtrar {
+    margin-left: 20px;
+}
+
+ul#statistic li#filtro ul li input {
+    width: 80px;
+    border: 1px solid #4e4e4e;
+    padding: 3px;
+    font-size: 9px;
+    text-align: center;
+}
+
+ul#statistic li#filtro ul li input.filtrar {
+    height: 20px;
+    padding: 0px;
+    width: 60px;
+    background: #6d6c6c;
+    color: #ffffff;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+ul#statistic li#geral ul {
+    float: left;
+    margin: 5px;
+    padding-right: 50px;
+}
+
+ul#statistic li#maisvistos {
+    width: 100%;
+    float: left;
+    margin: 5px;
+}
+
+ul#statistic li#maisvistos fieldset {
+    border: 1px solid #C0C0C0;
+    width: 920px;
+    margin-bottom: 40px;
+}
+
+ul#statistic li#maisvistos fieldset td.colortable {
+    font-size: 12px;
+    font-weight: bold;
+    border-bottom: 1px solid #e7e7e7;
+    padding-bottom: 5px;
+}
+
+ul#statistic li#maisvistos fieldset td.spacetable {
+    padding-top: 3px;
+}
+
+ul#statistic li#maisvistos p {
+    float: right;
+    margin-right: 10px;
+    padding: 5px;
+    display: inline-block;
+}
+
+ul#statistic li#maisvistos p a {
+    text-decoration: none;
+    color: #4e4e4e;
+}
+
+div.title,
+li.title {
+    font-size: 18px;
+    font-weight: bold;
+    width: 100%;
+}
+
+
+
+/* outra parte */
+
+ul#statistic div#graph_pizza {
+    width: 260px;
+    height: 260px;
+    float: left;
+    margin: 0 0 15px 30px;
+}
+
+ul#statistic div#box_video {
+    background: #edeef2;
+    width: 575px;
+    margin-left: 350px;
+    max-height: 138px;
+}
+
+ul#statistic div#box_video img {
+    float: left;
+    margin: 20px;
+	*margin: 20px 0px 20px 20px;
+}
+
+ul#statistic div#box_video li {
+    font-size: 12px;
+    font-weight: bold;
+    color: #000;
+    margin: 3px;
+	display: block;
+	width: 450px;
+	*width: 350px;
+	margin: 0px;
+	padding: 0px;
+}
+
+ul#statistic div#box_video li span {
+    margin: 0 5px;
+}
+
+ul#statistic div#box_points {
+    position: relative;
+    margin: 20px 0 0 400px;
+}
+
+ul#statistic div#box_points table tr td {
+    padding: 5px;
+    text-align: center;
+    width: 65px;
+    color: #feb300;
+    font-weight: bold;
+    font-size: 14px;
+}
+
+ul#statistic div#box_points table tr td.title {
+    color: #000;
+}
+
+
+div.ajax_loader {
+  position: absolute;
+  width: 802px;
+  height: 142px;
+  background-color:#FFF;
+  *filter:opacity(alpha=60); /* para o IE */
+  -moz-opacity:0.6; /* para o FireFox */
+  opacity:0.6; /* para o outros Navegadores */
+  text-align: center;
+  z-index:99999;
+  padding-top:80px;
+  margin:70px 0px 0px 80px;
+}
+
+div.ajax_loader span {
+  color:#AA464F;
+  display: block;
+  font-weight: bolder;
+  font-size: 14px;
+}

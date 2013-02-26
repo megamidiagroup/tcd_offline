@@ -1,0 +1,21 @@
+{% load miniature %}
+{% load super_truncate %}
+
+<ul class="answer">
+	
+	<li class="bg_top">&nbsp;</li>
+	
+	{% if videos %}
+		{% for i in videos %}
+			<li onclick="window.location='{{request.channel_url}}video/{{ i.id }}/{{ i.get_name|slugify }}';">
+				<img width="75" height="50" src="{{ i|thumbnail:'75x50' }}" border="0" align="left" />
+				<div>
+					<span>{{ i.get_name|super_truncate:'6-15' }}</span><br /> {{ i.get_description|super_truncate:'6-15' }}
+				</div>
+			</li>
+		{% endfor %}
+	{% endif %}
+	
+	<li class="more" onclick="window.location='{{request.channel_url}}search/';">&nbsp;</li>
+	
+</ul>

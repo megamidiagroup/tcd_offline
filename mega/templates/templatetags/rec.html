@@ -1,0 +1,56 @@
+{% extends 'admin/change_list.html' %}
+
+{% load i18n %}
+
+{% block breadcrumbs %}
+
+    <div class="breadcrumbs"><a href="/admin/">{% trans 'Home' %}</a> &rsaquo; <a href="/admin/mega/">Mega</a> &rsaquo; <a href="/admin/mega/live/">Ao Vivo</a> &rsaquo; {{ video.name }} </div>
+
+{% endblock breadcrumbs %}
+
+{% block content_title %}{% endblock content_title %}
+
+{% block content %}
+ 		
+ 		<link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}webchat/main.css" />
+    	<link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}webchat/admin.css" />
+    	
+    	<script type="text/javascript" src="{{ STATIC_URL }}{{ get_tipo_template }}/js/jquery-1.7.2.js"></script>
+    	<script type="text/javascript" src="{{ STATIC_URL }}webchat/main.js"></script>
+		<script type="text/javascript" src="{{ STATIC_URL }}mega/js/swfobject.js"></script>
+	
+		<script type="text/javascript">
+		
+			var flashvars  = {rtmpUrl: "rtmp://{{ rtmp }}", video: "mp4:{{ video.code }}"};
+			var params     = {menu: "false", allowFullScreen: "true", allowscriptaccess: "always"};
+			var attributes = {};
+		
+			swfobject.embedSWF("{{ STATIC_URL }}mega/swf/videoRecorderspeex.swf", "playercontent", "600", "400", "11.0.0", "{{ STATIC_URL }}mega/swf/expressInstall.swf", flashvars, params, attributes);
+			
+		</script>
+		
+		<div id="playercontent">
+			<p>
+				<a href="http://www.adobe.com/go/getflashplayer" target="_blank">
+					<img src="http://www.adobe.com/images/shared/download_buttons/get_flash_player.gif" alt="Instale o Adobe Flash player" />
+				</a>
+			</p>
+			<h4>Você não possue o Adobe Flash Player instalado, clique no ícone e instale, é grátis e seguro.</h4>
+		</div>
+		
+		<div class="descriptionlive">
+
+            <div class="ocultos" load="/{{ rede.link }}/live/load/{{ video.id }}/">
+            	<div class="msg conteiner">
+                    <ul><li class="welcome">Seja bem vindo {% if user.get_full_name %}{{ user.get_full_name }}{% else %}{{ user.username }}{% endif %} {% if history %}</li><br /><a class="history" href="javascript:void(0);">Há mensagens anteriores, para ver clique aqui</a>{% endif %} </ul>
+                </div>
+				<div class="input conteiner">
+					Digite aqui a sua mensagem
+					<br />
+					<textarea name="txt_msg" onclick="get_msg(this);" onselect="get_msg(this);" onblur="get_msg_onblur(this);" onkeypress="set_msg(event, this);"></textarea>
+				</div>
+            </div>
+            
+        </div>
+ 	
+{% endblock %}

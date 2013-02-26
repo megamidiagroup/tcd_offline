@@ -1,0 +1,18 @@
+{% load show_possible_parents %}
+{% load show_childs %}
+
+{% for cat in categories %}
+<li class='cat_li' idCat='{{ cat.id }}' status='{{cat.status}}'>
+    <input type='checkbox' class='cat_check' idCat='{{ cat.id }}' 
+    {% if cat.status %}
+    checked='{{cat.status}}'
+    {% endif %}> 
+    {{ cat.name }} 
+    </li>
+
+    {% if cat.childs  %}
+    <ul class='cat_ul' idCat='{{ cat.id }}'>
+        {% show_childs cat  allcategories %} 
+    </ul>
+    {% endif %}
+{% endfor %}

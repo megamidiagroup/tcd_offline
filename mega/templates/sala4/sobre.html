@@ -1,0 +1,79 @@
+{% extends 'sala4/main.html' %}
+
+{% load util %}
+
+{% block class-section %}{% endblock class-section %}
+
+{% block extra-js %}
+
+	<script type="text/javascript">
+		$(document).ready(function() {
+			
+			$('.lista.categoria').find('li:last').addClass('last');
+
+		});
+    </script>
+    
+{% endblock extra-js %}
+
+{% block content %}
+
+	<section id="content">
+	<div class="wrapper curso">
+		<div class="titulo">
+			<h2><span>Sobre</span></h2>
+		</div>
+		<img src="{{ STATIC_URL }}{{ get_tipo_template }}/images/pinguelo.png" border="0" id="pinguelo" />
+
+		<ul class="lista categoria">
+			<li class="texto page">
+				<p>
+					<b>Porque?</b>
+					<br />
+					Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam pulvinar elit 
+					nec erat ultricies tincidunt. Aenean ornare, magna ac pellentesque posuere, 
+					ante leo feugiat ligula, eget scelerisque lacus purus eu lorem. Integer interdum, 
+					urna feugiat tristique vulputate, ipsum neque suscipit urna, vitae rutrum arcu 
+					lorem vel lectus. Proin mauris odio, vehicula a fermentum a, accumsan quis lacus. 
+					Morbi vel malesuada ligula. Curabitur sodales, lectus eu laoreet lacinia, nulla 
+					turpis porttitor libero, molestie lobortis arcu mi eget erat. In nec elit vel 
+					sapien auctor luctus. Proin at sapien metus. Vestibulum sagittis commodo mauris 
+					in vehicula. Phasellus nec neque vitae libero adipiscing pharetra dignissim 
+					vestibulum nulla. Vivamus id ligula eros, in elementum ante. In hac habitasse 
+					platea dictumst. Vestibulum quis felis in metus pulvinar rhoncus sit amet sed 
+					lacus. In pretium pellentesque porta.
+					<br /><br />
+					<b>Onde?</b>
+					<br />
+					Vivamus tincidunt justo a massa tempus sed volutpat leo malesuada. Donec suscipit,
+					erat varius interdum vulputate, leo velit congue arcu, sed aliquam nunc risus 
+					eget tortor. Quisque dui nunc, tempus malesuada posuere sed, porta at nibh. 
+					Morbi sagittis mollis metus, at rhoncus lorem convallis ut. Suspendisse et ligula 
+					tellus. Aenean sollicitudin tellus risus. Duis sed lectus quis diam dapibus 
+					bibendum. Phasellus ornare porta lorem, ac blandit enim sagittis quis. Suspendisse 
+					scelerisque tincidunt tellus, vitae congue nisl pulvinar sit amet. Pellentesque in 
+					metus non mauris varius aliquet eu suscipit nulla. Nulla facilisi.
+					<br /><br />
+					Pellentesque lorem risus, malesuada a blandit ac, convallis a dolor. Ut ornare 
+					tortor eu orci posuere sodales. Sed eleifend, dui sit amet lobortis commodo, 
+					lorem mauris blandit sapien, non consectetur sapien risus in augue. In hac 
+					habitasse platea dictumst. Integer at eros nec nibh bibendum auctor nec vehicula 
+					nisi. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere 
+					cubilia Curae; Ut purus augue, feugiat sit amet sodales sed, egestas ac nisl. 
+					Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem ipsum dolor sit 
+					amet, consectetur adipiscing elit. Ut consequat ante vitae enim gravida et pretium 
+					nibh suscipit. Aenean est magna, egestas non interdum vel, lacinia non mauris. 
+					Sed posuere porttitor orci, sit amet ultrices tellus ultrices a. Praesent in leo 
+					risus, ut iaculis augue. Aenean vulputate aliquet mattis. Mauris varius laoreet 
+					neque sed ultrices.
+				</p>
+			</li>
+
+		</ul>
+
+		<div class="clearfix"></div>
+
+	</div>
+</section>
+
+{% endblock content %}

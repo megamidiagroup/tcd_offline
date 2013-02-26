@@ -1,0 +1,103 @@
+{% load util keyboard %}
+
+<!DOCTYPE html>
+<html dir="ltr" lang="pt-BR">
+<head>
+
+    <title>Uninter - Plataforma de Treinamento e Comunicação a Distância</title>
+    
+    <meta http-equiv="Content-Type" CONTENT="text/html; charset=UTF-8" />
+
+    <link rel="stylesheet" href="{{ STATIC_URL }}{{ get_tipo_template }}/css/no-ie6.css" type="text/css" />
+
+    <link rel="stylesheet" href="{{ STATIC_URL }}{{ get_tipo_template }}/css/flexslider.css" type="text/css" media="screen" />
+    <link rel="stylesheet" href="{{ STATIC_URL }}{{ get_tipo_template }}/css/layout.css" type="text/css" />
+    
+    {% if get_template.rede %}
+        <link rel="stylesheet" href="{{ STATIC_URL }}{{ get_tipo_template }}/css/template/{{ get_template.rede.link }}.css" type="text/css" />
+    {% endif %}
+
+    <!-- layouts smaller than 600px, iPhone and mobiles -->
+    <link rel="stylesheet" href="{{ STATIC_URL }}{{ get_tipo_template }}/css/layout-mobile.css" type="text/css" media="handheld and (max-width: 480px), screen and (max-device-width: 480px), screen and (max-width: 600px)" />
+    <!-- tablet styles -->
+    <link rel="stylesheet" href="{{ STATIC_URL }}{{ get_tipo_template }}/css/layout-tablet.css" type="text/css" media="only screen and (min-width: 601px) and (max-width: 970px)" />
+
+    <script src="{{ STATIC_URL }}{{ get_tipo_template }}/js/jquery-1.7.2.js"></script>
+    <script src="{{ STATIC_URL }}{{ get_tipo_template }}/js/jquery.flexslider-min.js"></script>
+    
+    <script src="{{ STATIC_URL }}{{ get_tipo_template }}/js/scripts.js" type="text/javascript"></script>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=3.0, user-scalable=yes" />
+    <meta name="HandheldFriendly" content="true" />
+
+    <link href="{{ rede|favicon }}" rel="shortcut icon" type="image/x-icon" />
+    
+    <meta name="robots" content="index,follow" />
+    
+    <meta name="description" content="Seja bem vindo ao treinamento a distância TCD, www.treinandoequipes.com.br" />
+
+</head>
+
+<body>
+	
+	<div url="{{ base_url }}" class="no-ie6"></div>
+
+    {% block content %}
+
+        <style type="text/css">
+            .error {
+                text-align: center;
+                font-size: 14px;
+                color: red;
+            }
+            .repass {
+                border: none;
+                width: auto;
+            }
+            .repass:hover {
+                text-decoration: underline;
+                background: none;
+            }
+        </style>
+
+        {% set_keyboard get_tipo_template '#user|#pass' %}
+
+        <div id="login">
+
+            <div id="logo">
+                <img src="{{ rede|logo:get_tipo_template }}" border="0" />
+            </div>
+
+            <form name="login" action="./" enctype="multipart/form-data" method="POST">
+
+                {% csrf_token %}
+
+                <label for="user">Login:</label>
+                <input type="text" name="user" id="user" />
+                
+                {% set_keyboard_buttom get_tipo_template %}
+
+                <label for="pass">Senha:</label>
+                <input type="password" name="pass" id="pass" />
+
+                <input type="submit" name="submit" value="Entrar" class="buttom" />
+
+                <input class="repass" type="submit" name="repass" value="Esqueci minha senha" />
+                
+                <input type="hidden" name="next" value="{{ next }}" />
+
+            </form>
+
+            {% if error %}
+                <div class="error">{{ error|default:'Usuário ou senha estão incorretos.' }}</div>
+            {% endif %}
+
+        </div>
+
+    {% endblock content %}
+
+    <script src="{{ STATIC_URL }}{{ get_tipo_template }}/js/ios-orientationchange-fix.js" type="text/javascript"></script>
+
+</body>
+
+</html>

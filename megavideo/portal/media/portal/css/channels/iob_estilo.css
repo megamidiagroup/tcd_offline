@@ -1,0 +1,22 @@
+
+body {
+	background: none;
+}
+
+div#main div#warp {
+	background: none;
+}
+
+#headerimg ul li a {
+    color: #000;
+}
+
+div#main div#header div#form_search input[type=text] {
+	background: none;
+	border: 1px solid black;
+}
+
+div#main div#header div#form_search ul li a {
+
+	color: black;
+}

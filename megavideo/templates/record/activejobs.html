@@ -1,0 +1,109 @@
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<meta name="author" content="Anonymous" />
+		<meta name="description" content="" />
+		<meta name="keywords" content="" />
+
+
+		<title>Vflow</title>
+
+
+
+		<link href="{{STATIC_URL}}/static/manager/css/main.css" rel="stylesheet" type="text/css" media="screen" />
+
+		
+		<link href="{{STATIC_URL}}/static/manager/css/digg.css" rel="stylesheet" type="text/css" media="screen" />
+		<link href="{{STATIC_URL}}/static/manager/css/menu_form.css" rel="stylesheet" type="text/css" media="screen" />
+		<link href="{{STATIC_URL}}/static/manager/css/menu_left.css" rel="stylesheet" type="text/css" media="screen" />
+		<link href="{{STATIC_URL}}/static/manager/css/menu_top.css" rel="stylesheet" type="text/css" media="screen" />
+		<link href="{{STATIC_URL}}/static/manager/css/bottom.css" rel="stylesheet" type="text/css" media="screen" />
+		<link href="{{STATIC_URL}}/static/manager/css/sortListUI.css" rel="stylesheet" type="text/css" media="screen" />
+
+
+
+
+		<script type="text/javascript" src="{{STATIC_URL}}/static/manager/js/jquery-1.3.2.min.js"> </script>
+
+		<script type="text/javascript" src="{{STATIC_URL}}/static/manager/js/jquery.corner.js"> </script>
+		<script type="text/javascript" src="{{STATIC_URL}}/static/manager/js/swfobject.js"> </script>
+		<script type="text/javascript" src="{{STATIC_URL}}/static/manager/js/jquery.pngFix.pack.js"> </script>
+
+
+		<script>
+			$('.corner').corner();
+			function loadleft(mid) {
+				$("#left").load("/record/jobdetail/", {'id' : mid }, function () {
+					                        $('.corner').corner();
+
+				});
+			}
+
+		</script>
+
+
+		<style>
+			.jobs {
+			 width: 500px; padding: 10px;
+			 margin: 10px;
+			}
+
+			.jobs h1 {
+				color: black;
+				font-size: 13px; 
+				} 
+
+			 .jobs table {
+
+
+			 width: 450px;
+			 }
+
+			 .jobs a:visited , .jobs a {
+				 color: #ababab;
+			 }
+
+			 .jobactive td {
+			
+			 color: #16522e;
+			 }
+			 .joberror td {
+			 	color:  #524616;
+			 }
+			
+			 #left {
+			 	padding: 10px;
+			 }
+		</style>
+
+	</head>
+
+	<body>
+		{% load humanize %}
+
+		<div class='corner' id='left' style='position: absolute; left: 540px;  background-color: d9ccaf; min-height: 500px; width: 400px;'> 
+
+		</div>
+		{% if activejobs %}
+		<div class='corner jobs jobactive' style='background-color: #afd9d0;'>
+		<h1>Processamento ativo</h1>
+		<table>
+			{% for i in activejobs %}
+			<tr><td>{{ i.name }}</td><td>{{ i.time }}</td><td><a href='javascript:loadleft({{ i.id }})'>detalhes</a></td></tr>
+			{% endfor %}
+		</table>
+		</div>
+		{% endif %}
+
+		{% if errorjobs %}
+		<div class='corner jobs joberror' style='background-color: d9ccaf;'>
+		<h1>Erros no processamento</h1>
+		<table>
+			{% for i in errorjobs %}
+			<tr><td>{{ i.name }}</td><td>{{ i.time }}</td><td><a href='/record/jobdetail/?id={{ i.id }}'>detalhes</a></td></tr>
+			{% endfor %}
+		</table>
+		</div>
+		{% endif %}
+	</body>
+</html>

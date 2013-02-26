@@ -1,0 +1,29 @@
+{% load miniature %}
+{% load super_truncate %}
+
+<ul class='sortListUI'>
+
+    {% if content_list.object_list %}
+
+        {% for i in content_list.object_list %}
+
+            <li id='{{i.id}}'>
+
+                    <img src='{{ i.video|thumbnail:"72x40" }}' height='40' border='0' />
+                    <strong>{{ i.video.get_name|super_truncatewords:"10-15" }}</strong>
+
+              </li>
+
+        {% endfor %}
+
+    {% else %}
+
+        <li>
+            <div class='empty'>
+                Nenhum registro cadastrado
+            </div>
+        </li>
+
+    {% endif %}
+
+</ul>

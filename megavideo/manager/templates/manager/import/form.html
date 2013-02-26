@@ -1,0 +1,84 @@
+{% extends 'manager/main.html' %}
+
+{% block css_script %}
+<link href="{{STATIC_URL}}/static/manager/css/main.css" rel="stylesheet" type="text/css" media="screen" />
+
+<link href="{{STATIC_URL}}/static/manager/css/digg.css" rel="stylesheet" type="text/css" media="screen" />
+
+<link href="{{STATIC_URL}}/static/manager/css/sortListUI.css" rel="stylesheet" type="text/css" media="screen" />
+{% endblock %}
+
+{% block js_script %}
+    <script type="text/javascript" src="{{STATIC_URL}}/static/manager/js/swfobject1.5.js"></script>
+    <script type="text/javascript" src="{{STATIC_URL}}/static/manager/js/script_manager.js"></script>
+{% endblock %}
+
+{% block content %}
+
+	<br /><br />
+	
+	<form>{% csrf_token %}</form>
+
+	<table cellpadding="0" cellspacing="2" width="100%">
+		{% if limit_upload %}
+			<tr>
+				<td>
+					* Seu limite de upload está excedendo o liberado pelo administrador.
+					Entre em contato com o mesmo para solucionar o problema.
+				</td>
+			</tr>
+		{% endif %}
+		<tr>
+			<td valign="top" width="460" align="center">
+				
+				<div class="box_flash">&nbsp;</div>
+				
+				<br />
+				
+	            <a href="javascript:void(0);" onclick="set_flash();">[mais]</a>
+				
+				<script type="text/javascript">
+				
+					var id = 0;
+					
+					function del_flash(id_del)
+					{
+						$('#main' + id_del + ', #btn_del' + id_del).remove();
+					}
+	
+					function set_flash()
+					{
+						
+						var html_flash  = '';
+							html_flash += '<div id="main' + id + '">';
+	                		html_flash += 	'<a href="http://www.adobe.com/go/getflashplayer">';
+	                		html_flash += 		'<img src="https://www.adobe.com/images/shared/download_buttons/get_flash_player.gif" alt="Get Adobe Flash player" title="Get Adobe Flash player" />';
+	                		html_flash += 	'</a>';
+	                		html_flash += 	'<br />';
+	                		html_flash += 	'Tecnologia Flash 9 <a href="http://www.adobe.com/go/getflashplayer">Baixar Plugin</a>Software gratu&iacute;to.';
+	            			html_flash += '</div>';
+	            			html_flash += '<a href="javascript:void(0);" id="btn_del' + id + '" onclick="del_flash(' + id + ');">[fechar]</a>';
+	            			
+	            		$('.box_flash').append(html_flash);
+						
+		                var so = new SWFObject("{{STATIC_URL}}/static/manager/swf/upload_one.swf", "main" + id, "440", "112", "9.0.0");
+		                so.addVariable("url"     , "{{ request.channel_url }}");
+		                so.addVariable("types"   , "Video:mp4|mpg|wmv|avi|mov|flv|f4v|3gp|3GP");
+		                so.addVariable("values"  , "{{ csrf_token }}");
+		                so.write("main" + id);
+		                id++;
+		                
+	                }
+	                
+	                set_flash();
+	
+	            </script>
+				
+			</td>
+			<td class="list_job" url="{{ request.channel_url }}manager/import/jobs/" valign="top">
+				{{ list_job }}
+			</td>
+		</tr>
+	</table>
+
+{% endblock %}

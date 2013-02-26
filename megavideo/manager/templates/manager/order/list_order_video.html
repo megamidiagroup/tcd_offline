@@ -1,0 +1,27 @@
+{% load miniature %}
+{% load super_truncate %}
+
+{% if video_list.count %}
+{% for i in video_list %}
+    <li id='{{i.id}}'>
+       <table>
+           <tr>
+             <td class='tt'> {{ forloop.counter }} </td>
+             <td class='img'>
+                 <img src='{{ i.video|thumbnail:"66x37" }}' border='0' width='66' />
+             </td> 
+             <td class='desc'>
+                 None: {{ i.video.get_name|super_truncatewords:"10-15" }}
+                 <p>
+                  Views: <b>{{ i.video.views }}</b>
+                 </p>
+             </td> 
+           </tr>
+       </table>
+    </li>
+ {% endfor %}
+ {% else %}
+     <li class='no_video'>
+      Não existe vídeos cadastradas
+     </li>
+ {% endif %}

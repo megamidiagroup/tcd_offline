@@ -1,0 +1,28 @@
+<div class='clear'></div>
+<div class="pagination">
+    {% if content_list %}
+    <ul id='pagination-digg'>
+        {% if content_list.has_previous %}
+        <li class='previous'><a href='{{ url }}{{ content_list.previous_page_number }}/'> &lt;&lt; Anterior </a></li>
+        {% else %}
+        <li class='previous disabled'>&lt;&lt; Anterior</li>
+        {% endif %}
+        {% for num in content_list.page_range %}
+        {% if not num %} <li class='pontos'> ... </li>  {# literally dots #}
+        {% else %}
+        {# pagelink num #}
+        {% ifequal num content_list.number %}
+        <li class="active">{{ num }}</li>
+        {% else %}
+        <li><a href="{{ url }}{{ num }}/">{{ num }}</a></li>
+        {% endifequal %}
+        {% endif %}
+        {% endfor %}
+        {% if content_list.has_next %}
+        <li class="previous"><a href="{{ url }}{{ content_list.next_page_number }}/">Próximo &gt;&gt;</a></li>
+        {% else %}
+        <li class="previous disabled">Próximo &gt;&gt;</li>
+        {% endif %}
+    </ul>
+    {% endif %}
+</div>

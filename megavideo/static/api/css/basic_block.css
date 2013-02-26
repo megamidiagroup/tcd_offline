@@ -1,0 +1,20 @@
+    .vflow_videolink {
+        text-decoration: none;
+        border: none;
+    }
+
+    .vflow_videothumb {
+        text-decoration: none;
+        border: 1px solid grey;
+    }
+
+    .vflow_videoname {
+        display: block;   
+        font-family: "Trebuchet MS";
+        font-size: 14px;
+        font-weight: bold;
+    }
+    .vflow_videoitem {
+        float: left;
+        margin: 5px;
+    }

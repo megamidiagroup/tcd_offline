@@ -1,0 +1,58 @@
+{% extends 'manager/main.html' %}
+{% load filter_url %}
+{% block content%}
+
+<form id='form_list' method='post' name='form_list' action='./' enctype='application/x-www-form-urlencoded'>
+	
+	{% csrf_token %}
+
+<ul>
+    <li>
+        {% block content_header %}
+        {% endblock %}
+        {% block list %}
+        <ol id='list' class=''>
+            {% if content_list.object_list %}
+            {% for i in content_list.object_list %}
+            {% block list_class %}
+                <li class="{% cycle 'color' '' %} line_{{ i.id }}">
+            {% endblock %}
+                {%  block line %}
+                    {% load miniature %}
+                    {%  block thumb %}
+                        <div class='list_img'>
+                            {% if i.image %}
+                                <img src="{{ i|thumbnail:'56x42' }}" width='56' height='42'>
+                            {% else %}
+                                <img src='{{STATIC_URL}}/static/images/default.jpg' width='56' height='42'>
+                            {% endif %}
+                        </div>
+                    {% endblock %}
+                <div class='clear'>&nbsp;</div>
+                {% endblock %}
+				{% block list_class_end %}
+					</li>
+				{% endblock %}
+            {% endfor %}
+            {% else %}
+            <li style='border:0; background:#fff; padding-top:20px;padding-bottom:40px'>
+                    <img border="0" src="{{STATIC_URL}}/static/portal/images/noresult.gif" alt="Não foi encontrado nenhum programa"/>
+            </li>
+            {% endif %}
+        </ol>
+    {% endblock %}
+    </li>
+
+</ul>
+
+
+{% block block_pagination %}
+	{% load paginators %}
+	{% if content_list %}
+		{% digg_paginator content_list digg_url %}
+	{% endif %}
+{% endblock %}
+
+</form>
+
+{% endblock %}

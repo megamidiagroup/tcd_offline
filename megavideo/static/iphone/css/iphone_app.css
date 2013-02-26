@@ -1,0 +1,70 @@
+* {
+	margin: 0;
+	padding: 0;
+	border: none;
+}
+
+body {
+}
+
+
+#main_table {
+/*	position: absolute;*/
+	width: 94%;
+	/*border: 1px solid #aaa;*/
+	background: url('/megavideo/static/iphone/images/bg_lista.jpg') repeat-x black;
+	margin-left: 3%;
+	margin-bottom: 25px;
+}
+
+.first_column {
+	width: 55px;
+}
+
+.lines {
+	height: 55px;
+	width: 302px;
+	border: 1px solid #aaa;
+	vertical-align: middle;
+	border: 1px solid red;
+}
+
+.arrow {
+	float: right;
+	margin-left: 10px;
+	margin-right: 10px;
+	margin-top: 12px;
+}
+
+.thumbs {
+	height: 55px;
+	width: 55px;
+	border: 0px;
+	border-right: 1px solid #aaa;
+}
+
+.logo {
+	margin-left: 20%;
+}
+
+.name_column {
+	padding-left: 10px;
+}
+a {
+	text-decoration: none;
+}
+
+.video_name {
+	font-family: 'Trebuchet MS', 'Arial';
+	color: portal;
+	font-weight: bold;
+	font-size: 16px;
+}
+
+.arrow_cell {
+	width: 25px;
+}
+
+td {
+	border-bottom: 1px solid #aaa;
+}

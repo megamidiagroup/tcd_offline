@@ -1,0 +1,20 @@
+{% load miniature %}
+
+<ul class='sortListUI'>
+{% if content_list.object_list %}
+    {% for i in content_list.object_list %}
+         <li id='{{i.id}}'>
+                <img border='0' src="{{STATIC_URL}}/static/manager/images/arrow.gif" />
+                <strong>{{ i.name }}</strong>
+          </li>
+    {% endfor %}
+
+{% else %}
+    <li>
+        <div class='empty'>
+            Nenhum registro cadastrado
+        </div>
+    </li>
+{% endif %}
+</ul>
+

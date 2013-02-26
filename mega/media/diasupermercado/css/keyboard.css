@@ -1,0 +1,101 @@
+/* css do keybord começa aqui  */
+.keyboard {
+    background: #d7e4f2!important;
+    width: 693px;
+    z-index: 10000;
+    position: absolute;
+    right: 10px;
+    bottom: 20px;
+    height: 278px;
+    padding: 10px;
+    font-size: 18px;
+    border:solid 1px #4d4d4d;
+    color:#FFF;
+    -moz-border-radius: 10px;
+    -webkit-border-radius: 10px;
+    border-radius: 10px;
+    -webkit-box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.5);
+    -moz-box-shadow:    0px 1px 2px rgba(0, 0, 0, 0.5);
+    box-shadow:         0px 1px 2px rgba(0, 0, 0, 0.5);
+    position: fixed;
+}
+
+#cron li {
+    padding: 5px;
+    font-size: 16px;
+    font-weight: bold;
+    margin: 0px;
+    float: left;
+    color: #434e54;
+}
+
+#keyboard {
+    background: #99B4D1!important;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    padding:5px 0 0 5px;
+}
+#keyboard li {
+    float: left;
+    margin: 0 5px 5px 0;
+    width: 40px;
+    height: 40px;
+    line-height: 40px;
+    text-align: center;
+    background: #2a2a2a;
+    background: -webkit-gradient(linear, left top, left bottom, from(#3b3b3b), to(#040404)); 
+    background: -moz-linear-gradient(top,  #3b3b3b,  #040404);
+    border: 1px solid #919191;
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+    border-radius: 5px;
+    -webkit-box-shadow: 0px 0px 1px rgba(0, 0, 0, 1);
+    -moz-box-shadow:    0px 0px 1px rgba(0, 0, 0, 1);
+    box-shadow:         0px 0px 1px rgba(0, 0, 0, 1);
+}
+.capslock, .tab, .left-shift {
+    clear: left;
+}
+#keyboard .tab, #keyboard .delete {
+    width: 70px;
+}
+#keyboard .capslock {
+    width: 80px;
+}
+#keyboard .return {
+    width: 77px;
+}
+#keyboard .left-shift {
+    width: 95px;
+}
+#keyboard .right-shift {
+    width: 109px;
+}
+.lastitem {
+    margin-right: 0;
+}
+.uppercase {
+    text-transform: uppercase;
+}
+#keyboard .space {
+    clear: left;
+    width: 681px;
+}
+.on {
+    display: none;
+}
+#keyboard li:hover {
+    position: relative;
+    top: 1px;
+    left: 1px;
+    border-color: #828282;
+    cursor: pointer;
+}
+
+.keyboard #cron li.closetia {
+    font-size: 20px;
+    float: right;
+    cursor: pointer;
+}
+​

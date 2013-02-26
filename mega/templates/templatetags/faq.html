@@ -1,0 +1,72 @@
+{% load util %}
+
+{% if treinamento.rede.is_faq %}
+
+	{% if list_faq %}
+	
+	    <div class="clear"></div>
+	    
+	    <div class="faq_video" value="false">
+	    	<fieldset value="false">
+	    		<legend class="bar" onclick="open_faq(this);" title="Clique aqui para mostrar">Faq do Treinamento</legend>
+	    		{% if is_create %}
+		    		<ul class="send_faq">
+						<li style="font-size: 1.6em;">Se não houver a pergunta, faça a sua, pode ser que ela venha aparecer no faq.</li>
+						<li>
+							<label style="float: left;font-size: 1.6em;">Fazer Pergunta:</label>
+							&nbsp;
+							<textarea name="msg_faq" style="width: 80%; height: 80px;"></textarea>
+						</li>
+						<li>
+							<input type="button" name="send_faq" value="Enviar" class="bar" style="padding: 4px 8px;cursor: pointer" onclick="send_faq(this, '{% url send_faq treinamento.rede.link treinamento.id %}', '{{ csrf_token }}');" />
+							<span class="error" style="color: green; font-size: 18px;">&nbsp;</span>
+						</li>
+					</ul>
+				{% endif %}
+	    		<ul class="faq">
+	    			{% if is_create %}
+		    			<li style="border: none; text-align: right; font-size: 18px;">
+		    				<span style="padding: 2px 6px; border: 1px solid #ccc; border-radius: 7px; cursor: pointer;" onclick="open_send_faq(this);">Enviar pergunta</span>
+		    			</li>
+		    		{% endif %}
+					{% for lf in list_faq %}
+			            <li {% if forloop.last %}style="border-bottom: none;"{% endif %}>
+			                <h3>{{ lf.pergunta }}</h3>
+			                <p>{{ lf.resposta }}</p>
+			            </li>
+	                {% endfor %}           
+				</ul>
+	    	</fieldset>
+	    </div>
+	                
+	{% else %}
+	
+		{% if is_create %}
+	                
+			<div class="clear"></div>
+		    
+		    <div class="faq_video" value="false">
+		    	<fieldset value="false">
+		    		<legend class="bar" onclick="open_send_faq_initial(this);" title="Clique aqui para mostrar">Faq do Treinamento - Enviar pergunta</legend>
+		    		<ul class="send_faq">
+						<li style="font-size: 1.6em;">Não perca tempo, faça sua pergunta, pode ser que ela venha aparecer no faq.</li>
+						<li>
+							<label style="float: left;font-size: 1.6em;">Fazer Pergunta:</label>
+							&nbsp;
+							<textarea name="msg_faq" style="width: 80%; height: 80px;"></textarea>
+						</li>
+						<li>
+							<input type="button" name="send_faq" value="Enviar" class="bar" style="padding: 4px 8px;cursor: pointer" onclick="send_faq(this, '{% url send_faq treinamento.rede.link treinamento.id %}', '{{ csrf_token }}');" />
+							<span class="error" style="color: green; font-size: 18px;">&nbsp;</span>
+						</li>
+					</ul>
+		    	</fieldset>
+		    </div>
+		    
+		    <script type="text/javascript">initial = true;</script>
+		    
+		{% endif %}
+	
+	{% endif %}
+
+{% endif %}

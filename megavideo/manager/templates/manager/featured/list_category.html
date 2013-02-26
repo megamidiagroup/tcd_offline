@@ -1,0 +1,88 @@
+
+    {% if destaque_category %}
+
+        <ul>
+
+            <li>
+
+                <ul id="categorymenu{{ destaque_category }}" class="mcdropdown_menu">
+
+                    {% for i in category_list %}
+
+                        <li rel="{{ i.id }}">
+
+                            {{ i.name }}
+
+                            {% if i.category_set.all.0 %}
+                                <ul>
+                            {% endif %}
+
+                            {% for j in i.category_set.all %}
+
+                                <li rel="{{ j.id }}">
+                                    {{ j.name }}
+                                </li>
+
+                            {% endfor %}
+
+                            {% if i.category_set.all.0 %}
+                                </ul>
+                            {% endif %}
+
+                        </li>
+
+                    {% endfor %}
+
+                </ul>
+
+            </li>
+
+            <input type="text" name="{{ destaque_category }}" class="category" value="{{ destaque_category }}" />
+
+            <p><img title='deletar categoria em destaque' class="bt_deletar" name="{{ category_id }}" src="{{STATIC_URL}}/static/manager/images/bt_excluir1.png" border='0'/></p>
+
+        </ul>
+
+    {% else %}
+
+	    <ul class="newItem">
+	
+	        <li>
+	
+	            <ul id="categorymenu0" class="mcdropdown_menu">
+	
+	                {% for i in category_list %}
+	
+	                    <li rel="{{ i.id }}">
+	
+	                        {{ i.name }}
+	
+	                        {% if i.category_set.all.0 %}
+	                            <ul>
+	                        {% endif %}
+	
+	                        {% for j in i.category_set.all %}
+	
+	                            <li rel="{{ j.id }}">
+	                                {{ j.name }}
+	                            </li>
+	
+	                        {% endfor %}
+	
+	                        {% if i.category_set.all.0 %}
+	                            </ul>
+	                        {% endif %}
+	
+	                    </li>
+	
+	                {% endfor %}
+	
+	            </ul>
+	
+	        </li>
+	
+	        <input type="text" name="0" class="category" value="" />
+	
+	    </ul>
+		
+	{% endif %}

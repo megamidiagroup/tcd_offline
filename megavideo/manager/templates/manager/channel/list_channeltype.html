@@ -1,0 +1,150 @@
+{% extends 'manager/list.html' %}
+
+{% block css_script %}
+
+        <link href="{{STATIC_URL}}/static/manager/css/main.css" rel="stylesheet" type="text/css" media="screen" />
+        
+        <link href="{{STATIC_URL}}/static/manager/css/digg.css" rel="stylesheet" type="text/css" media="screen" />
+        
+        
+        
+        
+        <link href="{{STATIC_URL}}/static/manager/css/sortListUI.css" rel="stylesheet" type="text/css" media="screen" />
+
+{% endblock %}
+
+{% block js_script %}
+
+        <script type="text/javascript" src="{{STATIC_URL}}/static/manager/js/jquery.jqModal.js"> </script>
+        <script type="text/javascript" src="{{STATIC_URL}}/static/manager/js/script_list.js"> </script>
+
+{% endblock %}
+
+{% block content_header %}
+
+{% endblock %}
+
+{% block line_title %}
+   {{ i.name }}
+{% endblock %}
+
+
+{% block list %}
+
+<li id='category-list'>
+
+    {% if content_list.object_list %}
+
+        {% for i in content_list.object_list %}
+
+            <ul class="openOptions {% cycle 'color ' '' %}line_{{ i.id }}" name='{{ i.id }}'>
+
+                <div class='list_img'>
+                    {% if i.image %}
+                        <img src='/storage/{{i.image}}' border='0' height='40'>
+                    {% endif %}
+                </div>
+                <div>
+                    <h4> {{ i.name }} {{ i.displayname }}</h4>
+					<!-- important
+                    <p><span>{{i.description|truncatewords:30}}</span></p>
+					-->
+                    <div style="height: 20px;">
+                        <table class='openOptions{{ i.id }}' style='display: block;'>
+                            <tr>
+                            	<td width="85%">&nbsp;</td>
+                                <td>
+                                    <a href='{{ request.channel_url }}manager/channeltype/update/{{ i.id }}/'>
+                                        <img class="" title='alterar' src="{{STATIC_URL}}/static/manager/images/bt_alterar.gif" />
+                                    </a>
+                                </td>
+                                <!-- important -->
+                                <td >
+                                    <img src='/megavideo/static/manager/images/bt_excluir.gif' id='line_{{ i.id }}' class='{% ifequal i.id 1 %}no_exclude{% else %}exclude{% endifequal %}' url='/manager/channeltype/del/' target_id='{{ i.id }}' title='{% ifequal i.id 1 %}Não é permitido excluir{% else %}Excluir canal{% endifequal %}' msg='Excluíndo este tip de canal, você estará excluíndo todo o conteúdo. <br />Você tem certeza que deseja excluir este tipo canal?' />
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+
+                <div class='clear'></div>
+
+            </ul>
+
+        {% endfor %}
+
+    {% else %}
+
+    <ul>
+        <div class='empty'>
+            Nenhum registro cadastrado
+        </div>
+    </ul>
+
+    {% endif %}
+
+</li>
+
+{% endblock %}
+
+{% block confirm %}
+
+<!-- Confirm Dialog -->
+<div class="jqmConfirm" id="confirm">
+
+    <div id="ex3b" class="jqmConfirmWindow">
+
+        <div class="jqmConfirmTitle clearfix">
+            <h1>Confirmação</h1>
+            <a href="#" class="jqmClose"><em>Close</em></a>
+        </div>
+
+        <div class="jqmConfirmContent">
+            <p class="jqmConfirmMsg"></p>
+        </div>
+
+        <table class="jqmButtons">
+            <tr>
+                <td width="40%" align="right" class="sim" id='1'><img src="{{STATIC_URL}}/static/manager/images/bt_ativo.gif" title="Sim" /> Sim</td>
+                <td width="20%">&nbsp;</td>
+                <td width="40%" align="left" class="no" id='0'><img src="{{STATIC_URL}}/static/manager/images/bt_remove.gif" title="Não" /> Não</td>
+            </tr>
+        </table>
+
+    </div>
+
+</div>
+
+{% endblock %}
+
+{% block block_pagination %}
+
+<div class="pagination">
+    {% if content_list %}
+     <ul id='pagination-digg'>
+        {% if content_list.has_previous %}
+            <li class='previous'><a href='{{ request.channel_url }}{{ digg_url }}page/{{ content_list.previous_page_number }}/'> Anterior </a></li>
+        {% else %}
+            <li class='previous'>Anterior </li>
+        {% endif %}
+            {% for num in content_list.page_range %}
+            {% if not num %} ...  {# literally dots #}
+            {% else %}
+            {# pagelink num #}
+                    {% ifequal num content_list.number %}
+                    <li class="active">{{ num }}</li>
+                    {% else %}
+                    <li><a href="{{ request.channel_url }}{{ digg_url }}page/{{ num }}/tag/{{ filter }}/">{{ num }}</a></li>
+                    {% endifequal %}
+            {% endif %}
+            {% endfor %}
+        {% if content_list.has_next %}
+            <li class="previous"><a href="{{ request.channel_url }}{{ digg_url }}page/{{ content_list.next_page_number }}/"> Próximo </a></li>
+        {% else %}
+            <li class="previous">Próximo</li>
+        {% endif %}
+    </ul>
+    {% endif %}
+</div>
+
+{% endblock %}

@@ -1,0 +1,39 @@
+﻿{% extends 'uninter/main.html' %}
+
+{% load util keyboard %}
+
+{% block content %}
+
+    {% block bloco %}
+
+        <div id="content">
+            <div class="container">
+
+                <div class="path">
+                    A busca retornou {{ list_busca|length }} resultado{{ list_busca|length|pluralize }} de {{ total }} no total.
+                </div>
+
+                <div class="bar" style="text-align: left; padding-left: 12px;"><span>Buscando por: {{ q|default:'' }}</span></div>
+                <div class="wrap">
+                    <ul class="faq">
+
+                        {% for i in list_busca %}
+                            <p>
+                                {% if i.0 == 'category' %}
+                                    <span><a href="{% url category rede.link i.1 %}" title="Clique aqui para acessar" style="font-size: 16px;font-weight: bold;">{{ i.2 }}</a></span>
+                                {% else %}
+                                    <span><a href="{% url treinamento rede.link i.1 %}" title="Clique aqui para acessar" style="font-size: 16px;font-weight: bold;">{{ i.2 }}</a></span>
+                                {% endif %}
+                                <br />
+                                <span style="font-size: 11px;">{{ i.3|safe }}</span>
+                            </p>
+                        {% endfor %}
+
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+    {% endblock bloco %}
+
+{% endblock content %}

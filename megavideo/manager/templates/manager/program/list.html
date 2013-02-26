@@ -1,0 +1,149 @@
+{% extends 'manager/list.html' %}
+
+
+{% block js_script %}
+	<script type="text/javascript" src="{{STATIC_URL}}/static/manager/js/jquery.jqModal.js"> </script>
+	<script type="text/javascript" src="{{STATIC_URL}}/static/manager/js/jquery.ImageOverlay.min.js"> </script>
+	<script type="text/javascript" src="{{STATIC_URL}}/static/manager/js/script_manager.js"> </script>
+{% endblock %}
+
+{% load stars %}
+{% load super_truncate %}
+
+{% block content_header %}
+
+<div id='select_action' align="right">
+
+	<form method="post" name="form" id="form" action="{{ request.channel_url }}manager/program/">
+
+	    <table width="450" cellpadding="0" cellspacing="0">
+
+			<tr>
+				<td width="100%" align="right" height="30" align='right' >
+					<input id="buscar" class='input_2' type='submit' value='' />
+					<span class='input_2'>
+					   <input type='text' id='search' name='search' value='{{ search }}' />
+					</span>
+					<span class='input_1'></span>
+				</td>
+			</tr>
+	    </table>
+
+	</form>
+
+</div>
+
+{% endblock %}
+
+
+{% load miniature %}
+
+{% block confirm %}
+
+<!-- Alert Dialog -->
+<div class="jqmConfirm categoria" id="confirm_categoria">
+
+    <div id="ex3b" class="jqmConfirmWindow">
+
+        <div class="jqmConfirmTitle clearfix">
+            <a href="#" class="jqmClose"><em>Close</em></a>
+        </div>
+
+        <div class="content">
+            <p class="jqmConfirmMsg msg"></p>
+            <h1>Inclua este vídeo em uma categoria antes de pública-lo</h1>
+        </div>
+
+        <input type="button" value="Clique Aqui" id="1" />
+
+    </div>
+
+</div>
+
+
+<!-- Confirm Dialog -->
+<div class="jqmConfirm" id="confirm">
+
+    <div id="ex3b" class="jqmConfirmWindow">
+
+        <div class="jqmConfirmTitle clearfix">
+            <h1>Confirmação</h1>
+            <a href="#" class="jqmClose"><em>Close</em></a>
+        </div>
+
+        <div class="jqmConfirmContent">
+            <p class="jqmConfirmMsg"></p>
+        </div>
+
+        <table class="jqmButtons">
+            <tr>
+                <td width="40%" align="right" class="sim" id='1'><img src="{{STATIC_URL}}/static/manager/images/bt_ativo.gif" title="Sim" /> Sim</td>
+                <td width="20%">&nbsp;</td>
+                <td width="40%" align="left" class="no" id='0'><img src="{{STATIC_URL}}/static/manager/images/bt_remove.gif" title="Não" /> Não</td>
+            </tr>
+        </table>
+
+    </div>
+
+</div>
+
+{% endblock %}
+
+{% block list %}
+        <ol id='list' class='mouseover_menu'>
+            {% if content_list.object_list %}
+            {% for i in content_list.object_list %}
+            {% block list_class %}
+               <li class="{% cycle 'color' '' %} line_{{ i.id }} bigBox">
+            {% endblock %}
+                {%  block line %}
+                    {% load miniature %}
+                    {%  block thumb %}
+                            <div class='list_img'>
+
+        {% if i.name %}
+			<div class="caption">
+		        <a href="{{ request.channel_url }}manager/program/update/{{i.id}}/" title="Editar"><img src="{{STATIC_URL}}/static/manager/images/btn_editar.png" title="Editar" /></a>
+				<img src="{{STATIC_URL}}/static/manager/images/btn_delete.png" id="line_{{ i.id }}" class="exclude" url="{{ request.channel_url }}manager/program/del/" target_id="{{ i.id }}" title="Excluir" msg="Você tem certeza que deseja excluir esta vídeo?" />
+			</div>
+            {% if i|thumbnail:"215x118" %}
+	            <a href='{{ request.channel_url }}manager/program/update/{{i.id}}/'>
+					<img src='{{ i|thumbnail:"215x118" }}' width='215' height='118' alt='{{ i.get_name }}' />
+	            </a>
+            {% endif %}
+        {% endif %}
+        <table>
+            <tr>
+            <td>
+              {% if i.published %}
+                   <div class='publicado true' target='{{ request.channel_url }}manager/program/publish/' id='pub_{{ i.id }}'></div>
+              {% else %}
+                   <div class='publicado false' target='{{ request.channel_url }}manager/program/publish/' id='pub_{{ i.id }}'></div>
+              {% endif %}
+            </td>
+            <td align="right">
+               <h3>
+                   {{ i.get_title|super_truncatewords:"10-15" }}
+               </h3>
+             </td>
+            </tr>
+        </table>
+    </div>
+                    {% endblock %}
+                <div class='clear'>&nbsp;</div>
+                {% endblock %}
+				{% block list_class_end %}
+					</li>
+				{% endblock %}
+            {% endfor %}
+            {% else %}
+            <li style='border:0; background:#fff; padding-top:20px;padding-bottom:40px; float:none;display:block; width:100%;'>
+              <div align="center">
+                    <img border="0" src="{{STATIC_URL}}/static/portal/images/noresult.gif" alt="Não foi encontrado nenhum programa"/>
+              </div>      
+            </li>
+            {% endif %}
+        </ol>
+    {% endblock %}
+
+

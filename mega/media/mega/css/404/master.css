@@ -1,0 +1,45 @@
+@import 'reset.css';
+@import 'text.css';
+
+
+body {
+  background: #fff;
+  color: #333;
+}
+
+h1 {
+  text-shadow: #fff 0 1px 0;
+  padding:5px 10px 10px 80px;
+  font-size:26px;
+}
+
+h2,
+h3,
+h4,
+h5,
+h6 {
+  line-height: 1;
+}
+
+a {
+  color: #06c;
+}
+
+a:hover {
+  color: #c60;
+}
+
+#content{
+	margin:auto;
+	width:260px;
+	padding:10px;
+}
+#error{
+	padding:10px;
+	background: #eee url(../../images/404/error.png) no-repeat 20px 30px;
+	border: 1px solid #ccc;
+}
+
+#mensagem{
+	padding-top:20px;
+}

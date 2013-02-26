@@ -1,0 +1,146 @@
+{% extends 'sala4/main.html' %}
+
+{% load util %}
+
+{% block extra-css %}
+	<link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}{{ get_tipo_template }}/css/jVal.css" />
+	<link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}{{ get_tipo_template }}/css/jquery.jgrowl.css" />
+{% endblock extra-css %}
+
+{% block extra-js %}
+
+	<script type="text/javascript" src="{{ STATIC_URL }}{{ get_tipo_template }}/js/jVal.js"></script>
+	<script type="text/javascript" src="{{ STATIC_URL }}{{ get_tipo_template }}/js/jquery.jgrowl_compressed.js"></script>
+
+	<script type="text/javascript">
+	
+		$(document).ready(function(){
+			$('input[name="txt_newpass"]').passwordStrength();
+			
+			{% if post and not human %}
+				$('#mensagem').jGrowl('Palavra digitada Íncorreta.');
+			{% endif %}
+			
+			$('#id_captcha_1').attr('jVal', '{valid:function (val) { if (val.length != 4) return "Digite o palavra correta."; else return ""; }}');
+			
+			{% if edit == 'false' %}
+				$('#mensagem').jGrowl('E-mail já existe ou inválido.');
+			{% endif %}
+			
+		});
+		
+		function send_form(form, send)
+		{
+			if (mobile)
+			{
+				if ( $(form).jVal({style:'blank',padding:26,border:0,wrap:false}) )
+				{
+					if (send)
+					{
+						check_mail();
+						$('.botao').html('Aguarde...').css('background-color', '#CCC');
+						return false;
+					}
+				}
+			}
+			else
+			{
+				if ( $(form).jVal({style:'pod',padding:3,border:1,wrap:true}) )
+				{
+					if (send)
+					{
+						check_mail();
+						$('.botao').html('Aguarde...').css('background-color', '#CCC');
+						return false;
+					}
+				}
+			}
+			return true;
+		}
+		
+		function check_mail()
+		{
+			$.ajax({
+				url: '{% url ajax_check_mail rede.link %}',
+				data: { csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val(), email: $('input[name=txt_email]').val() },
+				success: function(data) {
+					if (data == '-1')
+					{
+						$('#mensagem').jGrowl('Erro ao verificar o email.');
+						$('.botao').html('Salvar').css('background-color', '#0093C2');
+					} else {
+						if (parseInt(data) > 0)
+						{
+							$('#mensagem').jGrowl('O email já está cadastrado.');
+							$('.botao').html('Salvar').css('background-color', '#0093C2');
+						} else {
+							$('form').submit();
+						}
+					}
+				}
+			});
+		}
+		
+    </script>
+    
+{% endblock extra-js %}
+
+{% block content %}
+
+	<section id="content">
+		<div class="wrapper curso">
+			<div class="titulo">
+				<h2><span>Criar Conta</span></h2>
+			</div>
+			<img src="{{ STATIC_URL }}{{ get_tipo_template }}/images/pinguelo.png" border="0" id="pinguelo" />
+	
+			<ul class="lista login ">
+				
+				<form action="./" method="post" enctype="multipart/form-data">
+					
+					{% csrf_token %}
+				
+					<li class="form">
+						<h3>Preencha todos os campos abaixo</h3>
+						<ul class="dados">
+							<li>
+								<span>Nome *:</span>
+								<br />
+								<input type="text" value="{{ txt_name }}" name="txt_name" style="width: 255px;" onfocus="send_form('form', false);" onchange="send_form('form', false);"
+									jVal="{valid:function (val) { if (val.length < 3) return 'Digite o seu nome completo.'; else return ''; }}" />
+							</li>
+							<li>
+								<span>Email *:</span>
+								<br />
+								<input type="text" value="{{ txt_email }}" name="txt_email" style="width: 255px;" onfocus="send_form('form', false);" onchange="send_form('form', false);"
+									jVal="{valid:function (val) { if (/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/.test(val)) return true; else return false; }, message:'E-mail Inválido.'}"
+										jValKey="{valid:/[a-zA-Z0-9._%+-@]/, cFunc:'alert', cArgs:['E-mail: '+$(this).val()+'.']}" />
+							</li>
+							<li style="height: 68px;">
+								<span>Nova senha:</span>
+								<br />
+								<input type="password" id="password" value="" name="txt_newpass" style="width: 132px;" onfocus="send_form('form', false);" onchange="send_form('form', false);"
+									jVal="{valid:function (val) { if (is_secury < 60) return false; if (val.length >= 4) return true; else return false; }, message:'Insegura, use letras e números.'}" />
+								<div id="passwordStrengthDiv" class="is0 is40"></div>
+							</li>
+							<li>
+								<span>Confirma:</span>
+								<br />
+								<input type="password" value="" name="txt_confirm" style="width: 132px;" onfocus="send_form('form', false);" onchange="send_form('form', false);"
+									jVal="{valid:function (val) { if ( val != eval('$(\'#password\').val()') ) return false; else return true; }, message:'A senha não confere.'}" />
+							</li>
+							<li class="captcha">{{ captcha.as_p }}</li>
+						</ul>
+						<a href="javascript:void(0);" onclick="if (send_form('form', true))$('#mensagem').jGrowl('Verifique os campos abaixo.');" class="botao">Salvar</a>
+					</li>
+
+				</form>
+	
+			</ul>
+	
+			<div class="clearfix"></div>
+	
+		</div>
+	</section>
+
+{% endblock content %}

@@ -1,0 +1,154 @@
+﻿{% extends 'mega/main.html' %}
+
+{% load util keyboard %}
+
+{% block content %}
+
+    <div id="header">
+        <div class="container">
+            <div id="logo"><a href="{% url home %}{{ rede.link }}/"><img src="{{ rede|logo }}" border="0" /></a></div>
+            <div id="header-text">{% for i in list_menu %}{% if i.tipo == 'D' %}{{ i.name|safe }}{% endif %}{% endfor %}</div>
+
+            {% for i in list_menu %}
+                {% if i.tipo == 'S' %}
+                    <div id="search">
+                        <form method="get" id="search-form" action="{% url busca rede.link %}">
+                            <div class="form-item">
+                                <input type="text" value="{{ q|default:'' }}" name="q" class="busca" />
+                                {% set_keyboard_buttom get_tipo_template 'top:10px; right:36px;' %}
+                                <button id="search-submit">
+                                    <span>Buscar</span>
+                                </button>
+                            </div>
+                        </form>
+                        <span class="sub_pesquisa">Pesquisa de vídeos</span>
+                    </div>
+                {% endif %}
+            {% endfor %}
+
+            <div id="menu">
+                <div class="user-button">
+                	{% aproveitamento_count_append list_aproveitamento_account user %}
+                </div>
+                <div class="menu-button">MENU</div>
+                {% if list_menu|tipobusca %}<div class="search-button"></div>{% endif %}
+                <ul>
+                    {% for i in list_menu %}
+                        {% if i.tipo == 'B' %}
+                        	{% if i.name|lower == 'sair' %}
+                            	<li><a class="btn_logout" href="{% url home %}{{ rede.link }}/{{ i.url }}">{{ i.name|upper }}</a></li>
+                            {% else %}
+                            	<li><a href="{% url home %}{{ rede.link }}/{{ i.url }}">{{ i.name|upper }}</a></li>
+                            {% endif %}
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    {% block bloco %}
+
+        <div id="content">
+            <div class="container">
+
+                {% if list_video %}
+                    <div class="path">
+                        {% sub_menu_treinamento list_video rede %}
+                    </div>
+                {% endif %}
+
+                <div class="bar">Central de Treinamento</div>
+
+                {% if sucesso == 'true' %}
+
+                    <div class="wrap">
+                        <img src="{{ STATIC_URL }}{{ get_tipo_template }}/images/success.png" border="0" />
+                        <br /><br />
+                        <h3>Parabéns!</h3>
+                        <p>Você acertou <strong>{{ porcent }}%</strong> das respostas e a pontuação do teste foi atingida.</p>
+                        <p>Com esse treinamento você conquistou mais um passo importante em sua carreira profissional.</p>
+                        <p>Coloque os conhecimentos em prática e boa sorte!</p>
+                        <br />
+                        <input type="button" value="Concluído" class="buttom" onclick="window.location='{% url home rede.link %}'" style="cursor: pointer;" />
+                    </div>
+
+                {% else %}
+
+                    {% if sucesso == 'false' %}
+
+                        <div class="wrap">
+                            <img src="{{ STATIC_URL }}{{ get_tipo_template }}/images/fail.png" border="0" />
+                            <br /><br />
+                            <h3>Desculpe...</h3>
+                            <p>Infelizmente você acertou somente <strong>{{ porcent }}%</strong> das respostas e a pontuação do teste não foi atingida.</p>
+                            <p>Mas não desista, tente novamente e boa sorte!</p>
+                            <br />
+                            <input type="button" value="Assistir o vídeo e tentar novamente" class="buttom" onclick="window.location='{% url treinamento rede.link list_video.0.id %}'" style="cursor: pointer;" />
+                        </div>
+
+                    {% else %}
+                    
+                    	{% if sucesso == 'aguarde' %}
+                    	
+                    		<div class="wrap">
+
+	                            <h3>Aguarde...</h3>
+	                            <p>Infelizmente não podemos avaliar você neste momento, porém, estamos encaminhando suas respostas para o responsável para estar avaliando.</p>
+	                            <p>Em até 48 horas você receberá um email informando sobre a sua avaliação.</p>
+	                            <br />
+	                            <input type="button" value="Ok, entendi!" class="buttom" onclick="window.location='{% url home rede.link %}'" style="cursor: pointer;" />
+	                        </div>
+
+                    	{% else %}
+                    
+			                <div class="wrap">
+			                	{% if porcent_quiz < 100 %}
+			                		<p>Para ser aprovado neste treinamento você deverá acertar pelo menos <strong>{{ porcent_quiz }}%</strong> das questões, boa sorte! Lembrando que quanto <strong>mais</strong> acertar mais pontos irá ganhar.</p>
+			                	{% else %}
+			                		<p>Para ser aprovado neste treinamento você deverá acertar <strong>todas</strong> as questões abaixo, boa sorte!</p>
+			                	{% endif %}
+			                </div>
+	
+	                        <form id="questions" method="post" action="./">
+	
+	                            {% csrf_token %}
+	
+	                            {% for lq in list_question %}
+	
+	                                <p class="number">{{ forloop.counter }}</p>
+	                                <p class="question">{{ lq.text|safe }}</p>
+	
+	                                <div class="responses">
+	                                    {% for glr in lq.get_list_response %}
+	                                        <p>
+	                                            <label>
+	                                                <input type="radio" name="resposta_{{ lq.id }}" value="{{ glr.id }}" />
+	                                                {{ glr.text }}
+	                                            </label>
+	                                        </p>
+	                                    {% empty %}    
+	                                        <p>
+	                                        	<textarea name="resposta_{{ lq.id }}" rows="4" style="width: 100%;"></textarea>
+	                                        </p>
+	                                    {% endfor %}
+	                                </div>
+	
+	                            {% endfor %}
+	
+	                            <input type="submit" class="buttom" title="Certificação" value="Finalizar" style="cursor: pointer;" />
+	
+	                        </form>
+                        
+                        {% endif %}
+
+                    {% endif %}
+
+                {% endif %}
+
+            </div>
+        </div>
+
+    {% endblock bloco %}
+
+{% endblock content %}

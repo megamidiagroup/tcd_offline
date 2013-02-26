@@ -1,0 +1,84 @@
+ 
+table.brandwidth tr.featured.light{
+    background:#ebebeb;
+}
+ 
+table.brandwidth tr td.content-featured table.img td.img {
+    padding:6px 10px 0px 10px;
+    vertical-align: top;
+    height: 110px;	
+}
+
+table.brandwidth tr td.content-featured table.img td {
+    font-size: 18px;
+    color:#313131;
+    padding-left:10px;
+    vertical-align: top;
+    padding-top: 5px;
+}
+
+table.brandwidth tr td.content table tr td table.item tr td {
+	font-size: 14px;
+    color:#313131;
+    padding-left:10px;
+    vertical-align: top;
+}
+
+table.brandwidth tr td.content table tr td table.item tr td.img {
+     padding-top: 5px;	
+}
+
+table.brandwidth tr td.content-featured table.img td div , table.brandwidth tr td.content table tr td table.item tr td div {
+    position: relative;	
+}
+
+table.brandwidth tr td.content-featured table.img tr td div div {
+	font-size: 36px;
+	color:#313131;
+	position:absolute;
+	width:74px;
+	height:52px;
+	right:10px;
+	top:-20px;
+	text-align:center;
+}
+
+table.brandwidth tr td.content table tr td table.item tr td div div {
+	font-size: 29px;
+    color:#313131;
+    position:absolute;
+    width:58px;
+    height:32px;
+    right:8px;
+    top:-20px;
+    text-align:center;
+}
+
+table.brandwidth tr td.content table tr td table.item {
+	width:171px;
+	height:115px;
+}
+
+table.brandwidth tr td.content table.resume {
+    margin-top: 60px;
+}
+
+table.brandwidth tr td.content table.resume tr th {
+    color:#d0dfe4;
+    width:180px;
+    height: 40px;
+    font-size: 14px;
+}
+
+table.brandwidth tr td.content table.resume tr td {
+    text-align: center;
+    padding:10px;	
+    color:#fff;
+    font-size: 45px;
+}
+
+table.brandwidth tr td.content table.resume tr td span {
+    color:#D0DFE4;
+    font-size: 15px;	
+}
+

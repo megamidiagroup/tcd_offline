@@ -1,0 +1,39 @@
+{% load util %}
+
+{% if list_enquete %}
+
+	<div id="enquete-widget">
+        <a href="#" class="enquete"><img src="{{ STATIC_URL }}{{ get_tipo_template }}/images/icon_enquete.png" border="0" /></a>
+
+		<span class="jewelCount"><span>1</span></span>
+
+        <div id="enquete">
+            <div class="shadow">
+            	
+            	<form action="./" method="post" enctype="multipart/form-data">
+
+					{% csrf_token %}
+            	
+	            	<h3 style="text-align:center;">Enquete {{ rede.name }}</h3>
+	            	{% for le in list_enquete %}
+					    <label>{{ le.title }}</label>
+					    {% for loe in le|list_option_enquete %}
+					    	{# if groups|grupo:forloop.parentloop.counter == forloop.counter #}
+					    	{% if False %}
+					    		<label><input type="radio" checked="checked" name="group{{ forloop.parentloop.counter }}" value="{{ forloop.counter }}" /> {{ loe }}</label>
+					    	{% else %}
+					    		<label><input type="radio" name="group{{ forloop.parentloop.counter }}" value="{{ forloop.counter }}" /> {{ loe }}</label>
+					    	{% endif %}
+					    {% endfor %}
+				    {% endfor %}
+				    
+				    <input class="btn buttom" type="submit" value="Votar" />
+				    
+				</form>
+			    
+            </div>
+            <span class="arrow"></span>
+        </div>
+    </div>
+
+{% endif %}

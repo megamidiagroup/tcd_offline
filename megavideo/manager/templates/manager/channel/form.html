@@ -1,0 +1,24 @@
+{% extends 'manager/form.html' %}
+
+{% block css_script %}
+	<link href="{{STATIC_URL}}/static/manager/css/main.css" rel="stylesheet" type="text/css" media="screen" />
+	            
+	<link href="{{STATIC_URL}}/static/manager/css/digg.css" rel="stylesheet" type="text/css" media="screen" />
+	            
+	<link href="{{STATIC_URL}}/static/manager/css/sortListUI.css" rel="stylesheet" type="text/css" media="screen" />
+	<link href="{{STATIC_URL}}/static/manager/css/jquery-ui-1.7.1.custom.css" rel="stylesheet" type="text/css" media="screen" />
+{% endblock %}
+
+{% block form_title %}
+<h2>{{ form_title }}</h2>
+{% endblock %}
+
+{% block tag_list %}
+{% endblock %}
+
+{% block serie_list %}
+{% endblock %}
+
+{% block form_colum %}
+    <img src='{{ thumb_image }}' width='150'>
+{% endblock %}

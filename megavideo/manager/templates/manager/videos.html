@@ -1,0 +1,33 @@
+{% extends 'manager/main.html' %}
+
+{% block main %}
+<div id='main'>
+{% for i in vlist %}
+<div id='video_{{ i.id }}' class='video_box'>
+
+    <a href='{{ request.channel_url }}manager/video/{{ i.id }}'>
+    {% if i.is_wide %}
+        <img class='video_thumb_wide' src='{{ i.get_thumb_url }}'/>
+    {% else %}
+        <img class='video_thumb' src='{{ i.get_thumb_url }}'/>
+    {% endif %}
+    </a>
+        <div class='video_name'>{{ i.get_name|truncatewords:5 }}</div>
+
+        <div class='video_description'>{{ i.get_description|truncatewords:10 }}</div>
+        <div class='video_vote'>Vote :  </div>
+</div>
+
+{% endfor %}
+<div id='paginate'>
+    <ul id='paginate_list'>
+        {% for i in paginate.pages %}
+        <li>{{ i }}</li>
+        {% endfor %}
+    </ul>
+    </div>
+</div>
+</div>
+
+
+{% endblock %}

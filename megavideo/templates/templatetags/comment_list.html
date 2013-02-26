@@ -1,0 +1,100 @@
+{% load paginators %}
+{% if  scrapbook_list %}
+		{% for i in scrapbook_list.object_list %} 
+		<li class="{% cycle '' 'color' %} line_{{i.id}}" id='line_{{i.id}}' >
+			<table>
+				<tr>
+					<td width='60'>
+					<a href='/profile/{{i.from_scrap.id}}/' >		
+						{% load thumbnail %}
+						{% if i.from_scrap.image %}
+						{% thumbnail i.from_scrap.image 50x50 upscale as thumb %}
+							<img src='{{ thumb }}' class='profile' width='{{ thumb.width }}' border=0 height='{{ thumb.height }}' hspace='5' vspace='5'>
+						{% else %}
+							<img src='/megavideo/static/social/image/default.jpg' class='profile' width='50' height='50' border='0' hspace='5' vspace='5' >
+						{% endif %}	
+					</a>
+					</td>
+					<td valign='top'>
+					<p>
+						{{ i.message|safe }}
+					</p>
+					</td>
+				</tr>
+				<tr>
+					<td align='right' colspan=2>
+						<span>
+								{% load get_age %}
+								{{ i.added|diff_days }}
+						</span> 
+						{% load get_profile %}
+						{% if i|has_permission:person_info.id %}
+							<a href='javascript:void(0)' class='btn exclude' target_id='{{i.id}}' url="/profile/{{person_info.id}}/scrapbook/del_scrap/" msg="Você tem certeza que deseja excluir este vídeo?"  title='Excluir vídeo' alt='Excluir vídeo' border='0' >[ Excluir ]</a>
+						{% endif %}
+						<a href='javascript:void(0)' class='btn answer' from_person='{{person_info.id}}' to_person='{{i.from_scrap.id}}' parent='{{i.id}}'  url="/profile/scrapbook/answer/" >[ Comentar ]</a>
+					</td>
+				</tr>
+			</table>
+			
+			<div id='parent_scrap' style='padding-left:20px'>
+			<ul>			
+			{% if i.get_children %}
+					{% for f in i.get_children %}
+					<li class='{% cycle "color" "" %} line_{{i.id}}-{{f.id}}' id='line_{{i.id}}-{{f.id}}'>
+						<table>
+							<tr>
+								<td width='60'>
+								<a href='/profile/{{i.from_scrap.id}}/' >		
+									{% load thumbnail %}
+									{% if f.from_scrap.image %}
+									{% thumbnail f.from_scrap.image 30x30 upscale as thumb %}
+										<img src='{{ thumb }}' class='profile' width='{{ thumb.width }}' border=0 height='{{ thumb.height }}' hspace='5' vspace='5'>
+									{% else %}
+										<img src='/megavideo/static/social/image/default.jpg' class='profile' width='30' height='30' border='0' hspace='5' vspace='5' >
+									{% endif %}	
+								</a>
+								</td>
+								<td valign='top'>
+								<p>
+									{{ f.message|safe }}
+								</p>
+								</td>
+							</tr>
+							<tr>
+								<td align='right' colspan=2>
+									<span>
+											{% load get_age %}
+											{{ f.added|diff_days }}
+									</span> 
+									{% load get_profile %}
+									{% if f|has_permission:person_info.id %}
+										<a href='javascript:void(0)' class='btn exclude' target_id='{{f.id}}' hide='{{i.id}}-{{f.id}}' url="/profile/{{person_info.id}}/scrapbook/del_scrap/" msg="Você tem certeza que deseja excluir este vídeo?"  title='Excluir vídeo' alt='Excluir vídeo' border='0' >[ Excluir ]</a>
+									{% endif %}
+										<a href='javascript:void(0)' class='btn answer' from_person='{{person_info.id}}' to_person='{{f.from_scrap.id}}' parent='{{i.id}}'  url="/profile/scrapbook/answer/" >[ Comentar ]</a>
+								</td>
+							</tr>
+						</table>
+					</li>					
+					{% endfor %}
+			{% else %}
+				<li style='display:none'></li>
+		{% endif %}
+			</ul>
+		</div>
+		</li>
+		{% endfor %}
+		</ul>
+
+	</li>
+	
+	{% if scrapbook_list.object_list.count %}
+	<li>
+		{% django_paginator scrapbook_list '/profile/{{person_info.id}}/scrapbook/page/' %}
+	</li>
+	{% endif %}
+
+{% else %}
+	<li>
+		Nenhum comentário cadastrado
+	</li>	
+{% endif %}

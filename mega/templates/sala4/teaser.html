@@ -1,0 +1,158 @@
+{% extends 'sala4/main.html' %}
+
+{% load util %}
+
+{% block class-section %}teaser{% endblock class-section %}
+
+{% block extra-js %}
+
+	<script type="text/javascript">
+	
+		function preload(arrayOfImages) {
+			$(arrayOfImages).each(function(){
+				$('<img/>')[0].src = this;             
+			});
+	    }
+	    
+	    function send_teaser()
+	    {
+	    	$('input[type=submit]').attr('disabled', true);
+	    	$('.error').html('Aguarde...');
+	    	$.ajax({
+		        type: "POST",
+		        url: '{{ domain }}',
+		        dataType: "html",
+		        data: {email : $(".email").val(), csrfmiddlewaretoken : $("input[name=csrfmiddlewaretoken]").val(), action : $('form').attr('action')},
+		        success: function(data){
+		        	if (data == 'ok')
+		        	{
+		        		window.location = '{{ domain }}?sucesso=true';
+		        	} else {
+			            $('.error').html(data).css('display', 'block');
+			            $('input[type=submit]').val('Assinar').attr('disabled', false);
+		            }
+		        }
+		    });
+	    }
+
+		$(document).ready(function(){
+			
+			$('.planos').parent().parent().remove();
+			$('.btn_logout').remove();
+			$('.usuario').css('margin-right', '100px');
+			
+			$('.social').css('display', 'block');
+			
+			preload(['{{ STATIC_URL }}{{ get_tipo_template }}/images/btnAssinar-over.png']);
+			
+			$("#mc-embedded-subscribe").mouseenter(function (){
+				$(this).css('background','url("{{ STATIC_URL }}{{ get_tipo_template }}/images/btnAssinar-over.png") no-repeat scroll center center transparent');
+			}).mouseleave(function (){
+				$(this).css('background','url("{{ STATIC_URL }}{{ get_tipo_template }}/images/btnAssinar.png") no-repeat scroll center center transparent');
+			});
+			
+			$('.vr').css('height', $('#colunas').height() + "px");
+			
+			$('input[type=submit]').click(function(e){
+				send_teaser();
+			});
+			
+			$(".email").click(function(e){
+				var obj = $(this);
+				if ( obj.val() == obj.attr('default') )
+				{
+					obj.val('');
+				}
+			}).blur(function(e){
+				var obj = $(this);
+				if ( obj.val() == '' )
+				{
+					obj.val(obj.attr('default'));
+				}
+			}).focus(function(e){
+				var obj = $(this);
+				if ( obj.val() == obj.attr('default') )
+				{
+					obj.val('');
+				}
+			}).keydown(function(e){
+				if( e.which == 13 )
+				{
+					send_teaser();
+				}
+			});
+		
+		});
+		
+    </script>
+    
+{% endblock extra-js %}
+
+{% block content %}
+       
+	<section id="bannerArea">
+		<div class="wrapper">
+			<div class="titulo">
+	
+				<h2><span>Assista, Aprenda, Use.</span></h2>
+	
+			</div>
+	
+			<!-- Begin MailChimp Signup Form -->
+	
+			<form action="http://sala04.us1.list-manage2.com/subscribe/post?u=b0693906eb97cbe399ca3ddd1&amp;id=59bdb17a55" onsubmit="return false;" method="post" class="cadastro validate" target="_blank">
+				
+				{% csrf_token %}
+				
+				<input type="text" value="Endereço de Email" name="email" class="email" default="Endereço de Email" />
+				<input type="submit" value="Assinar" name="subscribe" id="mc-embedded-subscribe" class="button botao" />
+			</form>
+			
+			<p class="error" style="color: #990000; font-size: 20px;display: none;">&nbsp;</p>
+	
+			<!--End mc_embed_signup-->
+			<p>
+				Quer estar entre os primeiros participantes da SALA#04? Cadastre seu email acima. 
+				Não se preocupe, também odiamos SPAM, seu email só vai ser usado para comunicar 
+				o lançamento da plataforma :)
+			</p>
+		</div>
+		<div id="ondas"></div>
+	</section>
+	
+	<section id="content">
+		<div class="wrapper teaser">
+			<div class="columns" id="colunas">
+				<div class="column grid_4">
+					<img src="{{ STATIC_URL }}{{ get_tipo_template }}/images/hd.png" />
+					<h3>Vídeos com qualidade</h3>
+				</div>
+				<div class="gutter grid_4">
+					<div class="vr"></div>
+				</div>
+				<div class="column grid_4">
+					<img src="{{ STATIC_URL }}{{ get_tipo_template }}/images/professor.png" />
+					<h3>Professores da Área</h3>
+				</div>
+				<div class="gutter grid_4">
+					<div class="vr"></div>
+				</div>
+				<div class="column grid_4">
+					<img src="{{ STATIC_URL }}{{ get_tipo_template }}/images/badges.png" />
+					<h3>Conquiste badges</h3>
+				</div>
+				<div class="gutter grid_4">
+					<div class="vr"></div>
+				</div>
+				<div class="column grid_4">
+					<img src="{{ STATIC_URL }}{{ get_tipo_template }}/images/dream.png" />
+					<h3>Realize seu Projeto</h3>
+				</div>
+			</div>
+			<div class="clearfix"></div>
+		</div>
+	</section>
+
+{% endblock content %}
+
+{% block footer %}{% endblock footer %}

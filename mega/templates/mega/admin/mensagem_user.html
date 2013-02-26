@@ -1,0 +1,10 @@
+{% extends "admin/change_form.html" %}
+{% load i18n %}
+
+{% block form_top %}
+ 	Para cadastrar um usuário, você deverá selecionar uma rede.
+{% endblock %}
+
+{% block after_field_sets %}
+	<script type="text/javascript">alert('Para cadastrar um usuário, você deverá selecionar uma rede.');</script>
+{% endblock %}

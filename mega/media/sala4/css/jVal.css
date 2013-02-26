@@ -1,0 +1,96 @@
+.jfVal {
+	position: absolute;
+	z-index: 1110;
+}
+.jValSpacer {
+	position: absolute;
+	width: 0px;
+	float: left;
+}
+.jValSpacercover {
+	background: #eee url(../images/eeGrad2.gif) bottom repeat-x;
+	border: 1px solid #ccc;
+	border-right: 0px;
+}
+.jValSpacerpod {
+	background: #f0f2f5 url(../images/f0f2f5grad.gif) bottom repeat-x;
+	border: 1px solid #ccc;
+	border-right: 0px;
+}
+.jValSpacerblank {
+	height: 16px !important;
+	opacity: 0.6;
+}
+.jfVal .icon {
+	float: left;
+}
+.jfVal .iconcover {
+	background: #eee url(../images/eeGrad2.gif) bottom repeat-x;
+	border: 1px solid #ccc;
+	border-width: 1px 0px;
+	width: 20px;
+	text-align: left;
+}
+.jfVal .iconpod {
+	background: #f0f2f5 url(../images/f0f2f5grad.gif) bottom repeat-x;
+	border: 1px solid #ccc;
+	border-left: 0px;
+	-moz-border-radius-topright: 3px;
+	-moz-border-radius-bottomright: 3px;
+	-webkit-border-top-right-radius: 3px;
+	-webkit-border-bottom-right-radius: 3px;
+	width: 20px;
+	text-align: left;
+}
+.jfVal .iconblank {
+	background: #fff;
+	margin-top: -4px;
+	height: 20px !important;
+	padding-left: 5px;
+}
+.jfVal .icon .iconbg {
+	background: url(../images/warning.gif) center left no-repeat;
+	height: 100%;
+	width: 16px;
+}
+.jfVal .content {
+	color: red;
+	vertical-align: middle;
+	white-space: nowrap;
+	float: left;
+	padding-right: 5px;
+}
+.jfVal .contentcover {
+	background: #eee url(../images/eeGrad2.gif) bottom repeat-x;
+	border: 1px solid #ccc;
+	border-left: 0px;
+	-moz-border-radius-topright: 3px;
+	-moz-border-radius-bottomright: 3px;
+	-webkit-border-top-right-radius: 3px;
+	-webkit-border-bottom-right-radius: 3px;
+}
+.jfVal .messagepod {
+	opacity: 0.8;
+	background: none;
+	padding: 2px 5px;
+	width: 100%;
+}
+.jfVal .messageblank {
+	background: #fff;
+	padding: 2px 5px;
+}
+#form_blank input[type=text], #form_blank [jVal] {
+	padding-top:3px;
+}
+
+.is0{background:url(../images/progressImg1.png) no-repeat 0 0;width:138px;height:7px;}
+.is10{background-position:0 -7px;}
+.is20{background-position:0 -14px;}
+.is30{background-position:0 -21px;}
+.is40{background-position:0 -28px;}
+.is50{background-position:0 -35px;}
+.is60{background-position:0 -42px;}
+.is70{background-position:0 -49px;}
+.is80{background-position:0 -56px;}
+.is90{background-position:0 -63px;}
+.is100{background-position:0 -70px;}

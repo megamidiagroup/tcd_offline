@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <title>jQuery UI Datepicker - Localize calendar</title>
+
+    <script type="text/javascript" src="{{STATIC_URL}}/static/js/manager/jquery-1.3.2.min.js">
+    <script type="text/javascript" src="{{STATIC_URL}}/static/js/datapicker/ui.core.js"></script>
+    <script type="text/javascript" src="{{STATIC_URL}}/static/js/datapicker/ui.datepicker.js"></script>
+    <script type="text/javascript" src="{{STATIC_URL}}/static/js/datapicker/ui.datepicker-pt-BR.js"></script>
+    <script type="text/javascript" src="{{STATIC_URL}}/static/js/datapicker/config.js"></script>
+
+    <link type="text/css" href="{{STATIC_URL}}/static/css/datapicker/ui.all.css" rel="stylesheet" />
+
+</head>
+<body>
+
+    <input type="text" id="datepicker"/>
+
+    <script language="javascript">
+    $(function() {
+        date("datepicker");//#div
+    });
+    </script>
+
+{{ teste }}
+
+</body>
+</html>

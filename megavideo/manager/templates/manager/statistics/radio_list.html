@@ -1,0 +1,74 @@
+{% extends 'manager/list.html' %}
+
+{% block css_script %}
+	<link href="{{STATIC_URL}}/static/css/manager/main.css" rel="stylesheet" type="text/css" media="screen" />
+	
+	<link href="{{STATIC_URL}}/static/css/manager/digg.css" rel="stylesheet" type="text/css" media="screen" />
+	
+	
+	
+	
+
+{% endblock %}
+
+{% block js_script %}
+			<script type="text/javascript" src="{{STATIC_URL}}/static/js/manager/jquery-1.3.2.min.js"> </script>
+			<script type="text/javascript" src="{{STATIC_URL}}/static/js/manager/jquery.corner.js"> </script>
+			<script type="text/javascript" src="{{STATIC_URL}}/static/js/manager/swfobject.js"> </script>
+			<script type="text/javascript" src="{{STATIC_URL}}/static/js/manager/jquery.pngFix.pack.js"> </script>
+			<script type="text/javascript" src="{{STATIC_URL}}/static/js/manager/script_manager.js"> </script>
+{% endblock %}
+
+
+{% block content_header %}
+<h2>{{ filter_title }}</h2>
+
+{% endblock %}
+
+{% block line_title %}
+   {{ i.name }}
+{% endblock %}
+
+{% load miniature %}
+{% block list %}
+        <ol id='statist_list'>
+            <li>
+            {% if content_list.object_list %}
+            <table class="taboverview" cellpadding=0 cellspacing=0 width='100%'>
+				<thead>
+				<tr>
+					<th align='left'>ID</th>
+					<th align='left'>Nome</th>
+					<th align='left'>Freqüência</th>
+					<th align='left'>Ouvintes</th>
+					<th align='left'>Cidade</th>
+					<th align='left'>Downloads</th>
+					<th></th>
+				</tr>
+				</thead>
+				<tbody>
+				{% load extra_filter %}
+				{% for i in content_list.object_list %}
+			    <tr class="{% cycle 'color' '' %}">
+					<td>{{ i.id }}</td>
+					<td>{{ i.name }}</td>
+					<td>{{ i.frequency }} </td>
+					<td>{{ i.listeners }} </td>
+					<td>{{ i.get_city }} </td>
+					<td> {{ i.get_total_downloads }}</td>
+					<td> <a href='/manager/statistic/radio/info/{{i.id}}/'> <img width="17" border="0" src="{{STATIC_URL}}/static/images/vflowstat/icongraph.png"/> </a></td>
+				</tr>
+				{% endfor %}
+				</tbody>
+			</table>
+
+
+			{% else %}
+                <div class='empty'>
+                    Nenhum registro cadastrado
+                </div>
+            {% endif %}
+
+			</li>
+        </ol>
+{% endblock %}

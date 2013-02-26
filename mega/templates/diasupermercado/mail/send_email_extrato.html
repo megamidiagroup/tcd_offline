@@ -1,0 +1,40 @@
+﻿{% load util %}
+
+<table cellpadding="0" cellspacing="0" border="0" width="100%">
+
+    <tr>
+        <td align="left" valign="middle" colspan="3">
+            <img src="{{ BASE_URL }}{{ rede.logo.url }}" border="0" />
+        </td>
+    </tr>
+
+    <tr>
+        <td align="left" valign="middle" colspan="3">Olá {{ name }},</td>
+    </tr>
+    <tr>
+        <td align="left" valign="middle" colspan="3">Segue o extrato detalhado de seu certificado:</td>
+    </tr>
+    <tr><td colspan="3">&nbsp;</td></tr>
+    <tr>
+        <td align="left" valign="top"><b>Certificado</b></td>
+        <td align="left" valign="top"><b>Treinamentos</b></td>
+        <td align="center" valign="top"><b>Data</b></td>
+    </tr>
+
+    {% if list_certificado %}
+
+        {% for i in list_certificado %}
+            <tr>
+                <td align="left" valign="top">{{ i.name }}</td>
+                <td align="left" valign="top">
+                    {% for t in i.get_list_treinamento %}
+                        {{ t }} <br />
+                    {% endfor %}
+                </td>
+                <td align="center" valign="top">{{ i.date|date:'d/m/Y à\s H:i' }}</td>
+            </tr>
+        {% endfor %}
+
+    {% endif %}
+
+</table>

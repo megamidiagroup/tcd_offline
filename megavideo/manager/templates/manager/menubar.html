@@ -1,0 +1,16 @@
+{% load hasin %}
+<div id='menubar'>
+<ul>
+	<li class='mm_edit {{ request.get_full_path|return_selected:'update' }} '><img
+		src='/megavideo/static/manager/images/bt_edit.png' align="left"><a
+		href='{{ request.channel_url }}manager/program/update/{{video.id}}/'>Edit</a></li>
+	
+	<li class='mm_exclude'><img
+		src='/megavideo/static/manager/images/bt_delete.png' align="left"><a
+		href="javascript:void(0);" class="exclude" target_id="{{video.id}}"
+		url="{{ request.channel_url }}manager/program/"
+		msg="Você tem certeza que deseja excluir este vídeo?"
+		title="Excluir vídeo">Excluir</a></li>
+</ul>
+</div>
+<div class='clear'>&nbsp</div>

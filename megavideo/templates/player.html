@@ -1,0 +1,11 @@
+<object id="globalnav-object" classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000" codebase="http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=8,0,0,0" width="240" height="180" >
+	<param name="movie" value="{{STATIC_URL}}/static/swf/player.swf?{{ playerfile }}&idVideo={{ video.id }}" />
+    <param name="menu" value="False" />
+    <param name="quality" value="high" />
+    <param name="wmode" value="transparent" />
+    <param name="allowFullScreen" value="true" />
+    <param name="playAuto" value="False" />
+    <param name="FlashVars" value="' + vars + '" />
+    <embed src="{{STATIC_URL}}/static/swf/player.swf?{{ playerfile }}&idVideo={{ video.id }}&playAuto=False" allowFullScreen="true" type="application/x-shockwave-flash" pluginspage="http://www.macromedia.com/go/getflashplayer" playAuto="False" FlashVars="" menu="False" quality="high" id="player_flash" width="240" height="180"></embed>
+</object>
+

@@ -1,0 +1,102 @@
+{% extends 'manager/form.html' %}
+{% load super_truncate %}
+
+{% block js_script %}
+    <script type="text/javascript" src="{{STATIC_URL}}/static/manager/js/swfobject1.5.js"> </script>
+    <script type="text/javascript" src="{{STATIC_URL}}/static/manager/js/jquery.jqModal.js"> </script>
+    <script type="text/javascript" src="{{STATIC_URL}}/static/manager/js/publicity.js"> </script>
+{% endblock %}
+
+{% block form_title %}
+    <h2>{{ video.get_name|super_truncatewords:"10-15" }}</h2>
+{% endblock %}
+
+{% block flash_player %}
+
+{% endblock %}
+
+{% block li_info %}
+    
+{% endblock %}
+
+{% block form_list %}
+{% include 'manager/menubar.html' %}
+	
+	<table id="block_publicity" cellpadding="0" cellspacing="15" border="0">
+		<tr>
+			<td valign="top" width="640">s
+				<div id="playerFlash" video_id="{{video_id}}" url="{{base_url}}" rota="{{rota}}">
+		        	Aguarde, carregando o player...
+				</div>
+			</td>
+			<td valign="top" width="270">
+
+				<table id="filtro" width="190" cellpadding="0" cellspacing="0">
+					<tr>
+						<td class="selected" id="" align="center">
+							Todas
+						</td>
+						<td class="" id="true" align="center">
+							Publicadas
+						</td>
+						<td class="" id="false" align="center">
+							Despublicadas
+						</td>
+					</tr>
+				</table>
+				
+				<table class="list_publicity" width="100%" cellpadding="0" cellspacing="0">
+					<tr>
+						<td class="listagem">
+							{% include 'manager/publicity/ajax_list.html' %}
+						</td>
+					</tr>
+				</table>
+
+			</td>
+		</tr>
+		<tr>
+			<td colspan="2" class="new">
+				<a href="javascript:void(0);" title="Criar nova propaganda?" onclick="newPublicity();">
+					Nova Propaganda
+				</a>
+			</td>
+		</tr>
+	</table>
+	
+
+{% endblock %}
+
+{% block extra_line %}
+
+{% endblock %}
+
+{% block confirm %}
+
+<!-- Confirm Dialog -->
+<div class="jqmConfirm" id="confirm">
+
+    <div id="ex3b" class="jqmConfirmWindow">
+
+        <div class="jqmConfirmTitle clearfix">
+            <h1>Confirmação</h1>
+            <a href="#" class="jqmClose"><em>Close</em></a>
+        </div>
+
+        <div class="jqmConfirmContent">
+            <p class="jqmConfirmMsg"></p>
+        </div>
+
+        <table class="jqmButtons">
+            <tr>
+                <td width="40%" align="right" class="sim" id='1'><img src="{{STATIC_URL}}/static/manager/images/bt_ativo.gif" title="Sim" /> Sim</td>
+                <td width="20%">&nbsp;</td>
+                <td width="40%" align="left" class="no" id='0'><img src="{{STATIC_URL}}/static/manager/images/bt_remove.gif" title="Não" /> Não</td>
+            </tr>
+        </table>
+
+    </div>
+
+</div>
+
+{% endblock %}

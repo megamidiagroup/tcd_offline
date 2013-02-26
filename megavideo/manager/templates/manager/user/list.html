@@ -1,0 +1,130 @@
+{% extends 'manager/list.html' %}
+{% block css_script %}
+<link href="{{STATIC_URL}}/static/manager/css/main.css" rel="stylesheet" type="text/css" media="screen" />
+<link href="{{STATIC_URL}}/static/manager/css/digg.css" rel="stylesheet" type="text/css" media="screen" />
+
+<link href="{{STATIC_URL}}/static/manager/css/sortListUI.css" rel="stylesheet" type="text/css" media="screen" />
+{% endblock %}
+{% block js_script %}
+<script type="text/javascript" src="{{STATIC_URL}}/static/manager/js/jquery.jqModal.js">
+</script>
+<script type="text/javascript" src="{{STATIC_URL}}/static/manager/js/script_list.js">
+</script>
+{% endblock %}
+
+{% block breadcrumb %}
+{% for breadcrumb in request.breadcrumbs %}
+     <a href="{{ breadcrumb.url }}"
+     {% if forloop.first %} 
+     class='first' 
+     {% endif %}
+     >{{ breadcrumb.name }}</a>
+     {% if not forloop.last %} > {% endif %}
+{% endfor %}
+<div class='bt_cadastro'>
+    <a href='{{request.channel_url}}manager/user/add/'><img src='/megavideo/static/manager/images/bt_cadastrar.png' height="31" border='0' ></a>
+</div>
+{% endblock %}
+
+
+{% block line_title %}
+{{ i.name }}
+{% endblock %}
+{% block list %}
+<li id="list_new">
+    <table class='openOptions{{ i.id }}' cellspacing='0' cellpadding='0'> 
+          <tr>  
+                <th>
+                    Usuário
+                </th>
+                <th>
+                    Superusuário
+                </th>
+		<th>
+		    Ativo
+		</th>
+                <th>
+                    Rede
+                </th>
+                <th></th>
+                <th></th>
+        </tr>      
+        {% if content_list.object_list.count %}
+        
+		{% for i in content_list.object_list %}
+            <tr class='line_{{ i.id }}'>
+                <td width='240'>
+                    <span class="username"><b>{{ i.username }}</b></span>
+                </td>
+				<td width='110'>
+					{% if i.is_superuser %}
+						<div class='superuser true'></div>
+					{% else %}
+						<div class='superuser false'></div>	
+					{% endif %}
+				</td>	
+				<td width='110'>
+                                        {% if i.is_active %}
+                                                <div class='superuser true'></div>
+                                        {% else %}
+                                                <div class='superuser false'></div>
+                                        {% endif %}
+                                </td>
+                <td>
+                    <span>
+					{% for j in i.userchannel_set.all %}
+						{{ j.channel.name }}{% if not forloop.last %}, {% endif %}
+					{% endfor %}
+					</span>
+                </td>
+                <td width="100">
+                    <a href='{{request.channel_url}}manager/user/update/{{ i.id }}/' class='{% if not request.user.is_superuser %}{% if not request.user == i %}desabilita_btn{% endif %}{% endif %}' ><img class="" title='alterar' src="{{STATIC_URL}}/static/manager/images/bt_editar.png" border="0" /></a>
+                </td>
+                <!-- important -->
+                <td width="100">
+                    <img src='/megavideo/static/manager/images/bt_excluir.png' id='line_{{ i.id }}' class='{% if i.id == 1 or not request.user.is_superuser %}no_exclude{% else %}exclude{% endif %}' url='{{request.channel_url}}manager/user/del/' target_id='{{ i.id }}' title='{% ifequal i.id 1 %}Não é permitido excluir{% else %}Excluir usuário{% endifequal %}' msg='Você tem certeza que deseja excluir este usuário?' border="0" />
+                </td>
+            </tr>
+	   {% endfor %}
+	
+    {% else %}
+    <tr>
+        <div class='empty'>
+            Nenhum registro cadastrado
+        </div>
+   </tr>
+    {% endif %}
+    </table>
+</li>
+{% endblock %}
+{% block confirm %}<!-- Confirm Dialog -->
+<div class="jqmConfirm" id="confirm">
+    <div id="ex3b" class="jqmConfirmWindow">
+        <div class="jqmConfirmTitle clearfix">
+            <h1>Confirmação</h1>
+            <a href="#" class="jqmClose"><em>Close</em></a>
+        </div>
+        <div class="jqmConfirmContent">
+            <p class="jqmConfirmMsg">
+            </p>
+        </div>
+        <table class="jqmButtons">
+            <tr>
+                <td width="40%" align="right" class="sim" id='1'>
+                    <img src="{{STATIC_URL}}/static/manager/images/bt_ativo.gif" title="Sim" />Sim
+                </td>
+                <td width="20%">
+                    &nbsp;
+                </td>
+                <td width="40%" align="left" class="no" id='0'>
+                    <img src="{{STATIC_URL}}/static/manager/images/bt_remove.gif" title="Não" />Não
+                </td>
+            </tr>
+        </table>
+    </div>
+</div> {% endblock %}
+
+{% block block_pagination %}
+	{% load paginators %}
+	{% digg_paginator content_list digg_url %}
+{% endblock %}

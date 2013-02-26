@@ -1,0 +1,637 @@
+#main {
+	padding-bottom: 450px
+}
+#footer {
+	margin-top: -450px;
+	height: 450px
+}
+#header {
+	height: 240px
+}
+#header .wrapper {
+	width: 280px;
+	height: 240px
+}
+#header .wrapper h1 {
+	margin: 0 auto;
+	clear: both;
+	float: none
+}
+#header .wrapper a.login {
+	margin-top: 70px
+}
+#header .wrapper a.usuario {
+	float: left;
+	margin-top: 70px
+}
+#header .wrapper menu {
+	float: none;
+	margin: 120px 0 0;
+	width: 100%
+}
+#header .wrapper menu li {
+	width: 50%;
+	margin: 0;
+	padding: 0;
+	float: left;
+	background: transparent
+}
+#header .wrapper menu li a {
+	padding: 0 10px;
+	border-radius: 5px
+}
+#header .wrapper menu li a.biblioteca {
+	float: left;
+	background: #fff url("../images/play_menu.png") 10px 50% no-repeat
+}
+#header .wrapper menu li a.planos {
+	float: right;
+	background: #fff url("../images/estrela_menu.png") 10px 50% no-repeat
+}
+#bannerArea .wrapper {
+	width: 280px
+}
+#bannerArea .wrapper.home {
+	height: 780px
+}
+#bannerArea .wrapper .titulo {
+	width: 280px
+}
+#bannerArea .wrapper .titulo h2 {
+	width: 280px;
+	font-size: 32px
+}
+#bannerArea .wrapper .areas {
+	width: 280px
+}
+#bannerArea .wrapper .areas .area {
+	width: 280px;
+	height: 260px
+}
+#bannerArea .wrapper .areas .area h2 {
+	font-size: 50px
+}
+#bannerArea .wrapper .areas .area p {
+	width: 240px;
+	margin: 0 20px
+}
+#bannerArea .wrapper .areas .area#design {
+	left: 0;
+	top: 140px
+}
+#bannerArea .wrapper .areas .area#programacao {
+	left: 0;
+	top: 440px
+}
+#content .wrapper {
+	width: 280px
+}
+#content .wrapper .columns {
+	position: relative;
+	display: block;
+	height: 500px;
+	width: 280px
+}
+#content .wrapper .columns .gutter {
+	display: none
+}
+#content .wrapper .columns .column {
+	float: none;
+	position: absolute;
+	top: 0;
+	left: 0;
+	background-color: #f7f6f2
+}
+#content .wrapper .columns .column.grid_4 {
+	width: 280px
+}
+#content .wrapper .columns .column p {
+	text-align: center
+}
+#content .wrapper .titulo {
+	width: 280px
+}
+#content .wrapper .titulo h2 {
+	font-size: 50px
+}
+#content .wrapper .titulo h2 span {
+	padding: 0
+}
+#content .wrapper .titulo.categoria {
+	width: 280px
+}
+#content .wrapper .titulo.categoria h2 {
+	font-size: 50px
+}
+#content .wrapper .titulo.categoria h2 span {
+	padding: 0
+}
+#content .wrapper .lista.categoria {
+	position: relative;
+	display: block;
+	width: 280px;
+	padding: 0
+}
+#content .wrapper .lista.categoria li {
+	position: relative;
+	display: block;
+	width: 280px;
+	height: 58px;
+	line-height: 58px;
+	text-indent: 10px
+}
+#content .wrapper .lista.categoria li a {
+	position: relative;
+	display: block;
+	width: 280px;
+	font-size: 20px
+}
+#content .wrapper .lista.categoria li a img {
+	margin: -5px 5px 0 0
+}
+#content .wrapper .lista.categoria li a span {
+	margin: 0 10px 0 0
+}
+#content .wrapper .lista.quiz {
+	width: 230px
+}
+#content .wrapper .lista.quiz li.texto p {
+	width: auto;
+	font-size: 14px
+}
+#content .wrapper .lista.quiz li.questao {
+	padding: 40px 0 0
+}
+#content .wrapper .lista.quiz li.questao ul li {
+	text-indent: 0;
+	float: none
+}
+#content .wrapper .lista.quiz li.questao ul li.progresso {
+	text-indent: 0
+}
+#content .wrapper .lista.quiz li.questao ul li.enunciada {
+	text-indent: 0
+}
+#content .wrapper .lista.quiz li.questao ul li.alternativa {
+	padding: 0 0 10px;
+	height: auto;
+	line-height: normal;
+	min-height: 35px
+}
+#content .wrapper .lista.quiz li.questao ul li.alternativa .input_radio {
+	position: absolute;
+	line-height: 32px;
+	float: none;
+	top: 0;
+	left: 0
+}
+#content .wrapper .lista.quiz li.questao ul li.alternativa label {
+	position: relative;
+	display: block;
+	padding: 8px 0 0;
+	text-indent: 0;
+	margin: 0 0 0 40px;
+	float: none
+}
+#content .wrapper .lista.resultado {
+	width: 280px;
+	padding: 0
+}
+#content .wrapper .lista.resultado li {
+	text-indent: 0
+}
+#content .wrapper .lista.resultado li img {
+	width: 150px;
+	height: 150px
+}
+#content .wrapper .lista.resultado li.texto p {
+	width: 280px
+}
+#content .wrapper .lista.resultado li.share {
+	width: 258px;
+	margin: 0 10px
+}
+#content .wrapper .lista.resultado li.share p {
+	width: 258px
+}
+#content .wrapper .lista.resultado li.share .share_buttons {
+	width: 258px
+}
+#content .wrapper .lista.resultado li.share .share_buttons a {
+	width: 208px;
+	height: 67px;
+	margin: 5px auto;
+	float: none
+}
+#content .wrapper .lista.resultado li.share .share_buttons a.fb {
+	background-image: url(../images/mobile_facebook.jpg)
+}
+#content .wrapper .lista.resultado li.share .share_buttons a.twt {
+	background-image: url(../images/mobile_twitter.jpg)
+}
+#content .wrapper .lista.resultado li.proximo a {
+	font-size: 30px;
+	height: 50px;
+	line-height: 50px;
+	width: 190px
+}
+#content .wrapper .planos {
+	position: relative;
+	display: block;
+	width: 280px
+}
+#content .wrapper .planos .plano.esquerda, #content .wrapper .planos .plano.central, #content .wrapper .planos .plano.direita {
+	width: 280px
+}
+#content .wrapper .planos .plano.esquerda h3, #content .wrapper .planos .plano.central h3, #content .wrapper .planos .plano.direita h3 {
+	width: 280px
+}
+#content .wrapper .planos .plano.esquerda ul, #content .wrapper .planos .plano.central ul, #content .wrapper .planos .plano.direita ul {
+	width: 280px
+}
+#content .wrapper .planos .plano.esquerda .preco, #content .wrapper .planos .plano.central .preco, #content .wrapper .planos .plano.direita .preco {
+	width: 280px
+}
+#content .wrapper .planos .plano.esquerda .selecionar, #content .wrapper .planos .plano.central .selecionar, #content .wrapper .planos .plano.direita .selecionar {
+	width: 260px
+}
+#content .wrapper .planos .plano.esquerda {
+	left: -15px
+}
+#content .wrapper .planos .plano.esquerda.ativo {
+	z-index: 5;
+	top: 30px;
+	left: 0
+}
+#content .wrapper .planos .plano.esquerda.ativo .preco {
+	padding: 20px 0
+}
+#content .wrapper .planos .plano.central {
+	left: 0
+}
+#content .wrapper .planos .plano.direita {
+	left: 15px
+}
+#content .wrapper .planos .plano.direita.ativo {
+	z-index: 5;
+	top: 30px;
+	left: 0
+}
+#content .wrapper .planos .plano.direita.ativo .preco {
+	padding: 20px 0
+}
+#nav {
+	position: absolute;
+	display: block;
+	top: 250px;
+	left: 0;
+	width: 280px;
+	z-index: 10
+}
+#nav .button {
+	position: relative;
+	display: block;
+	width: 17px;
+	height: 28px;
+	text-indent: -10000px
+}
+#nav .button.prev {
+	float: left;
+	background: url(../images/mobile_arrow_prev.jpg) 0 0 no-repeat
+}
+#nav .button.next {
+	float: right;
+	background: url(../images/mobile_arrow_next.jpg) 0 0 no-repeat
+}
+#nav_planos {
+	position: absolute;
+	display: block;
+	top: 330px;
+	left: -10px;
+	width: 300px;
+	z-index: 10
+}
+#nav_planos .button {
+	position: relative;
+	display: block;
+	width: 17px;
+	height: 28px;
+	text-indent: -10000px
+}
+#nav_planos .button.prev {
+	float: left;
+	background: url(../images/mobile_arrow_prev_02.png) 0 0 no-repeat
+}
+#nav_planos .button.prev.esquerdo {
+	display: none
+}
+#nav_planos .button.next {
+	float: right;
+	background: url(../images/mobile_arrow_next_02.png) 0 0 no-repeat
+}
+#nav_planos .button.next.direito {
+	display: none
+}
+#content .wrapper.curso .lista.categoria li span {
+	font-size: 20px
+}
+#content .wrapper.curso .lista.categoria li.texto {
+	height: auto
+}
+#content .wrapper.curso .lista.categoria li.texto p {
+	width: 260px;
+	margin: 0 10px;
+	font-size: 14px
+}
+#content .wrapper.curso .lista.categoria li.quiz.locked {
+	display: none
+}
+#content .wrapper.curso .lista.categoria li.quiz.last {
+	left: 0;
+	right: 0;
+	top: 0;
+	width: 240px;
+	padding: 0 20px;
+	line-height: normal;
+	text-indent: 0;
+	height: 110px
+}
+#content .wrapper.curso .lista.categoria li.quiz.last a {
+	width: 240px;
+	height: 60px;
+	padding: 40px 0 10px;
+	text-align: center
+}
+#content .wrapper.curso .lista.categoria li.quiz.last img {
+	display: none
+}
+#content .wrapper.curso .lista.categoria li.quiz.last span {
+	display: none
+}
+#content .wrapper.curso .lista.login {
+	width: 260px;
+	padding: 0 10px
+}
+#content .wrapper.curso .lista.login .dashboard h3 {
+	line-height: normal;
+	padding: 20px 0 0;
+	float: none
+}
+#content .wrapper.curso .lista.login .dashboard .aproveitamento {
+	position: relative;
+	display: block;
+	width: 260px;
+	padding: 0 10px 20px;
+	left: -10px;
+	right: -10px;
+	float: none;
+	line-height: normal;
+	margin: 10px 0 0;
+	border-bottom: 1px solid #ebebeb
+}
+#content .wrapper.curso .lista.login .dashboard section .item .header {
+	font-size: 14px
+}
+#content .wrapper.curso .lista.login .dashboard section .item .header .nome {
+	float: none
+}
+#content .wrapper.curso .lista.login .dashboard section .item .header .aprov {
+	float: none
+}
+#content .wrapper.curso .lista.login .dashboard section .item .header .status {
+	float: none
+}
+#content .wrapper.curso .lista.login .dashboard section .item .header .simbolo {
+	float: none;
+	position: absolute;
+	right: 10px;
+	top: 50%;
+	margin: -10px 0 0 0
+}
+#content .wrapper.curso .lista.login .dashboard section .item .lista_videos {
+	font-size: 12px
+}
+#content .wrapper.curso .lista.login .dashboard section .item .lista_videos li {
+	line-height: normal;
+	padding: 10px 0
+}
+#content .wrapper.curso .lista.login .dashboard section .item .lista_videos li .data {
+	float: none
+}
+#content .wrapper.curso .lista.login .dashboard section .item .lista_videos li .nome {
+	float: none;
+	margin-left: 10px
+}
+#content .wrapper.curso .lista.login .dashboard section .item .lista_videos li .tempo {
+	float: none;
+	position: relative;
+	display: block;
+	margin: 5px 0 0
+}
+#content .wrapper.curso .lista.login .dashboard section .item .lista_videos li.disponivel {
+	position: relative;
+	display: block
+}
+#content .wrapper.curso .lista.login .dashboard section .item .lista_videos li.disponivel .icon {
+	position: absolute;
+	display: block;
+	top: 0;
+	left: 0;
+	float: none
+}
+#content .wrapper.curso .lista.login .dashboard section .item .lista_videos li.disponivel .nome {
+	float: none;
+	position: relative;
+	display: block;
+	margin: 0 15px 0 35px
+}
+#content .wrapper.curso .lista.login .dashboard section .item .lista_videos li.disponivel .desc {
+	float: none;
+	position: relative;
+	display: block;
+	margin: 0 15px 0 35px
+}
+#content .wrapper.curso .lista.login .form h3 {
+	line-height: normal;
+	padding: 20px 0 0
+}
+#content .wrapper.curso .lista.login .form .dados {
+	padding-bottom: 90px
+}
+#content .wrapper.curso .lista.login .form .dados li {
+	height: 40px;
+	line-height: normal;
+	padding: 5px 0
+}
+#content .wrapper.curso .lista.login .form .dados li span {
+	font-size: 14px;
+	height: 20px;
+	line-height: 20px
+}
+#content .wrapper.curso .lista.login .form .dados li span.value {
+}
+#content .wrapper.curso .lista.login .form .botao {
+	position: absolute;
+	right: 0;
+	bottom: 0;
+	display: inline
+}
+#content .wrapper.curso .lista.login .form p {
+	width: auto;
+	padding: 20px 0 0;
+	font-size: 18px
+}
+#content .wrapper.curso .lista.login .form form ul {
+	padding: 10px 0
+}
+#content .wrapper.curso .lista.login .form form ul li.campo input {
+	width: 238px;
+	height: 40px;
+	padding: 0 10px;
+	text-indent: 0
+}
+#content .wrapper.curso .lista.login .form form ul li.label label {
+	font-size: 14px
+}
+#content .wrapper.curso .lista.login .form form ul li.btn input {
+	float: right
+}
+#content .wrapper.curso .lista.login .social {
+	position: relative;
+	display: block;
+	padding: 15px 0;
+	height: auto;
+	line-height: normal
+}
+#content .wrapper.curso .lista.login .social a {
+	position: relative;
+	display: block;
+	padding: 5px 0
+}
+#footer .wrapper {
+	width: 280px
+}
+#footer .wrapper h2 {
+	width: 147px;
+	position: relative;
+	top: 0;
+	left: 0;
+	margin: 30px auto
+}
+#footer .wrapper h2 a {
+	width: 147px
+}
+#footer .wrapper menu.secundario {
+	position: relative;
+	top: 0;
+	left: 0
+}
+#footer .wrapper menu.secundario li {
+	height: 48px;
+	float: none;
+	text-align: center;
+	border-bottom: 1px dotted #d3cec3
+}
+#footer .wrapper menu.secundario li a {
+	height: 48px;
+	line-height: 48px
+}
+#footer .wrapper a.social {
+	position: relative;
+	top: 0;
+	margin: 40px auto
+}
+#footer .wrapper a.social.facebook {
+	left: 0
+}
+#videoArea .wrapper {
+	width: 280px
+}
+#videoArea .wrapper .titulo {
+	width: 280px
+}
+#videoArea .wrapper .titulo h2 {
+	font-size: 50px
+}
+#videoArea .wrapper .titulo h2 span {
+	padding: 0
+}
+#videoArea .wrapper .video_description .column.left.cima {
+	width: 120px;
+	margin: 0 0 0 20px
+}
+#videoArea .wrapper .video_description .column.right.cima {
+	width: 130px;
+	margin: 0 0 0 10px
+}
+#videoArea .wrapper .video_description .column.right.cima p {
+	float: none
+}
+#videoArea .wrapper .video_description .column.left.baixo {
+	width: 280px;
+	float: none;
+	margin: 0;
+	padding: 0
+}
+#videoArea .wrapper .video_description .column.left.baixo .detalhe img {
+	display: none
+}
+#videoArea .wrapper .video_description .column.left.baixo .detalhe span {
+	position: relative;
+	display: block;
+	float: none;
+	height: auto;
+	min-height: 30px;
+	margin: 0 0 0 10px;
+	padding: 0 0 0 32px;
+	background: url(../images/relogio.png) 0 0 no-repeat
+}
+#videoArea .wrapper .video_description .column.left.baixo p {
+	position: relative;
+	display: block;
+	margin: 10px;
+	padding: 30px 0
+}
+#videoArea .wrapper .video_description .column.right.baixo {
+	width: 280px;
+	float: none;
+	margin: 0;
+	padding: 0
+}
+#videoArea .wrapper .video_description .column.right.baixo .detalhe img {
+	display: none
+}
+#videoArea .wrapper .video_description .column.right.baixo .detalhe span {
+	position: relative;
+	display: block;
+	float: none;
+	height: auto;
+	min-height: 30px;
+	margin: 0 0 0 10px;
+	padding: 0 0 0 32px;
+	background: url(../images/download.png) 0 0 no-repeat
+}
+#videoArea .wrapper .video_description .column.right.baixo ul {
+	position: relative;
+	display: block;
+	margin: 10px 10px 10px;
+	padding: 0 0 30px
+}
+#videoArea .wrapper .video_description hr {
+	margin: 15px 0;
+	width: 280px
+}
+#videoArea .wrapper #video {
+	margin: 0;
+	width: 272px;
+	height: 152px
+}
+#videoArea .wrapper #video #play_video {
+	width: 272px;
+	height: 152px;
+	background: 0
+}
+#videoArea .wrapper #video img {
+	width: 272px;
+	height: 152px
+}

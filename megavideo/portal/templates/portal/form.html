@@ -1,0 +1,184 @@
+{% extends 'portal/main.html' %}
+
+{% block extra_js %}
+
+<script type="text/javascript" src="{{STATIC_URL}}/static/portal/js/jquery.simplevalidate.js"></script>
+
+<script language='JavaScript' type='text/javascript'>
+    $(function(){
+        $('#submitBtn1').formValidator({
+                onSuccess   : function() { $('#form_upload').submit() },
+                scope       : '#form_upload',
+                errorDiv    : '#errorDiv1'
+        }); 
+        
+        $('#submitBtn2').formValidator({
+                onSuccess   : function() { $('#form_upload').submit() },
+                scope       : '#form_upload',
+                errorDiv    : '#errorDiv1'
+        }); 
+        
+    });
+</script>
+
+{% endblock extra_js %}
+
+{% block flash %}
+
+<div class="box_form">
+	
+	{% if not destino_url %}
+	
+		<span class="top">
+			<img src="{{STATIC_URL}}/static/portal/images/form_text_sombra_top.png" width="356" height="72" border="0" />
+			<img src="{{STATIC_URL}}/static/portal/images/form_cam.png" width="81" height="69" border="0" />
+		</span>
+		
+		<hr class="form_line" />
+		
+	     <form action='' method='post' enctype='multipart/form-data' id='form_upload'  name='form_upload' onsubmit="false"> 
+	         <ul>
+	             <li style="margin-right: 15px;">
+	                 <label>
+	                     Nome <b>*</b>
+	                 </label>
+	                 <input type='text' name='name' id='name' class='input req-min' minlength='3' maxlength='40' value=''>
+	             </li>
+	             <li>
+	                 <label>
+	                     E-mail <b>*</b>
+	                 </label>
+	                 <input type='text' name='email' class='input req-email' id='email' value=''>
+	             </li>
+	             <li>
+	                 <label>
+	                     Título do vídeo <b>*</b>
+	                 </label>
+	                 <input type='text' name='title' id='title' class='input req-string'  value=''>
+	             </li>
+	             <li style="width: 520px;">
+	                 <label>
+	                     Descrição*
+	                 </label>
+	                 <textarea name='description' class='textarea req-string' rules='O campo descrição é obrigatório' id='description'></textarea>
+	             </li>
+	             <li style="width: 520px;">
+	                 <input type="hidden" name="cat_id" value="{{ cat_id }}" id="cat_id" />
+					 <input class="destino_url" type='hidden' value='upload' name='destino_url'>
+                     <input type='hidden' value='1' name='addValue'>
+                    
+	                 <div id="errorDiv1" class="error-div">
+	                     {{ form_error|default:'* Campos Obrigatórios' }}
+	                 </div>
+					 <div class="btn" style="margin-right: 40px;">
+	                 	<img src="{{STATIC_URL}}/static/portal/images/form_webcam_rec.png"  id='submitBtn1' class="btn" width="296" height="59" border="0" onmouseover="$('.destino_url').val('rec')" />
+					 </div>
+					 <div class="btn" style="margin-top: 5px;">
+					 	<img src="{{STATIC_URL}}/static/portal/images/form_upload_video.png"  id='submitBtn2' class="btn" width="183" height="54" border="0" onmouseover="$('.destino_url').val('upload')" />
+					 </div>
+	             </li>
+	         </ul>
+	     </form>
+	
+	{% endif %}
+	
+	
+	
+	{% ifequal destino_url 'upload' %}
+	
+		<span class="top" style="height: 100px;">
+			<p>Upload de arquivo de vídeo</p>
+		</span>
+		
+		<hr class="form_line" />
+		
+		<br /><br />
+				  			
+		<script type="text/javascript">
+			
+			var flashvars = {
+			  
+			  {% for index, value in flash_metas.items  %}
+			  
+			  		{{ index }} : '{{ value }}',
+			  
+			  {% endfor %}
+			  
+			  base_url : '{{ metas.base_url }}'
+			  
+			};
+			
+			var params   = {};
+			params.menu  = "false";
+			params.wmode = "transparent";
+			
+			swfobject.embedSWF("{{ metas.swf }}", "{{ metas.id }}", "{{ metas.width }}", "{{ metas.height }}", "9.0.0", "{{ metas.expressInstall }}", flashvars, params);
+
+		</script>
+		
+		<div align='center'>
+				
+		    <div id="{{ metas.id  }}">
+		        <a href="http://www.adobe.com/go/getflashplayer"><img src="http://www.adobe.com/images/shared/download_buttons/get_flash_player.gif" alt="Get Adobe Flash player" title="Get Adobe Flash player" /></a>
+		        <br/>
+		        Tecnologia Flash 9 
+				<a href="http://www.adobe.com/go/getflashplayer">Baixar Plugin</a>
+		        Software gratu&iacute;to.
+		    </div>
+		
+		</div>
+
+	{% endifequal %}
+	
+	
+	
+	{% ifequal destino_url 'rec' %}
+
+		<span class="top" style="height: 100px;">
+			<p>Ligue sua WebCam para gravar</p>
+		</span>
+		
+		<hr class="form_line" />
+		
+		<br /><br />
+				  			
+		<script type="text/javascript">
+			var flashvars = {
+			  
+			  {% for index, value in flash_metas.items  %}
+			  
+			  		{{ index }} : '{{ value }}',
+			  
+			  {% endfor %}
+			  
+			  base_url : '{{ metas.base_url }}'
+			  
+			};
+			
+			swfobject.embedSWF("{{ metas.swf }}", "{{ metas.id }}", "{{ metas.width }}", "{{ metas.height }}", "9.0.0", "", flashvars);
+		
+		</script>
+		
+		<div align='center'>
+				
+		    <div id="{{ metas.id  }}">
+		        <a href="http://www.adobe.com/go/getflashplayer"><img src="http://www.adobe.com/images/shared/download_buttons/get_flash_player.gif" alt="Get Adobe Flash player" title="Get Adobe Flash player" /></a>
+		        <br/>
+		        Tecnologia Flash 9 
+				<a href="http://www.adobe.com/go/getflashplayer">Baixar Plugin</a>
+		        Software gratu&iacute;to.
+		    </div>
+		
+		</div>
+		
+	{% endifequal %}
+
+</div>
+
+{% endblock flash %}
+
+{% block sidebar %}
+{% endblock sidebar %}
+
+{% block content %}
+{% endblock content %}

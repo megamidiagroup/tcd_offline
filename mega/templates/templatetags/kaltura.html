@@ -1,0 +1,56 @@
+<script type="text/javascript" src="https://www.kaltura.com/p/1075372/sp/107537200/embedIframeJs/uiconf_id/8850812/partner_id/1075372"></script>
+
+<object id="kaltura_player_1345667875" name="kaltura_player_1345667875" type="application/x-shockwave-flash" allowFullScreen="true" allowNetworking="all" allowScriptAccess="always" height="100%" width="100%" bgcolor="#000000" xmlns:dc="https://purl.org/dc/terms/" xmlns:media="https://search.yahoo.com/searchmonkey/media/" rel="media:video" resource="https://www.kaltura.com/index.php/kwidget/cache_st/1345667875/wid/_1075372/uiconf_id/8850812/entry_id/{{ code }}" data="https://www.kaltura.com/index.php/kwidget/cache_st/1345667875/wid/_1075372/uiconf_id/8850812/entry_id/{{ code }}">
+	<param name="allowFullScreen" value="true" />
+	<param name="allowNetworking" value="all" />
+	<param name="allowScriptAccess" value="always" />
+	<param name="bgcolor" value="#000000" />
+	<param name="flashVars" value="&{FLAVOR}" />
+	<param name="wmode" value="transparent" />
+	<param name="movie" value="https://www.kaltura.com/index.php/kwidget/cache_st/1345667875/wid/_1075372/uiconf_id/8850812/entry_id/{{ code }}" />
+	<a href="https://corp.kaltura.com/products/video-platform-features">Video Platform</a>
+	<a href="https://corp.kaltura.com/Products/Features/Video-Management">Video Management</a>
+	<a href="https://corp.kaltura.com/Video-Solutions">Video Solutions</a>
+	<a href="https://corp.kaltura.com/Products/Features/Video-Player">Video Player</a>
+	<a rel="media:thumbnail" href="https://cdnbakmi.kaltura.com/p/1075372/sp/107537200/thumbnail/entry_id/{{ code }}/width/120/height/90/bgcolor/000000/type/2"></a>
+	<span property="dc:description" content=""></span>
+	<span property="media:title" content="teste_video_megamidia_terceiro"></span>
+	<span property="media:type" content="application/x-shockwave-flash"></span>
+</object>
+
+<script type="text/javascript">
+	var myPlayer;
+	var jsCallbackReady = function(playerId) {
+		myPlayer = document.getElementById(playerId);
+		myPlayer.addJsListener("playerPlayed", "playbackStartHandler");
+		myPlayer.addJsListener("playbackComplete", "playbackCompleteHandler");
+	};
+
+	var playbackStartHandler = function() {
+		$('.buttom').css('display', 'none');
+		/* insere no historico de videos assitidos */
+		$.post('{% url home %}{{ rede }}/action/', {
+			'video_id' : '{{ id }}',
+			'action' : 'play',
+			'csrfmiddlewaretoken' : '{{ csrf_token }}'
+		}, function(data) {
+			//$('.mensagemSenha').html('<strong>'+data+'</strong>');
+			myPlayer.removeJsListener("playerPlayed", "playbackStartHandler");
+		});
+	};
+
+	var playbackCompleteHandler = function() {
+		$('.buttom').css('display', 'inline-block');
+		/* insere no historico de videos assitidos até completado */
+		$.post('{% url home %}{{ rede }}/action/', {
+			'video_id' : '{{ id }}',
+			'action' : 'complete',
+			'csrfmiddlewaretoken' : '{{ csrf_token }}'
+		}, function(data) {
+			//$('.mensagemSenha').html('<strong>'+data+'</strong>');
+		});
+	};
+
+	function updatePlayer(w, h) {}
+
+</script>

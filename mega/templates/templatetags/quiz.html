@@ -1,0 +1,383 @@
+{% extends 'admin/base_site.html' %}
+
+{% load i18n util %}
+
+{% block extrastyle %}
+	<link href="{{ STATIC_URL }}admin_tools/css/menu.css" type="text/css" rel="stylesheet" />
+	<link href="/media/admin/css/forms.css" type="text/css" rel="stylesheet" /> 
+{% endblock extrastyle %}
+
+{% block breadcrumbs %}
+
+<div class="breadcrumbs">
+	<a href="/admin/">{% trans 'Home' %}</a> &rsaquo; <a href="/admin/mega/">Mega</a> &rsaquo; <a href="/admin/mega/quiz/">Quiz</a> &rsaquo; {{ template_name|default:"Adicionar Quiz" }}
+</div>
+
+{% endblock breadcrumbs %}
+
+{% block content_title %}{% endblock content_title %}
+
+{% block content %}
+
+	<script type="text/javascript" src="{{ STATIC_URL_TCD }}{{ get_tipo_template|default:'mega' }}/js/jquery-1.7.2.js"></script>
+	<script type="text/javascript" src="{{ STATIC_URL_TCD }}/ckeditor/ckeditor/ckeditor.js"></script>
+
+	<script type="text/javascript">
+
+		var count_pergunta = 0;
+		var livre          = '';
+	
+		function set_pergunta()
+		{
+			
+			count_pergunta++;
+			
+			var obj      = $('.perguntas');
+			var pergunta = '';
+
+			pergunta += '<div class="pergunta">';				
+			pergunta += '	<fieldset class="module" style="width: 800px;padding: 10px;">';
+			pergunta += '		<label class="required" for="id_treinamento">Pergunta ' + count_pergunta + ':</label>';
+			pergunta += '       <div style="width: 600px; float: left;margin: -5px 0 0 0">';	
+			pergunta += '			<textarea class="textarea_pergunta" id="pergunta_' + count_pergunta + '" name="pergunta_' + count_pergunta + '" cols="80" rows="2"></textarea>';
+			pergunta += '       </div>';
+			pergunta += '       <a href="javascript:set_ck(' + count_pergunta + ');" class="btn_' + count_pergunta + '" style="position: absolute;margin: 6px 0 0 -67px">avançado</a>';
+			pergunta += '		<input type="text" value="20" name="pontos_' + count_pergunta + '" size="2" />';
+			pergunta += '		<input type="checkbox" value="1" name="habilitado_' + count_pergunta + '" checked="checked" />';
+			pergunta += '		<a href="javascript:void(0);" class="addlink add_resposta btn_add_' + count_pergunta + '" style="display: none; float: right" onclick="set_resposta(' + count_pergunta + ');">&nbsp;</a>';				
+			pergunta += '		<br />';
+			pergunta += '       <fieldset class="module respostas_' + count_pergunta + '" count="1" style="width: 777px;"></fieldset>';
+			pergunta += '	</fieldset>';	
+			pergunta += '	<a href="javascript:void(0);" class="deletelink del_pergunta" style="display: none; float: right;margin-top: -15px;" onclick="del_pergunta();">&nbsp;</a>';
+			pergunta += '	<a href="javascript:void(0);" class="addlink add_pergunta" style="display: none; float: right;margin: -15px 15px 0 0;" onclick="set_pergunta();">&nbsp;</a>';
+			pergunta += '</div>';
+			
+			obj.append(pergunta);
+			
+			check_buttons_pergunta();
+			check_buttons_resposta(count_pergunta);
+
+		}
+		
+		function set_ck(pergunta_id)
+		{
+			CKEDITOR.replace( 'pergunta_' + pergunta_id,
+		    {
+		    	enterMode    : CKEDITOR.ENTER_BR,
+		        customConfig : '{{ STATIC_URL_TCD }}/ckeditor/ckeditor/plugins/styles/styles/default.js'
+		    });
+		    $('.btn_' + pergunta_id).html('texto simples').attr('href', 'javascript:del_ck(' + pergunta_id + ', this);').css('margin', '26px 0 0 6px');
+		    return void(0);
+		}
+		
+		function del_ck(pergunta_id)
+		{
+			CKEDITOR.instances['pergunta_' + pergunta_id].destroy();
+		    $('.btn_' + pergunta_id).html('avançado').attr('href', 'javascript:set_ck(' + pergunta_id + ', this);').css('margin', '6px 0 0 -67px');
+		    return void(0);
+		}
+		
+		function set_resposta(pergunta_id)
+		{
+			
+			var obj      = $('.respostas_' + pergunta_id + '');
+			var resposta = '';
+			
+			resposta += '<div>';
+			resposta += '	<label class="required" for="id_resposta">Resposta ' + obj.attr('count') + ':</label>';
+			resposta += '	<textarea name="resposta_' + pergunta_id + '_' + obj.attr('count') + '" cols="100" rows="2"></textarea>';
+			resposta += '	<input type="radio" name="radio_' + pergunta_id + '" class="radio_' + pergunta_id + '_' + obj.attr('count') + '" value="' + obj.attr('count') + '" />';
+			resposta += '	<a href="javascript:void(0);" class="deletelink del_resposta" style="display: none; float: right" onclick="del_resposta(' + pergunta_id + ');">&nbsp;</a>';
+			resposta += '	<a href="javascript:void(0);" class="addlink add_resposta" style="display: none; float: right" onclick="set_resposta(' + pergunta_id + ');">&nbsp;</a>';	
+			resposta += '	<br />';
+			resposta += '</div>';
+			
+			if (parseInt(obj.attr('count')) <= 1)
+			{
+				obj.html('');
+			}
+			
+			obj.append(resposta);
+			
+			obj.attr('count', parseInt(obj.attr('count')) + 1);
+			
+			check_buttons_resposta(pergunta_id);
+			
+		}
+		
+		function del_pergunta()
+		{
+			
+			var obj = $('.perguntas');
+			try {
+				CKEDITOR.instances['pergunta_' + count_pergunta].destroy();
+			} catch(e){}
+			obj.find('div.pergunta:last').remove();
+			count_pergunta--;
+			check_buttons_pergunta();
+
+		}
+		
+		function del_resposta(pergunta_id)
+		{
+			var obj = $('.respostas_' + pergunta_id + '');
+			obj.find('div:last').remove();
+			obj.attr('count', parseInt(obj.attr('count')) - 1);
+			check_buttons_resposta(pergunta_id);
+		}
+		
+		function check_buttons_pergunta()
+		{
+			
+			var obj     = $('.perguntas');
+			var btn_del = '';
+			if (count_pergunta > 1){
+				btn_del = '.del_pergunta:last, ';
+			}
+			obj.find('.del_pergunta, .add_pergunta').css('display', 'none');
+			obj.find(btn_del + '.add_pergunta:last').css('display', 'block');
+
+		}
+		
+		function check_buttons_resposta(pergunta_id)
+		{
+			
+			var obj = $('.respostas_' + pergunta_id + '');
+			var btn_del = '';
+			if (parseInt(obj.attr('count')) > 1){
+				btn_del = '.del_resposta:last, ';
+				obj.parent().find('.btn_add_' + pergunta_id + '').css('display', 'none');
+			} else {
+				obj.parent().find('.btn_add_' + pergunta_id + '').css('display', 'block');
+				livre  = '<span>Resposta livre</span>';
+				livre += '<input type="hidden" name="free_' + pergunta_id + '" value="true" />';
+				obj.html(livre);
+			}
+
+			obj.find('.del_resposta, .add_resposta').css('display', 'none');
+			obj.find(btn_del + '.add_resposta:last').css('display', 'block');
+
+		}
+		
+		function check_combo(obj, $this)
+		{
+			if ($this.val() == "")
+			{
+				obj.css('display', 'block');
+			} else {
+				obj.css('display', 'none').find('input[type=text]').val('');
+			}
+		}
+		
+		function deletar(obj)
+		{
+			$('input, textarea, select').remove();
+			
+			$(obj).before('<input type="hidden" name="select_across" value="0" />');
+			$(obj).before('<input type="hidden" name="index" value="0" />');
+    		$(obj).before('<input type="hidden" value="{{ quiz.id }}" name="_selected_action" />');
+    		$(obj).before('<input type="hidden" value="delete_selected" name="action" />');
+    		$(obj).before('<input type="hidden" value="{{ csrf_token }}" name="csrfmiddlewaretoken" />');
+    		
+			$('form').attr('action', '../').submit();
+		}
+
+		$(document).ready(function() {
+			
+			$('select[name=responsavel]').change(function(e){
+				var obj = $('.email_respon');
+				check_combo(obj, $(this));
+			});
+			
+			check_combo($('.email_respon'), $('select[name=responsavel]'));
+			
+			{% for per in list_perguntas %}
+				set_pergunta();
+				$('textarea[name=pergunta_' + count_pergunta + ']').val('{{ per.text|barran }}');
+				$('input[name=pontos_' + count_pergunta + ']').val('{{ per.pontos }}');
+				{% if per.visible %}
+					$('input[name=habilitado_' + count_pergunta + ']').attr('checked', 'checked');
+				{% else %}
+					$('input[name=habilitado_' + count_pergunta + ']').removeAttr('checked');
+				{% endif %}
+				
+				{% for glr in per.get_list_response_order %}
+					set_resposta(parseInt('{{ forloop.parentloop.counter }}'));
+					var id_count = parseInt($('.respostas_{{ forloop.parentloop.counter }}').attr('count') - 1);
+					$('textarea[name=resposta_{{ forloop.parentloop.counter }}_' + id_count + ']').val('{{ glr.text }}');
+					{% if glr.correta %}
+						$('.radio_{{ forloop.parentloop.counter }}_' + id_count).attr('checked', 'checked');
+					{% endif %}
+				{% endfor %}
+			{% empty %}
+				set_pergunta();
+			{% endfor %}
+			
+		});
+		
+	</script>
+	
+	<style type="text/css">
+		.cke_skin_kama {display:inline}
+		.cke_contents {height: 200px !important;}
+		.textarea_pergunta {display: block;width: 510px;height: 50px;}
+	</style>
+	
+	{% if sucesso %}
+		<ul class="messagelist">
+	          <li class="info">Quiz "{{ template_name }}": {% if add %}adicionado{% else %}modificado{% endif %} com sucesso. Você pode editar novamente abaixo.</li>
+		</ul>
+	{% endif %}
+
+	<div class="colM" id="content">
+	
+		<h1>Adicionar Quiz</h1>
+		<div id="content-main">
+	
+			<form id="response_form" method="post" action="./" enctype="multipart/form-data">
+				
+				{% csrf_token %}
+				
+				<div>
+					
+					{% if errors %}
+						<p class="errornote">Por favor, corrija o erro abaixo.</p>
+					{% endif %}
+					
+					<fieldset class="module aligned" style="width: 900px;">
+						
+						{% if list_rede %}
+						
+							<div class="form-row {% if errors.rede %}errors{% endif %} rede">
+								
+								{% if errors.rede %}
+									<ul class="errorlist"><li>{{ errors.rede }}</li></ul>
+								{% endif %}
+		
+								<div>
+		
+									<label class="required" for="id_rede">Rede:</label>
+		
+									<select id="id_rede" name="rede">
+										<option value="">---------</option>
+										{% for lr in list_rede %}
+											{% if rede|safe == lr.id|safe %}
+												<option value="{{ lr.id }}" selected="selected">{{ lr.name }}</option>
+											{% else %}
+												<option value="{{ lr.id }}">{{ lr.name }}</option>
+											{% endif %}
+										{% endfor %}
+									</select>
+									
+								</div>
+		
+							</div>
+						
+						{% endif %}
+	
+						<div class="form-row {% if errors.treinamento %}errors{% endif %} treinamento">
+							
+							{% if errors.treinamento %}
+								<ul class="errorlist"><li>{{ errors.treinamento }}</li></ul>
+							{% endif %}
+	
+							<div>
+								
+								<label class="required" for="id_treinamento">Treinamento:</label>
+								
+								<select id="id_treinamento" name="treinamento">
+									<option value="">---------</option>
+									{% for lt in list_treinamento %}
+										{% if treinamento|safe == lt.id|safe %}
+											<option value="{{ lt.id }}" selected="selected">{{ lt.name }}</option>
+										{% else %}
+											<option value="{{ lt.id }}">{{ lt.name }}</option>
+										{% endif %}
+									{% endfor %}
+								</select>
+	
+							</div>
+	
+						</div>
+						
+						<div class="form-row perguntas">&nbsp;</div>
+
+						<div class="form-row {% if errors.responsavel %}errors{% endif %} responsavel">
+							
+							{% if errors.responsavel %}
+								<ul class="errorlist"><li>{{ errors.responsavel }}</li></ul>
+							{% endif %}
+		
+							<div>
+	
+								<label class="required" for="id_responsavel">Responsável:</label>
+	
+								<select id="id_responsavel" name="responsavel">
+									<option value="">---------</option>
+									{% for lu in list_user %}
+										{% if responsavel|safe == lu.id|safe %}
+											<option value="{{ lu.id }}" selected="selected">{% if lu.get_full_name %}{{ lu.get_full_name }}{% else %}{{ lu.username }}{% endif %} : {{ lu.email }}</{{></option>
+										{% else %}
+											<option value="{{ lu.id }}">{% if lu.get_full_name %}{{ lu.get_full_name }}{% else %}{{ lu.username }}{% endif %} : {{ lu.email }}</option>
+										{% endif %}
+									{% endfor %}
+								</select>
+								
+							</div>
+	
+						</div>
+						
+						<div class="form-row {% if errors.email_respon %}errors{% endif %} email_respon">
+							
+							{% if errors.email_respon %}
+								<ul class="errorlist"><li>{{ errors.email_respon }}</li></ul>
+							{% endif %}
+		
+							<div>
+	
+								<label class="required" for="id_email_respon">E-mail responsável:</label>
+	
+								<input name="email_respon" type="text" value="{{ email_respon }}" size="40" />
+								
+							</div>
+	
+						</div>
+						
+						<div class="form-row {% if errors.porcent %}errors{% endif %} porcent">
+							
+							{% if errors.porcent %}
+								<ul class="errorlist"><li>{{ errors.porcent }}</li></ul>
+							{% endif %}
+		
+							<div>
+	
+								<label class="required" for="id_porcent">Porcentagem aprovação:</label>
+	
+								<input name="porcent" type="text" value="{{ porcent|default:100 }}" size="3" /> %
+								
+							</div>
+	
+						</div>
+	
+					</fieldset>
+	
+					<div class="submit-row">
+						<input type="submit" name="_save" class="default" value="Salvar">
+						{% if not add %}
+							<p class="deletelink-box">
+								<a class="deletelink" href="delete/" >Apagar</a>
+							</p>
+						{% endif %}
+						<input type="submit" name="_addanother" value="Salvar e adicionar outro">
+						<input type="submit" name="_continue" value="Salvar e continuar editando">
+					</div>
+	
+				</div>
+			</form>
+		</div>
+	
+		<br class="clear">
+	
+	</div>
+
+{% endblock %}

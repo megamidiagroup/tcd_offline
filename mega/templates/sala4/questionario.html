@@ -1,0 +1,118 @@
+{% extends 'sala4/main.html' %}
+
+{% load util %}
+
+{% block class-section %}{% endblock class-section %}
+
+{% block extra-js %}
+
+	<script type="text/javascript">
+		$(document).ready(function() {
+			
+			var item = '';
+			
+			$('.alternativa').each(function(e){
+				var id = $(this).attr('id');
+				if ( item != id )
+				{
+					$('.' + id + ' .input_radio').find('input').click(function() {
+						$this = $(this);
+						$('.' + id).find('.input_radio.checked').removeClass('checked');
+						$this.parent().addClass('checked');
+					});
+				}
+				item = id;
+			});
+
+		});
+    </script>
+    
+{% endblock extra-js %}
+
+{% block content %}
+
+	{% if sucesso == 'true' %}
+	
+		{% include 'sala4/questionario_sucesso.html' %}
+	
+	{% else %}
+	
+		{% if sucesso == 'false' %}
+		
+			{% include 'sala4/questionario_nosucesso.html' %}
+
+		{% else %}
+       
+			<section id="content">
+				<div class="wrapper ">
+					<div class="titulo">
+						<h2><span>Aprendeu mesmo?</span></h2>
+					</div>
+			
+					<img src="{{ STATIC_URL }}{{ get_tipo_template }}/images/pinguelo.png" border=0 id="pinguelo" />
+			
+					<ul class="lista quiz">
+						<li class="texto">
+							<p>
+								<b>Como funciona?</b>
+								<br />
+								É bem simples, vc assistiu os vídeos, agora está na hora de testar seus 
+								conhecimentos. Responda as questões abaixo, se vc acertar no mínimo <strong>{{ porcent_quiz }}%</strong> 
+								das questões vc ganha o badge do curso que acabou de fazer.
+							</p><span class="clearfix"></span>
+						</li>
+						<li class="questao">
+							<ul>
+								<li class="progresso">
+									{% if list_question.count > 1 %}
+										Responda as questões do 1 ao {{ list_question.count }} e depois clique em Finalizar
+									{% else %}
+										Responda a questão abaixo e depois clique em Finalizar
+									{% endif %}
+									<span class="clearfix"></span>
+								</li>
+								
+								<form id="questions" method="post" action="./">
+		
+		                            {% csrf_token %}
+								
+									{% for i in list_question %}
+									
+										<li class="enunciado">
+											{{ forloop.counter }} - {{ i.text|safe }}
+											<span class="clearfix"></span>
+										</li>
+										
+										{% for glr in i.get_list_response %}
+											<li class="alternativa alter{{ forloop.parentloop.counter }}" id="alter{{ forloop.parentloop.counter }}">
+												<div class="input_radio">
+													{{ forloop.counter0|alphanumeric }}
+													<input type="radio" name="resposta_{{ i.id }}" value="{{ glr.id }}" id="alternativa{{ glr.id }}" />
+												</div>
+												<label for="alternativa{{ glr.id }}">{{ glr.text }}</label>
+											</li>
+										{% endfor %}
+										
+									{% endfor %}
+								
+									<li class="btNext">
+										<a href="javascript:void(0);" onclick="$('form').submit();">Finalizar</a>
+									</li>
+								
+								</form>
+								
+							</ul>
+							<span class="clearfix"></span>
+						</li>
+					</ul>
+			
+					<div class="clearfix"></div>
+			
+				</div>
+			</section>
+			
+		{% endif %}
+		
+	{% endif %}
+
+{% endblock content %}

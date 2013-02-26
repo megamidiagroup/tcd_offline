@@ -1,0 +1,11 @@
+{% load util %}
+
+{% for l in list %}
+
+	<div class="area" href="{% url category rede.link l.id %}" id="{% cycle 'design' 'programacao' %}">
+		<img src="{{ l|get_image }}" border="0" alt="{{ l.get_name }}" title="{{ l.get_name }}" width="161" />
+		<h2>{{ l.get_name }}</h2>
+		<p>{{ l.desc }}</p>
+	</div>
+
+{% endfor %}

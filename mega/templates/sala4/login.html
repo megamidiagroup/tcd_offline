@@ -1,0 +1,88 @@
+{% extends 'sala4/main.html' %}
+
+{% block class-section %}{% endblock class-section %}
+
+{% block extra-css %}
+	<link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}{{ get_tipo_template }}/css/jquery.jgrowl.css" />
+{% endblock extra-css %}
+
+{% block extra-js %}
+
+	<script type="text/javascript" src="{{ STATIC_URL }}{{ get_tipo_template }}/js/jquery.jgrowl_compressed.js"></script>
+
+	<script type="text/javascript">
+	    $(document).ready(function (){
+			$('#nome').focus();
+			{% if add == 'true' %}
+				$('#mensagem').jGrowl('Cadastro realizado com sucesso, verifique seu e-mail.');
+			{% endif %}
+	    });
+    </script>
+    
+{% endblock extra-js %}
+
+{% block content %}
+       
+	<section id="content">
+		<div class="wrapper curso">
+			<div class="titulo">
+				<h2><span>Login</span></h2>
+			</div>
+			<img src="{{ STATIC_URL }}{{ get_tipo_template }}/images/pinguelo.png" border=0 id="pinguelo" />
+	
+			<ul class="lista login">
+				<li class="social">
+					<a href="#">
+						<img src="{{ STATIC_URL }}{{ get_tipo_template }}/images/fb_connect.png" border="0" />
+					</a>
+					<a href="#">
+						<img src="{{ STATIC_URL }}{{ get_tipo_template }}/images/twt_connect.png" border="0" />
+					</a>
+				</li>
+				<li class="form">
+					
+					<form action="./" method="post" enctype="multipart/form-data">
+						
+						{% csrf_token %}
+						
+						<ul>
+							<li class="label">
+								<label for="nome">Login:</label>
+							</li>
+							<li class="campo">
+								<input type="text" id="nome" value="" name="user" />
+							</li>
+							<li class="label">
+								<label for="email">Senha:</label>
+							</li>
+							<li class="campo">
+								<input type="password" id="email" value="" name="pass" />
+							</li>
+							<li class="btn">
+								<input type="submit" id="submit" value="Enviar" name="enviar" />
+							</li>
+							
+							{% if error %}
+				                <li class="error">{{ error|default:'Usuário ou senha estão incorretos.' }}</li>
+				            {% endif %}
+							
+						</ul>
+						
+						<div class="clearfix"></div>
+						
+						<input type="hidden" name="next" value="{{ next }}" />
+						
+					</form>
+					
+					<div class="clearfix"></div>
+					
+				</li>
+	
+			</ul>
+	
+			<div class="clearfix"></div>
+	
+		</div>
+	</section>
+      
+{% endblock content %}

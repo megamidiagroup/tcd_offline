@@ -1,0 +1,29 @@
+﻿{% extends 'uninter/main.html' %}
+
+{% load util keyboard %}
+
+{% block content %}
+
+    {% block bloco %}
+
+        <div id="content">
+            <div class="container">
+                <div class="bar"><span>FAQ</span></div>
+                <div class="wrap">
+                    <ul class="faq">
+
+                        {% for i in list_faq %}
+                            <li {% if forloop.last %}style="border-bottom: none;"{% endif %}>
+                                <h3>{{ i.pergunta }}</h3>
+                                <p>{{ i.resposta }}</p>
+                            </li>
+                        {% endfor %}
+
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+    {% endblock bloco %}
+
+{% endblock content %}

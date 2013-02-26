@@ -1,0 +1,205 @@
+{% extends 'sala4/main.html' %}
+
+{% load util %}
+
+{% block extra-js %}
+
+	{% if not interno %}
+
+	    <script type="text/javascript">
+	
+		    $(document).ready(function (){
+		
+		      $('.vr').css('height',$('#colunas').height()+"px");
+		
+		        var $container  = $('.areas'),
+		          $articles = $('.area'),
+		          timeout;
+		        
+		
+		         $(".area").mouseenter(function (){
+		
+		             var $article  = $(this);
+		              clearTimeout( timeout );
+		              timeout = setTimeout( function() {
+		                
+		                if( $article.hasClass('active') ) return false;
+		                
+		                $articles.not( $article.removeClass('blur').addClass('active') )
+		                     .removeClass('active')
+		                     .addClass('blur');
+		
+		              }, 65 );
+		          }).mouseleave(function (){
+		            clearTimeout( timeout );
+		            $articles.removeClass('active blur');
+		          }).click(function(e){
+		          	window.location = $(this).attr('href');
+		          });
+		        
+		    });
+		    
+	    </script>
+	    
+	{% endif %}
+ 
+{% endblock extra-js %}
+
+{% block banner %}
+
+	{% if not interno %}
+        
+	    <section id="bannerArea" >
+	      <div class="wrapper home">
+	        <div class="titulo">                
+	          <h2><span>{{ list_category.0.desc }}</span></h2>
+	        </div>
+	        <div class="areas">
+	        	{% bloco_home_sala4 list_category rede 2 %}
+	        </div>
+	      </div>
+	      <div id="ondas"></div>
+	    </section>
+	    
+	{% endif %}
+
+{% endblock banner %}
+
+{% block content %}
+
+	{% if not interno %}
+
+	    <section id="content">
+	      <div class="wrapper teaser">
+	        <div class="columns" id="colunas">
+	            <div class="column grid_4">
+	              <img src="{{ STATIC_URL }}{{ get_tipo_template }}/images/hd.png" />
+	              <h3>Vídeos com qualidade</h3>
+	              <p>Ainda assim, existem dúvidas a respeito de como o novo modelo estrutural aqui preconizado pode nos levar a considerar a reestruturação de alternativas às soluções ortodoxas.</p>
+	            </div>
+	            <div class="gutter grid_4"><div class="vr"></div></div>
+	            <div class="column grid_4">
+	              <img src="{{ STATIC_URL }}{{ get_tipo_template }}/images/professor.png" />
+	              <h3>Professores experientes</h3>
+	              <p>Ainda assim, existem dúvidas a respeito de como o novo modelo estrutural aqui preconizado pode nos levar a considerar a reestruturação de alternativas às soluções ortodoxas.</p>
+	            </div>
+	            <div class="gutter grid_4"><div class="vr"></div></div>
+	            <div class="column grid_4">
+	              <img src="{{ STATIC_URL }}{{ get_tipo_template }}/images/badges.png" />
+	              <h3>Conquiste badges</h3>
+	              <p>Ainda assim, existem dúvidas a respeito de como o novo modelo estrutural aqui preconizado pode nos levar a considerar a reestruturação de alternativas às soluções ortodoxas.</p>
+	            </div>
+	            <div class="gutter grid_4"><div class="vr"></div></div>
+	            <div class="column grid_4">
+	              <img src="{{ STATIC_URL }}{{ get_tipo_template }}/images/dream.png" />
+	              <h3>O trabalho dos sonhos</h3>
+	              <p>Ainda assim, existem dúvidas a respeito de como o novo modelo estrutural aqui preconizado pode nos levar a considerar a reestruturação de alternativas às soluções ortodoxas.</p>
+	            </div>
+	        </div>
+	        <div class="clearfix"></div>
+	      </div>
+	    </section>
+	    
+	{% else %}
+	
+		{% if list_treinamento %}
+		
+			<section id="content">
+				<div class="wrapper curso">
+					<div class="titulo">
+						<h2><span>{{ list_treinamento.0.category.get_name }}</span></h2>
+					</div>
+					<img src="{{ STATIC_URL }}{{ get_tipo_template }}/images/pinguelo.png" border="0" id="pinguelo" />
+			
+					<ul class="lista categoria">
+						<li class="texto">
+							<p>{{ list_treinamento.0.category.desc|safe }}</p>
+						</li>
+						
+						{% bloco_list_videos_sala4 list_treinamento.0 rede get_tipo_template 0 user %}
+						
+					</ul>
+			
+					<div class="clearfix"></div>
+			
+				</div>
+			</section>
+		
+		{% else %}
+	
+			{% if not list_category.0.parent.parent %}
+	
+				<section id="content">
+		
+					<div class="wrapper">
+						
+						<div class="titulo">
+							<h2><span>{{ list_category.0.parent.name }}</span></h2>
+						</div>
+				
+						<img src="{{ STATIC_URL }}{{ get_tipo_template }}/images/pinguelo.png" border="0" id="pinguelo" />
+						<ul class="lista categoria">
+							{% for i in list_category %}
+								<li>
+									{% if i|count_category_category > 0 %}
+										<a href="{% url category rede.link i.id %}">{{ i.name }}<span>{{ i|count_category_category }} Curso{{ i|count_category_category|pluralize }}</span></a>
+									{% else %}
+										<a href="javascript:void(0);" style="cursor: default; color: #A6A6A6;">{{ i.name }}<span>(Nenhum Curso)</span></a>
+									{% endif %}
+								</li>
+							{% endfor %}
+						</ul>
+				
+						<div class="clearfix"></div>
+				
+					</div>
+					
+				</section>
+			
+			{% else %}
+			
+				<section id="content">
+					
+					<div class="wrapper">
+				
+						<div class="titulo categoria">
+							<h2><span><img src="{{ list_category.0.parent|get_image }}" /></span>
+							<br />
+							<span>{{ list_category.0.parent.name }}</span></h2>
+						</div>
+				
+						<img src="{{ STATIC_URL }}{{ get_tipo_template }}/images/pinguelo.png" border="0" id="pinguelo" />
+				
+						<ul class="lista categoria">
+							{% for i in list_category %}
+								<li>
+									{% if i|count_video_category > 0 %}
+										<a href="{% url category rede.link i.id %}">
+											<img src="{{ STATIC_URL }}{{ get_tipo_template }}/images/play.png" border="0" /> 
+											{{ i.get_name }}
+											<span>{{ i|count_video_category }} Vídeo{{ i|count_video_category|pluralize }}</span>
+										</a>
+									{% else %}
+										<a href="javascript:void(0);" style="cursor: default; color: #A6A6A6;">
+											<img src="{{ STATIC_URL }}{{ get_tipo_template }}/images/play.png" border="0" /> 
+											{{ i.get_name }}
+											<span>(Nenhum Vídeo)</span>
+										</a>
+									{% endif %}
+								</li>
+							{% endfor %}
+						</ul>
+				
+						<div class="clearfix"></div>
+				
+					</div>
+					
+				</section>
+			
+			{% endif %}
+		    
+		{% endif %}
+		
+	{% endif %}
+
+{% endblock content %}

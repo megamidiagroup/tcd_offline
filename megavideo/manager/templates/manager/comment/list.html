@@ -1,0 +1,181 @@
+{% extends 'manager/list.html' %}
+{% block content_header %}
+{% endblock %}
+{% load miniature %}
+{% load metadados %}
+{% load hasin %}
+
+{% block list %}
+
+{% if not video %}
+
+<ul id='list_comment'>
+    {% if content_list.object_list %}
+  <!-- video -->
+  {% for i in content_list.object_list %}
+    <li>
+        {% load miniature %}
+        <table width="100%">
+        <tr>
+            <td width="70">
+              <a href="{{ request.channel_url }}manager/comment/{{ i.id }}/">
+                  <img src='{{ i.video|thumbnail:"59x44" }}' width='59' height='44' border="0" align='left' />
+              </a> 
+            </td>
+            <td align="left">
+               <h3>{{ i.get_name|truncatewords:12 }}</h3>
+         <p><span>Canal:</span> <span class="channel">{{ i.get_channel }}</span></p>
+            </td>
+      <td align="right">
+        <span>Novos comentários &nbsp;</span> <h3 class="channel comment_{{i.id}}">{{ i.videocomment_set.all.count }}</h3>
+      </td>
+        </tr>
+        </table>
+    </li>
+  
+    {% for j in i.get_last_five_comment %}
+    <li class="comment line_{{ j.id }}">
+      <table width='100%'>
+        <tr>
+          <td>
+             {% if not j.name %}
+            <h3>Anônimo</h3>
+             {% else %}
+               <h3>{{j.name }}</h3>
+             {% endif %}  
+            &nbsp;&nbsp;&nbsp;{{ j.content }}
+          </td> 
+          <td width="80">
+            {{j.date.day}}/{{j.date.month}}/{{j.date.year}}
+          </td>
+          <td width="80">
+            {% if j.published %}
+              <div class='publicado true' target='{{ request.channel_url }}manager/comment/ajax_publish/' id='pub_{{ j.id }}'></div>
+            {% else %}
+              <div class='publicado false' target='{{ request.channel_url }}manager/comment/ajax_publish/' id='pub_{{ j.id }}'></div>
+            {% endif %}
+          </td>
+          {% if request.user.is_superuser %}
+          <td width="100">
+            <img src='/megavideo/static/manager/images/bt_excluir.png' class='exclude' id='line_{{ j.id }}' removeOne="comment_{{i.id}}"  url='/megavideo/manager/comment/del/' target_id='{{ j.id }}' title='Excluir comentários' msg='Você tem certeza que deseja excluir este comentário?' border="0" />
+          </td>
+          {% endif %}
+        </tr>
+      </table>
+    </li>
+    
+    {% if forloop.last %}
+      {% if i.videocomment_set.all.count|gte:5 %}
+        <li class="comment last">
+            <a href="{{ request.channel_url }}manager/comment/{{ i.id }}/"><img src="{{STATIC_URL}}/static/manager/images/coments_more_seta.png" /></a>          
+        </li>
+      {% endif %}
+    {% endif %}
+    
+    {% endfor %}
+  {% endfor %}
+    {% else %}
+    <li class='noresult'>
+                <img border="0" src="{{STATIC_URL}}/static/manager/images/noresult.gif" alt="Não foi encontrado nenhum programa"/>
+    </li>
+  {% endif %}
+</ol>
+
+      
+{% else %}      
+      
+<ul id='list_comment'>
+   
+    <!-- video -->
+    <li>
+        {% load miniature %}
+        <table width="100%">
+        <tr>
+            <td width="70">
+                <a href="{{ request.channel_url }}manager/comment/{{ video.id }}/">
+                    <img src='{{ video|thumbnail:"59x44" }}' width='59' height='44' border="0" align='left' />
+                </a> 
+            </td>
+            <td align="left">
+               <h3>{{ video.get_name|truncatewords:12 }}</h3>
+               <p><span>Canal:</span> <span class="channel">{{ video.get_channel }}</span></p>
+            </td>
+            <td align="right">
+                <span>Novos comentários &nbsp;</span> <h3 class="channel comment_{{ video.id }}">{{ video.videocomment_set.all.count }}</h3>
+            </td>
+        </tr>
+        </table>
+    </li>
+    
+     {% if content_list.object_list.count %}
+        {% for j in content_list.object_list %}
+        <li class="comment line_{{ j.id }}">
+            <table width='100%'>
+                <tr>
+                    <td>
+                       {% if not j.name %}
+                        <h3>Anônimo</h3>
+                       {% else %}
+                         <h3>{{j.name }}</h3>
+                       {% endif %}  
+                        &nbsp;&nbsp;&nbsp;{{ j.content }}
+                    </td>   
+                    <td width="80">
+                        {{j.date.day}}/{{j.date.month}}/{{j.date.year}}
+                    </td>
+                    <td width="80">
+                        {% if j.published %}
+                            <div class='publicado true' target='{{ request.channel_url }}manager/comment/ajax_publish/' id='pub_{{ j.id }}'></div>
+                        {% else %}
+                            <div class='publicado false' target='{{ request.channel_url }}manager/comment/ajax_publish/' id='pub_{{ j.id }}'></div>
+                        {% endif %}
+                    </td>
+                    {% if request.user.is_superuser %}
+                    <td width="100">
+                        <img src='/megavideo/static/manager/images/bt_excluir.png' class='exclude' id='line_{{ j.id }}' removeOne="comment_{{i.id}}"  url='/megavideo/manager/comment/del/' target_id='{{ j.id }}' title='Excluir comentários' msg='Você tem certeza que deseja excluir este comentário?' border="0" />
+                    </td>
+                    {% endif %}
+                </tr>
+            </table>
+        </li>
+        {% endfor %}
+    
+      {% else %}
+      <li class='noresult'>
+           <img border="0" src="{{STATIC_URL}}/static/manager/images/noresult.gif" alt="Não foi encontrado nenhum programa"/>
+      </li>
+  {% endif %}
+</ol>
+
+
+
+{% endif %}     
+      
+{% endblock %}      
+{% block confirm %}<!-- Confirm Dialog -->
+<div class="jqmConfirm" id="confirm">
+    <div id="ex3b" class="jqmConfirmWindow">
+        <div class="jqmConfirmTitle clearfix">
+            <h1>Confirmação</h1>
+            <a href="#" class="jqmClose"><em>Close</em></a>
+        </div>
+        <div class="jqmConfirmContent">
+            <p class="jqmConfirmMsg">
+            </p>
+        </div>
+        <table class="jqmButtons">
+            <tr>
+                <td width="40%" align="right" class="sim" id='1'>
+                    <img src="{{STATIC_URL}}/static/manager/images/bt_publicado.png" title="Sim" />Sim
+                </td>
+                <td width="20%">
+                    &nbsp;
+                </td>
+                <td width="40%" align="left" class="no" id='0'>
+                    <img src="{{STATIC_URL}}/static/manager/images/bt_despublic.png" title="Não" />Não
+                </td>
+            </tr>
+        </table>
+    </div>
+</div> 
+{% endblock %}

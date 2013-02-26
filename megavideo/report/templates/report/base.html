@@ -1,0 +1,135 @@
+{% load super_truncate %}
+{% load humanize_megas %}
+{% load miniature %}
+
+<style>
+    {% include 'report/main.css' %}
+</style>
+<table width="878" class='brandwidth' cellpadding="0" cellspacing="0" style="border:0px;margin:0px;padding:0px; font-family: Arial;" background="{{STATIC_URL}}/static/report/images/top.png" >
+<tr class='header'>
+    <th class='logo' style='height:185px;'>
+    </th>
+    <th align="right" class='date' valign="top">
+        <div style='margin:0 85px 0 0;'>
+	     <h1 style='color:#cecece;margin:0px;padding: 0px;padding-top:5px;font-size: 75px;line-height: 70px;'>{{ date_pub|date:'d' }}</h1>
+	     <h3 style='color:#cecece;margin:0px;padding: 0px; display: inline;line-height: 20px;'>{{ date_pub|date:'M' }}</h3>
+	     <h2 style='color:#cecece;margin:0px;padding: 0px; display: inline;line-height: 20px;padding: 0px;'>{{ date_pub|date:'Y' }}</h2>
+	   </div>  
+    </th>
+</tr>
+
+{% block list_video %}
+
+{% for i in group %}
+
+<tr class='line {% cycle "dark" "light" %}'>
+    <td colspan='2' height="35" class='first' style='color:#7099B4; padding-left:55px;font-size:18px; padding-top:10px' background="{{STATIC_URL}}/static/report/images/top_{% cycle "dark" "light" %}.png">
+        {% if forloop.first %}
+            Vídeos mais visto até <span class='day' style='font-size: 30px;color:#5A5A5A;font-weight: bolder;' >{{ i.inicio.max_date|date:'d' }}</span> <span class='month' style='font-size: 30px;color:#5A5A5A;font-weight: bolder;' >{{ i.inicio.max_date|date:'M' }}</span>
+        {% else %}
+            Mais visto de <span class='month' style='font-size: 30px;color:#5A5A5A;font-weight: bolder;'  >{{ i.inicio.min_date|date:'d' }}</span> até <span class='day' style='font-size: 30px;color:#5A5A5A;font-weight: bolder;' >{{ i.inicio.max_date|date:'d' }}</span> <span class='month' style='font-size: 30px;color:#5A5A5A;font-weight: bolder;' >{{ i.inicio.max_date|date:'M' }}</span>
+        {% endif %}
+    </td>
+</tr>
+
+<tr class='featured {% cycle "dark" "light" %}' background="{{STATIC_URL}}/static/report/images/bg_{% cycle "dark" "light" %}.png">
+
+    <td class='content-featured' style='vertical-align: top; padding-left: 55px;padding-top:40px;'>
+       <table width="215" height="158" class="img" cellpadding="0" cellspacing="0" style='height:158px;width:215px;' background="{{STATIC_URL}}/static/report/images/relatorio_img.png">
+           <tr>
+               <td class='img' style='font-size: 18px;color:#313131;padding:6px 10px 0px 10px;vertical-align: top;height: 110px;'>
+                    <a href='{{request.channel_url}}video/{{i.id}}/' target='_blank'>
+                       <img src='{{ STATIC_URL }}{{ i.inicio|thumbnail:"193x110" }}' width="193" height="110" border='0' />
+                    </a>        
+               </td> 
+               </tr>
+                   <tr>
+               <td style='font-size:18px;color:#313131;padding-left:10px;padding-top:10px;vertical-align: top;'>
+                    <div style='position:relative'>
+                    {{ i.inicio.get_name|super_truncatewords:"10-10" }}
+	                    <span style='float:right;font-size: 20px;color:#313131;padding-right:10px;text-align:center;'>
+	                        {{ i.inicio.ratesum|default:'231' }}          
+	                    </span>
+                    </div>       
+               </td>           
+           </tr>
+       </table>
+    </td>
+
+    <td class='content' style='padding-bottom: 20px;padding-top:40px;vertical-align: top;' colspan='2'>
+       <table cellpadding="3">
+       <tr>
+       {% for j in i.content %}
+          <td> 
+           <table width="171" height="115" cellpadding="3" cellspacing="0" class='item' background="{{STATIC_URL}}/static/report/images/bg_item.png" > 
+            <tr>
+            <td class='img' style='font-size: 18px;color:#313131;padding-left:10px;vertical-align: top;padding-top: 5px;'>
+                   <a href='{{request.channel_url}}video/{{j.id}}/' target='_blank'>
+                        <img src='{{ STATIC_URL }}{{ j|thumbnail:"150x85"}}' width="150" height="85" border='0' />
+                   </a>
+            </td> 
+            </tr>
+            <tr>   
+            <td style='font-size:14px;color:#313131;padding-left:10px;vertical-align: top;'>
+               <div style='position: relative;'>
+                {{ j.get_name|super_truncatewords:"10-10" }}        
+                   <span style='float:right;font-size: 19px;color:#313131;text-align:center;padding-right:10px;'>
+                       {{ j.views|default:'231' }}          
+                   </span>
+               </div>       
+            </td>  
+            </tr>
+            </table>
+            </td>
+            {% cycle "" "" "</tr><tr>" %}        
+       {% endfor %}
+       </table>
+    </td>
+    <tr>
+    <td colspan="2" background="{{STATIC_URL}}/static/report/images/bg_box_{% cycle "dark" "light" %}.png" align="right">
+        <table class='resume' cellpadding="0" cellspacing="0" style='margin-right:10px'>
+            <tr>
+                <th width="180" height="40" class='media' style='color:#d0dfe4;font-size: 14px;' background="{{STATIC_URL}}/static/report/images/resume_tt_midia.png">
+                    Média    
+                </th>
+                <th width="180" height="40" class='thumb' style='color:#d0dfe4;font-size: 14px;' background="{{STATIC_URL}}/static/report/images/resume_tt_thumb.png">
+                    Thumb    
+                </th>
+                <th width="180" height="40" class='web' style='color:#d0dfe4;font-size: 14px;' background="{{STATIC_URL}}/static/report/images/resume_tt_web.png">
+                    Web    
+                </th>
+                <th class='space'>
+                    &nbsp;
+                </th>
+                 <th width="180" height="40" class='view' style='color:#d0dfe4;font-size: 14px;' background="{{STATIC_URL}}/static/report/images/resume_tt_view.png">
+                    Visitantes    
+                </th>
+            </tr>
+            <tr>
+                <td class='media' style='text-align: center;padding:10px;color:#fff;font-size: 45px; ' background="{{STATIC_URL}}/static/report/images/resume_midia.png">
+                   {{ i.brandwidth.midia.bytes|humanize_bytes:'15px' }}  
+                </td>
+                <td class='thumb' style='text-align: center;padding:10px;color:#fff;font-size: 45px;' background="{{STATIC_URL}}/static/report/images/resume_thumb.png">
+                   {{ i.brandwidth.thumbnail.bytes|humanize_bytes:'15px'}}   
+                </td>
+                <td class='web' style='text-align: center;padding:10px;color:#fff;font-size: 45px;' background="{{STATIC_URL}}/static/report/images/resume_web.png">
+                    {{ i.brandwidth.web.bytes|humanize_bytes:'15px' }}
+                </td>
+                <td class='space' width="25">
+                    &nbsp;
+                </td>
+                <td class='view' style='text-align: center;padding:10px;color:#fff;font-size: 45px;' background="{{STATIC_URL}}/static/report/images/resume_view.png">
+                    {{ i.brandwidth.views|default:777777777 }}
+                </td>
+            </tr>
+        </table>
+        <br>
+    </td>
+    </tr>
+    
+</tr>
+
+{% endfor %}
+
+{% endblock list_video %}
+</table>

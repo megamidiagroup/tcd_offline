@@ -1,0 +1,42 @@
+﻿{% load util %}
+
+<table cellpadding="0" cellspacing="0" border="0" width="100%">
+
+    <tr>
+        <td align="left" valign="middle" colspan="3">
+            <img src="{{ BASE_URL }}{{ rede.logo.url }}" border="0" />
+        </td>
+    </tr>
+
+    <tr>
+        <td align="left" valign="middle" colspan="3">Olá {{ responsavel }},</td>
+    </tr>
+    <tr>
+        <td align="left" valign="middle" colspan="3">O usuário {{ usuario }} realizou o questionário de livre resposta e aguarda sua avaliação.<br /> Segue abaixo as perguntas com as suas respectivas respostas.</td>
+    </tr>
+    <tr>
+    	<td colspan="3">
+		
+			{% for lq in list_question %}
+			
+				{% if not lq.get_list_response_order %}
+			
+	                <p>{{ forloop.counter }}. {{ lq.text|safe }}</p>
+	
+	                <div class="responses">   
+	                	<p>Resposta: {{ lq.get_free_response.0.text }}</p>
+	                </div>
+	                
+	            {% endif %}
+
+            {% endfor %}
+		
+		</td>
+	</tr>
+    <tr>
+        <td align="left" valign="middle" colspan="3">
+            Avalie o usuário clicando <a href="{{ link }}" target="_blank">aqui</a> ou copie e cole no seu navegador o link {{ link }}
+        </td>
+    </tr>
+
+</table>

@@ -1,0 +1,5 @@
+<html>
+{% for i in vlist %}
+<a href='/old/player.php?id={{ i.id}}'><img src='{{ i.get_thumb_url }}'/></a></br>
+{% endfor %}
+</html>

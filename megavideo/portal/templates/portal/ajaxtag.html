@@ -1,0 +1,52 @@
+<script language='JavaScript'>
+$(document).ready(function(){
+
+        var options = { 
+	    type:          'post',         
+		//dataType:  	   'json', 
+		beforeSubmit:  function(){
+						$('div#error').html("<img src='{{STATIC_URL}}/static/portal/images/loading.gif' />")
+        },
+
+	    success:       function(data){
+							//create links
+							$('.recipe_tags_list').each(function(){
+								$(this).remove();
+							});
+							
+							$('#recipe_tags_list').after(data);
+							$('#modal_form_tag').remove();
+							
+					   }	 
+		}; 
+ 		
+ 		$('#form_send_tag').ajaxForm(options);
+		
+		$('#msg').hide()
+		
+});		
+</script>
+
+<form id="form_send_tag" method="post" name="form_send_tag" action="{{request.channel_url}}ajaxtagpost/" onSubmit='return false' >
+	
+<ul class='ajax_tag'>
+		<li>
+			<img src="{{STATIC_URL}}/static/portal/images/x.png" class='close_form' onclick='hideFormTagAjax()'>
+		</li>
+
+		<li>
+			<label for='ntag'>Inserir tags:</label>
+			<input type='text' value='' name='ntag' id='ntag'>
+            <input type='hidden' value='{{ id_video }}' name='id_video' id='id_video'>
+		</li>
+
+		<li>
+			<div id='error'>{{ error_message }}</div>
+			<br>
+			<input type='submit' name='send_tag' id='send_tag' value='Enviar dados' >
+		</li>
+</ul>
+
+</form>
+	
+ 

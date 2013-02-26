@@ -1,0 +1,26 @@
+<ul class='menu_top'>
+{% load filter_url %}
+{% load hasin %}
+{% for i in xml_menu.getchildren %}
+        <li class=''>
+            {% if not i.attrib.url %}
+                <span>{{ i.attrib.name|safe }}</span>
+            {% else %}
+                <a href="{{ request.channel_url}}{{ i.attrib.url }}" name="{{i.attrib.name}}"> {{ i.attrib.name|safe }}  </a>
+            {% endif %}
+			{% if i.getchildren %}
+				<ul class='menu_child'>
+				{% for j in i.getchildren %}
+			            <li class='{{ request.get_full_path|return_selected:j.attrib.url }}' uri='{{request.get_full_path|crop_page}}'  url='{{j.attrib.url}}'> 
+			              {% if not j.attrib.url %}
+			                 <span> {{ j.attrib.name|safe }}</span>
+			              {% else %}
+			                 <a href="{{ request.channel_url}}{{ j.attrib.url }}" name="{{j.attrib.name}}"> {{ j.attrib.name|safe }}  </a>
+			              {% endif %}  
+			            </li>
+				{% endfor %}
+				</ul>
+			{% endif %}
+		</li>	
+{% endfor %}
+</ul>

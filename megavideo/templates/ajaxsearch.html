@@ -1,0 +1,7 @@
+<h1>Busca {{ pattern }}</h1>
+<ul>
+	{% load miniature %}
+{% for i in videos %}
+<li><img src='{{ i|thumbnail:"75x50" }}' width='75' height='50'/> {{ i.get_name }}</li>
+{% endfor %}
+</ul>

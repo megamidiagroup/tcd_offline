@@ -1,0 +1,52 @@
+<script type="text/javascript">
+
+	var playermv  = Object();
+	var intervalo = 0;
+	
+	function onPlay(arg){
+		
+		$('.buttom').css('display', 'none');
+        /* insere no historico de videos assitidos */
+        $.post('{% url home %}{{ rede }}/action/',
+                {'video_id':'{{ id }}', 'action':'play', 'csrfmiddlewaretoken':'{{ csrf_token }}'},
+                function(data){
+                    //$('.mensagemSenha').html('<strong>'+data+'</strong>');
+                    //if(arg!=true) myPlayer.removeEvent('play', onPlay);
+                }
+        );
+		
+	};
+	
+	function onComplete(){
+		
+		$('.buttom').css('display', 'inline-block');
+        /* insere no historico de videos assitidos até completado */
+        $.post('{% url home %}{{ rede }}/action/',
+                {'video_id':'{{ id }}', 'action':'complete', 'csrfmiddlewaretoken':'{{ csrf_token }}'},
+                function(data){
+                    //$('.mensagemSenha').html('<strong>'+data+'</strong>');
+                }
+        );
+		
+	};
+	
+</script>
+
+<script type="text/javascript" src="{{ base_url }}api/video/embed.js?idContent={{ code }}&width={{ w }}&height={{ h }}"></script>
+
+<script type="text/javascript">
+
+	function setsize(w, h){
+		$('object, embed, video').css('width', w + 'px').css('height', h + 'px');
+		$('object, embed, video').attr('width', w).attr('height', h);
+		$('.mejs-mediaelement, .mejs-layer, .mejs-video').css('width', w + 'px').css('height', h + 'px');
+		try{
+			playermv.setPlayerSize(w, h);
+		}catch(e){}
+	}
+	
+	function updatePlayer(w, h) {
+		intervalo = setTimeout(function() { setsize(w, h); }, 10);
+	}
+	
+</script>

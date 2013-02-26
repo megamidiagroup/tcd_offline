@@ -1,0 +1,20 @@
+<select id="select" style="display: none;  width:398px; *width:380px;" onchange="selectcategory('{{channel_url}}category/', this);">
+	<option value="0">Todas as categorias</option>
+	{% for i in category_menu %}
+		{% ifequal cat_id i.list.id %}
+			<option value="{{ i.list.id }}" selected="selected">{{ i.list.name|safe }}&nbsp;&nbsp;({{ i.list.get_video.count }})</option>
+		{% else %}
+			<option value="{{ i.list.id }}">{{ i.list.name|safe }}&nbsp;&nbsp;({{ i.list.get_video.count }})</option>
+		{% endifequal %}
+		
+		{% for c in i.childs %}
+			{% ifequal cat_id c.id %}
+				<option value="{{ c.id }}" selected="selected" style="padding-left: 80px; color: #6b6b6b;">{{ c.name|safe }}&nbsp;&nbsp;({{ c.get_video.count }})</option>
+			{% else %}
+				<option value="{{ c.id }}" style="padding-left: 80px; color: #6b6b6b;">{{ c.name|safe }}&nbsp;&nbsp;({{ c.get_video.count }})</option>
+			{% endifequal %}
+		{% endfor %}
+		
+	{% endfor %}
+	
+</select>

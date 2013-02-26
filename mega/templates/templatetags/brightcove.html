@@ -1,0 +1,61 @@
+<script type="text/javascript" src="http://admin.brightcove.com/js/BrightcoveExperiences.js"></script>
+
+<object id="myExperience" class="BrightcoveExperience">
+    <param name="bgcolor" value="#000000" />
+    <param name="wmode" value="transparent" />
+    <param name="playerID" value="1637139418001"/>
+    <param name="playerKey" value="AQ~~,AAABTkciKVE~,-YisEh-LbwMn-S__oXeCZnN19UOQAd42" />
+    <param name="isVid" value="true" />
+    <param name="isUI" value="true" />
+    <param name="dynamicStreaming" value="true" />
+    <param name="@videoPlayer" value="{{ code }}" />
+    <!-- params for Smart Player API -->
+    <param name="includeAPI" value="true" />
+    <param name="templateReadyHandler" value="BCL.onTemplateReady" />
+</object>
+
+<script type="text/javascript">brightcove.createExperiences();</script>
+
+<script type="text/javascript">
+
+    // namespace for everything global
+    var BCL = {};
+
+    // listener for the Template Ready event
+    BCL.onTemplateReady = function(event) {
+        BCL.player = brightcove.api.getExperience("myExperience");
+        BCL.experienceModule = BCL.player.getModule(brightcove.api.modules.APIModules.EXPERIENCE);
+        // get a reference to the video player module
+        BCL.videoPlayer = BCL.player.getModule(brightcove.api.modules.APIModules.VIDEO_PLAYER);
+        // set listener for media change event
+        BCL.videoPlayer.addEventListener(brightcove.api.events.MediaEvent.PLAY, BCL.onMediaPlay);
+        BCL.videoPlayer.addEventListener(brightcove.api.events.MediaEvent.COMPLETE, BCL.onMediaComplete);
+    }
+
+    BCL.onMediaPlay = function(event) {
+        $('.buttom').css('display','none');
+        /* insere no historico de videos assitidos */
+        $.post('{% url home %}{{ rede }}/action/',
+                {'video_id':'{{ id }}', 'action':'play', 'csrfmiddlewaretoken':'{{ csrf_token }}'},
+                function(data){
+                    //$('.mensagemSenha').html('<strong>'+data+'</strong>');
+                }
+        );
+    }
+
+    BCL.onMediaComplete = function(event) {
+        $('.buttom').css('display','inline-block');
+        /* insere no historico de videos assitidos até completado */
+        $.post('{% url home %}{{ rede }}/action/',
+                {'video_id':'{{ id }}', 'action':'complete', 'csrfmiddlewaretoken':'{{ csrf_token }}'},
+                function(data){
+                    //$('.mensagemSenha').html('<strong>'+data+'</strong>');
+                }
+        );
+    }
+
+    function updatePlayer(w, h){
+        BCL.experienceModule.setSize(w, h);
+    }
+
+</script>

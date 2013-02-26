@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta http-equiv="x-ua-compatible" content="ie=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1" />
+<meta name="description" content="Adapt.js serves CSS based on screen width." />
+<title>Página não encontrada</title>
+<link rel="stylesheet" href="{{ STATIC_URL_TCD }}mega/css/404/master.css" />
+<noscript>
+<link rel="stylesheet" href="{{ STATIC_URL_TCD }}mega/css/404/mobile.min.css" />
+</noscript>
+<script>
+// Edit to suit your needs.
+var ADAPT_CONFIG = {
+  // Where is your CSS?
+  path: '{{ STATIC_URL_TCD }}mega/css/404/',
+
+  // false = Only run once, when page first loads.
+  // true = Change on window resize and page tilt.
+  dynamic: true,
+
+  // First range entry is the minimum.
+  // Last range entry is the maximum.
+  // Separate ranges by "to" keyword.
+  range: [
+    '0px    to 760px  = mobile.min.css',
+    '760px  to 980px  = 720.min.css',
+    '980px  to 1280px = 960.min.css',
+    '1280px to 1600px = 1200.min.css',
+    '1600px to 1940px = 1560.min.css',
+    '1940px to 2540px = 1920.min.css',
+    '2540px           = 2520.min.css'
+  ]
+};
+</script>
+<script src="{{ STATIC_URL_TCD }}mega/js/404/adapt.min.js"></script>
+</head>
+<body>
+<div id="content">
+	<div id="error">
+    	<h1>Página não encontrada</h1>
+        <div id="mensagem">
+            A página que você procura não pôde ser encontrada.<br>
+            <a href="javascript:history.go(-1);">Clique aqui para voltar</a>
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,49 @@
+{% load miniature %}
+{% load super_truncate %}
+
+{% if superlistvideos.title %}
+
+	<div id="{{ superlistvideos.id }}" class="corner-{{ superlistvideos.id }} {{ superlistvideos.class }}">
+		<div class="title">
+			<span class="title">
+				{{ superlistvideos.title }}
+				<br />
+				{{ superlistvideos.subtitle }}
+			</span>
+		</div>
+		<div class="setaup" page="{{ superlistvideos.list.previous_page_number }}" chan="{{ channel_url }}" onclick="get_super_seta('{{ superlistvideos.id }}', this, 'up');" style="cursor: pointer;">
+			{% ifequal superlistvideos.id 'featured' %}
+				<img src="{{STATIC_URL}}/static/portal/images/setUp.png" width="39" height="23" border="0" />
+			{% else %}
+                <img src="{{STATIC_URL}}/static/portal/images/setUpWhite.png" width="39" height="23" border="0" /> 
+			{% endifequal %}
+		</div>
+		<div class="page_1 paginator">
+			{% for i in superlistvideos.list.object_list %}
+				<div class="list" page="{{ superlistvideos.list.page }}" onclick="window.location='{{ channel_url }}video/{{i.id}}/';" style="cursor: pointer;">
+					<blockquote><img src="{{ i|thumbnail:'77x51'}}" width="77" height="51" border="0" /></blockquote>
+					<span class="title">{{ i.get_name|super_truncate:'4-11' }}</span>
+					<span class="description">{{ i.get_description|super_truncate:'6-15' }}</span>
+				</div>
+			{% endfor %}
+		</div>
+		<div class="setadown" page="{{ superlistvideos.list.next_page_number }}" max="{{ superlistvideos.max }}" chan="{{ channel_url }}" onclick="get_super_seta('{{ superlistvideos.id }}', this, 'down');" style="cursor: pointer;">
+			{% ifequal superlistvideos.id 'featured' %}
+				<img src="{{STATIC_URL}}/static/portal/images/setDown.png" width="39" height="23" border="0" />
+			{% else %}
+				<img src="{{STATIC_URL}}/static/portal/images/setDownWhite.png" width="39" height="23" border="0" />
+			{% endifequal %}
+		</div>
+	</div>
+
+{% else %}
+
+	{% for i in superlistvideos.list.object_list %}
+		<div class="list" onclick="window.location='{{request.channel_url}}video/{{i.id}}/';" style="cursor: pointer;">
+			<blockquote><img src="{{ i|thumbnail:'77x51'}}" width="77" height="51" border="0" /></blockquote>
+			<span class="title">{{ i.get_name|super_truncate:'4-11' }}</span>
+			<span class="description">{{ i.get_description|super_truncate:'6-15' }}</span>
+		</div>
+	{% endfor %}
+
+{% endif %}

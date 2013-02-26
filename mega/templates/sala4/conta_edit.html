@@ -1,0 +1,109 @@
+{% extends 'sala4/main.html' %}
+
+{% load util %}
+
+{% block extra-css %}
+	<link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}{{ get_tipo_template }}/css/jVal.css" />
+{% endblock extra-css %}
+
+{% block extra-js %}
+
+	<script type="text/javascript" src="{{ STATIC_URL }}{{ get_tipo_template }}/js/jVal.js"></script>
+
+	<script type="text/javascript">
+	
+		$(document).ready(function(){
+			$('input[name="txt_newpass"]').passwordStrength();
+		});
+		
+		function send_form(form, send)
+		{
+			if (mobile)
+			{
+				if ( $(form).jVal({style:'blank',padding:26,border:0,wrap:false}) )
+				{
+					if (send)
+					{
+						$(form).submit();
+						$('.botao').html('Aguarde...').css('background-color', '#CCC');
+					}
+				}
+			}
+			else
+			{
+				if ( $(form).jVal({style:'pod',padding:3,border:1,wrap:true}) )
+				{
+					if (send)
+					{
+						$(form).submit();
+						$('.botao').html('Aguarde...').css('background-color', '#CCC');
+					}
+				}
+			}
+		}
+		
+    </script>
+    
+{% endblock extra-js %}
+
+{% block content %}
+
+	<section id="content">
+		<div class="wrapper curso">
+			<div class="titulo">
+				<h2><span>Dashboard</span></h2>
+			</div>
+			<img src="{{ STATIC_URL }}{{ get_tipo_template }}/images/pinguelo.png" border="0" id="pinguelo" />
+	
+			<ul class="lista login ">
+				
+				<form action="./" method="post" enctype="multipart/form-data">
+					
+					{% csrf_token %}
+				
+					<li class="form">
+						<h3>Editar Cadastro</h3>
+						<ul class="dados">
+							<li>
+								<span>Nome *:</span>
+								<br />
+								<input type="text" value="{{ user.get_full_name }}" name="txt_name" style="width: 255px;" onfocus="send_form('form', false);" onchange="send_form('form', false);"
+									jVal="{valid:function (val) { if (val.length < 3) return 'Digite o seu nome completo.'; else return ''; }}" />
+							</li>
+							<li>
+								<span>Email *:</span>
+								<br />
+								<input type="text" value="{{ user.email }}" name="txt_email" style="width: 255px;" onfocus="send_form('form', false);" onchange="send_form('form', false);"
+									jVal="{valid:function (val) { if (/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/.test(val)) return true; else return false; }, message:'E-mail Inválido.'}"
+										jValKey="{valid:/[a-zA-Z0-9._%+-@]/, cFunc:'alert', cArgs:['E-mail: '+$(this).val()+'.']}" />
+							</li>
+							<li style="height: 68px;">
+								<span>Nova senha:</span>
+								<br />
+								<input type="password" id="password" value="" name="txt_newpass" style="width: 132px;" onfocus="send_form('form', false);" onchange="send_form('form', false);"
+									jVal="{valid:function (val) { if (val.length > 0 && is_secury < 50) return false; if (val.length >= 4 || val.length == 0) return true; else return false; }, message:'Insegura, use letras e números.'}" />
+								<div id="passwordStrengthDiv" class="is0 is40"></div>
+							</li>
+							<li>
+								<span>Confirma:</span>
+								<br />
+								<input type="password" value="" name="txt_confirm" style="width: 132px;" onfocus="send_form('form', false);" onchange="send_form('form', false);"
+									jVal="{valid:function (val) { if ( val != eval('$(\'#password\').val()') ) return false; else return true; }, message:'A senha não confere.'}" />
+							</li>
+						</ul>
+						<a href="javascript:void(0);" onclick="send_form('form', true);" class="botao">Salvar</a>
+					</li>
+					
+					<input type="hidden" name="user" value="{{ user.username }}" />
+	                <input type="hidden" name="key" value="{{ key }}" />
+				
+				</form>
+	
+			</ul>
+	
+			<div class="clearfix"></div>
+	
+		</div>
+	</section>
+
+{% endblock content %}

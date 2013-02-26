@@ -1,0 +1,169 @@
+{% extends 'manager/main.html' %}
+
+{% load miniature %}
+{% load extra_filter %}
+
+{% block content %}
+
+<ul class='formvideo'>
+    <li>
+      {% include 'manager/menubar.html' %}
+      <form id='form_enviar_ajax' action='{{ request.channel_url }}manager/program/ajaxupdate/' method='post' onsubmit='return false;'>
+      <ol id='action'>
+      <li>
+       <div id='player'>   
+		<h2 style='font-size: 16px;'>Demo do preroll</h2>
+		<img src='{{ video|thumbnail:"112x76" }}' width='112' height='76' /><br/>
+		
+		 <div id="flashPlayer" name="{{ video.id }}" url="{{ base_url }}">
+              Aguarde, carregando o player...
+          </div>
+          
+          <dl class="form">
+          
+          <dd>
+              <input name='id' id='id_id' type="hidden"" class='metaInput' value='{{ video.id }}' >
+              <input name='name' id='id_name' type="text" class='metaInput' value='{{ video.get_name }}' >
+          </dd>
+          
+          <dd>
+              <textarea id='id_description' name='description' class='metaInput' >{{ video.get_description }}</textarea>
+          </dd>
+          
+          <dd id='output_message' style='display:none;'>&nbsp;</dd>
+          
+          <dd>
+              <img src='/megavideo/static/manager/images/bt_salvar.png' class='btn' id='btn_salvar_program' />
+          </dd>
+		
+	   {% if roll %}
+	   Roll atual : Video {{roll.id }} - "{{ roll.get_name }}"<br/>
+	   <blockquote><img src='{{ roll|thumbnail:"112x76" }}' width='112' height='76' /></blockquote>
+	   {% endif %}
+	
+       </div> <!-- close div player -->
+       <div id='info' style='width:450px'>
+       
+       <div id='preroll'>
+         <table cellpadding="0" cellspacing="0">
+             <tr class='first'>
+                 <th colspan="4">Preroll</th>
+             </tr>
+             
+             {% if videos %}
+             
+             {% for i in videos %}
+	             <tr class='line_{{ i.id }}'>
+	             <!-- 55x37 -->
+	                 <td class='left'><img src='{{ i|thumbnail:"55x37" }}' border='0' height="37" /> </td>
+	                 <td width='260'>
+	                   {{ i.get_name }}<br/>
+	                   <span>{{ i.duration|number2time }}</span>
+	                 </td>
+	                 <td>
+	                    <img src='/megavideo/static/manager/images/bt_edit_preroll.png' border='0' />
+	                 </td>
+	                 <td class='right'>
+	                    <img src="{{STATIC_URL}}/static/manager/images/bt_del_preroll.png" id="line_{{ i.id }}" class="exclude" url="/manager/program/del/" target_id="{{ i.id }}" title="Excluir" msg="Você tem certeza que deseja excluir esta vídeo?" />
+	                 </td>
+	             </tr>
+             {% endfor %}
+             
+             {% else %}
+	             <tr>
+	                 <td colspan="4">Nenhum vídeo cadastrado</td>
+	             </tr>
+             {% endif %}
+             
+              <tr class='last'>
+                <td colspan="4">
+                <img src='/megavideo/static/manager/images/bg_preroll.png' border='0' />
+                </td>
+             </tr>
+         </table>
+       
+		<!--Titulo do roll : 
+		<input type='hidden' name='title' value='Demo'/><br/>
+		
+		<h2>Video de pre-roll: </h2><br/>
+		<select name='idroll' id='bloup'>
+			<option value='0'>Nehum Roll</option>
+	 	{% for ir in videos %}
+	
+		{% ifequal ir.id roll.id %}
+		<option selected='select' value='{{ir.id}}'>
+		<img src='{{ ir|thumbnail:"112x76" }}' width='112' height='76' />
+		Video {{ ir.id }} - {{ ir.get_name }}</option>
+		{% endifequal %}
+	
+		{% ifnotequal ir.id roll.id %}
+		  <option value='{{ ir.id }}'><img src='{{ ir|thumbnail:"112x76" }}' width='112' height='76' />Video {{ ir.id }} - {{ ir.get_name }} </option>
+		{% endifnotequal %}
+	
+		{% endfor %}
+		</select>
+		
+		<input type='hidden' name='position' value='0' />
+		<input type='submit' value='Enviar' />
+		
+		-->
+		
+       </div><!-- close info -->
+		
+		</li>
+		<li class='clear'></li>
+		</ol>
+		</form> 
+	</li>
+</ul>		
+{% endblock %}
+{% block confirm %}
+
+<!-- Alert Dialog -->
+<div class="jqmConfirm categoria" id="confirm_categoria">
+
+    <div id="ex3b" class="jqmConfirmWindow">
+
+        <div class="jqmConfirmTitle clearfix">
+            <a href="#" class="jqmClose"><em>Close</em></a>
+        </div>
+
+        <div class="content">
+            <p class="jqmConfirmMsg msg"></p>
+            <h1>Inclua este vídeo em uma categoria antes de pública-lo</h1>
+        </div>
+
+        <input type="button" value="Clique Aqui" id="1" />
+
+    </div>
+
+</div>
+
+
+<!-- Confirm Dialog -->
+<div class="jqmConfirm" id="confirm">
+
+    <div id="ex3b" class="jqmConfirmWindow">
+
+        <div class="jqmConfirmTitle clearfix">
+            <h1>Confirmação</h1>
+            <a href="#" class="jqmClose"><em>Close</em></a>
+        </div>
+
+        <div class="jqmConfirmContent">
+            <p class="jqmConfirmMsg"></p>
+        </div>
+
+        <table class="jqmButtons">
+            <tr>
+                <td width="40%" align="right" class="sim" id='1'><img src="{{STATIC_URL}}/static/manager/images/bt_ativo.gif" title="Sim" /> Sim</td>
+                <td width="20%">&nbsp;</td>
+                <td width="40%" align="left" class="no" id='0'><img src="{{STATIC_URL}}/static/manager/images/bt_remove.gif" title="Não" /> Não</td>
+            </tr>
+        </table>
+
+    </div>
+
+</div>
+
+{% endblock %}

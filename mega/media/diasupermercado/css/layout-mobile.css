@@ -1,0 +1,68 @@
+.container {width:100%; margin:0 auto; position:relative;}
+.buttom,.buttom2{padding:11px 20px 10px;}
+
+#header{ padding:0;}
+#header #header-text {margin: 2px 0;position: static;text-align: center;font-size:1.2em;}
+#header #search{position:static; width:100%; top:0; right:0; display:none;}
+#header #search input{height:30px; width:90%; padding:0 10px; position:static;border:0;-webkit-border-radius: 0;-moz-border-radius: 0; border-radius:0; margin:0;}
+#header #search button{height:30px; width:80px; padding:0 10px; background:none no-repeat scroll center center #D33124;
+border:0; position:absolute; right:0; display:block; top:0;-webkit-border-radius:0;-moz-border-radius:0; border-radius:0;}
+#header #search button span{display:inline; font-size:1.2em; color:#FFF; text-transform:uppercase;}
+#header #menu{position:relative; top:0; left:0;-webkit-border-radius: 0;-moz-border-radius: 0; border-radius: 0;border:none;}
+#header #menu .menu-button{display:block; text-align:center; background-color:#D33124; padding:5px 0; margin-top:10px; color:#fff;}
+#header #menu .search-button{background:url("../images/icon-search.png") no-repeat scroll center center #9f2116;width:30px; height:30px; position:absolute; overflow:hidden; top:2px; right:2px;}
+#header #menu .user-button{background:url("../images/icon-user.png") no-repeat scroll center center #9f2116;width:30px; height:30px; position:absolute; overflow:hidden; top:2px; left:2px;}
+#header #menu .enquete{background:url("../images/icon_enquete_thumb.png") no-repeat scroll center center;width:30px; height:30px; position:absolute; overflow:hidden; top:2px; left:38px;}
+#header #menu ul{display:none;}
+#header #menu ul li{display:block;}
+#header #menu ul li a{background: none #D33124;filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#e03b2e', endColorstr='#a82218');background: -webkit-gradient(linear, left top, left bottom, from(#e03b2e), to(#a82218)); background: -moz-linear-gradient(top,  #e03b2e,  #a82218);float:none; display:block;-webkit-border-radius: 0;-moz-border-radius: 0; border-radius: 0; padding:10px 15px; margin-left:0; border-top:solid 1px #9F2116;}
+#header #menu ul li a:hover{background:#d78000; }
+#header #menu ul li a span{background: none;margin: 0;
+	padding: 0;}
+#header #logo{text-align:center;}
+#header .header-bg{display:none;}
+#header .container{height:auto;}
+
+#content ul.category li,
+#content ul.category2 li{display:block; width:100%; float:none;}
+#content ul.category li a,
+#content ul.category2 li a{padding:5px;border-bottom:1px dotted #114C35;}
+#content ul.category li div,
+#content ul.category2 li div{padding:0;border:0; margin:5px 5px 5px 0; width:35%; float:left;}
+#content ul.category li h2,
+#content ul.category2 li h2{font-size:1.6em; margin-bottom:5px;}
+#content ul.category li span,
+#content ul.category2 li span{font-size:1.2em;}
+
+#content .video .player{width:320px; height:180px; margin:0 auto 10px; float:none;}
+#content .video .player object{width:320px; height:180px;}
+#content .video .description{width:100%; height:auto; margin-bottom:10px; float:none;}
+#content .video iframe.elearning{width: 95%}
+
+#content #questions .number{font-size:2.4em;}
+#content #questions .question{font-size:1.6em;}
+
+#highlights .container, #content .container{ width:100%; padding:20px 0;}
+
+#footer {padding:20px 0;}
+#footer p{font-size:1.2em;}
+
+#account-widget{position:static; top:0; right:0;box-shadow:none; border:none;}
+#account-widget .user-account{margin:0; display:none;}
+#account-widget #account{width:100%; display:none;position:static; top:0; right:0; padding:0; border:none;}
+#account-widget #account > div{ background:none repeat scroll 0 0 #F4F4F4; height:auto; min-height:50px; border: none;-webkit-border-radius: 0;-moz-border-radius:0;border-radius: 0;box-shadow:none;}
+#account-widget #account .arrow{display:none;}
+
+#enquete-widget{position:static; top:0; right:0;box-shadow:none; border:none;}
+#enquete-widget .enquete{margin:0; display:none;}
+#enquete-widget #enquete{width:100%; display:none;position:static; top:0; right:0; padding:0; border:none;}
+#enquete-widget #enquete > div{ background:none repeat scroll 0 0 #fff; height:auto; min-height:50px; border: none;-webkit-border-radius: 0;-moz-border-radius:0;border-radius: 0;box-shadow:none;}
+#enquete-widget #enquete .arrow{display:none;}
+
+#login {height:auto; margin:0px; position:static; width:100%; }
+#login form{padding:20px 20px; margin:10px;}
+#login form input.buttom{width:50%; padding:11px 20px 10px;}
+
+.tia {display: none;}
+#account-widget .jewelCount, #enquete-widget .jewelCount {display: none;}
+#menu .user-button .jewelCount, #menu .enquete .jewelCount{display: block;right: 0px;left: auto;}

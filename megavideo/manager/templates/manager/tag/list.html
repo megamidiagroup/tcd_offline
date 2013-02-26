@@ -1,0 +1,47 @@
+{% extends 'manager/form.html' %}
+{% load super_truncate %}
+
+{% block js_script %}
+    <script type="text/javascript" src="{{STATIC_URL}}/static/manager/js/swfobject1.5.js"> </script>
+    <script type="text/javascript" src="{{STATIC_URL}}/static/manager/js/jquery.jqModal.js"> </script>
+    <script type="text/javascript" src="{{STATIC_URL}}/static/manager/js/tag.js"> </script>
+{% endblock %}
+
+{% block first_content %}
+    {% include 'manager/menubar.html' %}
+{% endblock first_content %}
+
+{% block form_title %}
+    <h2>{{ video.get_name|super_truncatewords:"10-15"  }} <br /> {{ video.category.0.name }}</h2>
+{% endblock %}
+
+
+{% block li_info %}
+    <li id='info' class='info_left'>
+{% endblock %}
+
+{% block form_list %}
+
+        <div id="playerFlash" video_id="{{video_id}}" url="{{base_url}}">Aguarde, carregando o player...</div>
+         
+    </li>
+
+{% endblock %}
+
+{% block extra_line %}
+
+    <li id='list_tag'>
+
+        <div class='background_title '>
+
+            <div id='list_tag_float'>
+                {% include 'manager/tag/ajax_list.html' %}
+            </div>
+           
+         </div>
+          <div>   
+                &nbsp;
+           </div>
+    </li>
+
+{% endblock %}

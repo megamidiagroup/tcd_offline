@@ -1,0 +1,101 @@
+﻿{% extends 'uninter/main.html' %}
+
+{% load util keyboard %}
+
+{% block content %}
+
+    {% if list_banner.count > 0 %}
+        <div id="highlights">
+            <div class="container">
+                <div class="full-banner">
+                    <div class="flexslider">
+                        <ul class="slides">
+                            {% for i in list_banner %}
+                                <li>
+                                    {% if i.url %}<a href="{{ i.url }}" title="Clique aqui para acessar o link" {% if i.blank %}target="_blank"{% endif %}>{% endif %}
+                                    <img src="{{ i|get_image }}" border="0" />
+                                    {% if i.url %}</a>{% endif %}
+                                    {% if i.legend %}
+                                    <p class="flex-caption">{{ i.name }}</p>
+                                    {% endif %}
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
+    {% block bloco %}
+
+        <div id="content">
+            <div class="container">
+
+                {% if list_video %}
+                    <div class="path">
+                        {% sub_menu_treinamento list_video rede %}
+                    </div>
+                {% endif %}
+
+                <div class="bar"><span></span></div>
+
+                <div class="video">
+                    <div class="player">
+
+                        {% ifequal list_video.0.tipo 'B' %}
+                            {% brightcove rede.link list_video.0.code list_video.0.id %}
+                        {% endifequal %}
+
+                        {% ifequal list_video.0.tipo 'K' %}
+                            {% kaltura rede.link list_video.0.code list_video.0.id %}
+                        {% endifequal %}
+
+                        {% ifequal list_video.0.tipo 'M' %}
+                            {% megavideo rede.link list_video.0.code list_video.0.id %}
+                        {% endifequal %}
+
+                    </div>
+                    <div class="description">
+                        <div>
+                            <h2 class="box-title">{{ list_video.0.name }}</h2>
+                            <p>{{ list_video.0.desc|safe }}</p>
+                            {% if list_video.0.time %}
+                                <p>Duração: {{ list_video.0.time }}</p>
+                            {% endif %}
+                            <br />
+                            {% if elearning %}
+                                <a class="buttom" href="{% url elearning rede.link list_video.0.id %}" style="display: inline-block;">IR PARA O E-LEARNING</a>
+                            {% else %}
+	                            {% if list_video.0|is_question:user  %}
+	                                <a class="buttom" href="{% url questionario rede.link list_video.0.id %}" style="display: inline-block;">IR PARA O TESTE</a>
+	                            {% endif %}
+                            {% endif %}
+                        </div>
+						{% if list_anexo %}
+	                        <div class="anexo" value="false">
+	                        	<span class="icon" onclick="open_anexo(this);">
+	                        		<b class="close">Clique ao lado para realizar download do material</b>
+	                        		<b class="open">Clique nos links abaixo para realizar download</b>
+	                        	</span>
+	                        	<ul>
+	                        		{% for la in list_anexo %}
+		                        		<li class="path">
+		                        			<a title="{{ la.desc }}" href="{% url download_anexo rede.link la.id %}" target="_blank">{{ forloop.counter }}. {{ la.name }}</a>
+		                        		</li>
+	                        		{% endfor %}
+	                        	</ul>
+	                        </div>
+                        {% endif %}
+                    </div>
+                    {% faq list_video.0 %}
+                </div>
+
+                {% videos_relacionados list_video rede %}
+
+            </div>
+        </div>
+
+    {% endblock bloco %}
+
+{% endblock content %}

@@ -1,0 +1,32 @@
+<section id="content">
+	<div class="wrapper ">
+		<div class="titulo">
+			<h2><span>IihH! Não foi dessa veZ :@</span></h2>
+		</div>
+
+		<img src="{{ STATIC_URL }}{{ get_tipo_template }}/images/pinguelo.png" border=0 id="pinguelo" />
+
+		<ul class="lista resultado negativo">
+			<li class="texto">
+				<p>
+					Você conseguiu acertar cerca de <strong>{{ porcent }}%</strong> 
+						das questões, más ainda não foi dessa vez!
+				</p>
+				<p>
+					Lembre-se que você pode ganhar um badge.
+				</p>
+				<p>
+					Não custa nada tentar novamente.
+				</p>
+				<span class="clearfix"></span>
+			</li>
+
+			<li class="proximo">
+				<a href="{% url questionario rede.link list_video.0.id %}">Reiniciar Quiz</a><div class="clearfix"></div>
+			</li>
+		</ul>
+
+		<div class="clearfix"></div>
+
+	</div>
+</section>

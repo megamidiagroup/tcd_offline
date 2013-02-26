@@ -1,0 +1,170 @@
+{% load miniature %}
+{% load super_truncate %}
+{% load humanize_time %}
+
+{% if conf.video_id %}
+    <form id='{{conf.id|default:'vflow_form'}}' class='{{conf.class|default:'vflow_form'}}' action='{{ base_url }}/api/comment/add/' onsubmit='return false' method='post'> 
+	    <ul>
+	        <li>
+	            <label>
+	                {{conf.form.input.0.label|default:'name'}}
+	            </label>
+	            <input type='text' id='{{conf.form.input.0.name|default:'vflow_form_name'}}' class='{{conf.form.input.0.name|default:'vflow_form_name'}}' name='{{conf.form.input.0.name|default:'vflow_form_name'}}' value=''>
+	        </li>    
+	
+	        <li>
+	            <label>
+	                {{conf.form.input.1.label|default:'email'}}
+	            </label>
+	            <input type='text' id='{{conf.form.input.1.name|default:'vflow_form_email'}}' class='{{conf.form.input.1.name|default:'vflow_form_email'}}' name='{{conf.form.input.1.name|default:'vflow_form_email'}}' value=''>
+	        </li>    
+	
+	        <li>
+	            <label>
+	                {{conf.form.input.0.label|default:'comment'}}
+	            </label>
+	            <textarea id='{{conf.form.input.2.name|default:'vflow_form_comment'}}' class='{{conf.form.input.2.name|default:'vflow_form_comment'}}' name='{{conf.form.input.2.name|default:'vflow_form_comment'}}'></textarea>
+	        </li>    
+	        
+	        <li>
+	            <input type='hidden' id='vflow_form_token' class='vflow_form_token' name='vflow_form_token' value='{{token|default:21}}' />
+	            <input type='hidden' id='vflow_form_video_id' class='vflow_form_video_id' name='vflow_form_video_id' value='{{conf.video_id|default:705}}' />
+	            <input type='submit' id='{{conf.form.submit|default:'vflow_form_submit'}}' class='{{conf.form.submit|default:'vflow_form_submit'}}' value='{{conf.form.submit.value|default:'Enviar'}}'/>
+	            <div id='vflow_return_add'></div>
+	        </li>
+	    </ul>    
+    </form>
+    
+    {{ base_url }}
+    
+    <script language='javascript'>
+    
+       $('.vflow_form_submit').click(function(){
+
+           var _id = $('#vflow_form_video_id').val();
+           var _name = $('#vflow_form_name').val();
+           var _email = $('#vflow_form_email').val();
+           var _comment = $('#vflow_form_comment').val();
+
+           
+           var send_url = '{{ base_url }}/api/comment/add/?video_id=' + _id + '&name=' + _name + '&email=' + _email + '&comment=' + _comment + '&callback=?'; 
+           $.getJSON(send_url, 
+               function(data, textStatus){
+       	    	    $('#vflow_return_add').html(data.msg);
+        	   }); 
+      
+       });
+    </script>
+{% endif %}
+
+
+{% ifequal conf.list_as 'ul' %}
+<ul id='{{conf.id}}' class='{{conf.classname}}'>
+    {% if content_list.object_list %}
+        
+    {% for i in content_list.object_list %}
+    
+	    <li class='vflow_comment_item' id='item_id' >
+	        <a class='vflow_comment_link' href='{{ conf.page_link }}?id={{ i.video.id }}&category={{ i.get_category|default:0 }}'>
+   		        <span class='vflow_content'>{{ i.content }}</span>
+	        </a>
+	        <span class='vflow_name'>{{ i.name|super_truncatewords:conf.truncate_title  }}</span>
+	        <span class='vflow_date'>{{ i.date|date:'d/m/Y' }}</span>
+	    </li>
+    
+    {% endfor %}
+    
+    {% else %}
+    
+      <li class='noresult'>
+           <span class='noresult'>Sua busca não retornou resultados</span>
+      </li>
+        
+    {% endif %}
+    
+</ul>
+{% endifequal %}
+
+{% ifequal conf.list_as 'div' %}
+<div id='{{conf.id}}' class='{{conf.class}}'>
+
+    {% if content_list.object_list %}
+
+    {% for i in content_list.object_list %}
+    <div class='vflow_comment_item' id='item_id'>
+	        <a class='vflow_comment_link' href='{{ conf.page_link }}?id={{ i.video.id }}&category={{ i.video.get_category|default:0 }}'>
+		        <span class='vflow_comment'>{{ i.content }}</span>
+	        </a>
+	        <span class='vflow_name'>{{ i.name|super_truncatewords:conf.truncate_title  }}</span>
+	        <span class='vflow_date'>{{ i.date|date:'d/m/Y' }}</span>
+    </div>
+    {% endfor %}
+    
+    {% else %}
+    <div class='noresult'>
+         <span class='noresult'>Sua busca não retornou resultados</span>
+    </div>
+    {% endif %}
+    
+</div>
+{% endifequal %}
+
+{% ifequal conf.list_as 'table' %}
+<table id='{{conf.id}}' class='{{conf.class}}'>
+    <tr>
+    
+    {% if content_list.object_list %}
+    
+    {% for i in content_list.object_list %}
+    <td class='vflow_comment_item' id='item_id'>
+        <a class='vflow_comment_link' href='{{ conf.page_link }}?id={{ i.video.id }}&category={{ i.video.get_category|default:0 }}'>
+            <span class='vflow_comment'>{{ i.content }}</span>
+        </a>
+        <span class='vflow_name'>{{ i.name|super_truncatewords:conf.truncate_title  }}</span>
+        <span class='vflow_date'>{{ i.date|date:'d/m/Y' }}</span>
+    </td>
+    {% endfor %}
+    
+    {% else %}
+    <td class='noresult'>
+          <span class='noresult'>Sua busca não retornou resultados</span>
+    </td>               
+    {% endif %}
+    
+    </tr>
+</table>
+{% endifequal %}
+
+
+{% if content_list.object_list.count %}
+	{% if paginate %}
+	<div class='clear'></div>
+	<div class='pagination'>
+	    {% if content_list %}
+	    <ul id='pagination-digg'>
+	        {% if content_list.has_previous %}
+	        <li class='previous'><a href='{{ url }}{{ content_list.previous_page_number }}'> &lt;&lt; Anterior </a></li>
+	        {% else %}
+	        <li class='previous'>&lt;&lt; Anterior</li>
+	        {% endif %}
+	        {% for num in content_list.page_range %}
+	        {% if not num %} ...  {# literally dots #}
+	        {% else %}
+	        {# pagelink num #}
+	        {% ifequal num content_list.number %}
+	        <li class='active'>{{ num }}</li>
+	        {% else %}
+	        <li><a href='{{ url }}{{ num }}'>{{ num }}</a></li>
+	        {% endifequal %}
+	        {% endif %}
+	        {% endfor %}
+	        {% if content_list.has_next %}
+	        <li class='previous'><a href='{{ url }}{{ content_list.next_page_number }}'>Próximo &gt;&gt;</a></li>
+	        {% else %}
+	        <li class='previous'>Próximo &gt;&gt;</li>
+	        {% endif %}
+	    </ul>
+	    {% endif %}
+	</div>
+	{% endif %}
+{% endif %}

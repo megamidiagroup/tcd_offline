@@ -1,0 +1,86 @@
+{% extends 'sala4/main.html' %}
+
+{% load util %}
+
+{% block extra-css %}
+	<link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}{{ get_tipo_template }}/css/jquery.jgrowl.css" />
+{% endblock extra-css %}
+
+{% block extra-js %}
+
+	<script type="text/javascript" src="{{ STATIC_URL }}{{ get_tipo_template }}/js/jquery.jgrowl_compressed.js"></script>
+
+	<script type="text/javascript">
+		$(document).ready(function() {
+
+			$('.item .header').click(function() {
+				$this = $(this);
+				if ($this.parent().hasClass('opened')) {
+					$this.parent().removeClass('opened');
+					$this.parent().find('.lista_videos').slideUp();
+				} else {
+					$this.parent().addClass('opened');
+					$this.parent().find('.lista_videos').slideDown();
+				}
+			});
+			
+			{% if edit == 'true' %}
+				$('#mensagem').jGrowl('Cadastro salvo com sucesso.');
+			{% endif %}
+
+		});
+    </script>
+    
+{% endblock extra-js %}
+
+{% block content %}
+
+	<section id="content">
+		<div class="wrapper curso">
+			<div class="titulo">
+				<h2><span>Dashboard</span></h2>
+			</div>
+			<img src="{{ STATIC_URL }}{{ get_tipo_template }}/images/pinguelo.png" border="0" id="pinguelo" />
+	
+			<ul class="lista login ">
+				<li class="dashboard">
+					
+					<h3>Vídeos vistos</h3>
+					
+					<div class="aproveitamento">
+						<span>{{ list_aproveitamento_account|porcent_aproveitamento_not_complete:user }}% de aproveitamento</span>
+						/ {{ rede|count_videos_per_user_assistido:user }} vídeo{{ rede|count_videos_per_user_assistido:user|pluralize }} visto{{ rede|count_videos_per_user_assistido:user|pluralize }} de {{ rede|count_videos_per_rede }} disponiveis
+					</div>
+					
+					<div class="clearfix"></div>
+					
+					{% dashboard rede user get_tipo_template %}
+
+					<div class="clearfix"></div>
+					
+				</li>
+				<li class="form">
+					<h3>Meus dados</h3>
+					<ul class="dados">
+						<li>
+							<span>Nome:</span>
+							<br />
+							<span class="value">{{ user.get_full_name }}</span>
+						</li>
+						<li>
+							<span>Email:</span>
+							<br />
+							<span class="value">{{ user.email }}</span>
+						</li>
+					</ul>
+					<a href="{% url conta_edit rede.link %}" class="botao">Editar perfil</a>
+				</li>
+	
+			</ul>
+	
+			<div class="clearfix"></div>
+	
+		</div>
+	</section>
+
+{% endblock content %}

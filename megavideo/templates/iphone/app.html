@@ -1,0 +1,32 @@
+<html>
+	{% load miniature %}
+	<head>
+        <link href="{{STATIC_URL}}/static/iphone/css/iphone_app.css" rel="StyleSheet" type="text/css" />
+		<meta name="viewport" content="width=320; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;"/>
+
+	</head>
+	<body>
+		<table id='main_table' cellspacing='0' cellpadding='0' >
+
+			{% for i in vlist %}
+			<tr class='lines'><td class='first_column'>
+					<a href='/video/get/{{ i.id}}/iPhone/'>
+						<img src="{{ i|thumbnail:"55x55" }}" class="thumbs" />
+					</a>
+				</td>
+
+				<td class='name_column'>
+					<a href='/video/get/{{ i.id}}/iPhone/'>
+						<span class='video_name'>{{ i.get_name|truncatewords:4}}</span>
+					</a>
+				</td>
+				<td class='arrow_cell'>
+					<a href='/video/get/{{ i.id}}/iPhone/'>
+						<img src='/megavideo/static/iphone/images/seta.png' />
+					</a>
+				</td>
+			</tr>
+			{% endfor %}
+		</table>
+	</body>
+</html>

@@ -1,0 +1,71 @@
+{% load extra_filter %}
+
+<ul id='list_tag'>
+	<li>
+	<table width='437' cellpadding="0" cellspacing="0">
+		<tr>
+			<td colspan="4" style="padding: 0pt; background:none;">
+				<img src="{{STATIC_URL}}/static/manager/images/top_list_tag.png" style="border:0px; margin:0px; padding:0px;" >
+			</td>
+		</tr>	
+
+        {% for i in tags %}
+
+            <tr>
+
+                <td width='150' class="first">
+                  
+                    <a href='javascript:void(0);' class='edit_tag_btn' onclick="editar_tag('{{i.id}}');">
+                        {{ i.get_tags.0.name }}
+                    </a>
+
+                </td>
+                <td width='40'>&nbsp;
+
+                {% ifnotequal i.initime 0 %}
+                    {% ifequal i.endtime 0 %}
+
+                            {{ i.initime|number2time }}
+
+                    {% endifequal %}
+                {% endifnotequal %}
+
+                </td>
+                <td width='99'>
+                    <a href='javascript:void(0);' class='edit_tag_btn' onclick="editar_tag('{{i.id}}', '{{i.get_tags.0.name}}', '{{i.initime}}');">
+                        <img class="" src="{{STATIC_URL}}/static/manager/images/bt_editar.png" title="alterar" border='0' />
+                    </a>
+                </td>
+                <td width='97' class="last">
+                    <a href='javascript:void(0);' class='del_tag_btn' onclick="deletar_tag('{{i.id}}');">
+                        <img class="exclude" title="Excluir" src="{{STATIC_URL}}/static/manager/images/bt_excluir.png" border='0' />
+                    </a>
+                </td>
+
+            </tr>
+
+            {% endfor %}
+			
+	{% if not tags %}
+            <tr>
+                <td width='150' class="first">
+                    Nenhuma tag cadastrada!
+                </td>
+				<td class="last">
+                    &nbsp;
+                </td>
+            </tr>
+    {% endif %}
+			
+			
+		<tr>
+			<td style="padding:0; border: none; background:none;padding-top:2px;"colspan="4">
+				<img src="{{STATIC_URL}}/static/manager/images/bottom_list_tag.png" border="0" >
+			</td>
+		</tr>	
+			
+    </table>
+
+
+</li>
+</ul>

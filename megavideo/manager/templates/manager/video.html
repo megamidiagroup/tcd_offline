@@ -1,0 +1,56 @@
+{% extends 'manager/main.html' %}
+
+{% block main %}
+<div id='main'>
+<div id='right_column'>
+    <div id='encodings_block'>
+        <h3>Encodings Disponíveis</h3>
+        <ul>
+            {% for i in video.videotranscode_set.all %}
+            <li>{{ i.transcode.name }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+
+
+<div id='video_box'>
+    <h1>{{ video.get_name }}</h1>
+    <div id='video_image'>
+        <img class='video_image' src='{{ video.get_thumb_url }}' label='{{ i.metas.name }}'/>
+    </div>
+
+    <h2>Upload do thumbnail</h2>
+
+    <p>
+    Você pode mandar uma imagem para ser usada como thumbnail desse vídeo. Esta imagem sera redimensionada para 320x240.
+    </p>
+
+    <div id='upload_flash'>
+        <object  id="globalnav-object" classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000" codebase="http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=8,0,0,0" width="268" height="50" >
+
+            <param name="movie" value="{{STATIC_URL}}/static/manager/swf/uploadThumb.swf?uploadUrl=/vflow/uploadthumb/{{ video.id }}/" />
+
+            <param name="menu" value="false" />
+            <param name="quality" value="high" />
+            <param name="wmode" value="transparent" />
+            <param name="allowFullScreen" value="true" />
+            <param name="playAuto" value="false" />
+            <embed src="{{STATIC_URL}}/static/manager/swf/uploadThumb.swf?&uploadUrl=/vflow/uploadthumb/{{ video.id }}/" allowFullScreen="true" type="application/x-shockwave-flash" pluginspage="http://www.macromedia.com/go/getflashplayer" playAuto="False" FlashVars="" menu="false" quality="high" id="player_flash" width="268" height="99"></embed>
+        </object>
+
+    </div>
+
+</div>
+
+
+<div id='center_column'>
+    <h1>Metadados</h1>
+
+    <h1>Categorias</h1>
+</div>
+
+</div>
+
+
+{% endblock %}

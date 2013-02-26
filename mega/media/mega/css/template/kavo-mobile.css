@@ -1,0 +1,3 @@
+/* template do kavo mobile */
+
+#header #menu .search-button {background-color: #00406d ;}#header #menu .menu-button {color: #d2d2d2;background-color: #00406d;}#header #menu .user-button {background-color: #00406d ;}#header #search button {background-color: #00406d;color: #ffffff;}#header #menu ul li a {color: #d2d2d2;filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#00406d", endColorstr="#ffffff");background: -webkit-gradient(linear, left top, left bottom, from(#00406d), to(#ffffff));background: -moz-linear-gradient(top,  #00406d,  #ffffff);float:none; display:block;-webkit-border-radius: 0;}

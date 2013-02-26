@@ -1,0 +1,122 @@
+{% extends 'manager/main.html' %}
+{% load miniature %}
+
+{% block css_script %}
+<link href="{{STATIC_URL}}/static/manager/css/main.css" rel="stylesheet" type="text/css" media="screen" />
+
+<link href="{{STATIC_URL}}/static/manager/css/digg.css" rel="stylesheet" type="text/css" media="screen" />
+
+
+
+
+<link href="{{STATIC_URL}}/static/manager/css/jtips.css" rel="stylesheet" type="text/css" media="screen" />
+<link href="{{STATIC_URL}}/static/manager/css/sortListUI.css" rel="stylesheet" type="text/css" media="screen" />
+<link href="{{STATIC_URL}}/static/css/vflowstat/report.css" rel="stylesheet" type="text/css" />
+
+<link href="{{STATIC_URL}}/static/manager/css/datePicker.css" rel="stylesheet" type="text/css" />
+
+{% endblock %}
+
+{% block js_script %}
+<script type="text/javascript" src="{{STATIC_URL}}/static/manager/js/jquery-1.3.2.min.js"> </script>
+<script type="text/javascript" src="{{STATIC_URL}}/static/manager/js/jquery.corner.js"> </script>
+<script type="text/javascript" src="{{STATIC_URL}}/static/manager/js/swfobject.js"> </script>
+<script type="text/javascript" src="{{STATIC_URL}}/static/manager/js/jquery.pngFix.pack.js"> </script>
+<script type="text/javascript" src="{{STATIC_URL}}/static/manager/js/date.js"> </script>
+<script type="text/javascript" src="{{STATIC_URL}}/static/manager/js/jquery.datePicker.js"> </script>
+<script type="text/javascript" src="{{STATIC_URL}}/static/manager/js/jtip.js"> </script>
+<script type="text/javascript" src="{{STATIC_URL}}/static/manager/js/statistic.js"> </script>
+{% endblock %}
+
+{% block content%}
+
+
+<ul style='padding-left:10px'>
+
+    <li>
+        <h3>Mapa <a href="{{ request.channel_url }}manager/statistic/ajaxsoftware/?width=375" class="jTip" id="ajax_map" name="Software"><img src='/megavideo/static/manager/images/ico_question.gif'></a> </h3>
+    </li>
+
+    <li>
+        <FORM method=get id="form_map" action="{{ request.channel_url }}manager/statistic/map/">
+        <table>
+            <tr>
+                <td>
+                    <a href="{{ request.channel_url }}manager/statistic/map/">Geral</a>
+                </td>
+                <td>
+                    |
+                </td>
+                <td>
+                    <a href="{{ request.channel_url }}manager/statistic/map/?allcity=true">Cidades</a>
+                </td>
+                <td>
+                        <div class="select">
+                        <div class="titleselect"> Pais </div>
+                            <SELECT NAME="code" id="domain" onchange='carregar()'>
+                            <OPTION VALUE=''>Todos</OPTION>
+                                  {% for u in country %}
+                                     <OPTION VALUE={{u.country_code}}
+
+                                     {% ifequal code u.country_code %}
+
+                                        selected='selected'
+
+                                     {% endifequal %}
+
+                                     > {{u.country_name}}
+                                 {% endfor %}
+                            </SELECT>
+                        </div>
+                        <div style='margin-top:-8px; float:left'>
+                            <INPUT type="submit" id ="btselect" value="Aplicar" onclick="carregar(); " style='padding:0px' >
+                        </div>
+                </td>
+            </tr>
+        </table>
+        </FORM>
+    </li>
+
+
+    <li>
+        <center>
+
+                     <object classid="clsid:d27cdb6e-ae6d-11cf-96b8-444553540000"
+                        codebase="http://fpdownload.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=9,0,115,0"
+                        width="950" height="580" id="zoom_map" align="middle">
+                    <param name="allowScriptAccess" value="sameDomain"/>
+
+                    <param name="movie" value="{{STATIC_URL}}/static/swf/vflowstat/world.swf"/>
+
+                    {% if not getfull %}
+                        <param name="FlashVars" value="data_file=/stat/report_map/?code={{code}}"/>
+                    {% else %}
+                        <param name="FlashVars" value="data_file=/stat/getallcountry/"/>
+                    {% endif %}
+
+                    <param name="quality" value="high"/>
+                    <param name="bgcolor" value="#FFFFFF"/>
+                    <param name="wmode" value="transparent" />
+
+                    {% if not getfull %}
+
+                    <embed src="{{STATIC_URL}}/static/swf/vflowstat/world.swf" FlashVars="data_file={{ request.channel_url }}manager/statistic/report_map/?code={{code}}"  wmode="transparent" quality="high" bgcolor="#FFFFFF"
+                           width=950 height=580 name="zoom_map" align="middle" allowScriptAccess="sameDomain"
+                           type="application/x-shockwave-flash" pluginspage="http://www.macromedia.com/go/getflashplayer"/>
+
+                    {% else %}
+
+                    <embed src="{{STATIC_URL}}/static/swf/vflowstat/world.swf" FlashVars="data_file=/stat/getallcountry/" wmode="transparent"  quality="high" bgcolor="#FFFFFF"
+                           width=950 height=580 name="zoom_map" align="middle" allowScriptAccess="sameDomain"
+                           type="application/x-shockwave-flash" pluginspage="http://www.macromedia.com/go/getflashplayer"/>
+
+                    {% endif %}
+
+                </object>
+         </center>
+
+
+    </li>
+
+</ul>
+{% endblock %}

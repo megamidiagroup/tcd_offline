@@ -1,0 +1,20 @@
+{% load extra_filter %}
+<caption>Acessos  </caption>
+<thead>
+  <tr>
+    <td></td>
+    {% for i in graphic %}
+        <th scope="col">{{ i.mdata|date_time }}{{ graphic_name }}</th>
+    {% endfor %}
+  </tr>
+</thead>
+<tbody>
+  <tr>
+  {% for i in graphic %}
+    {% if forloop.first %}
+    <th scope="row"> Visitantes </th>
+    {% endif %}
+    <td>{{ i.total_download }}</td>
+  {% endfor %}
+   </tr>
+</tbody>

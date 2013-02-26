@@ -1,0 +1,28 @@
+{% load transcode %}
+
+{% if jquery == 'true' %}
+<link type='text/css' rel='stylesheet' href='{{ static }}css/mediaelementplayer.min.css' />
+{% endif %}
+
+{% if has_description %}
+<h4 id='title'>
+{{video.get_name|linebreaks}}
+</h4>
+{% endif %}
+
+<script type='text/javascript'>if(playermv==undefined)var playermv;var is_video = !!document.createElement('video').canPlayType;</script>
+
+<object classid='clsid:D27CDB6E-AE6D-11cf-96B8-{{ idContent }}' width='{{ width }}' height='{{ height }}'>
+<param name='movie' value='{{player}}?{{values}}'></param>
+<param name='allowFullScreen' value='true'></param>
+<param name='allowscriptaccess' value='always'></param>
+<embed src='{{player}}?{{values}}' type='application/x-shockwave-flash' width='{{ width }}' height='{{ height }}' allowscriptaccess='always' allowfullscreen='true'></embed>
+</object>
+
+<script type='text/javascript'>jQuery.noConflict();if((jQuery.browser.msie && jQuery.browser.version > 9.0) || (is_video && get_flash(9)==undefined)){document.write('{{html5}}');(function($){$(function(){$('object,embed').remove();playermv=new MediaElementPlayer('#video_{{ idContent|deserialize }}',{defaultVideoWidth:'{{width}}',defaultVideoHeight:'{{height}}',success:function(media,node,player){var events=['loadstart','play','pause','ended'];for(var i=0,il=events.length;i<il;i++){var eventName=events[i];media.addEventListener(events[i],function(e){try{if(e.type=='play'){onPlay(e);}if(e.type=='ended'){onComplete();}}catch(err){}});}}});});})(jQuery);function updatePlayer(w,h){$('video').attr('width',w).attr('height',h);$('.mejs-container, .mejs-overlay, .mejs-poster').css('width',w+'px').css('height',h+'px');}}if(is_video==false && get_flash(9)==undefined){(function($){$(function(){$('object,embed').remove();});})(jQuery);document.write('<p><a href=http://www.adobe.com/go/getflash target=_blank>O plugin flash não está instalado,para instalar,clique aqui</a></p>');}</script>
+
+{% if has_description %}
+<div id='description'>
+{{video.get_description|linebreaks}}
+</div>
+{% endif %}

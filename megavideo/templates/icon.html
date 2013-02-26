@@ -1,0 +1,32 @@
+<div id='righth'> {{ videostitle }} </div>
+
+<table id='paginate-video'><tr><td style='padding-left: 3%;'> Páginas :  </td>
+            <td id='paginate_container'>
+                {% for i in paginate.all_pages %}
+                <div
+                    
+                    {% ifequal i paginate.current_page %} 
+                    class='paginate_item paginate_item_selected' 
+                    {% else %}
+                    class='paginate_item' 
+                    {% endifequal %}
+                    paginateStyle='{{ paginate.style }}' 
+                    paginateParam='{{ paginate.param|escape }}'>{{ i }}</div>
+                {% endfor %}
+        </td>
+    </tr>
+</table>
+
+<div class='intern-video'>
+<div id="videoContainer">
+		{% for video in videos %}
+
+		<!-- j = ''; $('.thumbContainer').each(function(i) { j += this.getAttribute('idVideo') + ', '}) -->
+		<div id="icon_{{ video.id }}" class="icon_container">
+		{% include "one_video.html" %}
+		</div>
+
+		{% endfor %}
+		<p style='color: portal;'>_</p>
+</div>
+</div>

@@ -1,0 +1,72 @@
+{% extends 'sala4/main.html' %}
+
+{% load util %}
+
+{% block class-section %}teaser{% endblock class-section %}
+
+{% block extra-js %}
+
+	<script type="text/javascript">
+	
+		$(document).ready(function(){
+			
+			$('.planos').parent().parent().remove();
+			$('.social').css('display', 'block');
+			$('.vr').css('height', $('#colunas').height() + "px");
+		
+		});
+		
+    </script>
+    
+{% endblock extra-js %}
+
+{% block content %}
+       
+	<section id="bannerArea">
+		<div class="wrapper">
+			<div class="titulo obrigado">
+				<h2><span>Obrigado!</span></h2>
+			</div>
+			<p>
+				Enquanto isso acompanhe nosso <a href="https://www.facebook.com/Sala04" class="link" target="_blank">Facebook</a>
+			</p>
+		</div>
+		<div id="ondas"></div>
+	</section>
+	
+	<section id="content">
+		<div class="wrapper teaser">
+			<div class="columns" id="colunas">
+				<div class="column grid_4">
+					<img src="{{ STATIC_URL }}{{ get_tipo_template }}/images/hd.png" />
+					<h3>Vídeos com qualidade</h3>
+				</div>
+				<div class="gutter grid_4">
+					<div class="vr"></div>
+				</div>
+				<div class="column grid_4">
+					<img src="{{ STATIC_URL }}{{ get_tipo_template }}/images/professor.png" />
+					<h3>Professores da Área</h3>
+				</div>
+				<div class="gutter grid_4">
+					<div class="vr"></div>
+				</div>
+				<div class="column grid_4">
+					<img src="{{ STATIC_URL }}{{ get_tipo_template }}/images/badges.png" />
+					<h3>Conquiste badges</h3>
+				</div>
+				<div class="gutter grid_4">
+					<div class="vr"></div>
+				</div>
+				<div class="column grid_4">
+					<img src="{{ STATIC_URL }}{{ get_tipo_template }}/images/dream.png" />
+					<h3>Realize seu Projeto</h3>
+				</div>
+			</div>
+			<div class="clearfix"></div>
+		</div>
+	</section>
+
+{% endblock content %}
+
+{% block footer %}{% endblock footer %}

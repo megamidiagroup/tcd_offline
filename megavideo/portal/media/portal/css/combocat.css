@@ -1,0 +1,78 @@
+.dd {
+    display:inline-block !important;
+    text-align:left;
+    background-color: #fff;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 22px;
+    z-index: 10000;
+}
+.dd .ddTitle {
+    text-indent: 0;
+    cursor: default;
+    overflow: hidden;
+    height: 40px;
+	width: 425px;
+	color: #ced0d2;
+	background: url(../images/middle_bg.png) repeat-x;
+}
+.dd .ddTitle span.arrow {
+    background:url(../images/button.png) no-repeat 0 0; 
+	float:right; 
+	display:inline-block;
+	width:51px; 
+	height:40px; 
+	cursor:pointer;
+	margin-left: 5px;
+}
+
+.dd .ddTitle span.textTitle {line-height:16px;float: left;margin: 12px 20px;}
+.dd .ddTitle span.textTitle img{text-align:left; padding:0 2px 0 0}
+.dd .ddTitle img.selected {
+    padding:0 3px 0 0;
+    vertical-align:top;
+}
+
+.dd .ddTitle span.before {float: left;}
+
+.dd .ddTitle span.after {float: right;margin-right: -5px;}
+
+.dd .ddChild {
+    position:absolute;
+    border-top:none;
+    display:none;
+    margin:0;
+    width:auto;
+    overflow:auto;
+    overflow-x:hidden !important;
+    background-color:#ffffff;
+	z-index: 10000;
+}
+
+.dd .ddChild .opta a, 
+.dd .ddChild .opta a:visited {padding-left:10px}
+.dd .ddChild a {
+	font-family: "Trebuchet MS";
+	font-size: 16px;
+    display:block;
+    padding: 10px 50px;
+    text-decoration:none;
+    color:#ababab;
+    overflow:hidden;
+    portal-space:nowrap;
+    cursor:pointer;
+	width: auto;
+	background: url(../images/middle_bottom_bg.png);
+}
+.dd .ddChild a:hover {
+    background: url(../images/middle_bottom_out.png);
+}
+.dd .ddChild a img {
+    border:0;
+    padding:0 2px 0 0;
+    vertical-align:middle;
+}
+.dd .ddChild a.selected {
+    background: url(../images/middle_bottom_out.png);
+
+}
+.hidden {display:none;}

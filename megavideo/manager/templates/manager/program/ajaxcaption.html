@@ -1,0 +1,49 @@
+{% load extra_filter %}
+
+<ul id='list_tag'>
+    {% for i in update %}
+    <li class="{% cycle 'color' 'color2' %} line_{{ i.id }}" style="padding: 3px;">
+        <table width='100%' border='0'>
+            <tr>
+                <td colspan=2 width='25%'>
+                    {% for z in i.get_tags %}
+                        <a href='#' class='edit_tag_btn' onclick='editar_tag({{i.id}});'>
+                            {{ z.name }}
+                        </a>
+                    {% endfor %}
+                </td>
+
+                {% ifnotequal i.initime 0 %}
+                    {% ifnotequal i.endtime 0 %}
+                        <td>
+                            De:
+                            {{ i.initime|number2time }}
+                            a
+                            {{ i.endtime|number2time }}
+                        </td>
+                    {% endifnotequal %}
+                {% endifnotequal %}
+
+                {% ifnotequal i.initime 0 %}
+                    {% ifequal i.endtime 0 %}
+                        <td>
+                            Em
+                            {{ i.initime|number2time }}
+                        </td>
+                    {% endifequal %}
+                {% endifnotequal %}
+
+                <td style="text-align:right; width: 150px;">
+                    <a href='#' class='edit_tag_btn' onclick='editar_tag({{i.id}});'>
+                        <img class="" src="{{STATIC_URL}}/static/manager/images/bt_alterar.gif" title="alterar"/>
+                    </a>
+                    <a href='#' class='del_tag_btn' onclick='deletar_tag({{i.id}});'>
+                        <img class="exclude" title="Excluir" src="{{STATIC_URL}}/static/manager/images/bt_excluir.gif"/>
+                    </a>
+                </td>
+            </tr>
+    </table>
+    </li>
+
+    {% endfor %}
+</ul>

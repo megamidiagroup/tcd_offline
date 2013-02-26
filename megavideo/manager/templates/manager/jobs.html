@@ -1,0 +1,21 @@
+{% extends 'manager/main.html' %}
+{% block content%}
+<ul>
+    <li>
+        <h2>Em Tratamento</h2>
+        <ol id='list'>
+            {% for i in running_jobs %}
+            <li><p>Desde {{ i.date }}</p> <blockquote>{{ i.original_name }}</blockquote> Status <b>{{ i.get_status_display }}</b></li>
+            {% endfor %}
+        </ol>
+    </li>
+    <li>
+        <h2>Últimos arquivos tratados</h2>
+        <ol id='list'>
+            {% for i in last_jobs %}
+            <li><p>Desde {{ i.date }}</p> <blockquote>{{ i.original_name }}</blockquote> Status <b>{{ i.get_status_display }}</b></li>
+            {% endfor %}
+        </ol>
+    </li>
+</ul>
+{% endblock %}

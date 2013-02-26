@@ -1,0 +1,33 @@
+{% extends 'portal/main.html' %}
+
+{% block extra_css %}
+	<link type="text/css" rel="stylesheet" href="{{STATIC_URL}}/static/portal/css/digg.css" />
+{% endblock %} 
+
+{% block extra_js %}
+	<script type="text/javascript" src="{{STATIC_URL}}/static/manager/js/swfobject1.5.js"></script>
+{% endblock extra_js %}
+
+{% block flash %}
+
+<div id="float_list" style="width: 914px;background: none;">
+	
+	<ul>
+		
+		<li>
+			<div class="chat">
+				<iframe src="{{ base_url }}chat/?type=user" scrolling="no" width="100%" height="836" style="border: none;"></iframe>
+			</div>
+		</li>
+				
+	</ul>
+	
+</div>
+
+{% endblock flash %}
+
+{% block content %}
+{% endblock content %}
+
+{% block destaques %}
+{% endblock destaques %}

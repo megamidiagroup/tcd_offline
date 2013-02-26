@@ -1,0 +1,35 @@
+{% load extra_day %}
+{% load points %}
+
+{% if comments_list %}
+
+	<div class="page1">
+	    <table class='ajax_comment_list' width='100%'>
+	        {% for i in comments_list.object_list %}
+	        <tr>
+	            <td valign='top'>
+	                <h4>{{i.name}}</h4>
+					<h5>{{ i.date.day }}/{{ i.date.month }}/{{ i.date.year }} - {{ i.date.hour }}h{{ i.date.minute }}m</h5>
+	                {{i.content|points|safe}} 
+	            </td>
+	            <td valign='top'>
+	            </td>
+	        </tr>
+	        <tr>
+	            <td class="line" colspan="2">
+	                &nbsp;
+	            </td>
+	        </tr>
+	        {% endfor %}
+	        <tr>
+	            <td colspan="2"></td>
+	        </tr>
+	    </table>
+	</div>
+	{% for num in comments_list.page_range %}
+		{% if not forloop.first %}
+			<div class="page{{ num }}" style="display: none;"></div>
+		{% endif %}
+	{% endfor %}
+
+{% endif %}

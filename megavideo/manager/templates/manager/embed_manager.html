@@ -1,0 +1,11 @@
+<object {% if video.is_wide %} width="480" height="360" {% else %} width="480" height="360" {% endif %} codebase="http://fpdownload.macromedia.com/get/flashplayer/current/swflash.cab#version=9,0,124,0">
+    <param name="movie" value="{{ request.channel_url }}static/swf/megaplayer.swf?id={{ update.id }}&base_url={{ request.channel_url }}" />
+    {% if playAuto %}
+    <param name="playAuto" value="true" />{else}<param name="playAuto" value="false" />
+    {% endif %}
+    <param name="allowScriptAccess" value="always" />
+    <param name="allowFullScreen" value="true" />
+    <embed src="{{ request.channel_url }}static/swf/megaplayer.swf?id={{ update.id }}&base_url={{ request.channel_url }}"
+    {% if video.is_wide %} width="480" height="360" {% else %} width="480" height="360" {% endif %}
+	allowScriptAccess="always" allowFullScreen="true" type="application/x-shockwave-flash" pluginspage="http://www.adobe.com/go/getflashplayer"></embed>
+</object>

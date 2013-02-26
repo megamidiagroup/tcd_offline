@@ -1,0 +1,31 @@
+<div class='wrs_main' style='padding-left: 10%; margin-bottom: 20px;'>
+	<div style='font-size: 14px; font-family: Verdana,Helvetica,Arial,sans-serif; color: #003366; font-weight: bold; margin-bottom: 10px;'>Demo Locuções</div>
+{% for i in objects %}
+<div style='padding: 3px; margin: 2px;padding-left: 10%; padding-right: 10%; 
+    background-color: #f9f9f9; border: 1px solid #ccc;'>
+    <div class='wrs_play' style='float: left;'><img onClick='wrs_show_player({{i.id }})' src='http://sebrae.tv.vflow.com.br/webtv/play.png'/></div>
+    <div class='wrs_date' style='float: right; '>{{ i.date }}</div>
+    <div class='wrs_title' style='float: left;font-size: 13px; margin-top: 5px;color: #003696;cursor: pointer;' onClick='wrs_show_player({{i.id }})'>{{ i.title }}</div>
+	<div class='wrs_description' style='clear: both;'> {{ i.description }}</div>
+
+	<div id='wrs_player_{{i.id}}' class='wrs_player'>
+		<object classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000" codebase="http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=9,0,28,0" width="400" height="300">
+			<param name="movie" value="http://sebrae.tv.vflow.com.br/webtv//swf/player.swf?idVideo={{ i.id64 }}&playAuto=false"/>
+			<param name="quality" value="high"/>
+			<param name="wmode" value="transparent"/>
+			<param name="allowScriptAccess" value="always"/>
+			<embed allowScriptAccess="always" 
+			src="http://sebrae.tv.vflow.com.br/webtv//swf/player.swf?idVideo={{ i.id64 }}&playAuto=false" 
+			quality="high" 
+			wmode="transparent" 
+			pluginspage="http://www.adobe.com/shockwave/download/download.cgi?P1_Prod_Version=ShockwaveFlash" 
+			type="application/x-shockwave-flash" 
+			width="400" 
+			height="60">
+			</embed>
+		</object>
+
+	</div>
+</div>
+{% endfor %}
+</div>

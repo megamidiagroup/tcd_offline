@@ -1,0 +1,191 @@
+<div id='video_description'>
+	<table width='100%'>
+		<tr>
+			<td>
+				<h2>{{ video.get_name }}</h2>
+				<h4>
+					{% if video.videocategory_set.all %}
+					<img src='{{STATIC_URL}}/static/portal/images/detalhe.png' alt='Incorporar' align='left' > 
+					
+						{% if video.videocategory_set.all.0.category.parent %}
+								{{ video.videocategory_set.all.0.category.parent.name }} | {{ video.videocategory_set.all.0.category.name }}
+						{% else %}
+								{{ video.videocategory_set.all.0.category.name }}
+						{% endif %}
+					
+					{% endif %}
+				</h4>
+			</td>
+			<td width='120'>
+			
+				{% if video %}
+				
+				<div class="mid_vote"> 
+					
+					 <form name="star-rating-control" id='star-rating-control'>
+					 	   
+						   
+						  <input type='hidden' value='{{ video.id }}' name='id_video' id='id_video_hidden'>   	
+						  {% if not safe_voted %} 	
+
+							  {% for i in vote %}
+							  <input type="radio" class="vote-star" name="api-readonly-test" value="{{ i }}"/>
+							  {% endfor %}
+						  
+						  {% else %}
+							  	
+							  {% for i in vote %}
+							  		<input type="radio" class="vote-star" name="api-readonly-test" value="{{ i }}"
+									{% ifequal safe_voted i %}
+										checked='checked'
+									{% endifequal %} />
+							  {% endfor %}
+						  	  
+						  {% endif %}
+						  
+						  <div id='captcha'> </div>
+						   
+					 </form>
+					
+				</div>
+				
+				{% endif %}
+				
+			</td>
+		</tr>
+		<tr>
+			<td class='space'>
+				{{ video.get_description|safe }}
+			</td>
+			<td>
+				 {% if video.videotranscode_set.all %}
+					 <table>
+					 	<tr>
+					 		<td colspan='2'>
+					 			<img src='{{STATIC_URL}}/static/portal/images/tt_mobile.png' alt='Mobile' >
+					 		</td>
+					 	</tr>
+						<tr>
+							<td align='right'>
+							{% load hasin %}
+							{% if video.get_transcode|hasin:'iPhone' %}
+								<a href='{{request.channel_url}}video/get/{{ video.id }}/iPhone/'><img src='{{STATIC_URL}}/static/portal/images/icon_iphone.jpg' alt='Iphone' ></a>
+							{% endif %}
+							</td>
+							<td align='right'>
+							{% if video.get_transcode|hasin:'3gp' %}
+								<a href='{{request.channel_url}}video/get/{{ video.id }}/3gp/"'><img src='{{STATIC_URL}}/static/portal/images/icon_3gp.jpg' alt='3gp' ></a>
+							{% endif %}
+							</td>
+						</tr>
+					 </table>
+				 {% endif %}
+			</td>
+		</tr>
+		<tr>
+			<td colspan='2' class='space'>
+			
+			{% if video %}
+			
+				<ul class='ul_lista_tags'>
+					<li id='recipe_tags_list'>		
+						<img src="{{STATIC_URL}}/static/portal/images/tag.gif" />
+					</li>
+						
+						{% for j in videotag %}
+							 <li class='recipe_tags_list'>
+								<a href='{{request.channel_url}}search/tag/{{ j }}/'>{{ j }}</a>
+							 </li>
+						{% endfor %}
+			 		
+					<li>
+			 		<div id='bt_show_videotag' style='width:100px; float:left'> 
+                            ... <img src='{{STATIC_URL}}/static/portal/images/bt_pen.gif' alt='Adicionar tag' id_video='{{ video.id }}' title='Adicionar tag' border='0' alt='btn_pen' class='bt_pen' id='bt_pen' /> </div> 
+					</div>		
+			 		</li>
+				</ul>
+				
+			{% endif %}	
+				
+			</td>
+		</tr>	
+		<tr>
+			<td colspan='2' class='space'>
+			{% if video %}
+				<table>
+					<tr>
+						<td>
+							<img src='{{STATIC_URL}}/static/portal/images/tt_incorporar.png' alt='Incorporar' > 
+						</td>
+						<td>
+						    <div class="form_URL">
+				                <b>URL:&nbsp;</b>
+				                <input name="url_embend" type="text" value='{{ base_url }}{{ channel_url }}video/{{ video.id }}/{{ video.get_name|slugify }}' />
+							</div>
+						</td>
+						<td>	
+							<div class="form_EMBED" id="{{video.id}}">
+				                <b>&nbsp;Embed:&nbsp;</b>
+				                <input name="embed" id='flash_embed' type="text" value='{{ flash }}' />
+							</div>
+						</td>
+					</tr>
+				</table>
+			{% endif %}	
+			</td>
+		</tr>
+		<tr>
+			<td colspan='2' class='compartilhar'>
+				<!-- <img src='{{STATIC_URL}}/static/portal/images/comente_videos_01.png'> -->
+				
+				{% if video %}
+				<div class='share_video'>
+					<ul>
+						<li class="start"></li>
+						<li><a href="http://www.stumbleupon.com/submit?url={{ selected_video }}&title={{ video.get_name}}" title="stumbleupon" target='_blank'><img src="{{STATIC_URL}}/static/portal/images/share_stumbleupon.gif"></a></li>
+						<li><a href="http://del.icio.us/post?url={{ selected_video }}&title={{video.get_name}}" title="deli.icio.us" target='_blank'><img src="{{STATIC_URL}}/static/portal/images/share_del.icio.us.gif"></a></li>
+						<li><a href="http://myweb2.search.yahoo.com/myresults/bookmarklet?u={{ selected_video }}&t={{video.get_name}}" target='_blank'><img src="{{STATIC_URL}}/static/portal/images/share_yahoo.gif"></a></li>
+						<li><a href="http://reddit.com/submit?url={{ selected_video }}&title={{video.get_name}}" target='_blank'><img src="{{STATIC_URL}}/static/portal/images/reddit.png"></a></li>
+						<li><a href="http://digg.com/submit?phase=2&amp;url={{ selected_video }}&title={{video.get_name}}" target='_blank'><img src="{{STATIC_URL}}/static/portal/images/share_digg.gif"></a></li>
+						<li><a href="http://www.google.com/bookmarks/mark?op=edit&bkmk={{ selected_video }}&title={{video.get_name}}" title="Google" target='_blank'><img src="{{STATIC_URL}}/static/portal/images/share_google.gif"></a></li>
+						<li><a href="http://www.blogblogs.com.br/my/gadgets/fave?url={{ selected_video }}&{{video.get_name}}" target='_blank'><img src="{{STATIC_URL}}/static/portal/images/blog.png"></a> </li>
+						<li><a href="https://favorites.live.com/quickadd.aspx?marklet=1&mkt=pt-br&url={{ selected_video }}&title={{video.get_name}}&top=1" target='_blank'><img src="{{STATIC_URL}}/static/portal/images/share_live.gif"></a></li>
+						<li><a href="http://twitter.com/home?status={{ selected_video }}" title="{{video.get_name}}" target='_blank'><img src="{{STATIC_URL}}/static/portal/images/twitter.gif"></a></li>
+						<li><a href="http://www.orkut.com.br/Main#Compose.aspx?subject={{video.get_name}}&body={{ selected_video }}&friendGroup=4" target='_blank'><img src="{{STATIC_URL}}/static/portal/images/share_orkut.gif"></a></li>
+						<li><a href="http://www.facebook.com/sharer.php?u={{ selected_video }}&t={{video.get_name}}" target='_blank'><img src="{{STATIC_URL}}/static/portal/images/share_facebook.gif"></a></li>
+						<li><a href="http://www.myspace.com/Modules/PostTo/Pages/?u={{ selected_video }}&t={{video.get_name}}&c=" target='_blank'><img src="{{STATIC_URL}}/static/portal/images/share_myspace.gif"></a></li>
+					</ul> 
+				</div>
+				
+				<a href="javascript:void(0);" video_id="{{ video.id }}" open="0" onclick="commentsform(this, '.comment_list');">
+					<img src="{{STATIC_URL}}/static/portal/images/comente_videos_02.png" border="0">
+				</a>
+				
+				{% endif %}
+				
+			</td>
+		</tr>
+		<tr>
+			<td colspan="2" class="comment_list" style="display: none;">
+				{% include 'portal/ajax_commentform.html' %}
+			</td>
+		</tr>
+		<tr>
+			<td colspan="2" class="itens">
+				<div class='other_program'>
+				    <br /><br />
+				    {% if comments_list %}
+				    <h2>Comentários</h2>
+				    <br /><br />
+					{% include 'portal/ajax_commentlist.html' %}
+				
+					{% endif %}
+				</div>
+				{% if comments_buttom %}
+				<a class="more" page="2" href="javascript:void(0);" maxpage="{{comments_list.paginator.num_pages}}" onclick="MorePage(this, '{{video.id}}');" title="Clique aqui para ver mais comentários!" >Mais comentários</a>
+				<br /><br />
+				{% endif %}
+			</td>
+		</tr>
+	</table>
+</div>

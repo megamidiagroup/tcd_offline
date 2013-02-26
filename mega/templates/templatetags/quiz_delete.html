@@ -1,0 +1,63 @@
+{% extends 'admin/change_list.html' %}
+
+{% load i18n util %}
+
+{% block extrastyle %}
+	<link href="{{ STATIC_URL }}admin_tools/css/menu.css" type="text/css" rel="stylesheet" />
+	<link href="/media/admin/css/forms.css" type="text/css" rel="stylesheet" /> 
+{% endblock extrastyle %}
+
+{% block breadcrumbs %}
+
+<div class="breadcrumbs">
+	<a href="/admin/">{% trans 'Home' %}</a> &rsaquo; <a href="/admin/mega/">Mega</a> &rsaquo; <a href="/admin/mega/quiz/">Quiz</a> &rsaquo; {{ template_name|default:"Adicionar Quiz" }}
+</div>
+
+{% endblock breadcrumbs %}
+
+{% block content_title %}{% endblock content_title %}
+
+{% block content %}
+
+	{% if sucesso %}
+		<ul class="messagelist">
+	          <li class="info">Quiz "{{ template_name }}": {% if add %}adicionado{% else %}modificado{% endif %} com sucesso. Você pode editar novamente abaixo.</li>
+		</ul>
+	{% endif %}
+	
+	<div class="colM" id="content">
+        
+        <h1>Tem certeza?</h1>
+        
+	    <p>
+	    	Você tem certeza que quer remover Quiz "{{ template_name }}"? 
+	    	Todos os seguintes itens relacionados serão removidos:
+	    </p>
+	    
+	    <ul>
+		    {% for per in list_perguntas %}
+				<li>Pergunta {{ forloop.counter }}: <a href="/admin/mega/quiz/{{ template_id }}/">{{ per.text|safe }}</a></li>
+				{% for glr in per.get_list_response_order %}
+					<li style="margin-left: 20px;">Resposta {{ forloop.counter }}: <a href="/admin/mega/quiz/{{ template_id }}/">{{ per.text|safe }}</a></li>
+				{% endfor %}
+			{% endfor %}
+		</ul>
+
+	    <form method="post" action="../../">
+	    	
+	    	{% csrf_token %}
+
+		    <div>
+		    	<input type="hidden" value="{{ quiz_id }}" name="_selected_action" />
+		    	<input type="hidden" value="delete_selected" name="action" />
+			    <input type="hidden" value="yes" name="post" />
+			    <input type="submit" value="Sim, tenho certeza" />
+		    </div>
+		    
+	    </form>
+	
+		<br class="clear">
+	
+	</div>
+
+{% endblock %}

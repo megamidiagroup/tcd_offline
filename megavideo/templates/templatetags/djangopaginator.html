@@ -1,0 +1,30 @@
+<table id="django-pagination" class="pagination" width='100%'>
+	<tr>
+		{% if content_list %}
+			<td class="current" width='180'>Mostrando <b>{{ content_list.number }}-{{ content_list.paginator.num_pages }} </b> de <b> {{ content_list.paginator.count }}</b></td>
+			
+			<td align='right'>
+			
+			<table width='200'>
+				
+				{% if content_list.has_previous  %}
+					<td class="ativo"><a href='{{ url }}1/'>Primeira&nbsp;</a>|</td>
+					<td class="ativo"><a href='{{ url }}{{ content_list.previous_page_number }}/'><&nbsp;Anterior&nbsp;</a>|</td>
+				{% else %}
+					<td class="ativo">Primeira&nbsp;|</td>
+					<td class="ativo"><&nbsp;Anterior&nbsp;|</td>
+				{% endif %}
+				
+				{% if content_list.has_next %}
+					<td class="ativo"><a href='{{ url }}{{ content_list.next_page_number }}/'>Próximo&nbsp;></a></td>
+					<td class="ativo">|&nbsp;<a href='{{ url }}{{ content_list.paginator.num_pages }}/'>Última</a></td>
+				{% else %}	
+					<td class="ativo">Próximo&nbsp;></td>
+					<td class="ativo">|&nbsp;Última</td>
+				{% endif %}	
+			</table>
+			
+			</td>
+		{% endif %}
+	</tr>
+</table>

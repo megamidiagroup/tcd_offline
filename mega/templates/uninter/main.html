@@ -1,0 +1,232 @@
+{% load util keyboard enquete %}
+
+<!DOCTYPE html>
+<html dir="ltr" lang="pt-BR">
+<head>
+
+    <title>Uninter - Plataforma de Treinamento e Comunicação a Distância</title>
+    
+    <meta http-equiv="Content-Type" CONTENT="text/html; charset=UTF-8" />
+    
+    <link rel="stylesheet" href="{{ STATIC_URL }}{{ get_tipo_template }}/css/no-ie6.css" type="text/css" />
+
+    <link rel="stylesheet" href="{{ STATIC_URL }}{{ get_tipo_template }}/css/flexslider.css" type="text/css" media="screen" />
+    <link rel="stylesheet" href="{{ STATIC_URL }}{{ get_tipo_template }}/css/layout.css" type="text/css" />
+
+    {% if get_template.rede %}
+        <link rel="stylesheet" href="{{ STATIC_URL }}{{ get_tipo_template }}/css/template/{{ get_template.rede.link }}.css" type="text/css" />
+    {% endif %}
+
+    <!-- layouts smaller than 600px, iPhone and mobiles -->
+    <link rel="stylesheet" href="{{ STATIC_URL }}{{ get_tipo_template }}/css/layout-mobile.css" type="text/css" media="handheld and (max-width: 480px), screen and (max-device-width: 480px), screen and (max-width: 600px)" />
+
+    {% if get_template.rede %}
+        <link rel="stylesheet" href="{{ STATIC_URL }}{{ get_tipo_template }}/css/template/{{ get_template.rede.link }}-mobile.css" type="text/css" media="handheld and (max-width: 480px), screen and (max-device-width: 480px), screen and (max-width: 600px)" />
+    {% endif %}
+
+    <!-- tablet styles -->
+    <link rel="stylesheet" href="{{ STATIC_URL }}{{ get_tipo_template }}/css/layout-tablet.css" type="text/css" media="only screen and (min-width: 601px) and (max-width: 970px)" />
+
+    {% if get_template.rede %}
+        <link rel="stylesheet" href="{{ STATIC_URL }}{{ get_tipo_template }}/css/template/{{ get_template.rede.link }}-tablet.css" type="text/css" media="only screen and (min-width: 601px) and (max-width: 970px)" />
+    {% endif %}
+
+    <script src="{{ STATIC_URL }}{{ get_tipo_template }}/js/jquery-1.7.2.js" type="text/javascript"></script>
+    <script src="{{ STATIC_URL }}{{ get_tipo_template }}/js/jquery.flexslider-min.js" type="text/javascript"></script>
+    <script src="{{ STATIC_URL }}{{ get_tipo_template }}/js/jquery.carouFredSel-5.6.1-packed.js" type="text/javascript"></script>
+    <script src="{{ STATIC_URL }}{{ get_tipo_template }}/js/scripts.js" type="text/javascript"></script>
+
+    {% block js %}
+
+    {% endblock js %}
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=3.0, user-scalable=yes" />
+    <meta name="HandheldFriendly" content="true" />
+
+    <link href="{{ rede|favicon }}" rel="shortcut icon" type="image/x-icon" />
+    
+    <meta name="robots" content="index,follow" />
+    
+    <meta name="description" content="Seja bem vindo ao treinamento a distância TCD, www.treinandoequipes.com.br" />
+    
+</head>
+
+<body>
+	
+	<div url="{{ base_url }}" class="no-ie6"></div>
+
+    {% block account %}
+
+        <div id="account-widget">
+            <a href="#" class="user-account"><img src="{{ rede|get_icone:get_tipo_template }}" border="0" /></a>
+            
+            {% aproveitamento_count_append list_aproveitamento_account user %}
+            
+            <div id="account">
+                <div>
+                	
+                	{% if not list_menu|filter_menu:'sair' %}
+            			<a href="{% url logout rede.link %}" class="buttom btn_logout">Sair</a>
+            		{% endif %}
+                    <h3>Olá {{ user.get_full_name }},</h3>
+                    <p>Seu saldo de pontos é: {{ pontos|default:0 }}</p>
+                    
+                    <span class="line"></span>
+                    
+                    <h3>Aproveitamento</h3>
+                    
+                    <div class="certified">
+                        <h5 style="font-weight: normal;font-size: 11px;">
+                        	<a href="#">
+                        		<div class="progress-bar {% if list_aproveitamento_account|porcent_aproveitamento:user < 71 %}progress-bar-red{% endif %}">
+	                        		<div style="width: {{ list_aproveitamento_account|porcent_aproveitamento:user }}%;" class="ui-progress">
+		                                <span class="ui-label">
+		                                    <span class="percent">{{ list_aproveitamento_account|porcent_aproveitamento:user }}%<span class="arrow"></span></span>
+		                                </span>
+		                            </div>
+	                            </div>
+	                        </a>
+                        </h5>
+                        <ul class="courses">
+                            {% for laa in list_aproveitamento_account %}
+                            	{% if laa|aproveitamento_append:user %}
+	                                <li>
+	                                    <a href="{% url treinamento rede.link laa.id %}" title="{% aproveitamento_status laa user 1 %}">
+	                                        {% aproveitamento_status laa user %} {{ laa.name|truncatewords:7 }}
+	                                    </a>
+	                                </li>
+                                {% endif %}
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    
+                    {% if list_certificado_account %}
+
+                        <span class="line"></span>
+
+                        <h3>Certificações</h3>
+
+                        {% for i in list_certificado_account %}
+
+                            <div class="certified">
+                                <h5><a href="#">{{ i.name }}</a></h5>
+                                <div class="progress-bar">
+				                    <div style="width: {{ i|porcent_certificado:user }}%;" class="ui-progress">
+				                        <span class="ui-label">
+				                            <span class="percent">{{ i|porcent_certificado:user }}%<span class="arrow"></span></span>
+				                        </span>
+				                    </div>
+				                </div>
+                                <ul class="courses">
+                                    {% for t in i|list_treinamento %}
+                                        <li>
+                                            <a href="{% url treinamento rede.link t.id %}" title="{% if t|get_is_treinamento_check:user %}Teste realizado{% else %}Teste não realizado{% endif %}">
+                                                <span class="{% if t|get_is_treinamento_check:user %}ok{% else %}pending{% endif %}"></span>{{ t.name|truncatewords:8 }}
+                                            </a>
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+
+                        {% endfor %}
+
+                        <span class="line"></span>
+
+                    {% else %}
+
+                        <span class="line"></span>
+
+                        <h3>Não há certificações</h3>
+
+                    {% endif %}
+
+                </div>
+                <span class="arrow"></span>
+            </div>
+        </div>
+
+    {% endblock account %}
+    
+    {% block enquete %}
+    
+    	{% if grafico %}
+			{% grafico rede %}
+		{% else %}
+			{% enquete rede %}
+		{% endif %}
+
+    {% endblock enquete %}
+    
+    {% set_keyboard get_tipo_template '.busca' 1 %}
+    
+    <div id="header">
+        <div class="container">
+            <div id="logo"><a href="{% url home %}{{ rede.link }}/"><img src="{{ rede|logo }}" border="0" /></a></div>
+			<div id="header-text">{% for i in list_menu %}{% if i.tipo == 'D' %}{{ i.name|safe }}{% endif %}{% endfor %}</div>
+
+            {% for i in list_menu %}
+                {% if i.tipo == 'S' %}
+                    <div id="search">
+                        <form method="get" id="search-form" action="{% url busca rede.link %}" onsubmit="if ( $('.busca').val() == 'Pesquisa de vídeos' )return false;">
+                            <div class="form-item">
+                                <input type="text" value="{{ q|default:'Pesquisa de vídeos' }}" default="Pesquisa de vídeos" name="q" class="busca" />
+                                {% set_keyboard_buttom get_tipo_template 'top:10px; right:36px;' %}
+                                <button id="search-submit">
+                                    <span>Buscar</span>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                {% endif %}
+            {% endfor %}
+
+            <div id="menu">
+            	
+                <div class="user-button">
+                	{% aproveitamento_count_append list_aproveitamento_account user %}
+                </div>
+                <div class="enquete">
+                	{% if not grafico %}
+                		<span class="jewelCount"><span>1</span></span>
+                	{% endif %}
+                </div>
+                <div class="menu-button"><span>MENU</span></div>
+                {% if list_menu|tipobusca %}<div class="search-button"></div>{% endif %}
+                <div class="menu">
+	                <ul>
+	                    {% for i in list_menu %}
+	                        {% if i.tipo == 'B' %}
+	                        	{% if not i.name|lower == 'sair' %}
+	                        		<li><a href="{% url home %}{{ rede.link }}/{{ i.url }}">{{ i.name|upper }}</a><span class="barrinha"></span></li>
+	                            {% endif %}
+	                        {% endif %}
+	                    {% endfor %}
+	                </ul>
+	                {% if list_menu|filter_menu:'sair' %}
+            			<a class="btn_logout" href="{% url logout rede.link %}">SAIR</a>
+            		{% endif %}
+	        	</div>
+            </div>
+        </div>
+    </div>
+
+    {% block content %}
+
+    {% endblock content %}
+
+    <div class="clear"></div>
+
+    <div id="footer">
+        <p class="copy">© Copyright 2012</p>
+        <p>
+        	Os vídeos e conteúdos publicados nesta plataforma são de uso exclusivo de seus <br />
+        	detentores legais, sendo proibida a venda ou reprodução de qualquer um dos materiais <br />
+        	sem prévia autorização.
+        </p>
+	</div>
+
+    <script src="{{ STATIC_URL }}{{ get_tipo_template }}/js/ios-orientationchange-fix.js" type="text/javascript"></script>
+
+</body>
+
+</html>

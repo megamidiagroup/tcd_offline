@@ -1,0 +1,94 @@
+﻿{% extends 'uninter/main.html' %}
+
+{% load util keyboard %}
+
+{% block content %}
+
+    {% block bloco %}
+
+        <div id="content">
+            <div class="container">
+            	<div class="bar"><span>Meus pontos</span></div>
+		        <div class="wrap">
+		        	<h3><b>{{ pontos|default:0 }}</b> pontos</h3>
+		        	
+		        	{% if list_treinamento %}
+		        	
+			            <table>
+			            	<thead>
+			                    <tr>
+			                        <th>Data</th>
+			                        <th>Treinamento</th>
+			                        <th>Pontos</th>
+			                    </tr>
+			                </thead>
+			                <tbody>
+			                	{% for i in list_treinamento %}
+	                                <tr>
+	                                    <td>{{ i|datetreinamento:user|date:'d/m/Y à\s H:i' }}</td>
+	                                    <td>{{ i.name }}</td>
+	                                    <td>{{ i|pontostreinamento:user }}</td>
+	                                </tr>
+	                            {% endfor %}
+			                </tbody>
+			            </table>
+		            
+					{% else %}
+
+                        <p>Nenhum registro encontrado!</p>
+
+                    {% endif %}
+
+                    <a class="buttom" style="display: none;" target="_blank" href="http://www.multiplusfidelidade.com.br/?key=U54FS25415" >Trocar meus pontos</a>
+
+                    {% if sucesso %}
+                        <div class="wrap">
+                            <img src="{{ STATIC_URL }}{{ get_tipo_template }}/images/success.png" border="0" />
+                            <h3>Seus pontos foram enviados para seu email com sucesso.</h3>
+                        </div>
+                    {% else %}
+                    	<div class="center">
+                      		<a class="buttom" href="{% url conta rede.link %}?sucesso={% if list_treinamento.count > 0 %}true{% endif %}" >Enviar meus pontos por e-mail</a>
+                        </div>
+                    {% endif %}
+
+				</div>
+                    
+                <div class="bar"><span>Meus dados</span></div>
+
+                {% if edit %}
+                    <div class="wrap">
+                        <img src="{{ STATIC_URL }}{{ get_tipo_template }}/images/success.png" border="0" />
+                        <h3>Cadastro salvo com sucesso.</h3>
+                    </div>
+                {% endif %}
+                
+                <div class="wrap">
+	
+	                <p><b>Nome: 				</b>{{ user.get_full_name }}</p>
+	                <p><b>CPF: 					</b>{{ infouser.cpf }}</p>
+	                <p><b>E-mail: 				</b>{{ user.email }}</p>
+	                <p><b>Endereço:     		</b>{{ infouser.endereco }}</p>
+	                <p><b>Bairro:       		</b>{{ infouser.bairro }}</p>
+	                <p><b>CEP:          		</b>{{ infouser.cep }}</p>
+	                <p><b>Estado:       		</b>{{ infouser.estado }}</p>
+	                <p><b>Cidade:       		</b>{{ infouser.cidade }}</p>
+	                <p><b>Telefone Comercial: 	</b>{{ infouser.fone_com }}</p>
+	                <p><b>Telefone Celular: 	</b>{{ infouser.fone_cel }}</p>
+	                <p><b style="font-size: 12px;">Aceito receber mensagens gratuitas pelo celular:
+						</b>{{ infouser.receber|humanizeboolean }}</p>
+	                <p><b style="font-size: 12px;">Aceito receber revista eletrônica: 
+	                	</b>{{ infouser.envia|humanizeboolean }}</p>
+
+					<div class="center">
+	               		<a class="buttom" href="{% url home %}{{ rede.link }}/conta/edit/" >Editar conta</a>
+	                </div>
+
+                </div>
+
+            </div>
+        </div>
+
+    {% endblock bloco %}
+
+{% endblock content %}

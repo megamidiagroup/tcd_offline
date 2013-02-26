@@ -1,0 +1,18 @@
+/* template do tcd */
+
+body {background: #eeeeee ;}#header {background: none;border-bottom: 1px solid #b3afb3;}#highlights {background: none;border-top: 1px solid #ffffff;border-bottom: 1px solid #b3afb3;}#header #search button {background: url("http://10.0.1.95/media/tcd/storage/uploads/template/2012/07/icon-search_1.png") no-repeat center #0d3e51;}#header #menu {background-color: #0d3e51;border: 1px solid #305a73;}#header #menu ul li a {color: #ffffff;background-color: #0d3e51;}#header #menu ul li a:hover {color: #ffffff;background-color: #154e65;}#content {border-top: 1px solid #ffffff;border-bottom: none;}#footer {color: #ffffff;background: #0d3e51 ;border-top: 1px solid #cfdae1;}#content .bar, .path .back {color: #ffffff;background-color: #0d3e51;}#content .barra_parceiros {color: #ffffff;background-color: #0d3e51;}#content ul.category li a {background: none;}#content ul.category li a:hover {background-color: #f5f5f5;}#content ul.category li div {border: 1px solid #0d3e51;}#content ul.category li h2 {font-size: 20px;color: #0d3e51;}#login form label {color: #0d3e51;}.buttom {background-color: #0d3e51;color: #ffffff;}.buttom:hover {background-color: #154e65;color: #f2f2f2;}h3, .box-title {color: #0d3e51;}.flex-control-nav li a {color: #9e9e9e;}.flex-control-nav li a.active {color: #0d3e51;}.flex-control-nav li a:hover {color: #0d3e51;}.path a, .path {color: #0d3e51;}
+
+#header #logo{margin-top:0;}
+
+#content .related-videos li h4 {
+    color: #0d3e51;
+    font-size: 1.4em;
+}
+
+@media only screen and (min-width: 601px) and (max-width: 970px)
+{
+     #header #menu {background-color: #0d3e51!important;};
+    #header .container #menu ul li a:hover {background:none repeat scroll 0 0 #10382E !important;}
+}
+
+#header #search button {background-color: #0d3e51!important;};

@@ -1,0 +1,181 @@
+﻿{% extends 'mega/main.html' %}
+
+{% load util keyboard %}
+
+{% block content %}
+
+    <div id="header">
+        <div class="container">
+            <div id="logo"><a href="{% url home %}{{ rede.link }}/"><img src="{{ rede|logo }}" border="0" /></a></div>
+			<div id="header-text">{% for i in list_menu %}{% if i.tipo == 'D' %}{{ i.name|safe }}{% endif %}{% endfor %}</div>
+
+            {% for i in list_menu %}
+                {% if i.tipo == 'S' %}
+                    <div id="search">
+                        <form method="get" id="search-form" action="{% url busca rede.link %}">
+                            <div class="form-item">
+                                <input type="text" value="{{ q|default:'' }}" name="q" class="busca" />
+                                {% set_keyboard_buttom get_tipo_template 'top:10px; right:36px;' %}
+                                <button id="search-submit">
+                                    <span>Buscar</span>
+                                </button>
+                            </div>
+                        </form>
+                        <span class="sub_pesquisa">Pesquisa de vídeos</span>
+                    </div>
+                {% endif %}
+            {% endfor %}
+
+            <div id="menu">
+                <div class="user-button">
+                	{% aproveitamento_count_append list_aproveitamento_account user %}
+                </div>
+                <div class="enquete">
+                	{% if not grafico %}
+                		<span class="jewelCount"><span>1</span></span>
+                	{% endif %}
+                </div>
+                <div class="menu-button">MENU</div>
+                {% if list_menu|tipobusca %}<div class="search-button"></div>{% endif %}
+                <ul>
+                    {% for i in list_menu %}
+                        {% if i.tipo == 'B' %}
+                        	{% if i.name|lower == 'sair' %}
+                            	<li><a class="btn_logout" href="{% url home %}{{ rede.link }}/{{ i.url }}">{{ i.name|upper }}</a></li>
+                            {% else %}
+                            	<li><a href="{% url home %}{{ rede.link }}/{{ i.url }}">{{ i.name|upper }}</a></li>
+                            {% endif %}
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+    {% if list_banner.count > 0 %}
+        <div id="highlights">
+            <div class="container">
+                <div class="full-banner">
+                    <div class="flexslider">
+                    <ul class="slides">
+                        {% for i in list_banner %}
+                            <li>
+                                {% if i.url %}<a href="{{ i.url }}" title="Clique aqui para acessar o link" {% if i.blank %}target="_blank"{% endif %}>{% endif %}
+                                    <img src="{{ i|get_image }}" border="0" />
+                                {% if i.url %}</a>{% endif %}
+                                {% if i.legend %}
+                                    <p class="flex-caption">{{ i.name }}</p>
+                                {% endif %}
+                            </li>
+                        {% endfor %}
+                    </ul>
+                  </div>
+              </div>
+            </div>
+        </div>
+    {% endif %}
+
+    {% block bloco %}
+
+        <div id="content">
+            <div class="container {% if not list_treinamento and list_category.0|css_hiraquia_cat == 'custom-category0' %}home{% endif %}">
+
+                {% if interno %}
+                    <div class="path">
+                        {% sub_menu list_category rede list_treinamento %}
+                    </div>
+                {% endif %}
+
+                {% if list_treinamento.count > 1 %}
+                    <div class="bar">Selecione um dos {{ list_treinamento.count }} vídeos abaixo</div>
+                {% else %}
+                    {% if list_treinamento.count == 1 %}
+                        <div class="bar">Selecione o vídeo abaixo</div>
+                    {% else %}
+                        <div class="bar">
+                            {% if list_category.count > 1 %}
+                            	{{ get_template.title_d|filter_search:list_category.count|default:'SELECIONE UMA DAS %s CATEGORIAS ABAIXO'|filter_search:list_category.count }}
+                            {% else %}
+                                {{ get_template.title_ds|default:'SELECIONE A CATEGORIA ABAIXO' }}
+                            {% endif %}
+                        </div>
+                    {% endif %}
+                {% endif %}
+
+                {% if list_category %}
+                    <ul class="category clearfix">
+                        {% for i in list_category %}
+                            <li>
+                                <a href="{% url home %}{{ rede.link }}/category/{{ i.id }}/" title="{{ i.desc|safe|striptags }}">
+                                    <div class="{{ i|css_hiraquia_cat }} {% if not i.is_name %}no-name-category{% endif %}"><img src="{{ i|get_image }}" border="0" /></div>
+                                    {% if i.is_name %}<h2 class="box-title">{{ i.name }}</h2>{% endif %}
+                                    {% if i.is_name %}<span>{{ i.desc|safe|truncatewords_html:8 }}</span>{% endif %}
+                                </a>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+
+                {% if list_treinamento %}
+                    <ul class="category clearfix videos">
+                        {% for i in list_treinamento %}
+                        	{% if i.tipo == 'L' %}
+                        		<li>
+		                            <a href="{% url live rede.link i.id %}" title="{{ i.desc|safe|striptags }}" class="{% if forloop.last %}last{% endif %}">
+		                                <div class="{{ i|css_hiraquia_video }}"><img src="{{ i|get_image }}" border="0" /></div>
+		                                <h2 class="box-title">{{ i.name }}</h2>
+		                                <span>{{ i.desc|safe|truncatewords_html:8 }}</span>
+		                                <br /><br />
+		                                <span>Será exibido no dia {{ i.agendado|date:'d F à\s H:i' }} com duração de {{ i.time }}</span>
+		                            </a>
+		                        </li>
+                        	{% else %}
+		                        <li>
+		                            <a href="{% url home %}{{ rede.link }}/treinamento/{{ i.id }}/" title="{{ i.desc|safe|striptags }}" class="{% if forloop.last %}last{% endif %}">
+		                                <div class="{{ i|css_hiraquia_video }}"><img src="{{ i|get_image }}" border="0" /></div>
+		                                <h2 class="box-title">{{ i.name }}</h2>
+		                                <span>{{ i.desc|safe|truncatewords_html:8 }}</span>
+		                                <br /><br />
+		                                <span><b>Duração: {{ i.time }}</b></span>
+		                            </a>
+		                        </li>
+	                        {% endif %}
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+
+                {% if list_parceiro %}
+
+                    <div class="bar clear barra_parceiros">{{ get_template.title_pd|default:'PARCEIROS' }}</div>
+
+                    <div class="bloco_parceiros">
+                    	<ul class="category clearfix parceiros">
+	                        {% for lp in list_parceiro %}
+	                        	{% if lp.link %}
+	                        		<li>
+		                                <a href="{{ lp.link }}" title="{{ lp.name }}">
+		                                    <div class="{{ lp|css_hiraquia_cat }} no-name-category"><img src="{{ lp|get_image }}" border="0" /></div>
+		                                    {% if lp.is_name %}<h2 class="box-title" style="text-align: center;">{{ lp.name }}</h2>{% endif %}
+		                                </a>
+		                            </li>
+		                        {% else %}
+		                            <li>
+		                                <a href="javascript:void(0);" style="cursor: default;">
+		                                    <div class="{{ lp|css_hiraquia_cat }} no-name-category"><img src="{{ lp|get_image }}" border="0" /></div>
+		                                    {% if lp.is_name %}<h2 class="box-title" style="text-align: center;">{{ lp.name }}</h2>{% endif %}
+		                                </a>
+		                            </li>
+		                        {% endif %}
+	                        {% endfor %}
+	                    </ul>
+
+                        <div class="clearfix"></div>
+                    </div>
+
+                {% endif %}
+
+            </div>
+        </div>
+
+    {% endblock bloco %}
+
+{% endblock content %}

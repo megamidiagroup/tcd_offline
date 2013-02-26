@@ -1,0 +1,250 @@
+{% extends "manager/list.html" %}
+{% block css_script %}
+{% load get_limit %}
+{% load hasin %}
+
+<link href="{{STATIC_URL}}/static/manager/css/main.css" rel="stylesheet" type="text/css" media="screen" />
+
+<link href="{{STATIC_URL}}/static/manager/css/digg.css" rel="stylesheet" type="text/css" media="screen" />
+
+
+
+
+<link href="{{STATIC_URL}}/static/manager/css/sortListUI.css" rel="stylesheet" type="text/css" media="screen" />
+{% endblock %}
+{% block js_script %}
+<script type="text/javascript" src="{{STATIC_URL}}/static/manager/js/jquery.jqModal.js"></script>
+<script type="text/javascript" src="{{STATIC_URL}}/static/boxy/src/javascripts/jquery.boxy.js"></script>
+<script type="text/javascript" src="{{STATIC_URL}}/static/manager/js/jquery-ui-1.7.1.drag.js"> </script>
+<script type="text/javascript" src="{{STATIC_URL}}/static/manager/js/sorlistUI.js"> </script>
+<script type="text/javascript" src="{{STATIC_URL}}/static/manager/js/script_list.js"></script>
+
+<link href="{{STATIC_URL}}/static/boxy/src/stylesheets/boxy.css" rel="stylesheet" type="text/css" media="screen" />
+{% endblock %}
+
+
+{% block breadcrumb %}
+{% for breadcrumb in request.breadcrumbs %}
+     <a href="{{ breadcrumb.url }}"
+     {% if forloop.first %} 
+     class='first' 
+     {% endif %}
+     >{{ breadcrumb.name }}</a>
+     {% if not forloop.last %} > {% endif %}
+{% endfor %}
+<div class='bt_cadastro'>
+    <!--   <a href='javascript:void(0)' onclick="order('{{ request.channel_url }}manager/category/order/', 'program')" ><img src='/megavideo/static/manager/images/bt_ordenar_category.png' height="31" border='0' ></a> -->
+    <a href='{{ request.channel_url }}manager/category/add/' style='border:0'>
+      <img src='/megavideo/static/manager/images/bt_cadastrar.png' height="31" border='0' >
+    </a>
+</div>
+{% endblock %}
+
+
+
+{% block line_title %}
+{% endblock %}
+
+{% block list %}
+<li id="list_new">
+    <table class="openOptions{{ i.id }}" cellspacing="0" cellpadding="0">
+          <tr>  
+                <th>
+                    Image
+                </th>
+                <th>
+                    Categoria
+                </th>
+                <th style="padding-left:10px;">
+                    Publicação
+                </th>
+                <th>
+                    
+                </th>
+                <th>
+                </th>
+                <th>
+                </th>
+                <th>
+                </th>
+        </tr>           
+        {% if content_list.object_list %}
+       
+        {% for i in content_list.object_list %}
+        <tr class="line_{{ i.id }}">
+            <td class="corrige_padding">
+                {% if i.image %}<img src="{{STATIC_URL}}/static/{{i.image}}" height="40" border="0"> {% else %} &nbsp; {% endif %}
+            </td>
+            <td class="corrige_padding" style="text-align:left; padding-left:20px;">
+                {{ i.name|truncatewords:8 }} {{ i.displayname }}  ({{ i.count_video_published }})
+            </td>
+            
+            <td class="corrige_padding">
+      {% if i.published %}
+        <div class='publicado true' target='/megavideo/manager/category/publish/' id='pub_{{ i.id }}'></div>
+      {% else %}
+        <div class='publicado false' target='/megavideo/manager/category/publish/' id='pub_{{ i.id }}'></div>
+      {% endif %}
+            </td>
+            
+           <td class="corrige_padding">&nbsp;
+            
+           {% if i.is_parent %}
+                    <a href="{{ request.channel_url }}manager/category/addsub/{{ i.id }}/"><img class="" title="alterar" src="{{STATIC_URL}}/static/manager/images/bt_add_subcategoria.png" /></a>
+           {% endif %}
+           
+                  </td>
+                  <td class="corrige_padding">
+                      <a href="{{ request.channel_url }}manager/category/update/{{ i.id }}/"><img title="alterar" src="{{STATIC_URL}}/static/manager/images/bt_editar.png" /></a>
+                  </td>
+                  <td class="corrige_padding">&nbsp;
+                   {% if not i.category_set.all.count %}
+            <a href="#" onclick="order('{{ request.channel_url }}manager/category/{{ i.id }}/ordervideo/', 'program')"><img title="Ordenar Vídeo" src="{{STATIC_URL}}/static/manager/images/bt_ordenar_videos.png" /></a>
+                   {% endif %}    
+                  </td>
+                  <td class="corrige_padding">
+                      {% if request.user.is_superuser %}
+                      <img src="{{STATIC_URL}}/static/manager/images/bt_excluir.png" id="line_{{ i.id }}" class="exclude" url="/megavideo/manager/category/del/" target_id="{{ i.id }}" title="Excluir" msg="Excluíndo esta categoria, você estará excluíndo as sub-categorias.<br />Você tem certeza que deseja excluir esta categoria?" />
+                      {% endif %}
+                  </td>
+        </tr>          
+        
+        {% if i.category_set.all.count %}
+        {% if not category_id %}
+        {% for j in i|get_subcategory:5 %}
+        <tr class="subcategory line_{{ j.id }}">
+            <td class="corrige_padding">
+                &nbsp;{% if j.image %}<img src="/megavideo/storage/{{j.image}}" height="40" border="0">{% else %} {% endif %}
+            </td>
+            <td class="corrige_padding" style="text-align:left; padding-left:35px;">
+                {{ j.name|truncatewords:8 }}  {{ j.displayname }} ({{j.count_video_published}})&nbsp;
+            </td>
+            <td class="corrige_padding">
+            {% if j.published %}
+                <div class='publicado true' target='/megavideo/manager/category/publish/' id='pub_{{ j.id }}'></div>
+            {% else %}
+                <div class='publicado false' target='/megavideo/manager/category/publish/' id='pub_{{ j.id }}'></div>
+            {% endif %}
+            </td class="corrige_padding">
+            <td>
+                &nbsp;
+            </td class="corrige_padding">
+            <td>
+                <a href="{{ request.channel_url }}manager/category/update/{{ j.id }}/"><img class="" title="alterar" src="{{STATIC_URL}}/static/manager/images/bt_editar.png" /></a>
+            </td class="corrige_padding">
+            <td>&nbsp;
+                {% if j.video_set.all.count %}
+                <a href="{{ request.channel_url }}manager/category/{{ j.id }}/ordervideo/"><img class="" title="Ordenar Vídeo" src="{{STATIC_URL}}/static/manager/images/bt_ordenar_videos.png" /></a>
+                {% endif %}
+            </td>
+            <td class="corrige_padding">
+                {% if request.user.is_superuser %}
+                <img src="{{STATIC_URL}}/static/manager/images/bt_excluir.png" id="line_{{ j.id }}" class="exclude" url="/megavideo/manager/category/del/" target_id="{{ j.id }}" title="Excluir" msg="Você tem certeza que deseja excluir esta categoria?" />
+                {% endif %}
+            </td>
+       
+        </tr>
+        
+        {% if forloop.last %}
+          {% if i.category_set.all.count|gte:5 %}
+          <tr class='last'>
+              <td colspan="7">
+                  <a href="{{ request.channel_url }}manager/category/{{ i.id }}/" style='border:0px;background:none' ><img src="{{STATIC_URL}}/static/manager/images/coments_more_seta.png" border='0' height="37" /></a>              
+              </td>
+          </tr>  
+          {% endif %}
+        {% endif %}
+        {% endfor %}
+        
+        {# else if category_id #}
+        {% else %}
+        {% for j in i.category_set.all %}
+        <tr class="subcategory line_{{ j.id }}">
+            <td>
+                &nbsp;{% if j.image %}<img src="/megavideo/storage/{{j.image}}" height="40" border="0"> {% endif %}
+            </td>
+            <td>
+                {{ j.name|truncatewords:8 }}  {{ j.displayname }} ({{j.count_video_published}})&nbsp;
+            </td>
+            <td>
+            {% if j.published %}
+                <div class='publicado true' target='/megavideo/manager/category/publish/' id='pub_{{ j.id }}'></div>
+            {% else %}
+                <div class='publicado false' target='/megavideo/manager/category/publish/' id='pub_{{ j.id }}'></div>
+            {% endif %}
+            </td>
+            <td>
+                &nbsp;
+            </td>
+            <td>
+                <a href="{{ request.channel_url }}manager/category/update/{{ j.id }}/"><img class="" title="alterar" src="{{STATIC_URL}}/static/manager/images/bt_editar.png" /></a>
+            </td>
+            <td>&nbsp;
+                {% if j.video_set.all.count %}
+                <a href="{{ request.channel_url }}manager/category/{{ j.id }}/ordervideo/"><img class="" title="Ordenar Vídeo" src="{{STATIC_URL}}/static/manager/images/bt_ordenar_videos.png" /></a>
+                {% endif %}
+            </td>
+            <td>
+                {% if request.user.is_superuser %}
+                <img src="{{STATIC_URL}}/static/manager/images/bt_excluir.png" id="line_{{ j.id }}" class="exclude" url="/megavideo/manager/category/del/" target_id="{{ j.id }}" title="Excluir" msg="Você tem certeza que deseja excluir esta categoria?" />
+                {% endif %}
+            </td>
+       
+        </tr>
+        
+        
+        {% endfor %}
+        
+        
+        
+        {# endif if category_id #}
+        {% endif %}
+        
+        {% endif %}
+        
+        {% endfor %}
+        
+        {% else %}
+        <tr>
+            <td colspan="7">
+                <div class="empty" align='center'>
+                  <img src='{{ STATIC_URL }}/static/manager/images/noresult.gif' title='Nenhum registro cadastrado' border='0' >
+                </div>
+            </td>
+        </tr>
+        {% endif %}
+    </table>
+</li>
+{% endblock %}
+
+{% block block_pagination %}
+{% endblock %}
+
+{% block confirm %}
+<!-- Confirm Dialog -->
+<div class="jqmConfirm" id="confirm">
+    <div id="ex3b" class="jqmConfirmWindow">
+        <div class="jqmConfirmTitle clearfix">
+            <h1>Confirmação</h1>
+            <a href="#" class="jqmClose"><em>Close</em></a>
+        </div>
+        <div class="jqmConfirmContent">
+            <p class="jqmConfirmMsg">
+            </p>
+        </div>
+        <table class="jqmButtons">
+            <tr>
+                <td width="40%" align="right" class="sim" id="1">
+                    <img src="{{STATIC_URL}}/static/manager/images/bt_ativo.gif" title="Sim" />Sim
+                </td>
+                <td width="20%">
+                    &nbsp;
+                </td>
+                <td width="40%" align="left" class="no" id="0">
+                    <img src="{{STATIC_URL}}/static/manager/images/bt_remove.gif" title="Não" />Não
+                </td>
+            </tr>
+        </table>
+    </div>
+</div> 
+{% endblock %}

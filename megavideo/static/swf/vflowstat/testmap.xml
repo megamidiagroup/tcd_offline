@@ -1,0 +1,345 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<countrydata>
+
+<state id="range">
+		<data>0 - 33</data>
+		<color>fed976</color>
+</state>
+
+<state id="range">
+		<data>34 - 66</data>
+		<color>feb24c</color>
+
+</state>
+
+<state id="range">
+		<data>67 - 99</data>
+		<color>fd8d3c</color>
+</state>
+
+<state id="range">
+		<data>100 - 133</data>
+		<color>fc4e2a</color>
+
+</state>
+
+<state id="range">
+		<data>134 - 166</data>
+		<color>e31a1c</color>
+</state>
+
+<state id="range">
+		<data>167 - 200</data>
+		<color>bd0026</color>
+
+</state>
+
+<state id="zoom_out_center">
+		<loc>1.5,16.5</loc>
+</state>
+
+<state id="zoom_out_scale">
+		<data>160</data>
+</state>
+<state id="default_color">
+		<color>555555</color>
+
+</state>
+
+<state id="background_color">
+		<color>333333</color>
+</state>
+
+<state id="outline_color">
+		<color>333333</color>
+</state>
+
+<state id="AG">
+	<name>Algeria</name>
+
+	<data>0</data>
+</state>
+
+<state id="AO">
+		<name>Angola</name>
+		<data>164</data>
+</state>
+<state id="BA">
+		<name>Bahrain</name>
+
+		<data>37</data>
+</state>
+<state id="BN">
+		<name>Benin</name>
+		<data>159</data>
+</state>
+<state id="BC">
+		<name>Botswana</name>
+		<data>125</data>
+
+</state>
+
+<state id="BX">
+		<name>Brunei Darussalam</name>
+		<data>31</data>
+</state>
+<state id="UV">
+		<name>Burkina Faso</name>
+		<data>173</data>
+
+</state>
+<state id="BY">
+		<name>Burundi</name>
+		<data>171</data>
+</state>
+<state id="CM">
+		<name>Cameroon</name>
+		<data>142</data>
+</state>
+
+<state id="CV">
+		<name>Cape Verde</name>
+		<data>103</data>
+</state>
+<state id="CT">
+		<name>Central African Republic</name>
+		<data>168</data>
+</state>
+<state id="CD">
+
+		<name>Chad</name>
+		<data>165</data>
+</state>
+
+<state id="CN">
+		<name>Comoros</name>
+		<data>134</data>
+</state>
+<state id="CF">
+
+		<name>Congo</name>
+		<data>140</data>
+</state>
+
+<state id="CG">
+		<name>Democratic Republic
+of Congo</name>
+		<data>167</data>
+</state>
+
+<state id="IV">
+		<name>Cote d'Ivoire</name>
+		<data>161</data>
+</state>
+
+<state id="DJ">
+		<name>Djibouti</name>
+		<data>153</data>
+</state>
+
+<state id="EG">
+		<name>Egypt</name>
+		<data>120</data>
+</state>
+
+<state id="EK">
+		<name>Equatorial Guinea</name>
+		<data>116</data>
+
+</state>
+<state id="ER">
+		<name>Eritrea</name>
+		<data>155</data>
+</state>
+<state id="ET">
+		<name>Ethiopia</name>
+		<data>169</data>
+</state>
+
+<state id="GB">
+		<name>Gabon</name>
+		<data>118</data>
+</state>
+<state id="GA">
+		<name>Gambia</name>
+		<data>151</data>
+</state>
+<state id="GH">
+
+		<name>Ghana</name>
+		<data>129</data>
+</state>
+<state id="GJ">
+		<name>Grenada</name>
+		<data>93</data>
+</state>
+<state id="GV">
+		<name>Guinea</name>
+
+		<data>157</data>
+</state>
+<state id="PU">
+		<name>Guinea-Bissau</name>
+		<data>166</data>
+</state>
+<state id="KE">
+		<name>Kenya</name>
+		<data>146</data>
+
+</state>
+<state id="LT">
+		<name>Lesotho</name>
+		<data>137</data>
+</state>
+<state id="LI">
+	<name>Liberia</name>
+	<data>0</data>
+</state>
+
+<state id="LY">
+		<name>Libyan Arab Jamahiriya</name>
+		<data>61</data>
+</state>
+<state id="MA">
+		<name>Madagascar</name>
+		<data>149</data>
+</state>
+
+<state id="MI">
+		<name>Malawi</name>
+		<data>162</data>
+</state>
+<state id="MV">
+		<name>Maldives</name>
+		<data>86</data>
+</state>
+<state id="ML">
+
+		<name>Mali</name>
+		<data>172</data>
+</state>
+<state id="MT">
+		<name>Malta</name>
+		<data>33</data>
+</state>
+
+<state id="MR">
+
+		<name>Mauritania</name>
+		<data>154</data>
+</state>
+<state id="MP">
+		<name>Mauritius</name>
+		<data>62</data>
+</state>
+
+<state id="MO">
+
+		<name>Morocco</name>
+		<data>126</data>
+</state>
+<state id="MZ">
+		<name>Mozambique</name>
+		<data>170</data>
+</state>
+
+<state id="WA">
+
+		<name>Namibia</name>
+		<data>124</data>
+</state>
+
+<state id="NG">
+		<name>Niger</name>
+		<data>174</data>
+</state>
+<state id="NI">
+
+		<name>Nigeria</name>
+		<data>152</data>
+</state>
+
+<state id="RW">
+		<name>Rwanda</name>
+		<data>158</data>
+</state>
+<state id="SG">
+
+		<name>Senegal</name>
+		<data>156</data>
+</state>
+
+<state id="SE">
+		<name>Seychelles</name>
+		<data>36</data>
+</state>
+<state id="SL">
+
+		<name>Sierra Leone</name>
+		<data>175</data>
+</state>
+
+<state id="BP">
+		<name>Solomon Islands</name>
+		<data>123</data>
+</state>
+<state id="SO">
+
+	<name>Somalia</name>
+	<data>0</data>
+</state>
+
+<state id="SF">
+		<name>South Africa</name>
+		<data>111</data>
+</state>
+
+<state id="SU">
+		<name>Sudan</name>
+		<data>138</data>
+</state>
+
+<state id="WZ">
+		<name>Swaziland</name>
+		<data>133</data>
+</state>
+
+<state id="TZ">
+	<name>United Republic of Tanzania</name>
+		<data>160</data>
+</state>
+
+<state id="TO">
+		<name>Togo</name>
+		<data>141</data>
+
+</state>
+
+<state id="TS">
+		<name>Tunisia</name>
+		<data>91</data>
+</state>
+
+<state id="UG">
+		<name>Uganda</name>
+		<data>147</data>
+
+</state>
+
+<state id="WI">
+	<name>Western Sahara</name>
+	<data>148</data>
+</state>
+
+
+<state id="ZA">
+		<name>Zambia</name>
+		<data>163</data>
+
+</state>
+<state id="ZI">
+		<name>Zimbabwe</name>
+		<data>145</data>
+</state>
+
+</countrydata>

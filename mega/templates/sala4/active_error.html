@@ -1,0 +1,19 @@
+{% extends 'sala4/main.html' %}
+
+{% load util %}
+
+{% block content %}
+       
+	<section id="bannerArea">
+		<div class="wrapper">
+			<div class="titulo obrigado">
+				<h2><span>Link inválido!</span></h2>
+			</div>
+			<p>
+				Caso tenha cadastro, <a href="{% url login rede.link %}" class="link">clique aqui</a> e faça o login.
+			</p>
+		</div>
+		<div id="ondas"></div>
+	</section>
+
+{% endblock content %}

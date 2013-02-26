@@ -1,0 +1,120 @@
+{% extends 'manager/main.html' %}
+{% load humanize_megas %}
+
+{% block content %}
+<div id='main'>
+<form action='{{request.channel_url}}manager/ftp/' method="post" name='form_ftp'>
+<table id="list_ftp" BORDER=0 CELLPADDING=0 CELLSPACING=0 FRAME=BOX>
+	<tr style="background:url('../images/bg_arquivo.jpg') repeat-x;">
+		<th colspan="4">Arquivo</th>
+	{% if content_list %}
+		 <td width="100" align="center"><input type="submit" value='Adicionar vídeos selecionados' >
+		 <input type="hidden" name='add_files' value='1'>
+		 </td>
+	  
+	    <td width="100" align="center">
+        {% if request.user.is_superuser %}
+	       <h1>Excluir</h1>
+	    {% endif %}
+	    </td>
+	{% endif %}    
+	</tr>
+	{% if content_list %}
+	{% for i in content_list %}
+		<tr id='line_{{ forloop.counter }}' class='line_{{ forloop.counter }} {% cycle "color"  "" %}'>    
+		    <td width="60" style="padding-left:15px;"> 
+		        <img class='video_thumb_wide' src='../images/default.jpg' width='56' height='42'/>
+		    </td>
+		    <td align="left"><h2>{{ i.name|truncatewords:5 }}</h2></td>
+		    <td align="left">{{ i.date|date:'d/m/Y - h:i'}}</td>
+		    <td align="left">{{ i.size|humanize_bytes}}</td>
+		    <td width="70" align="center"><input type="checkbox" name='file' value='{{i.realpath}}'  /></td>
+		    <td width="130" align="center">
+			    {% if request.user.is_superuser %}
+			         <img src="{{STATIC_URL}}/static/manager/images/bt_excluir_ftp.png" width='30' id="line_{{ forloop.counter }}" class="exclude" url="{{request.channel_url|default:'/'}}manager/ftp/del/?realpath={{i.realpath}}" target_id="{{ forloop.counter }}" title="Excluir" msg="Você tem certeza que deseja excluir esta vídeo?"  />
+			    {% endif %}
+		    </td>
+		</tr>
+	{% endfor %}
+	
+	{% else %}
+	   
+	   <tr>
+	       <td colspan="7" align="center">
+                <div class='noresult' >
+                        <img border="0" src="{{STATIC_URL}}/static/manager/images/noresult.gif" alt="Não foi encontrado nenhum programa"/>
+               </div>        
+	       </td>
+	   </tr>
+	   
+	
+	{% endif %}
+	
+</table>
+</form>
+
+<div id='paginate'>
+    <ul id='paginate_list'>
+        {% for i in paginate.pages %}
+        <li>{{ i }}</li>
+        {% endfor %}
+    </ul>
+    </div>
+</div>
+</div>
+
+
+{% endblock %}
+
+
+{% block confirm %}
+
+<!-- Alert Dialog -->
+<div class="jqmConfirm categoria" id="confirm_categoria">
+
+    <div id="ex3b" class="jqmConfirmWindow">
+
+        <div class="jqmConfirmTitle clearfix">
+            <a href="#" class="jqmClose"><em>Close</em></a>
+        </div>
+
+        <div class="content">
+            <p class="jqmConfirmMsg msg"></p>
+            <h1>Inclua este vídeo em uma categoria antes de pública-lo</h1>
+        </div>
+
+        <input type="button" value="Clique Aqui" id="1" />
+
+    </div>
+
+</div>
+
+
+<!-- Confirm Dialog -->
+<div class="jqmConfirm" id="confirm">
+
+    <div id="ex3b" class="jqmConfirmWindow">
+
+        <div class="jqmConfirmTitle clearfix">
+            <h1>Confirmação</h1>
+            <a href="#" class="jqmClose"><em>Close</em></a>
+        </div>
+
+        <div class="jqmConfirmContent">
+            <p class="jqmConfirmMsg"></p>
+        </div>
+
+        <table class="jqmButtons">
+            <tr>
+                <td width="40%" align="right" class="sim" id='1'><img src="{{STATIC_URL}}/static/manager/images/bt_ativo.gif" title="Sim" /> Sim</td>
+                <td width="20%">&nbsp;</td>
+                <td width="40%" align="left" class="no" id='0'><img src="{{STATIC_URL}}/static/manager/images/bt_remove.gif" title="Não" /> Não</td>
+            </tr>
+        </table>
+
+    </div>
+
+</div>
+
+{% endblock %}
+

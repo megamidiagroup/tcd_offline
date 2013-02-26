@@ -1,0 +1,10 @@
+<select id="select" style="display: none; width: 420px;" onchange="selectchannel(this);">
+	<option value="{{request.channel_url}}portal/search/">Todos os canais</option>
+	{% for i in channel_menu %}
+		{% ifequal chan i.name %}
+			<option value="/{{ channel_prefix }}/{{ i.name }}/search/" selected="selected">{{ i.name }}</option>
+		{% else %}
+			<option value="/{{ channel_prefix }}/{{ i.name }}/search/">{{ i.name }}</option>
+		{% endifequal %}
+	{% endfor %}
+</select>

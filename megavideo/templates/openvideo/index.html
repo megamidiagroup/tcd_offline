@@ -1,0 +1,37 @@
+<html>
+	<head>
+        {% load miniature %}
+        <script type="text/javascript" src="{{STATIC_URL}}/static/portal/js/jquery-1.3.2.min.js"></script>
+        <style>
+            #video_container { width: 640px; height: 360px; border: 1px solid black;}
+            #video_object {width: 640px; height: 360px; float: left; z-index: -1;display: inline;}
+            .overlay_thumb {padding: 5px; margin: 5px; float: left; z-index: 10;};
+        </style> 
+        <script>
+
+            function init(){
+
+            $('.thumb_image').click(function () {
+                var url = $(this).attr('vurl');
+                $('#video_container')[0].innerHTML = '<video id="video_object" src="' + url + '" autoplay="true" controls="true" />';
+            })
+        }
+        $(document).ready(init);
+        </script>
+	</head>
+    {% load openvideo %}
+	<body>
+		<h1>VFlow OpenVideo Test </h1>
+
+        <div id='video_container'>
+            <video id='video_object' src='{{ last_video|openvideo_url }}' controls='true' ></video>
+        </div>
+        {% for i in videos %}
+        <div class='overlay_thumb' vurl='{{ i|openvideo_url }}'>
+            <img class='thumb_image' vurl='{{ i|openvideo_url }}' src='{{ i|thumbnail:"80x80" }}'/>
+            </div>
+        {% endfor %}
+        
+
+	</body>
+</html>

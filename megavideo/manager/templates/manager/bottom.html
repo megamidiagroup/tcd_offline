@@ -1,0 +1,35 @@
+<ul class='footer'>
+    <li>
+        <img src='{{STATIC_URL}}/static/manager/images/logo_megamidia.gif' >
+    </li>
+    <li>
+        <h4>São Paulo</h4>
+        Tel: + 55 11 3053-6969 <br />
+	Fax: + 55 11 3053-6968 <br /> 
+    	Al. Lorena, 131 - 4o andar <br />
+	Jardins - São Paulo - SP <br />
+	CEP: 01424-000
+    </li>
+    <li>
+        <h4>Curitiba</h4>
+        Tel.: + 55 41 2106-8500 <br />
+	Fax: + 55 41 2106-8533 <br />
+	Rua Brigadeiro Franco, 3991 <br />
+	Rebouças - Curitiba - Paraná <br />
+	CEP: 80220-100
+    </li>
+    <li>
+        <h4>Reportar Erros</h4>
+        <form action="{{ request.channel_url }}manager/ajax_register_bug/" method="post" name="sendbug" class='sendbug' id='sendbug' onsubmit='return false;' >
+        	
+        	{% csrf_token %}
+        	
+	        <textarea rows="3" cols="10" name="bug_msg" id='bug_msg' ></textarea>
+	        <input type="hidden" value='{{ request.build_absolute_uri }}' id='bug_url' name='bug_url' >  
+	        <input type="hidden" value='{{ request.user }}' id='bug_user' name='bug_user'> 
+	        <div id='bug_return'></div>      
+	        <input type="submit" value="reportar">
+        </form>
+    </li>
+</ul>
+<br />

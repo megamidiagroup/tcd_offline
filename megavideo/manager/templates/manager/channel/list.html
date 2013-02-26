@@ -1,0 +1,143 @@
+{% extends 'manager/list.html' %}
+{% block css_script %}
+<link href="{{STATIC_URL}}/static/manager/css/main.css" rel="stylesheet" type="text/css" media="screen" />
+<link href="{{STATIC_URL}}/static/manager/css/digg.css" rel="stylesheet" type="text/css" media="screen" />
+
+<link href="{{STATIC_URL}}/static/manager/css/sortListUI.css" rel="stylesheet" type="text/css" media="screen" />
+{% endblock %}
+{% block js_script %}
+<script type="text/javascript" src="{{STATIC_URL}}/static/manager/js/jquery.jqModal.js"></script>
+<script type="text/javascript" src="{{STATIC_URL}}/static/manager/js/jquery.dd.js"> </script>
+<script type="text/javascript" src="{{STATIC_URL}}/static/manager/js/script_list.js"></script>
+{% endblock %}
+
+{% block breadcrumb %}
+{% for breadcrumb in request.breadcrumbs %}
+     <a href="{{ breadcrumb.url }}"
+     {% if forloop.first %} 
+     class='first' 
+     {% endif %}
+     >{{ breadcrumb.name }}</a>
+     {% if not forloop.last %} > {% endif %}
+{% endfor %}
+<div class='bt_cadastro'>
+    <a href='{{request.channel_url}}manager/channel/add/'><img src='/megavideo/static/manager/images/bt_cadastrar.png' height="31" border='0' ></a>
+</div>
+{% endblock %}
+
+{% block line_title %}
+{{ i.name }}
+{% endblock %}
+{% block list %}
+
+<form>{% csrf_token %}</form>
+
+<li id='list_new'>
+	
+    <table class='openOptions{{ i.id }}' cellspacing='0' cellpadding='0'  >
+        <tr>
+                <th>
+                    Rede
+                </th>
+                <th>
+                    Usuários
+                </th>
+                <th>
+                    Qtda. Vídeos
+                </th>
+                <th>
+                    Espaço em disco
+                </th>
+                <th>
+                </th>
+                <th>
+                </th>
+        </tr>            
+    
+    
+	    {% if content_list.object_list %}
+	    
+	    
+	    
+        {% for i in content_list.object_list %}
+         
+                <tr class='line_{{ i.id }}'>
+                    <td >
+                       <a href='/megavideo/home/{{ i.name }}/manager/program/'>{{ i.name }} {{ i.displayname }} ({{ i.count_video_published }})</a>
+                    </td>
+					
+                    <td >
+                        <span>
+                        	{% for j in i.userchannel_set.all %}
+								{{j.user.username}}{% if not forloop.last %}, {% endif %}
+							{% endfor %}
+							&nbsp;
+						</span>
+                    </td>
+					
+                    <td >
+                        <span>
+                        	{{i.count_video}}
+						</span>
+                    </td>
+					
+                    <td  align="center">
+                        <span>
+                        	{{i.bandwidth_total}}
+						</span>
+                    </td>
+					
+                    <td width="100">
+                        <a href='{{ request.channel_url }}manager/channel/update/{{ i.id }}/'><img class="" title='alterar' src="{{STATIC_URL}}/static/manager/images/bt_editar.png" /></a>
+                    </td><!-- important -->
+                    <td width="100">
+                        <img src='/megavideo/static/manager/images/bt_excluir.png' id='line_{{ i.id }}' class='{% ifequal i.id 1 %}no_exclude{% else %}exclude{% endifequal %}' url='{{ request.channel_url }}manager/channel/del/' target_id='{{ i.id }}' title='{% ifequal i.id 1 %}Não é permitido excluir{% else %}Excluir canal{% endifequal %}' msg='Excluíndo este canal, você estará excluíndo todo o conteúdo. <br />Você tem certeza que deseja excluir este canal?' />
+                    </td>
+                </tr>
+
+		{% endfor %}
+		
+		{% else %}
+          <tr>
+            <td colspan="7">
+                <div class="empty" align='center'>
+                  <img src='{{ STATIC_URL }}/static/manager/images/noresult.gif' title='Nenhum registro cadastrado' >
+                </div>
+            </td>
+        </tr>
+        {% endif %}
+     </table>
+</li>
+{% endblock %}
+{% block confirm %}<!-- Confirm Dialog -->
+<div class="jqmConfirm" id="confirm">
+    <div id="ex3b" class="jqmConfirmWindow">
+        <div class="jqmConfirmTitle clearfix">
+            <h1>Confirmação</h1>
+            <a href="#" class="jqmClose"><em>Close</em></a>
+        </div>
+        <div class="jqmConfirmContent">
+            <p class="jqmConfirmMsg">
+            </p>
+        </div>
+        <table class="jqmButtons">
+            <tr>
+                <td width="40%" align="right" class="sim" id='1'>
+                    <img src="{{STATIC_URL}}/static/manager/images/bt_ativo.gif" title="Sim" />Sim
+                </td>
+                <td width="20%">
+                    &nbsp;
+                </td>
+                <td width="40%" align="left" class="no" id='0'>
+                    <img src="{{STATIC_URL}}/static/manager/images/bt_remove.gif" title="Não" />Não
+                </td>
+            </tr>
+        </table>
+    </div>
+</div> {% endblock %}
+
+{% block block_pagination %}
+	{% load paginators %}
+	{% digg_paginator content_list digg_url %}
+{% endblock %}
+ 

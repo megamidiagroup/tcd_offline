@@ -1,0 +1,44 @@
+﻿{% load util %}
+
+<table cellpadding="0" cellspacing="0" border="0" width="100%">
+
+    <tr>
+        <td align="left" valign="middle" colspan="3">
+            <img src="{{ BASE_URL }}{{ rede.logo.url }}" border="0" />
+        </td>
+    </tr>
+
+    <tr>
+        <td align="left" valign="middle" colspan="3">Olá {{ name }},</td>
+    </tr>
+    <tr>
+        <td align="left" valign="middle" colspan="3">Segue a lista de seus pontos:</td>
+    </tr>
+    <tr><td colspan="3">&nbsp;</td></tr>
+    <tr>
+        <td align="left" valign="middle"><b>Data</b></td>
+        <td align="left" valign="middle"><b>Treinamento</b></td>
+        <td align="center" valign="middle"><b>Pontos</b></td>
+    </tr>
+
+    {% if list_treinamento %}
+
+        {% for i in list_treinamento %}
+            <tr>
+                <td align="left" valign="middle">{{ i|datetreinamento:user|date:'d/m/Y à\s H:i' }}</td>
+                <td align="left" valign="middle">{{ i.name }}</td>
+                <td align="center" valign="middle">{{ i|pontostreinamento:user }}</td>
+            </tr>
+        {% endfor %}
+
+    {% endif %}
+
+    <tr><td colspan="3">&nbsp;</td></tr>
+
+    <tr>
+        <td align="center" valign="middle">&nbsp;</td>
+        <td align="right" valign="middle" >Total de pontos</td>
+        <td align="center" valign="middle">{{ pontos|default:0 }}</td>
+    </tr>
+
+</table>

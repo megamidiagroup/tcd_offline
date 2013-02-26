@@ -1,0 +1,179 @@
+{% load util date_humanize %}
+
+{% for lc in list_category.0|list_category_category %}
+
+	<section>
+	
+		<h3>{{ lc.name }}</h3>
+		
+		<div class="clearfix"></div>
+		
+		{% for lcc in lc|list_category_category %}
+		
+			<div class="item">
+				<div class="header">
+					
+					<span class="nome">{{ lcc.name }}</span>
+					<span class="aprov">{{ lcc|list_category_treinamentos|count_videos_assistido:user }} vídeos vistos de {{ lcc|count_video_category }}</span>
+					<span class="simbolo"></span>
+					<span class="status">
+						{% if lcc|list_category_treinamentos|count_videos_assistido:user == lcc|count_video_category and not lcc|list_category_treinamentos|is_quiz:user %}
+							Concluído
+						{% endif %}
+						{% if lcc|list_category_treinamentos|is_quiz:user %}
+							Quiz Disponível
+						{% endif %}
+					</span>
+					
+					<div class="clearfix"></div>
+					
+				</div>
+				<ul class="lista_videos">
+					{% for lt in lcc|list_category_treinamentos %}
+						<li>
+							
+							{% if lt|date_assistido:user %}
+								<span class="data" style="font-size: 12px;">
+									{{ lt|date_assistido:user|date:"d.m.Y" }}
+								</span>
+								<span class="nome" style="color: #8C8C8C;font-weight: normal;">{{ lt.get_name }}</span>
+								<span>
+									<blockquote>
+										{% if lt.plano.name == 'Free' %}
+											<span class="price largura free" title="Free">&nbsp;</span>
+										{% else %}
+											<span class="price largura quero-comecar" title="Pago">&nbsp;</span>
+										{% endif %}
+									</blockquote>
+									<span class="tempo">{{ lt.time|duration_time_resume }}</span>	
+								</span>
+							{% else %}
+								<span class="data btn-parent" link="{% url treinamento lt.rede.link lt.id %}">
+									<img src="{{ STATIC_URL }}{{ get_tipo_template }}/images/play_video.png" border="0" align="center" style="width: 35px;margin-top: -10px;" />
+								</span>
+								<span class="nome">{{ lt.get_name }}</span>
+								<span>
+									<blockquote>
+										{% if lt.plano.name == 'Free' %}
+											<span class="price largura free" title="Free">&nbsp;</span>
+										{% else %}
+											<span class="price largura quero-comecar" title="Pago">&nbsp;</span>
+										{% endif %}
+									</blockquote>	
+									<span class="tempo">{{ lt.time|duration_time_resume }}</span>
+								</span>
+							{% endif %}
+							
+							<div class="clearfix"></div>
+							
+						</li>
+
+					{% empty %}
+						<li>
+							<span class="data">(Nenhum Vídeo)</span>
+							<span class="nome"></span>
+							<span class="tempo"></span>
+							
+							<div class="clearfix"></div>
+							
+						</li>
+					{% endfor %}
+					<section>
+					{% if lcc|list_category_treinamentos|is_quiz:user %}
+						{% with total=lcc|list_category_treinamentos %}
+							<li class="disponivel btn" link="{% url questionario lcc.rede.link total.0.id %}">
+								<span class="icon"></span>
+								<span class="nome">Quiz Disponível ou Incompleto</span>
+								<span class="desc">Responda para desbloquear um Badge</span>                                                                
+								<div class="clearfix"></div>
+							</li>
+						{% endwith %}
+					{% endif %}
+					
+				</ul>
+			</div>
+			
+			<div class="clearfix"></div>
+		
+		{% empty %}
+		
+			<div class="item">
+				<div class="header">
+					
+					<span class="nome">(Nenhum Curso)</span>
+					<span class="aprov"></span>
+					<span class="simbolo"></span>
+					<span class="status"></span>
+					
+					<div class="clearfix"></div>
+					
+				</div>
+			</div>
+			
+			<div class="clearfix"></div>
+		
+		{% endfor %}
+
+	</section>
+
+	<div class="clearfix"></div>
+
+{% endfor %}
+
+
+<section>
+
+	<h3 style="color: #000;">Pagamentos</h3>
+
+	<div class="clearfix"></div>
+
+	<div class="item">
+		<div class="header" style="background-color: #999;">
+
+			<span class="nome" style="margin-left: 20px;">Data</span>
+			<span class="aprov" style="color: #fff;margin-left: 35px;">Descrição</span>
+			<span class="aprov" style="color: #fff;margin-left: 70px;">Status</span>
+			<span class="aprov" style="color: #fff;margin-left: 30px;">Vídeos Vistos</span>
+			<span class="aprov" style="color: #fff;margin-left: 30px;">Badges Alcançados</span>
+			<span class="simbolo"></span>
+			<span class="status"></span>
+			<div class="clearfix"></div>
+
+		</div>
+		<ul class="lista_videos">
+			{% for lp in list_pagamento %}
+				<li>
+					<span class="data" style="font-size: 12px;"> {{ lp.date|date:"d.m.Y" }} </span>
+					<span class="nome" style="color: #8C8C8C;font-weight: normal;width: 112px;">{{ lp.plano.name }}</span>
+					<span class="nome" style="color: #8C8C8C;font-weight: normal;width: 75px;">Ativo</span>
+					<span class="nome" style="color: #8C8C8C;font-weight: normal;width: 120px;">{{ lp.videos.all.count }}</span>
+					<span class="nome" style="color: #8C8C8C;font-weight: normal;width: 32px;">{{ lp.badges.all.count }}</span>
+					<span>
+						<blockquote>
+							<span class="price largura {{ lp.plano.name|slugify }}" title="Tipo do Plano">&nbsp;</span>
+						</blockquote> 
+					<span class="tempo">{{ lp.date|get_days }}</span> </span>
+					<div class="clearfix"></div>
+				</li>
+			{% empty %}
+				<li>
+					<span class="data">(Nenhum Pagamento)</span>
+					<span class="nome"></span>
+					<span class="tempo"></span>
+					<div class="clearfix"></div>
+				</li>
+			{% endfor %}
+
+			<li class="disponivel btn" link="{% url planos rede.link %}" style="background-color: #DA841F;">
+				<span class="icon"></span>
+				<span class="nome" style="font-size: 12px;">Não tem saldo suficiênte, clique aqui e obtenha um plano</span>
+				<span class="desc" style="font-size: 12px;color: #fff;">Você pode obter os planos Quero Começar ou Sou Pro</span>
+				<div class="clearfix"></div>
+			</li>
+
+		</ul>
+	</div>
+
+	<div class="clearfix"></div>
+
+	</section>

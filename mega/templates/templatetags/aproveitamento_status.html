@@ -1,0 +1,5 @@
+{% if not title %}
+	<span class="status {% if play %}play-ok{% else %}play-pending{% endif %}">{{ play|floatformat }}</span>
+	<span class="status {% if view %}view-ok{% else %}view-pending{% endif %}">{{ view|floatformat }}</span>
+	<span class="status {% if question %}question-none{% else %}question-pending{% endif %}">{{ question|floatformat }}</span>
+{% else %}{{ title }}{% endif %}

@@ -1,0 +1,15 @@
+<html>
+		{% for i in jobs %}
+		<p> <strong><a href='/api/route_player/?id_job={{ i.id }}&html=true'>Job #{{i.id}} {{ i.message }} : {{ i.date|timesince }} ago</a></strong><br/>
+		Status : {{ i.get_status_display }}<br/>
+		{% for j in i.joblog_set.all %}
+
+		<small> {{ j.message }} | {{ j.show_arguments }} </small><br/>
+
+		{% endfor %}
+		
+	</p>
+
+
+		{% endfor %}
+</html>

@@ -1,0 +1,22 @@
+{% load extra_day %}
+
+{% for vc in comments_list.object_list %}
+
+	<div class="comments">
+	    <div class="img">
+	        <img src="{{STATIC_URL}}/static/portal/images/rostinho.png" width="66" height="75" border="0" />
+	    </div>
+	    <div class="corpo">
+	        <p>
+	            <i>{{ vc.name }}<span>{{ vc.date|diffdays }}</span></i>
+	        </p>
+	        <br/>
+	        <br/>
+	        <span>{{ vc.content }}</span>
+	        <br/>
+	        <br/>
+	        <br/>
+	    </div>
+	</div>
+	
+{% endfor %}

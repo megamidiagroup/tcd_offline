@@ -1,0 +1,75 @@
+﻿{% extends 'diasupermercado/main.html' %}
+
+{% load util keyboard %}
+
+{% block content %}
+
+    <div id="header">
+        <div class="container">
+            <div id="logo"><a href="{% url home %}{{ rede.link }}/"><img src="{{ rede|logo }}" border="0" /></a></div><br />
+            <div id="header-text">{% for i in list_menu %}{% if i.tipo == 'D' %}{{ i.name|safe }}{% endif %}{% endfor %}</div>
+
+            {% for i in list_menu %}
+                {% if i.tipo == 'S' %}
+                    <div id="search">
+                        <form method="get" id="search-form" action="{% url busca rede.link %}">
+                            <div class="form-item">
+                                <input type="text" value="{{ q|default:'' }}" name="q" class="busca" />
+                                {% set_keyboard_buttom get_tipo_template 'top:10px; right:36px;' %}
+                                <button id="search-submit">
+                                    <span>Buscar</span>
+                                </button>
+                            </div>
+                        </form>
+                        <span class="sub_pesquisa">Pesquisa de vídeos</span>
+                    </div>
+                {% endif %}
+            {% endfor %}
+
+            <div id="menu">
+                <div class="user-button">
+                	{% aproveitamento_count_append list_aproveitamento_account user %}
+                </div>
+                <div class="menu-button">MENU</div>
+                {% if list_menu|tipobusca %}<div class="search-button"></div>{% endif %}
+                <ul>
+                    {% for i in list_menu %}
+                        {% if i.tipo == 'B' %}
+                        	{% if i.name|lower == 'sair' %}
+                            	<li><a class="btn_logout" href="{% url home %}{{ rede.link }}/{{ i.url }}"><span>{{ i.name|upper }}</span></a></li>
+                            {% else %}
+                            	<li><a href="{% url home %}{{ rede.link }}/{{ i.url }}"><span>{{ i.name|upper }}</span></a></li>
+                            {% endif %}
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+            </div>
+            
+            <div class="header-bg"></div>
+            
+        </div>
+    </div>
+
+    {% block bloco %}
+
+        <div id="content">
+            <div class="container">
+                <div class="bar">FAQ</div>
+                <div class="wrap">
+                    <ul class="faq">
+
+                        {% for i in list_faq %}
+                            <li {% if forloop.last %}style="border-bottom: none;"{% endif %}>
+                                <h3>{{ i.pergunta }}</h3>
+                                <p>{{ i.resposta }}</p>
+                            </li>
+                        {% endfor %}
+
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+    {% endblock bloco %}
+
+{% endblock content %}

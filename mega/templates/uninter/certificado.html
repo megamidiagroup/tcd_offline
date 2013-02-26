@@ -1,0 +1,95 @@
+﻿{% extends 'uninter/main.html' %}
+
+{% load util keyboard %}
+
+{% block content %}
+
+    <script type="text/javascript">
+
+        function send_pdf(obj)
+        {
+
+            var is = '';
+
+            $('.ch_certificado').each(function(e){
+                if( $(':checked').attr('name') != undefined )
+                {
+                    is += $(this).val() + '-';
+                }
+            });
+
+            if (is == false)
+            {
+                alert('Selecione um certificado.');
+            }
+            else
+            {
+                window.location = $(obj).attr('action') + '?key=' + is;
+            }
+
+        }
+
+        function set_input(value)
+        {
+
+            $('input[name="' + value + '"]').attr("checked", "checked");
+
+        }
+
+    </script>
+
+    {% block bloco %}
+
+        <div id="content">
+            <div class="container">
+                <div class="bar"><span>Meus pontos</span></div>
+                <div class="wrap">
+                    <h3>Minhas Certificações</h3>
+
+                    {% if list_certificado %}
+
+                        <table cellspacing="10">
+                            <tr>
+                                <td>&nbsp;</td>
+                                <td><b>Data</b></td>
+                                <td><b>Certificado</b></td>
+                                <td><b>Treinamento(s)</b></td>
+                            </tr>
+                            {% for i in list_certificado %}
+                            <tr>
+                                <td><input type="radio" class="ch_certificado" value="{{ i.id|base64encode }}" name="campo-{{ i.id|base64encode }}" /></td>
+                                <td onclick="set_input('campo-{{ i.id|base64encode }}');">{{ i.date|date:'d/m/Y à\s H:i' }}</td>
+                                <td onclick="set_input('campo-{{ i.id|base64encode }}');">{{ i.name }}</td>
+                                <td onclick="set_input('campo-{{ i.id|base64encode }}');">{{ i.get_list_treinamento|join:', ' }}</td>
+                            </tr>
+                            {% endfor %}
+                        </table>
+
+                    {% else %}
+
+                        <p>Nenhum registro encontrado!</p>
+
+                    {% endif %}
+
+                    {% if sucesso %}
+                        <div class="wrap">
+                            <img src="{{ STATIC_URL }}{{ get_tipo_template }}/images/success.png" border="0" />
+                            <h3>Seu certificado foi enviado para seu email com sucesso.</h3>
+                        </div>
+                        <div class="center">
+                    {% else %}
+                    	<div class="center">
+                        	<a class="buttom" href="javascript:void(0);" onclick="send_pdf(this);" action="{% url certificado rede.link %}?sucesso={% if list_certificado.count > 0 %}true{% endif %}" >Enviar meu extrato por e-mail</a>
+                    {% endif %}
+
+                    	<a class="buttom" href="javascript:void(0);" onclick="send_pdf(this);" action="{% url home %}{{ rede.link }}/certificado/pdf/" >Download do extrato via PDF</a>
+                    
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+    {% endblock bloco %}
+
+{% endblock content %}

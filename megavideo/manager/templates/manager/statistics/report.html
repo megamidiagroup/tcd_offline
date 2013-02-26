@@ -1,0 +1,269 @@
+{% extends 'manager/main.html' %}
+
+{% load miniature %}
+{% load humanize_megas %}
+{% load super_truncate %}
+
+{% block css_script %}
+
+    <link rel="stylesheet" type="text/css" media="screen" href="{{STATIC_URL}}/static/manager/css/main.css" />
+    
+    <link rel="stylesheet" type="text/css" media="screen" href="{{STATIC_URL}}/static/manager/css/digg.css" />
+    <link rel="stylesheet" type="text/css" media="screen" href="{{STATIC_URL}}/static/manager/css/datePicker.css" />
+
+    <!-- Novo chart -->
+    <link rel="stylesheet" type="text/css" media="screen" href="{{STATIC_URL}}/static/manager/css/visualize.css" />
+    <link rel="stylesheet" type="text/css" media="screen" href="{{STATIC_URL}}/static/manager/css/visualize-light.css" />
+    <!-- Novo chart -->
+     
+    <!-- slider -->         
+    <link rel="stylesheet" href="{{STATIC_URL}}/static/manager/css/jquery-ui-1.7.1.custom.css" type="text/css" />
+    <link rel="Stylesheet" href="{{STATIC_URL}}/static/manager/css/ui.slider.extras.css" type="text/css" />
+    <!-- slider -->    
+     
+    <link rel="stylesheet" type="text/css" media="screen" href="{{STATIC_URL}}/static/manager/css/statistic.css" />
+    
+{% endblock %}
+
+{% block js_script %}
+    <script type="text/javascript" src="{{STATIC_URL}}/static/manager/js/jquery-1.4.2.min.js"> </script>
+    <script type="text/javascript" src="{{STATIC_URL}}/static/manager/js/swfobject1.5.js"> </script>
+    <script type="text/javascript" src="{{STATIC_URL}}/static/manager/js/jquery.dd.js"> </script>
+
+    <!-- Novo chart -->
+    <script type="text/javascript" src="{{STATIC_URL}}/static/manager/js/enhance.js"> </script>
+    <script type="text/javascript" src="{{STATIC_URL}}/static/manager/js/excanvas.js"> </script>
+    <script type="text/javascript" src="{{STATIC_URL}}/static/manager/js/visualize.jQuery.js"> </script>
+    <!-- Novo chart -->
+    
+    <!-- slider -->    
+    <script type="text/javascript" src="{{STATIC_URL}}/static/manager/js/jquery-ui-1.7.1.custom.min.js"></script>
+    <script type="text/javascript" src="{{STATIC_URL}}/static/manager/js/selectToUISlider.jQuery.js"></script>
+    <!-- slider -->
+    
+    <script type="text/javascript" src="{{STATIC_URL}}/static/manager/js/statistic.js"> </script>
+{% endblock %}
+
+{% block content %}
+
+<ul id='statistic'>
+    
+    <li class='header'>
+        <ol>
+        <li>
+          
+          <table class='box' width="200" cellpadding="0" cellspacing="0">
+              <tr>
+                 <th valign="center">
+                   <img src='{{ STATIC_URL }}../images/th_visitante.png' border='0' align="middle">
+                   Visitantes
+                 </th> 
+              </tr>
+              <tr>
+                 <td>
+                    <h4>Mês {{ visitantes.month }}</h4>
+                    <h1>{{ visitantes.month }}</h1>
+                    <br>
+                    <h4>Ano {{ visitantes.year }}</h4>
+                    <h1>{{ visitantes.year }}</h1>
+                 </td>
+              </tr>
+          </table>
+          
+        </li>
+        <li>  
+          
+          <table class='box' width="240" cellpadding="0" cellspacing="0">
+              <tr>
+                 <th valign="center">
+                   <img src='{{ STATIC_URL }}../images/th_relogio.png' border='0' align="middle">
+                   Tempo de acesso
+                 </th> 
+              </tr>
+              <tr>
+                 <td>
+                  <h4>Mês {{ tempo.month }}</h4>
+                  <h1>{{ tempo.month }}</h1>
+                  <br>
+                  <h4>Ano {{ tempo.year }}</h4>
+                  <h1>{{ tempo.year }}</h1>
+                 </td>
+              </tr>
+          </table>
+          
+        </li>
+        <li class='last'>
+          <table class='box' width="430" cellpadding="0" cellspacing="0">
+              <tr>
+                 <th valign="center">
+                   <img src='{{ STATIC_URL }}../images/th_disco.png' border='0' align="middle" hspace='10' vspace=''>
+                   Espaço utilizando
+                 </th> 
+              </tr>
+              <tr>
+                 <td class='no_bg'>
+                  
+                  <table class='graficos'>
+                   
+                    <tr>
+                      <td>
+                        
+                        <table class='downloads' style='display:none' >
+                          <caption class='tranf_blue'> Quantidade tranferida (MB)  </caption>
+                          <thead>
+                          <tr>
+                            <td></td>
+                            <th scope="col">Usado</th>
+                            <th scope="col">Livre</th>
+                          </tr>
+                        </thead>
+                          <tr>
+                            <th scope="row">Usado {{ transferencia.total.bytes|humanize_bytes }}</th>
+                            <td>{{ transferencia.total.bytes  }} </td>
+                          </tr>
+                          <tr>
+                            <th scope="row">Livre {{ transferencia.free_trans|humanize_bytes }}</th>
+                            <td>{{ transferencia.free_trans }} </td>
+                          </tr>
+                          
+                          {% if transferencia.extra_tans %}                          
+                          <tr>
+                            <th scope="row">Extra {{ transferencia.extra_tans|humanize_bytes }}</th>
+                            <td>{{ transferencia.extra_tans }}</td>
+                          </tr>
+                          {% endif %}
+                          
+                        </table>
+                          
+                      </td>
+                      <td>
+                         
+                         <table class='espaco' style='display:none' >
+                           <caption class='tranf_black'> Recursos  </caption>
+                         <thead>  
+                            <tr>
+                            <td></td>
+                            <th scope="col">Usado</th>
+                            <th scope="col">Livre</th>
+                          </tr>
+                        </thead>
+                          <tr>
+                           <th scope="row">Usado {{ transferencia.usage_space|humanize_bytes }}</th>
+                           <td>{{ transferencia.usage_space }}</td>
+                          </tr>  
+                          
+                          <tr>
+                            <th scope="row">Livre {{ transferencia.free_space|humanize_bytes }}</th>
+                            <td>{{ transferencia.free_space }}</td>
+                          </tr>
+                          
+                          {% if transferencia.extra %}                          
+                          <tr>
+                            <th scope="row">Extra {{ transferencia.extra|humanize_bytes }}</th>
+                            <td>{{ transferencia.extra }}</td>
+                          </tr>
+                          {% endif %}
+                          
+                          
+                          
+                        </table>
+                         
+                      </td>
+                    </tr>
+                  </table>
+                  
+                 </td>
+              </tr>
+          </table>
+        </li>
+        </ol>
+    </li>
+
+    <li class='grafico' align='center'>
+    <div class="clear"></div>
+      
+    <fieldset class='slider_month'>
+            <select name="speed" id="speed">
+                {% for i in months %}
+                <option value="{{ i|date:'M' }}">{{ i|date:'M' }}</option>
+                {% endfor %}
+                <option value="Hoje" selected="selected">Hoje</option>
+            </select>
+    </fieldset>    
+    
+    <table class='enhance' style="display:none" >
+      <caption>Acessos  </caption>
+      <thead>
+        <tr>
+          <td></td>
+          {% for i in graphic %}
+              <th scope="col">{{ i.mdata }}h</th>
+          {% endfor %}
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+        <th scope="row"> Visitantes </th>
+        {% for i in graphic %}
+          <td>{{ i.total_download }}</td>
+        {% endfor %}
+         </tr>
+      </tbody>
+    </table> 
+    
+    <br />
+    <br />
+    
+    <table class='enhance_domains' cellpadding="0" cellspacing="0" style='display:none'>
+      <caption>Acessos por domínio</caption>
+      <thead>
+        <tr>
+          <th></th>
+          {% for i in domains %}
+              <th scope="col">{{ i.domain.domain }}</th>
+          {% endfor %}
+        </tr>
+      </thead>
+      <tbody>
+        {% for i in domains %}
+         <tr>
+            <th scope="row"> {{ i.domain|default:'coisa' }} ({{ i.total_visitorlog|default:0 }})</th>
+            <td>{{ i.total_visitorlog|default:0 }}</td>
+         </tr>
+       {% endfor %}
+       
+      </tbody>
+    </table> 
+     
+    
+    <div class="clear"></div>
+    
+    </li>
+
+
+
+    <li id="geral">
+      
+    <div class="clear"></div>
+    
+        <ul>
+            <li class="title"> 
+              Visão geral do conteúdo 
+              <p>(mais visualizados)</p> 
+            </li>
+        </ul>
+        <ul class='list_thumb'>
+            {% for i in last_five %}
+            <li {% if forloop.last %} class='last' {% endif %} >
+              <img src='{{ i|thumbnail:"163x110" }}' width='163' height='110' alt='{{i.get_name}}' />
+              <div>{{ i.get_name|super_truncatewords:"10-15" }}</div>
+            </li>
+            {% endfor %}
+        </ul>
+    </li>
+
+    <div class="clear">&nbsp;</div>
+
+</ul>
+
+{% endblock %}

@@ -1,0 +1,7 @@
+{% for i in stars_voted %}
+	{% if  i %}
+		<img src="{{STATIC_URL}}/static/portal/images/star3.gif" border="0" />
+	{% else %}
+		<img src="{{STATIC_URL}}/static/portal/images/star4.gif" border="0" />
+	{% endif %}
+{% endfor %}

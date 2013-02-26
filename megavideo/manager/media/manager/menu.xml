@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	<menu name="Geral">
+		<submenu name="Inserção de vídeos" url="manager/import/"></submenu>
+		<submenu name="Vídeos" url="manager/program/"></submenu>
+		<submenu name="Lista de Vídeos" url="manager/list_embed/"></submenu>
+		<submenu name="Sair" url="manager/logout/"></submenu>
+	</menu>
+	<menu name="Configurações">
+		<submenu name="Redes" url="manager/channel/"></submenu>
+		<submenu name="Categorias" url="manager/category/"></submenu>
+		<submenu name="Ordenar" url="manager/orderby/"></submenu>
+		<submenu name="Usuários" url="manager/user/"></submenu>
+	</menu>
+</root>

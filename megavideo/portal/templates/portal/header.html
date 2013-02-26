@@ -1,0 +1,32 @@
+<div id="busca">
+	
+	<ul>
+		<li style='border:0px'>
+			<a href="{{channel_url}}manager/" target="_blank">Manager</a>
+		</li>
+	</ul>
+	<div class="left"></div>
+	<div class="middle">
+		<form action="{{channel_url}}search/" id="form_quick_search" method="get">
+			<input type="text" value="{{ search|default:'Buscar' }}" chan="{{ chan }}" id="ajax_search" name="search" maxlength="15" size="10" autocomplete="off" />
+		</form>
+	</div>
+	<div class="right"></div>
+	<div class="buscar" onclick="$('#form_quick_search').submit();"></div>
+	    
+</div>
+
+<div id='ajax_answer' class="ajax_answer" style="display: none;">&nbsp;</div>
+
+<div id='logo_home' class='pngfix'>
+	<a href='{{ channel_url }}'>
+		<img src='{{STATIC_URL}}/static/portal/images/logo_vflow.png' class='pngfix' alt='Vflow video' />
+	</a>
+</div> <!--/logo_home-->
+
+<div id="headerimg">
+	{{ combocat }}
+</div> <!--/headerimg-->
+
+{% load miniature %}
+<hr class='clear'>

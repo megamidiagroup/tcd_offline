@@ -1,0 +1,59 @@
+﻿{% extends 'mega/main.html' %}
+
+{% load util keyboard %}
+
+{% block account %}{% endblock account %}
+
+{% block content %}
+
+    <div id="header">
+        <div class="container">
+            <div id="logo">
+            	<a href="{% url home %}{{ rede.link }}/">
+            		<img src="{{ rede|logo }}" border="0" />
+            	</a>
+            </div>
+        </div>
+    </div>
+    
+    {% block bloco %}
+
+        <div id="content">
+            <div class="container">
+            	
+            	<h2>Selecione abaixo a opção que deseja para frequência de envios ou desativar e clique em Salvar.</h2>
+
+            	{% if error %}
+            		<br /><br />
+            		<h1 style="color: #006600;">{{ error }}</h1>
+            	{% endif %}
+            	
+            	<br /><br />
+            	
+            	<form action="./?key={{ key }}" method="post" enctype="multipart/form-data">
+            		
+            		{% csrf_token %}
+            		
+            		<select name="resend">
+						<option value="" {% if sel_rede.resend == '' %}selected="selected"{% endif %}>Desativar (Você não receberá mais e-mails)</option>
+						<option value="I" {% if sel_rede.resend == 'I' %}selected="selected"{% endif %}>Imediato (Quem enviar uma sugestão ou dúvida, você receberá em tempo real)</option>
+						<option value="D" {% if sel_rede.resend == 'D' %}selected="selected"{% endif %}>Diário (Todos os dias, as 00:00 horas você receberá o e-mail)</option>
+						<option value="S" {% if sel_rede.resend == 'S' %}selected="selected"{% endif %}>Semanal (Uma vez por semana, as 00:00 horas)</option>
+						<option value="M" {% if sel_rede.resend == 'M' %}selected="selected"{% endif %}>Mensal (Uma vez por mês, as 00:00 horas)</option>
+						<option value="A" {% if sel_rede.resend == 'A' %}selected="selected"{% endif %}>Anual (Uma vez por ano, as 00:00 horas)</option>
+					</select>
+					
+					<br /><br />
+					
+					<input type="hidden" value="{{ key }}" name="key" />
+					
+					<input type="submit" value="Salvar" name="salvar" /> 
+            		
+            	</form>
+
+            </div>
+        </div>
+
+    {% endblock bloco %}
+
+{% endblock content %}

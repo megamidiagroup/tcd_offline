@@ -1,0 +1,115 @@
+.container {width:100%; margin:0 auto; position:relative;}
+.buttom{padding:11px 20px 10px; display:block;}
+
+#header{ padding:0;}
+#header #header-text {margin: 2px 0;position: static;text-align: center;}
+#header #search{position:static; width:100%; top:0; right:0; display:none;}
+#header #search input{height:30px; width:90%; padding:0 10px; position:static;border:0;-webkit-border-radius: 0;-moz-border-radius: 0; border-radius:0; margin:0;}
+#header #search button{height:30px; width:80px; padding:0 10px; background:none no-repeat scroll center center #0d3e51;
+border:0; position:absolute; right:0; display:block; top:0;-webkit-border-radius:0;-moz-border-radius:0; border-radius:0;}
+#header #search button span{display:inline; font-size:1.2em; color:#FFF; text-transform:uppercase;}
+#header #search > span{display:none;}
+
+#header #menu{position:relative;}
+#header #menu .menu-button{display:block; text-align:center; background-color:#e6b728; padding:8px 0 0; margin-top:10px; color:#fff; height:38px;}
+#header #menu .menu-button span{font-size:1.2em; position:absolute; right:20px;background:url("../images/icon-menu.png") no-repeat right 7px transparent; padding-right:28px;}
+#header #menu .user-button{background:url("../images/icon-user.png") no-repeat scroll center center #ffffff;width:34px; height:34px; position:absolute; overflow:show; top:5px; left:20px;-webkit-border-radius: 2px;-moz-border-radius: 2px;border-radius: 2px;}
+#header #menu .enquete{background:url("../images/icon_enquete_thumb.png") no-repeat scroll center center;width:30px; height:30px; position:absolute; overflow:hidden; top:8px; left:70px;}
+
+#header #menu .menu{display:none; z-index:9999; top:46px; background-color:#e6b728;
+-webkit-box-shadow: 0px 20px 20px rgba(0, 0, 0, 0.6);
+-moz-box-shadow:    0px 20px 20px rgba(0, 0, 0, 0.6);
+box-shadow:         0px 20px 20px rgba(0, 0, 0, 0.6);}
+#header #menu ul{border:none; display:block; padding:0; width:100%; position:static; border-bottom:1px dotted #002E41;}
+#header #menu ul li{display:block; border-top:1px dotted #002E41;}
+#header #menu ul li span{display:none;}
+#header #menu .menu a{padding:10px 0 10px 20px; display:block; border-top:1px solid #f0d47e; font-size:0.9em;}
+#header #menu .menu a:hover{color:#FFF;}
+#header #menu .menu .btn_logout{position:static; -webkit-border-radius:0px;-moz-border-radius:0px; border-radius:0px; background:none;margin-top:0px;}
+
+#header #menu #search-form{border-top:1px dotted #002E41;}
+#header #menu #search-form .form-item{border-top:1px solid #f0d47e; padding:8px 20px;}
+#header #menu #search-form input{height:34px; width:100%; padding:0px; border:0;-webkit-border-radius: 6px;-moz-border-radius: 6px; border-radius:6px; text-indent:10px;}
+#header #menu #search-form button{height:34px; width:30px; padding:0 10px; background:url("../images/icon-search.png") no-repeat scroll center center #ffdf7f;
+border:0; position:absolute; right:20px; display:block; top:10px;-webkit-border-radius:0 6px 6px 0;-moz-border-radius:0 6px 6px 0; border-radius:0 6px 6px 0;
+cursor:pointer;}
+#header #menu #search-form button span{display:none;}
+#header #menu .user-button .jewelCount, #menu .enquete .jewelCount{display: block;top: 5px;left: -10px;}
+
+#header #logo{text-align:center; padding:10px 0 10px; height:88px; display:table; width:100%;}
+
+#header #logo a{display:table-cell; vertical-align:middle;}
+#header #logo img{max-height:82px;}
+
+#highlights {width:auto;padding:10px 20px;}
+
+#content{padding:20px; width:auto;}
+#content ul.category li,
+#content ul.category2 li{display:block; width:100%; float:none;}
+#content ul.category li a,
+#content ul.category2 li a{padding:5px 3px 15px; overflow:hidden;}
+#content ul.category li div,
+#content ul.category2 li div{padding:0;border:0; margin:5px 5px 5px 0; width:100%; float:left;}
+#content ul.category li h2,
+#content ul.category2 li h2{margin-bottom:5px;}
+#content ul.category li span,
+#content ul.category2 li span{font-size:1.2em;}
+#content ul.category li a div{height:auto;}
+#content ul.category li a div img{width: 100%; border:0;}
+#content ul.category li .fita {left:-5px; top:30px;}
+
+#content ul.videos li {padding:10px; height:auto; min-height:70px;}
+#content ul.videos li div {margin:0px; width:40%;}
+#content ul.videos li h2 {font-size:2em; line-height:100%; width:57%; float:right;}
+#content ul.videos li span {width:57%; float:right;}
+
+#content .video{width:100%;}
+#content .video .player{width:320px; height:180px; margin:0 auto 10px; float:none;}
+#content .video .player object{width:320px; height:180px;}
+#content .video .description{width:100%; height:auto; margin-bottom:10px; float:none;}
+#content .video .description div {padding: 10px 20px;}
+#content .video iframe.elearning{width: 95%}
+
+#content #questions .number{font-size:2.4em;}
+#content #questions .question{font-size:1.6em;}
+
+#content table thead{display:none;}
+#content table tr {display:block; border-bottom:1px solid #DCDCDC; margin-bottom:10px; padding-bottom:10px;}
+#content table td {display:block; border:none; padding:2px 0; font-size:0.9em;}
+#content table td:nth-child(2){font-size:1.2em;}
+#content table td:last-child:before {content:'Pontos: ';}
+
+#content .wrap p b {display:block; width:auto;}
+#content form {width:100%;}
+#content form input[type="text"], #content .wrap p input[type="password"]{display: block; padding: 8px 0; text-indent: 5px; width: 100%;}
+#content form .buttom {width:auto;}
+#content form input[type="submit"]{width:100%; margin:20px 0px 40px;}
+#content form select{margin:0; width:100%;}
+
+#footer {padding:20px 0; width:auto; margin:0 20px;}
+
+#account-widget{position:static; top:0; right:0;box-shadow:none; border:none;}
+#account-widget .user-account{margin:0; display:none;}
+#account-widget #account{width:100%; display:none;position:absolute; top:164px; right:0; padding:0; border:none; z-index:9999;
+-webkit-box-shadow: 0px 20px 20px rgba(0, 0, 0, 0.6);
+-moz-box-shadow:    0px 20px 20px rgba(0, 0, 0, 0.6);
+box-shadow:         0px 20px 20px rgba(0, 0, 0, 0.6);}
+#account-widget #account > div{ background:none repeat scroll 0 0 #F4F4F4; height:auto; min-height:50px; border: none;-webkit-border-radius: 0;-moz-border-radius:0;border-radius: 0;box-shadow:none; max-height:none; padding:20px;}
+#account-widget #account .arrow{display:block; width:9px; height:8px; top:-8px; left:31px; background-position:-7px 3px;}
+
+#enquete-widget{position:static; top:0; right:0;box-shadow:none; border:none;}
+#enquete-widget .enquete{margin:0; display:none;}
+#enquete-widget #enquete{width:100%; display:none;position:absolute; top:164px; right:0; padding:0; border:none;z-index:9999;
+-webkit-box-shadow: 0px 20px 20px rgba(0, 0, 0, 0.6);
+-moz-box-shadow:    0px 20px 20px rgba(0, 0, 0, 0.6);
+box-shadow:         0px 20px 20px rgba(0, 0, 0, 0.6);}
+#enquete-widget #enquete > div{ background:none repeat scroll 0 0 #fff; height:auto; min-height:50px; border: none;-webkit-border-radius: 0;-moz-border-radius:0;border-radius: 0;box-shadow:none; max-height:none; padding:20px;}
+#enquete-widget #enquete .arrow{display:block; width:9px; height:8px; top:-8px; left:79px; background-position:-7px 3px;}
+
+#login #logo{margin:0px;-webkit-border-radius:0px;-moz-border-radius:0px; border-radius:0px;}
+#login {height:auto; margin:0px; position:static; width:100%; }
+#login form{padding:20px 20px; margin:10px;}
+#login form input.buttom{width:50%; padding:11px 20px 10px;}
+#content ul.category li div.no-name-category,
+#content ul.category2 li div.no-name-category {text-align: center;width: 100%;}
+.tia {display: none;}

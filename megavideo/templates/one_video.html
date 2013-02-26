@@ -1,0 +1,19 @@
+		<div class="thumbContainer" idVideo="{{ video.id }}" state="{{ video.published }}">
+			<div class="thumbContent" idVideo="{{ video.id }}" state="{{ video.published }}">
+				<div class="thumbBorder" idVideo="{{ video.id }}">
+				<img class="thumb" src="{{ video.thumb }}" idVideo="{{ video.id }}" name="{{ video.name }}">
+			</div>
+			<div class="thumbName"> {{ video.displayName }}</div>
+			<div class="thumbMenu">
+				{% if video.published %}
+				<img class="thumbIcon thumbPublish publishIcon" title="despublicar" src="{{STATIC_URL}}/static/images/bt_despublicar.gif" idVideo="{{ video.id }}" state="{{ video.published }}"/>
+				{% else %}
+				<img class="thumbIcon thumbPublish publishIcon" title="publicar" src="{{STATIC_URL}}/static/images/bt_publicar.gif" idVideo="{{ video.id }}" state="{{ video.published }}"/>
+				{% endif %}
+				<img class="thumbIcon thumbPublish thumbCategory" title="categorias" src="{{STATIC_URL}}/static/images/bt_categorizar.gif" idVideo="{{ video.id }}" name="{{ video.name }}" state="{{ video.published }}"/>
+				<img class="thumbIcon delButton" title='deletar' src="{{STATIC_URL}}/static/images/bt_deletar.gif" idVideo="{{ video.id }}" state="{{ video.published }}"/>
+				<img class="thumbIcon thumbFullscreen" title='ver' src="{{STATIC_URL}}/static/images/bt_fullscreen.png" idVideo="{{ video.id }}" state="{{ video.published }}"/>
+			</div>
+			</div>
+		</div>
+

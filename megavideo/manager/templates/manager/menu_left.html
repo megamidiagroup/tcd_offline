@@ -1,0 +1,42 @@
+{% if menu_coordenadas.tipo %}
+    <ul>
+{% else %}
+    <ul style="height: 0px;">
+{% endif %}
+
+    <li class="local"> {{ menu_coordenadas.local }} </li>
+    {% if menu_coordenadas.tipo %}
+        <li class="tipo">
+            <a href="{{ menu_coordenadas.full }}" title="{{ menu_coordenadas.title }}">
+                {{ menu_coordenadas.tipo }}
+            </a>
+        </li>
+        {% if selection %}
+			{% if selectionaction %}
+				<a href="{{ selectionaction }}" title="Ver os vídeos da categoria">
+			{% endif %}
+            		<li class="selection {% if selection2 %} selection2 {% endif %}"> | {{ selection }} </li>
+			{% if selectionaction %}
+				</a>
+			{% endif %}
+        {% else %}
+            <li class="selection {% if selection2 %} selection2 {% endif %}">&nbsp;</li>
+        {% endif %}
+
+		{% if selection2 %}
+            <li class="selection"> | {{ selection2 }} </li>
+        {% endif %}
+
+        {% for i in menu_nav %}
+            <li class='{{i.class}}'>
+                <a href='{{ i.url }}' class="{{ i.class }}">
+                    &nbsp;&nbsp;&nbsp;&nbsp;{{ i.text|safe }}
+                </a>
+            </li>
+        {% endfor %}
+		
+    {% endif %}
+
+	<div class="clear">&nbsp;</div>
+
+</ul>

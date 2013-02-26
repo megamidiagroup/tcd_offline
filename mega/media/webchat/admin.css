@@ -1,0 +1,11 @@
+#playercontent {height: 400px;width: 600px; float:left; margin-bottom:10px;}
+#playercontent object{height: 400px;width: 600px;}
+.descriptionlive {float: left;width: 475px;margin-bottom:10px; text-shadow:0 1px 0 rgba(255, 255, 255, .6);}
+.descriptionlive div{padding:10px;}
+.descriptionlive p{font-size:1.6em;}
+.descriptionlive .ocultos{padding: 0px; margin: 0px 10px;}
+.descriptionlive .ocultos .msg{border: 1px solid #ccc;overflow-x: auto;}
+.descriptionlive .ocultos .msg ul{font-size: 14px;}
+.descriptionlive .ocultos .msg ul li{list-style: none;}
+.descriptionlive .ocultos .input{padding: 10px 0px;font-size: 14px;}
+.descriptionlive .ocultos .input textarea{border: 1px solid #ccc;width: 448px;}

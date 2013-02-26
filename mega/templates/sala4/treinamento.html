@@ -1,0 +1,114 @@
+{% extends 'sala4/main.html' %}
+
+{% load util %}
+
+{% block class-section %}{% endblock class-section %}
+
+{% block extra-js %}
+
+	<script type="text/javascript">
+	    $(document).ready(function (){
+	       $('.lista.categoria').find('li:last').addClass('last');
+	       $("ul.categoria").find("li.active").find('img').attr("src",'{{ STATIC_URL }}{{ get_tipo_template }}/images/playing_current.png');
+	    });
+    </script>
+    
+{% endblock extra-js %}
+
+{% block content %}
+       
+   <section id="videoArea">
+		<div class="wrapper">
+			<div class="titulo">
+				<h2><span>Design Editorial</span></h2>
+			</div>
+			
+			{% if list_video|permission_video:user %}
+	
+				<div id="video">
+					
+					{% ifequal list_video.0.tipo 'B' %}
+	                    {% brightcove rede.link list_video.0.code list_video.0.id 960 540 %}
+	                {% endifequal %}
+	
+	                {% ifequal list_video.0.tipo 'K' %}
+	                    {% kaltura rede.link list_video.0.code list_video.0.id 960 540 %}
+	                {% endifequal %}
+	
+	                {% ifequal list_video.0.tipo 'M' %}
+	                    {% megavideo rede.link list_video.0.code list_video.0.id 960 540 %}
+	                {% endifequal %}
+	
+				</div>
+	
+				<div class="video_description">
+					<div class="column left cima">
+						<p>{{ list_video.0.name }}</p>
+					</div>
+					<div class="column right cima">
+						<p>Prof: {{ list_video.0.author|default:'(Desconhecido)' }}</p>
+					</div>
+					<div class="clearfix"></div>
+		
+					<hr />
+		
+					<div class="column left baixo">
+						<div class="detalhe">
+							<img src="{{ STATIC_URL }}{{ get_tipo_template }}/images/relogio.png" border="0" />
+							<span>Duração: {{ list_video.0.time }}</span>
+						</div>
+						<p>{{ list_video.0.desc|safe }}</p>
+					</div>
+					<div class="column right downloads baixo">
+						{% if list_anexo %}
+							<div class="detalhe">
+								<img src="{{ STATIC_URL }}{{ get_tipo_template }}/images/download.png" border="0" />
+								<span>Download{{ list_anexo|pluralize }}</span>
+							</div>
+							<ul>
+								{% for la in list_anexo %}
+									<li>
+										<a title="{{ la.desc }}" href="{% url download_anexo rede.link la.id %}" target="_blank">• {{ la.name }}</a>
+									</li>
+								{% endfor %}
+							</ul>
+						{% endif %}
+					</div>
+					<div class="clearfix"></div>
+					<div class="theHackForIE7"></div>
+		
+				</div>
+				
+			{% else %}
+			
+				<div class="video_description">
+					<div class="column left cima" style="width: 838px;margin: 20px 60px;">
+						<p style="color: red;line-height: normal">Você não tem permissão para assistir o vídeo, não perca tempo, adquira agora o plano "Quero Começar" ou "Sou Pro" e assista o vídeo.</p>
+					</div>
+					<div class="clearfix"></div>
+					<div class="theHackForIE7"></div>
+				</div>
+
+			{% endif %}
+			
+			<div class="clearfix"></div>
+		</div>
+	</section>
+
+	<section id="content">
+		<div class="wrapper curso">
+			
+			<img src="{{ STATIC_URL }}{{ get_tipo_template }}/images/pinguelo.png" border=0 id="pinguelo" />
+	
+			<ul class="lista categoria">
+				
+				{% bloco_list_videos_sala4 list_video.0 rede get_tipo_template list_video.0.id user %}
+				
+			</ul>
+	
+			<div class="clearfix"></div>
+	
+		</div>
+	</section>
+
+{% endblock content %}

@@ -1,0 +1,472 @@
+{% extends 'admin/change_list.html' %}
+
+{% load i18n relatorio %}
+
+{% block breadcrumbs %}
+
+    <div class="breadcrumbs"><a href="/admin/">{% trans 'Home' %}</a>{% if title %} &rsaquo; Relatórios / Gráficos{% endif %}</div>
+
+{% endblock breadcrumbs %}
+
+{% block content_title %}{% endblock content_title %}
+
+{% block content %}
+
+	<link rel="stylesheet" href="{{ STATIC_URL_TCD }}{{ get_tipo_template|default:'mega' }}/css/jquery.datatables.css" type="text/css" />
+	<link rel="stylesheet" href="{{ STATIC_URL_TCD }}{{ get_tipo_template|default:'mega' }}/css/themes/base/jquery.ui.all.css" type="text/css" />
+
+    <script type="text/javascript" src="{{ STATIC_URL_TCD }}{{ get_tipo_template|default:'mega' }}/js/jquery-1.7.2.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL_TCD }}{{ get_tipo_template|default:'mega' }}/js/select_admin.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL_TCD }}{{ get_tipo_template|default:'mega' }}/js/jquery.maskedinput-1.3.min.js"></script>
+    
+	<script type="text/javascript" src="{{ STATIC_URL_TCD }}{{ get_tipo_template|default:'mega' }}/js/highcharts.js"></script>
+	<script type="text/javascript" src="{{ STATIC_URL_TCD }}{{ get_tipo_template|default:'mega' }}/js/exporting.js"></script>
+	
+	<script type="text/javascript" src="{{ STATIC_URL_TCD }}{{ get_tipo_template|default:'mega' }}/js/jquery.datatables.min.js"></script>
+	<script type="text/javascript" src="{{ STATIC_URL_TCD }}{{ get_tipo_template|default:'mega' }}/js/jquery.ui.core.js"></script>
+	<script type="text/javascript" src="{{ STATIC_URL_TCD }}{{ get_tipo_template|default:'mega' }}/js/jquery.ui.widget.js"></script>
+	<script type="text/javascript" src="{{ STATIC_URL_TCD }}{{ get_tipo_template|default:'mega' }}/js/jquery.ui.datepicker.js"></script>
+    
+    <script type='text/javascript'>
+		$(document).ready(function() {
+
+			$.datepicker.regional['pt-BR'] = 
+				{
+					closeText: 'Fechar',
+					prevText: '&#x3c;Anterior',
+					nextText: 'Pr&oacute;ximo&#x3e;',
+					currentText: 'Hoje',
+					monthNames: ['Janeiro','Fevereiro','Mar&ccedil;o','Abril','Maio','Junho',
+					'Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'],
+					monthNamesShort: ['Jan','Fev','Mar','Abr','Mai','Jun',
+					'Jul','Ago','Set','Out','Nov','Dez'],
+					dayNames: ['Domingo','Segunda-feira','Ter&ccedil;a-feira','Quarta-feira','Quinta-feira','Sexta-feira','S&aacute;bado'],
+					dayNamesShort: ['Dom','Seg','Ter','Qua','Qui','Sex','S&aacute;b'],
+					dayNamesMin: ['Dom','Seg','Ter','Qua','Qui','Sex','S&aacute;b'],
+					weekHeader: 'Sm',
+					dateFormat: 'dd/mm/yy',
+					firstDay: 0,
+					isRTL: false,
+					showMonthAfterYear: false,
+					yearSuffix: ''
+				};
+			$.datepicker.setDefaults($.datepicker.regional['pt-BR']);
+			$('#dateinit, #dateend').datepicker().mask('99/99/9999'); 
+			
+			var chart;
+			chart = new Highcharts.Chart({
+				chart: {
+					renderTo: 'tip_container',
+					plotBackgroundColor: null,
+					plotBorderWidth: null,
+					plotShadow: false
+				},
+				title: {
+					text: 'Estatistica de acertos / erros'
+				},
+				tooltip: {
+					formatter: function() {
+						return '<b>'+ this.point.name +'</b>: '+ parseInt(this.percentage) +' %';
+					}
+				},
+				plotOptions: {
+					pie: {
+						allowPointSelect: true,
+						cursor: 'pointer',
+						dataLabels: {
+							enabled: true,
+							color: '#000000',
+							connectorColor: '#000000',
+							formatter: function() {
+								return parseInt(this.percentage) +' %';
+							}
+						},
+						showInLegend: true
+					}
+				},
+				legend: {
+			        width: 105, 
+			        align: 'right',  
+			        verticalAlign: 'top',
+			        x: 0,
+			        y: 160
+			    },
+				series: [{
+					type: 'pie',
+					name: 'Browser share',
+					data:   [{
+								name: 'Erros',
+								color: '#ffa306',
+								y: parseInt('{{ erros|default:0 }}')
+							}, {
+								name: 'Acertos',
+								color: '#00b3c7',
+								y: parseInt('{{ acertos|default:0 }}')
+							}, {
+								name: 'Não Fizeram',
+								color: '#ceb57d',
+								y: parseInt('{{ notfizeram|default:1 }}')
+							}] 
+				}],
+				credits:{enabled:true, text:'Total {{ num_q }} treinamento{{ num_q|pluralize }}'}
+			});
+			
+			
+			var chart;
+			chart = new Highcharts.Chart({
+			chart: {
+				renderTo: 'out_container',
+				type: 'column'
+			},
+			title: {
+				text: 'Estatística de acessos'
+			},
+			xAxis: {
+				categories: [
+					{% for i in list_grafico_acessos %}
+						'{{ i.data }}' {% if not forloop.last %},{% endif %}
+					{% endfor %}
+				]
+			},
+			yAxis: {
+				min: 0,
+				title: {
+					text: 'Número de Acessos'
+				}
+			},
+			legend: {
+				enabled : false
+			},
+			tooltip: {
+				formatter: function() {
+					return 'Data: '+
+						this.x + ',  ' + this.y + ' acessos';
+				}
+			},
+			plotOptions: {
+				column: {
+					pointPadding: 0.05,
+					borderWidth: 2
+				}
+				},
+				series: [{
+					name: 'Acessos',
+					color: '#00b3c7',
+					data: [
+						{% for i in list_grafico_acessos %}
+							parseInt('{{ i.count }}') {% if not forloop.last %},{% endif %}
+						{% endfor %}
+					]
+				}],
+			credits:{enabled:true, text:'Obs: Mostra somente as datas onde houver acessos'}
+			});
+			
+			
+		    var table1 = $('#top_usuario').dataTable({
+			    "oLanguage": {
+		            "sLengthMenu": "Mostrar _MENU_ quantidade por página",
+		            "sZeroRecords": "Retornou nenhum resultado",
+		            "sInfo": "Mostrando _START_ até _END_ de _TOTAL_ total de registros",
+		            "sInfoEmpty": "Mostrando 0 até 0 de 0 total",
+		            "sInfoFiltered": "(filtrado de _MAX_ total de registros)",
+		            'sSearch': 'Filtro',
+		            'oPaginate': {
+				        'sFirst':    'Primeiro',
+				        'sPrevious': 'Anterior',
+				        'sNext':     'Próximo',
+				        'sLast':     'Último'
+				    }
+		       }
+		    });
+		    
+		    var table2 = $('#top_treinamento').dataTable({
+			    "oLanguage": {
+		            "sLengthMenu": "Mostrar _MENU_ quantidade por página",
+		            "sZeroRecords": "Retornou nenhum resultado",
+		            "sInfo": "Mostrando _START_ até _END_ de _TOTAL_ total de registros",
+		            "sInfoEmpty": "Mostrando 0 até 0 de 0 total",
+		            "sInfoFiltered": "(filtrado de _MAX_ total de registros)",
+		            'sSearch': 'Filtro',
+		            'oPaginate': {
+				        'sFirst':    'Primeiro',
+				        'sPrevious': 'Anterior',
+				        'sNext':     'Próximo',
+				        'sLast':     'Último'
+				    }
+		       }
+		    });
+		    
+		    var table3 = $('#statistic_user').dataTable({
+			    "oLanguage": {
+		            "sLengthMenu": "Mostrar _MENU_ quantidade por página",
+		            "sZeroRecords": "Retornou nenhum resultado",
+		            "sInfo": "Mostrando _START_ até _END_ de _TOTAL_ total de registros",
+		            "sInfoEmpty": "Mostrando 0 até 0 de 0 total",
+		            "sInfoFiltered": "(filtrado de _MAX_ total de registros)",
+		            'sSearch': 'Filtro',
+		            'oPaginate': {
+				        'sFirst':    'Primeiro',
+				        'sPrevious': 'Anterior',
+				        'sNext':     'Próximo',
+				        'sLast':     'Último'
+				    }
+		       }
+		    });
+
+		    table1.fnSort( [ [1, 'desc'] ] );
+		    table2.fnSort( [ [1, 'desc'] ] );
+		    table3.fnSort( [ [0, 'desc'] ] );
+
+		});
+    </script>
+
+    <h1>Lista de Relatórios / Gráficos</h1>
+
+    <div id="content-main">
+
+		<fieldset>
+			
+			<form action="./" enctype="multipart/form-data" method="get">
+			
+				<table cellpadding="0" cellspacing="0" width="100%">
+					<tr>
+						<td>
+							{% if result_list_rede.count > 0 %}
+							
+								Selecione a rede: 
+								
+								<select name="rede_id" onchange="$('form').submit();">
+									<option value="">Todas as redes</option>
+									{% for i in result_list_rede %}
+										{% if rede_id|safe == i.id|safe %}
+											<option value="{{ i.id }}" selected="selected">{{ i.name }}</option>
+										{% else %}
+											<option value="{{ i.id }}">{{ i.name }}</option>
+										{% endif %}
+									{% endfor %}
+								</select>
+								
+							{% else %}
+							
+								<span style="margin: 5px;display: block;">Rede: <b>{{ result_list_rede.name }}</b></span>
+								
+							{% endif %}
+						</td>
+						<td>
+							Selecione o periodo: 
+							<input id="dateinit" name="de" value="{{ de }}" maxlength="10" size="11" />
+							até
+							<input id="dateend" name="ate" value="{{ ate }}" maxlength="10" size="11" />
+							<input type="submit" value="Filtrar" name="filter" />
+						</td>
+					</tr>
+				</table>
+				
+				<input type="hidden" name="user_id" value="{{ user_id }}" />
+			
+			</form>
+			
+			<table cellpadding="0" cellspacing="0" width="100%">
+				<tr>
+					<td>
+						
+						<div id="tip_container" style="min-width: 500px; height: 350px; margin: 0 auto"></div>
+						
+					</td>
+					<td width="100">&nbsp;</td>
+					<td>
+						
+						<table width="600" cellpadding="0" cellspacing="0"><tr><td align="center" style="font-size: 14px;">Top Usuários</td></tr></table>
+						
+						<table width="600" cellpadding="0" cellspacing="0" border="0" class="display" id="top_usuario">
+							<thead>
+								<tr>
+									<th>Usuário</th>
+									<th>Acessos</th>
+									{% if not rede_id %}
+										<th>Rede</th>
+									{% endif %}
+								</tr>
+							</thead>
+							<tbody>
+								{% for i in list_top_user %}
+									<tr class="grade{% cycle 'X' 'C' %}">
+										<td>{{ i.object.user.username }}</td>
+										<td>{{ i.count }}</td>
+										{% if not rede_id %}
+											<td>{{ i.object.user.infouser.rede.name }}</td>
+										{% endif %}
+									</tr>
+								{% endfor %}
+							</tbody>
+							<tfoot>
+								<tr>
+									<th>Usuário</th>
+									<th>Acessos</th>
+									{% if not rede_id %}
+										<th>Rede</th>
+									{% endif %}
+								</tr>
+							</tfoot>
+						</table>
+						
+						<table width="600" cellpadding="0" cellspacing="0">
+							<tr>
+								<td align="right">
+									{% if mais_top_user %}
+										<a href="?m=top_user" title="ver mais" style="font-size: 12px;color: #333;">ver mais ></a>
+									{% endif %}
+								</td>
+							</tr>
+						</table>
+						
+					</td>
+				</tr>
+				<tr>
+					<td>
+						
+						<div id="out_container" style="min-width: 500px; height: 400px; margin: 0 auto"></div>
+						
+					</td>
+					<td width="100">&nbsp;</td>
+					<td>
+						
+						<table width="600" cellpadding="0" cellspacing="0"><tr><td align="center" style="font-size: 14px;">Top Treinamentos</td></tr></table>
+						
+						<table width="600" cellpadding="0" cellspacing="0" border="0" class="display" id="top_treinamento">
+							<thead>
+								<tr>
+									<th>Nome</th>
+									<th>Acessos</th>
+									{% if not rede_id %}
+										<th>Rede</th>
+									{% endif %}
+								</tr>
+							</thead>
+							<tbody>
+								{% for i in list_top_treinamento %}
+									<tr class="grade{% cycle 'X' 'C' %}">
+										<td>{{ i.object.video.name }}</td>
+										<td>{{ i.count }}</td>
+										{% if not rede_id %}
+											<td>{{ i.object.user.infouser.rede.name }}</td>
+										{% endif %}
+									</tr>
+								{% endfor %}
+							</tbody>
+							<tfoot>
+								<tr>
+									<th>Nome</th>
+									<th>Acessos</th>
+									{% if not rede_id %}
+										<th>Rede</th>
+									{% endif %}
+								</tr>
+							</tfoot>
+						</table>
+						
+						<table width="600" cellpadding="0" cellspacing="0">
+							<tr>
+								<td align="right">
+									{% if mais_top_treinamento %}
+										<a href="?m=top_treinamento" title="ver mais" style="font-size: 12px;color: #333;">ver mais ></a>
+									{% endif %}
+								</td>
+							</tr>
+						</table>
+						
+					</td>
+				</tr>
+				<tr>
+					<td colspan="3">
+						
+						<table width="100%" cellpadding="0" cellspacing="0"><tr><td align="center" style="font-size: 14px;">{% if user_id %}Estatística por Usuário{% else %}Estatística Total{% endif %}</td></tr></table>
+						
+						<table cellpadding="0" cellspacing="0" width="100%">
+							<tr>
+								<td>Selecione o usuário: 
+									<select name='user_id' onchange='$("input[name=user_id]").val(this.value);$("form").submit();'>
+										<option value="">Todos os usuários</option>
+										{% for i in result_list_user %}
+											{% if user_id|safe == i.id|safe %}
+												<option value="{{ i.id }}" selected="selected">{{ i.username }}</option>
+											{% else %}
+												<option value="{{ i.id }}">{{ i.username }}</option>
+											{% endif %}
+										{% endfor %}
+									</select>
+								</td>
+							</tr>
+						</table>
+						
+						<table width="100%" cellpadding="0" cellspacing="0" border="0" class="display" id="statistic_user">
+							<thead>
+								<tr>
+									<th>Data</th>
+									{% if not rede_id %}
+										<th>Rede</th>
+									{% endif %}
+									{% if not user_id %}
+										<th>Usuário</th>
+									{% endif %}
+									<th>Treinamento</th>
+									<th>Total / Parcial</th>
+									<th>Horário</th>
+									<th>Pontos</th>
+								</tr>
+							</thead>
+							<tbody>
+								{% for i in list_statistic %}
+									<tr class="grade{% cycle 'X' 'C' %}">
+										<td><span style="display: none;">{{ i.date|date:'Ymd' }}</span>{{ i.date|date:'d/m/Y' }}</td>
+										{% if not rede_id %}
+											<td>{{ i.user.infouser.rede.name }}</td>
+										{% endif %}
+										{% if not user_id %}
+											<td>{{ i.user.username }}</td>
+										{% endif %}
+										<td>{{ i.video.name }}</td>
+										<td>{% if i.play and i.complete %}Total{% else %}Parcial{% endif %}</td>
+										<td>{{ i.date|date:'H:i' }}</td>
+										<td>{{ i.user.infouser.pontos }}</td>
+									</tr>
+								{% endfor %}
+							</tbody>
+							<tfoot>
+								<tr>
+									<th>Data</th>
+									{% if not rede_id %}
+										<th>Rede</th>
+									{% endif %}
+									{% if not user_id %}
+										<th>Usuário</th>
+									{% endif %}
+									<th>Treinamento</th>
+									<th>Total / Parcial</th>
+									<th>Horário</th>
+									<th>Pontos</th>
+								</tr>
+							</tfoot>
+						</table>
+						
+						<table width="100%" cellpadding="0" cellspacing="0">
+							<tr>
+								<td align="right">
+									{% if mais_statistic %}
+										<a href="?m=statistic" title="ver mais" style="font-size: 12px;color: #333;">ver mais ></a>
+									{% endif %}
+								</td>
+							</tr>
+						</table>
+						
+					</td>
+				</tr>
+			</table>
+			
+		</fieldset>
+         
+    </div>
+
+    <br class="clear" />
+
+{% endblock %}

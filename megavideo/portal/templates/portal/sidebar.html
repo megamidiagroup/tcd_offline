@@ -1,0 +1,42 @@
+{% load stars %}
+{% load miniature %}
+
+<ul class='list_videos'>
+		{% for i in last_video %}
+			<li>
+				<table>
+					<tr>
+						<td>
+							<a href='{{request.channel_url}}video/{{i.id}}/' class='easytooltip' title="<p>{{ i.get_name }}</p>">
+								<img src='{{ i|thumbnail:'100x75' }}' width="100" height="75" border="0" />
+							</a>
+						</td>
+						<td valign='top'>
+							<h4>
+								{{ i.get_name }}
+							</h4>
+							<p>
+								{{ i.get_description|linebreaks|truncatewords:10 }}
+							</p>
+							<div class='stars'>
+								{% show_star i %}
+							</div>
+						</td>
+					</tr>
+				</table>				
+			</li>
+		{% endfor %} 
+	<li>
+		<div align='right'>
+			<a href='{{request.channel_url}}portal/search/'><img src='{{STATIC_URL}}/static/portal/images/mais_videos.png' alt='mais vídeos' border='0' ></a>
+		</div>
+	</li>
+	<li>
+		&nbsp;
+	</li>
+	<li>
+		&nbsp;
+	</li>
+</ul>
+
+{% endif %}

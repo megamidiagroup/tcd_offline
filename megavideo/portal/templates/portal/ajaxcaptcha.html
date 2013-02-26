@@ -1,0 +1,23 @@
+{% if human %}
+
+	<div id='return_captcha'>
+		<b> {{ message|safe }} </b>
+		{% if voted %}
+			<span> Votos: {{ voted }} </span>
+		{% endif %}	
+	</div>
+	
+	<script type="text/javascript">closeWindow('div#captcha', '{{ voto }}');</script>
+	
+{% else %}
+
+	<form name="form_captcha" id="form_captcha" action="{{request.channel_url}}portal/ajaxcaptcha/" onsubmit="sendCaptcha('form_captcha', 'form_captcha');return false;"> 
+		{{ form }}
+		<input type="hidden" name="id_video" value="{{ id_video }}" />
+		<input type="hidden" name="value" value="{{ value }}" />
+		<a href="javascript:void(0);" onclick="sendCaptcha('form_captcha', 'form_captcha');" title="Verificar">
+			<img src="{{STATIC_URL}}/static/portal/images/btn_enviar_comment.png" width="64" height="30" border="0" />
+		</a>
+	</form>
+	
+{% endif %}

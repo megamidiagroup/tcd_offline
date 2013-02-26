@@ -1,0 +1,62 @@
+{% extends 'portal/main.html' %}
+
+{% load miniature %}
+{% load stars %}
+{% load extra_day %}
+{% load extra_filter %}
+{% load super_truncate %}
+{% load paginators %}
+
+{% block extra_css %}
+	<link type="text/css" rel="stylesheet" href="{{STATIC_URL}}/static/portal/css/digg.css" />
+{% endblock %} 
+
+{% block flash %}
+
+<div id="float_list">
+	
+	<ul>
+		
+		<li>
+			<h2>{% if chan %} Canal {{ chan }} {% else %} Todos os canais {% endif %}</h2>
+		</li>
+		
+		{% if content_list.object_list.count %}
+		
+			{% for i in content_list.object_list %}
+		
+				<li class="item {% cycle 'left' 'right' %}" onclick="window.location='/v/{{ i.id }}/';">
+					<blockquote>
+						<img src="{{ i|thumbnail:'104x70'}}" width="104" height="70" border="0" />
+					</blockquote>
+					<span class="title">{{ i|get_meta:'name'|safe|super_truncate:'4-14'|default:'Sem nome' }}</span>
+					<span class="description">{{ i|get_meta:'description'|safe|super_truncate:'5-20'|default:'Sem descrição' }}</span>
+					<span class="votes">{% show_star i %}</span>
+					<span class="date"><i>{{ i.date|diffdays }}</i></span>
+				</li>
+				
+			{% endfor %}
+		
+		{% else %}
+		
+			<li class='noresult'>
+                     <img border="0" src="{{STATIC_URL}}/static/manager/images/noresult.gif" alt="Não foi encontrado nenhum programa"/>
+            </li>
+		
+		{% endif %}
+		
+		<li class="pages">
+			{% search_paginator content_list pagination_url var_search %}
+		</li>
+				
+	</ul>
+	
+</div>
+
+{% endblock flash %}
+
+{% block content %}
+{% endblock content %}
+
+{% block destaques %}
+{% endblock destaques %}

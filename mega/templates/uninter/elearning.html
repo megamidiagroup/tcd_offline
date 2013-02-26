@@ -1,0 +1,60 @@
+﻿{% extends 'uninter/main.html' %}
+
+{% load util keyboard %}
+
+{% block content %}
+
+    {% if list_banner.count > 0 %}
+        <div id="highlights">
+            <div class="container">
+                <div class="full-banner">
+                    <div class="flexslider">
+                        <ul class="slides">
+                            {% for i in list_banner %}
+                                <li>
+                                    {% if i.url %}<a href="{{ i.url }}" title="Clique aqui para acessar o link" {% if i.blank %}target="_blank"{% endif %}>{% endif %}
+                                    <img src="{{ i|get_image }}" border="0" />
+                                    {% if i.url %}</a>{% endif %}
+                                    {% if i.legend %}
+                                    <p class="flex-caption">{{ i.name }}</p>
+                                    {% endif %}
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
+    {% block bloco %}
+
+        <div id="content">
+            <div class="container">
+
+                {% if list_video %}
+                    <div class="path">
+                        {% sub_menu_treinamento list_video rede %}
+                    </div>
+                {% endif %}
+
+                <div class="bar"><span></span></div>
+                
+                <div class="video" style="width: auto;">
+                    	
+                    <iframe class="elearning" src="{{ elearning }}"></iframe>
+                        
+                </div>
+                
+                {% if list_video.0|is_question:user  %}
+                	<a class="buttom" href="{% url questionario rede.link list_video.0.id %}" style="display: none;float: right;margin-top: 20px;">IR PARA O TESTE</a>
+               	{% else %}
+               		<a class="buttom" href="{% url home rede.link %}" style="display: none;float: right;margin-top: 20px;">Finalizar</a>
+                {% endif %}
+
+            </div>
+        </div>
+
+    {% endblock bloco %}
+
+{% endblock content %}

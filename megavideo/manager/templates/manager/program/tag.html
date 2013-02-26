@@ -1,0 +1,122 @@
+{% extends 'manager/form.html' %}
+
+
+    {% block js %}
+        <script type="text/javascript" src="{{STATIC_URL}}/static/manager/js/jquery-1.3.2.min.js"> </script>
+        <script type="text/javascript" src="{{STATIC_URL}}/static/manager/js/jquery.corner.js"> </script>
+
+        {# files for load swf #}
+
+        <script type="text/javascript" src="{{STATIC_URL}}/static/manager/js/swfobject.js"> </script>
+        <script type="text/javascript" src="{{STATIC_URL}}/static/manager/js/swffit.js"> </script>
+
+        <script type="text/javascript" src="{{STATIC_URL}}/static/manager/js/script_manager.js"> </script>
+
+        <script type="text/javascript" src="{{STATIC_URL}}/static/js/datapicker/ui.core.js"> </script>
+        <script type="text/javascript" src="{{STATIC_URL}}/static/js/datapicker/ui.datepicker-pt-BR.js"> </script>
+        <script type="text/javascript" src="{{STATIC_URL}}/static/js/datapicker/ui.datepicker.js"> </script>
+        <script type="text/javascript" src="{{STATIC_URL}}/static/js/datapicker/config.js"> </script>
+
+    {% endblock %}
+
+
+    {% block form_title %}
+        <h2>{{ video.get_name }} <br /> {{ video.category.0.name }}</h2>
+    {% endblock %}
+
+    {% block li_info %}
+
+        <li id='info' class='info_left'>
+
+    {% endblock %}
+
+
+    {% block form_list %}
+
+    <script type="text/javascript">
+            var flashvars = {
+              idContent: "{{program_id}}",
+              /* titulo do audio */
+              base_url:  "{{url_setting}}"
+              /* titulo do audio */
+            };
+        swfobject.embedSWF("{{STATIC_URL}}/static/manager/swf/player_tags.swf", "flashPlayerTag", "428", "370", "9.0.0", "", flashvars);
+    </script>
+
+    <div id="flashPlayerTag">
+        <a href="http://www.adobe.com/go/getflashplayer"><img src="http://www.adobe.com/images/shared/download_buttons/get_flash_player.gif" alt="Get Adobe Flash player" title="Get Adobe Flash player" /></a>
+        <br/>
+        Tecnologia Flash 9 <a href="http://www.adobe.com/go/getflashplayer">Baixar Plugin</a>
+        Software gratu&iacute;to.
+    </div>
+
+<p>&nbsp;</p>
+
+<form>
+    <ul class='form_tag'>
+          <li>
+
+            <input type='hidden' id='hidden_video_id' value='{{program_id}}' />
+            <input type='hidden' id='hidden_tag_id' value='0' />
+            <input type='hidden' id='hidden_perm' value='false' />
+
+            <label>Tempo inicial:</label>
+            <input type='text' disabled='true' value='0' id='initime' />
+
+            <label>Tempo final:</label>
+            <input type='text' disabled='true' value='0' id='endtime' />
+
+            <label>Tags</label>
+            <textarea class="metaInput" name='tag' id='tag'></textarea>
+
+            <div id="vocableid"></div>
+
+        </li>
+
+        <div id="msg"> </div>
+
+        <li>
+            <img title='Salvar alteracoes' id="salvar_tag_btn" src='/megavideo/static/manager/images/bt_salvar_alteracoes.gif' style="width:150px; height:18px; cursor:pointer;" />
+            <img title='Editar alteracoes' id="editar_tag_btn" src='/megavideo/static/manager/images/bt_salvar.gif' style="width:68px; height:18px; cursor:pointer; display:none;" />
+            <img title='Limpar as informacoes' id="cancelar_btn" src='/megavideo/static/manager/images/bt_cancelar.gif' style="width:68px; height:18px; cursor:pointer; display:none;" />
+            <a href="../tag/?program_id={{ program_id }}">
+                <img src="{{STATIC_URL}}/static/manager/images/bt_voltar.gif" title="Deseja voltar"/>
+            </a>
+        </li>
+    </ul>
+</form>
+
+
+
+{% endblock %}
+
+{% block extra_line %}
+
+<li id='list_tag'>
+
+    <div class='background_title '>
+
+        <ul id='list_tag_title'>
+            <li>
+                <a href='javascript:void(0)' class='selected' id='list_tags_todas'>Todas</a>
+            </li>
+            <li>
+                <a href='javascript:void(0)' id='list_tags_inteira'>Inteira</a>
+            </li>
+            <li>
+                <a href='javascript:void(0)' id='list_tags_pontual'>Pontual</a>
+            </li>
+            <li>
+                <a href='javascript:void(0)' id='list_tags_faixa'>Faixa</a>
+            </li>
+        </ul>
+
+        <div id='list_tag_float'>
+            {% include 'manager/program/ajaxtags.html' %}
+        </div>
+
+     </div>
+
+</li>
+{% endblock %}
+

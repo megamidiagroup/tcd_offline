@@ -1,0 +1,28 @@
+<!--style>
+    * {
+        font-family: "Trebuchet MS", "Tahoma", "Verdana";
+    }
+    span, p {
+        margin: 0px;
+        padding: 0px;
+        font-size: 11px;
+    }
+    -->
+    <style>
+    .job_cmd {
+        padding: 3px;
+        margin: 0px;
+        font-size: 14px;
+    }
+</style>
+{% for i in job.joblog_set.all %}
+<div>
+    {% ifequal i.level "E" %}
+    <span class='job_cmd' style='color: red;'>{{ i.message }}</span>
+    {% else %}
+    <span class='job_cmd'>{{ i.message }}</span>
+    {% endifequal %}
+    <span >Em {{ i.date }}</span>
+    <div><p>Parâmetros : {{ i.show_arguments }}</p></div>
+</div>
+{% endfor %}

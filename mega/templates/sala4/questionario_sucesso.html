@@ -1,0 +1,79 @@
+{% load util %}
+
+<section id="content">
+	<div class="wrapper ">
+		<div class="titulo">
+			<h2><span>Mandou bem ;-)</span></h2>
+		</div>
+
+		<img src="{{ STATIC_URL }}{{ get_tipo_template }}/images/pinguelo.png" border="0" id="pinguelo" />
+
+		<ul class="lista resultado">
+			<li class="texto">
+				{% if porcent < 100 %}
+					<p>
+						Você conseguiu acertar cerca de <strong>{{ porcent }}%</strong> 
+							das questões, más isso é foi suficiente para você desbloquear o badge
+								<b>{{ list_video.0|get_certificado }}</b>, parabéns!
+					</p>
+				{% else %}
+					<p>
+						Você conseguiu acertar todas as questões e acaba de desbloquear o badge<br /> 
+							<b>{{ list_video.0|get_certificado }}</b>, parabéns!
+					</p>
+				{% endif %}
+				<span class="clearfix"></span>
+			</li>
+			<li><img src="{{ list_video.0|get_certificado:'image' }}" border="0" />
+			</li>
+			<li class="share">
+				<p>
+					Compartilhe esta conquista com seus colegas de trabalho e amigos:
+				</p>
+				<div class='share_buttons'>
+					
+					<div id='fb-root'></div>
+					
+    				<script src='http://connect.facebook.net/en_US/all.js'></script>
+    				
+    				<script> 
+    				
+					      FB.init({appId: "{{ app_id }}", status: true, cookie: true});
+					
+					      function postToFeed() {
+					
+					        // calling the API ...
+					        var obj = {
+					          method		: 'feed',
+					          redirect_uri	: '{% if is_secure %}https://{% else %}http://{% endif %}{{ get_host }}',
+					          link			: '{% if is_secure %}https://{% else %}http://{% endif %}{{ get_host }}{% url badget rede.link list_video.0.id|encode_object %}',
+					          picture		: '{% if is_secure %}https://{% else %}http://{% endif %}{{ get_host }}{{ list_video.0|get_certificado:"image" }}',
+					          name			: '{{ list_video.0|get_certificado }}',
+					          caption		: 'Badget Sala#04',
+					          description	: 'O aluno {{ user.get_full_name }} é {{ list_video.0|get_certificado }}'
+					        };
+					
+					        function callback(response) {}
+					        
+					        FB.ui(obj, callback);
+					        
+					      }
+				    
+				    </script>
+	
+					<a class="fb" href="javascript:void(0);" onclick='postToFeed(); return false;'>Facebook</a>
+
+					<a class="twt" href="javascript:void(0);" onclick="var opentwt = window.open('https://twitter.com/intent/tweet?source=webclient&text={{ list_video.0|get_certificado }}&url={% if is_secure %}https://{% else %}http://{% endif %}{{ get_host }}{% url badget rede.link list_video.0.id|encode_object %}&lang=pt-BR', 'opentwt', 'menubar=1,resizable=1,width=450,height=350');opentwt.moveTo(($(window).width() / 2) - (450 / 2), 300);" title="Twittar">Twitter</a>
+					
+				</div>
+				<div class="clearfix"></div>
+			</li>
+			<li class="proximo">
+				<a href="{% url category rede.link list_video.0.category.parent.id %}">Próximo Curso</a><div class="clearfix"></div>
+			</li>
+		</ul>
+
+		<div class="clearfix"></div>
+
+	</div>
+</section>

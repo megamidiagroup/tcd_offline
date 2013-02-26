@@ -1,0 +1,56 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+		<link rel="shortcut icon" href="{{STATIC_URL}}/static/images/favicon.ico">
+		<title>..:: SEBRAE Web Radio ::..</title>
+        
+        <script type="text/javascript">
+			var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+			document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' 					type='text/javascript'%3E%3C/script%3E"));
+		</script>
+		<script type="text/javascript">
+			try {
+				var pageTracker = _gat._getTracker("UA-8005611-2");
+				pageTracker._trackPageview();
+			} catch(err) {
+			
+			}
+        </script>
+        
+		<script type="text/javascript" src="{{STATIC_URL}}/static/js/manager/swfobject.js"></script>
+		<script type="text/javascript" src="{{STATIC_URL}}/static/js/manager/swffit.js"></script>
+        
+		<script type="text/javascript">
+			var flashvars = {
+			  idCategory: '{{ idCategory }}',
+			  tag: '{{ tag }}',
+			  idContent: '{{ idContent }}',
+			  repeat: '{{ repeat }}',
+			  playAuto: 'true', //{{ playAuto }},
+			  logger: '{{ logger }}',
+			  tagger: false,
+			  base_url: '{{ base_url }}'
+			};
+			swfobject.embedSWF("{{STATIC_URL}}/static/swf/sebrae.swf", "main3", "570", "530", "9.0.0", "", flashvars);
+			swffit("main3", 570, 530, 570, 530);
+		</script>
+		<style type="text/css">
+			body{
+				background-color: #F0F0F0;
+			}
+		</style>
+	</head>
+	<body> 
+    	<h4 style="display:block; position:fixed; width:100%; text-align: center; padding-top: 50px; font-family: Arial, Helvetica, sans-serif; font-size: 18px; color: #999999;">
+    	Sebrae Web R&aacute;dio</h4>
+    
+<div id="main3">
+			<a href="http://www.adobe.com/go/getflashplayer">
+            <img src="http://www.adobe.com/images/shared/download_buttons/get_flash_player.gif" alt="Get Adobe Flash player" title="Get Adobe Flash player" /></a>
+            <br />
+			Tecnologia Flash 9 
+            <a href="http://www.adobe.com/go/getflashplayer">Baixar Plugin</a> Software gratu&iacute;to.
+		</div>
+	</body>
+</html>

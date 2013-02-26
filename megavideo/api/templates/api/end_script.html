@@ -1,0 +1,7 @@
+{% for i in objects %}
+$('wrs_player_{{ i.id }}').hide()
+{% endfor %}
+
+function wrs_show_player(i) {
+$('wrs_player_' + i).toggle()
+}

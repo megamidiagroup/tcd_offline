@@ -1,0 +1,167 @@
+﻿{% extends 'uninter/main.html' %}
+
+{% load util keyboard %}
+
+{% block content %}
+
+    {% if list_banner.count > 0 %}
+        <div id="highlights">
+            <div class="container">
+                <div class="full-banner">
+                    <div class="flexslider">
+                    <ul class="slides">
+                        {% for i in list_banner %}
+                            <li>
+                                {% if i.url %}<a href="{{ i.url }}" title="Clique aqui para acessar o link" {% if i.blank %}target="_blank"{% endif %}>{% endif %}
+                                    <img src="{{ i|get_image }}" border="0" />
+                                {% if i.url %}</a>{% endif %}
+                                {% if i.legend %}
+                                    <p class="flex-caption">{{ i.name }}</p>
+                                {% endif %}
+                            </li>
+                        {% endfor %}
+                    </ul>
+                  </div>
+              </div>
+            </div>
+        </div>
+    {% endif %}
+
+    {% block bloco %}
+
+        <div id="content">
+            <div class="container">
+
+                {% if interno %}
+                    <div class="path">
+                        {% sub_menu list_category rede list_treinamento %}
+                    </div>
+                {% endif %}
+
+                {% if list_treinamento.count > 1 %}
+                    <div class="bar"><span>Selecione um dos {{ list_treinamento.count }} vídeos abaixo</span></div>
+                {% else %}
+                    {% if list_treinamento.count == 1 %}
+                        <div class="bar"><span>Selecione o vídeo abaixo</span></div>
+                    {% else %}
+                        <div class="bar">
+                        	<span>
+	                            {% if list_category.count > 1 %}
+	                                SELECIONE UMA DAS {{ list_category.count }} CATEGORIAS ABAIXO
+	                            {% else %}
+	                                SELECIONE A CATEGORIA ABAIXO
+	                            {% endif %}
+                            </span>
+                        </div>
+                    {% endif %}
+                {% endif %}
+
+                {% if list_category %}
+                    <ul class="category clearfix">
+                        {% for i in list_category %}
+                            <li>
+                                <a href="{% url home %}{{ rede.link }}/category/{{ i.id }}/" title="{{ i.desc|safe|striptags }}">
+                                	{% if i|count_video_category %}<span class="fita">{{ i|count_video_category }} VÍDEOS</span>{% endif %}
+                                    <div>
+                                    	<img src="{{ i|get_image }}" border="0" />
+                                    	{% if i.is_name %}<h2 class="box-title">{{ i.name }}</h2>{% endif %}
+                                    </div>
+                                </a>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+
+                {% if list_treinamento %}
+                    <ul class="videos clearfix">
+                        {% for i in list_treinamento %}
+                        	{% if i.tipo == 'L' %}
+                        		<li>
+		                            <a href="{% url live rede.link i.id %}" title="{{ i.desc|safe|striptags }}">
+		                                <div class="{{ i|css_hiraquia_video }}">
+		                                	<div class="play-video"></div>
+		                                	<img src="{{ i|get_image }}" border="0" />
+		                                </div>
+		                                <h2 class="box-title">{{ i.name }}</h2>
+		                                {% if i.desc|lenght > 2 %}
+			                                <span>{{ i.desc|safe|truncatewords_html:25 }}</span>
+			                                <br />
+		                                {% endif %}
+		                                <span>Será exibido no dia {{ i.agendado|date:'d F à\s H:i' }} com duração de {{ i.time }}</span>
+		                            </a>
+		                        </li>
+                        	{% else %}
+		                        <li>
+		                            <a href="{% url home %}{{ rede.link }}/{{ i|is_not_video }}/{{ i.id }}/" title="{{ i.desc|safe|striptags }}">
+		                                <div class="{{ i|css_hiraquia_video }}">
+		                                	<div class="play-video"></div>
+		                                	<img src="{{ i|get_image }}" border="0" />
+		                                </div>
+		                                <h2 class="box-title">{{ i.name }}</h2>
+		                                {% if i.desc|lenght > 2 %}
+			                                <span>{{ i.desc|safe|truncatewords_html:25 }}</span>
+			                                <br />
+		                                {% endif %}
+		                                <span>{{ i.time }}</span>
+		                            </a>
+		                        </li>
+	                        {% endif %}
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+
+                {% if list_parceiro %}
+
+                    <div class="bar clear parceiros"><span>PARCEIROS</span></div>
+
+                    <div class="partner">
+                        <ul>
+                            {% for i in list_parceiro %}
+                                {% if i.link %}
+                            		<li>
+                            			<span></span>
+                            			<a href="{{ i.link }}" title="{{ i.name }}">
+                            				<img src="{{ i|get_image }}" title="{{ i.name }}" border="0" />
+                            			</a>
+                            		</li>
+                            	{% else %}
+                                	<li><span></span><img src="{{ i|get_image }}" title="{{ i.name }}" border="0" /></li>
+                                {% endif %}
+                            {% endfor %}
+                        </ul>
+
+                        <a id="prev" class="arrow prev" href="#"></a>
+                        <a id="next" class="arrow next" href="#"></a>
+
+                        <div class="clearfix"></div>
+                    </div>
+
+                    <script type="text/javascript" language="javascript">
+                        $(function() {
+                            $('.partner ul').carouFredSel({
+                                width: '100%',
+                                scroll: 2,
+                                prev: '#prev',
+                                next: '#next',
+                                onResize: function(){
+                                    $(".partner ul").trigger("configuration", ["items.visible", function( val ) {
+                                        $(this).trigger("configuration", ["align", ($('.partner ul li').length<=val)?"left":"center"]);
+                                    }]);
+                                },
+                                onCreate: function(itens, sizes){
+                                    $(".partner ul").trigger("configuration", ["items.visible", function( val ) {
+                                        $(this).trigger("configuration", ["align", ($('.partner ul li').length<=val)?"left":"center"]);
+                                    }]);
+                                }
+                            });
+                        });
+                    </script>
+
+                {% endif %}
+
+            </div>
+        </div>
+
+    {% endblock bloco %}
+
+{% endblock content %}

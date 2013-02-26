@@ -1,0 +1,131 @@
+{% extends 'manager/main.html' %}
+
+
+{% block js_script %}
+    <script type="text/javascript" src="{{STATIC_URL}}/static/manager/js/jquery-1.3.2.min.js"> </script>
+    <script type="text/javascript" src="{{STATIC_URL}}/static/manager/js/jquery.corner.js"> </script>
+	<script type="text/javascript" src="{{STATIC_URL}}/static/manager/js/jquery.dd.js"> </script>
+	<script type="text/javascript" src="{{STATIC_URL}}/static/manager/js/jquery.checkbox.min.js"></script>
+    <script type="text/javascript" src="{{STATIC_URL}}/static/manager/js/script_form.js"> </script>
+{% endblock %}
+
+
+{% load filter_url %}
+
+{% block content%}
+{% block first_content %}
+
+{% endblock first_content %}
+
+{% if form_action %}
+	<form name="form1" action='./' method='post' enctype="multipart/form-data" >
+{% else %}
+    <form name="form2" action='{{ request.channel_url|default:request.get_full_path }}' method='post' enctype="multipart/form-data" >
+{% endif %}
+
+	{% csrf_token %}
+
+    <ol id='action' class='corner {{ extra_css }}'>
+
+        {% block li_info %}
+            <li id='form'>
+        {% endblock %}
+
+            {% block form_list %}
+                <ul>
+                    
+                    {% block serie_list %}
+                    <li>
+                     <label>Séries Principais</label>
+                     <select name='select_category' id='series'>
+                          <option value='0'>Selecione</option>
+                          {% for i in category_list_form %}
+                              <option value='{{i.id}}'>{{ i.name }}</option>
+                              {% for i in i.category_set.all %}
+                              <option value='{{i.id}}'>  - {{ i.name }}</option>
+                              {% endfor %}
+                          {% endfor %}
+                      </select>
+                    </li>
+                  {% endblock %} 
+                  
+                     
+
+                  {% load extra_filter %}
+                  {% for i in metas %}
+                   <li style='{% if not i.name %}display: none;{% else %}float:left; width:400px;{% endif %}{% cycle "clear:left;" "" %}'>
+                   
+                        <label>
+                           {{ i.name }}
+                        </label>
+
+                        {% ifequal i.validate "text" %}
+                        <input class="metaInput" type='text' value='{{ i.value }}' name='{{ i.metaname }}' {% if i.disabled == 'disabled' %}disabled='disabled'{% endif %} />
+                        {% endifequal %}
+
+                        {% ifequal i.validate "password" %}
+                        <input class="metaInput" type='password' value='{{ i.value|crop_str:5 }}' name='{{ i.metaname }}' />
+                        {% endifequal %}
+
+                        {% ifequal i.validate "filedata" %}
+                        <input class="metaInput" type='file' value='{{ i.value }}' name='{{ i.metaname }}' />
+                        {% endifequal %}
+
+                        {% ifequal i.validate "longtext" %}
+                        <textarea class="metaInput" name='{{ i.metaname }}'>{{ i.value }}</textarea>
+                        {% endifequal %}
+
+                        {% ifequal i.validate "checkbox" %}
+                            <input class="metaInput" name='{{ i.metaname }}' style='{% if not i.name %}display: none;{% endif %}' value='1' type='checkbox' {% if i.value == '1' or i.value %}checked='checked'{% endif %} />
+                        {% endifequal %}
+
+            						{% ifequal i.validate "select" %}
+            						
+            							<select name='{{ i.metaname }}' id='{{ i.metaname }}' class='{{ i.class }}' style="width:312px;" >
+            								<option value='0'>Selecione um tipo de canal</option>
+            								{% for j in i.list %}
+            						                <option name='{{ j.name }}' value='{{ j.id }}' {% ifequal j.id i.value %}selected='selected'{% endifequal %} />
+                      										{{ j.id }} - {{ j.name }}
+                      									</option>
+            								{% endfor %}
+            							</select>
+            						
+            						{% endifequal %}
+
+                        {% ifequal i.validate "file" %}
+                         	<input class="metaInput" type='file' value='{{ i.value }}' name='{{ i.metaname }}' />
+                        {% endifequal %}
+
+
+                    </li>
+                    {% endfor %}
+
+                {% block extra_form %}
+                {% endblock %}
+              
+                {% if form_error %}
+                <li class='error' style='clear:both;'>
+                    {% for i in form_error %}
+                        <div> {{ i.msg }} </div>
+                    {% endfor %}
+                </li>
+                {% endif %}
+
+                <li class='footer' style='clear:both;'>
+                    <input class="metaInput" type='hidden' value='1'  name='addValue' />
+                    <input type='image' src='/megavideo/static/manager/images/bt_salvar.png'  value='submit' name='submit' />
+                </li>
+            
+              </ul>
+            {% endblock %}
+        </li>
+
+        {% block extra_line %}
+
+
+        {% endblock %}
+    </ol>
+    <div class='clear'></div>
+</form>
+
+{% endblock %}

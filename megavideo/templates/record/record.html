@@ -1,0 +1,22 @@
+<html>
+<head>
+<script language='javascript' >
+function callback_function (idroute) {
+    alert('Validado id = '+ idroute);
+}
+</script>
+</head>
+
+<body>
+<object id="globalnav-object" classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000" codebase="http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=8,0,0,0" width="423" height="380" >
+        <param name="movie" value="{{STATIC_URL}}/static/swf/rec.swf?{{ recparams }}&callback=callback_function" />
+        <param name="menu" value="false" />
+        <param name="quality" value="high" />
+        <param name="wmode" value="transparent" />
+        <param name="allowFullScreen" value="true" />
+        <param name="FlashVars" value="" />
+        <embed src="{{STATIC_URL}}/static/swf/rec.swf?{{ recparams }}&callback=callback_function" allowFullScreen="true" type="application/x-shockwave-flash" pluginspage="http://www.macromedia.com/go/getflashplayer" FlashVars="" menu="false" quality="high" id="player_flash" width="423" height="380"></embed>
+</object>
+</body>
+
+</html>

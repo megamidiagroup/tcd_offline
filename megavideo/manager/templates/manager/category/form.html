@@ -1,0 +1,35 @@
+{% extends 'manager/form.html' %}
+
+{% block css_script %}
+    <link href="{{STATIC_URL}}/static/manager/css/main.css" rel="stylesheet" type="text/css" media="screen" />
+    <link href="{{STATIC_URL}}/static/manager/css/digg.css" rel="stylesheet" type="text/css" media="screen" />
+    <link href="{{STATIC_URL}}/static/manager/css/sortListUI.css" rel="stylesheet" type="text/css" media="screen" />
+    <link href="{{STATIC_URL}}/static/manager/css/jquery-ui-1.7.1.custom.css" rel="stylesheet" type="text/css" media="screen" />
+{% endblock %}
+
+{% block form_title %}
+<h2>{{tipo}}</h2>
+{% endblock %}
+
+{% block tag_list %}
+{% endblock %}
+
+{% block form_colum %}
+    {% if thumb_image %}
+        <img src='{{ thumb_image }}' width='150' border='0'>
+    {% endif %}
+{% endblock %}
+
+{% block serie_list_title %}
+    Series principais
+{% endblock %}
+
+{% block serie_list %}
+	{% if parent %}
+	<li style='clear:both'>
+	    <label style='font-size:22px;'>Categoria: {{ parent.name }}</label>
+	    <input type="hidden" value="{{ parent.id }}" name='parent_id' />
+	    <br>
+	</li>
+	{% endif %}
+{% endblock %}

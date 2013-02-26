@@ -1,0 +1,82 @@
+{% load util %}
+
+{% for i in list_videos %}
+	{% if video_id == i.id %}
+		<li class="active">
+			<a href="javascript:void(0);" style="cursor: default;">
+				<img src="{{ STATIC_URL }}{{ get_tipo_template }}/images/playing.png" border="0" />
+				{{ i.name }}
+				<span>
+					<blockquote>
+						{% if i.plano.name == 'Free' %}
+							<span class="price largura free" title="Free">&nbsp;</span>
+						{% else %}
+							<span class="price largura quero-comecar" title="Pago">&nbsp;</span>
+						{% endif %}
+						<span class="duration">{{ i.time|duration_time_resume }}</span>
+					</blockquote>					
+				</span>
+			</a>
+		</li>
+	{% else %}
+		<li>
+			<a href="{% url treinamento rede.link i.id %}">
+				<img src="{{ STATIC_URL }}{{ get_tipo_template }}/images/playing.png" border="0" />
+				{{ i.name }}
+				<span>
+					<blockquote>
+						{% if i.plano.name == 'Free' %}
+							<span class="price largura free" title="Free">&nbsp;</span>
+						{% else %}
+							<span class="price largura quero-comecar" title="Pago">&nbsp;</span>
+						{% endif %}
+						<span class="duration">{{ i.time|duration_time_resume }}</span>
+					</blockquote>					
+				</span>
+			</a>
+		</li>
+	{% endif %}
+{% endfor %}
+
+<style type="text/css">
+	blockquote.shadow {
+	    background: url({{ list_videos.0|get_certificado:'image' }}) no-repeat;
+	    background-position: -38px center;
+	    margin: 0px 20px 0 0;
+	    background-size: 131px;
+	    width: 100px;
+	    float: left;
+	}
+	@media only handheld and (max-width: 480px), screen and (max-device-width: 480px), screen and (max-width: 600px)
+	{
+	    blockquote.shadow{
+	     	background: url({{ list_videos.0|get_certificado:'image' }}) no-repeat;
+	     	background-position: -42px center;
+		    margin: -15px 0 0 -20px;
+		    background-size: 80px;
+		    width: 40px;
+		    height: 80px;
+		    float: left;
+	     }
+	     #content .wrapper.curso .lista.categoria li.quiz.last a{
+	     	padding: 30px 0 10px;
+	     }
+	}
+</style>
+
+<li class="quiz">
+
+	{% if list_videos.0|is_aprovado:user %}
+		<a href="javascript:void(0);" style="cursor: default; color: #A6A6A6;">
+			<blockquote class="shadow">&nbsp;</blockquote>
+			Parabéns! Você já realizou o quiz.
+			<span></span>
+		</a>
+	{% else %}
+		<a href="{% url questionario rede.link list_videos.0.id %}">
+			<blockquote class="shadow">&nbsp;</blockquote>
+			terminou? faça o quiz para liberar seu badge!
+			<span></span>
+		</a>
+	{% endif %}
+</li>

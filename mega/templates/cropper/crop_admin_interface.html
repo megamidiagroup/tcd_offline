@@ -1,0 +1,80 @@
+{% extends "admin/change_form.html" %}
+
+{% block extrahead %}
+{{ block.super }}
+
+<script type="text/javascript" src="{{ ADMIN_MEDIA_PREFIX }}js/jcrop/jquery.min.js"></script>
+<script type="text/javascript" src="{{ ADMIN_MEDIA_PREFIX }}js/jcrop/jquery.Jcrop.js"></script>
+<script type="text/javascript">
+
+	jQuery(window).load(function() {
+		var real_width = {{ original.source.image.width|default:"0" }};
+		var real_height = {{ original.source.image.height|default:"0" }};
+		
+		var resized_width = $('#crop img').width();
+		var resized_height = $('#crop img').height();
+		
+		var width_ratio = real_width / resized_width;
+		var height_ratio = real_height / resized_height;
+		
+		function update(c) {
+			$('#id_x').val(Math.floor(c.x * width_ratio));
+			$('#id_y').val(Math.floor(c.y * height_ratio));
+			$('#id_w').val(Math.floor(c.w * width_ratio));
+			$('#id_h').val(Math.floor(c.h * height_ratio));
+		}
+		
+		var args = {
+			onSelect: update,
+			onChange: update
+		}
+		{% if original.size %}
+		args.aspectRatio = {{ original.size.width }} / {{ original.size.height }};
+		{% endif %}
+		
+		if ( $('#crop img').length ){
+			var api = $.Jcrop($('#crop img'), args);
+		
+			// Reconfigure if user changes the aspect ratio
+			$('#id_size').change(function() {
+				var selected = $('#id_size :selected').text();
+				var bits = selected.split('x');
+				var width = parseInt(bits[0], 10);
+				var height = parseInt(bits[1].split(' ')[0], 10);
+				api.setOptions({
+					onSelect: update,
+					onChange: update,
+					aspectRatio: (width / height)
+				});
+				api.setSelect([0, 0, width, height]);
+			});
+		}
+	});
+
+</script>
+
+<style type="text/css">
+/* #crop img {
+	width: 800px;
+} */
+</style>
+
+<link rel="stylesheet" href="{{ ADMIN_MEDIA_PREFIX }}css/jcrop/jquery.Jcrop.css" type="text/css">
+
+{% endblock %}
+
+{% block content %}
+
+{% if original %}
+{% if original.image %}
+<h3>Current cropped image</h3>
+<p>{{ original.image.url }}</p>
+<p><img src="{{ original.image.url }}"></p>
+{% endif %}
+<h3>Drag to select a new crop</h3>
+<div id="crop">
+	<img src="{{ original.source.preview.url }}" width="800" border="0" />
+</div>
+{% endif %}
+{{ block.super }}
+{% endblock %}

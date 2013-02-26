@@ -1,0 +1,7 @@
+/* template do redesmart */
+
+body {background: none;}#header {background: #ed1c23 ;border-bottom: none;}#highlights {background: none;border-top: none;border-bottom: none;}#header #search button {background-color: #731617 ;}#header #menu {background-color: #bfbfbf;border: none;}#header #menu ul li a {color: #000000;background-color: #bfbfbf;}#header #menu ul li a:hover {color: #ea0000;background-color: #cfcfcf;}#content {border-top: none;border-bottom: none;}#footer {color: #ffffff;background: #bfbfbf ;border-top: none;}#content .bar, .path .back {color: #ffffff;background-color: #ea0000;}#content ul.category li a {background: none;}#content ul.category li a:hover {background: none;}#content ul.category li div {border: none;padding: 0;}#content ul.category li h2 {font-size: 16px;color: #000000;}#login form label {color: #000000;}.buttom {background-color: #8c8c8c;color: #000000;}.buttom:hover {background-color: #cccccc;color: #ea0000;}h3, .box-title {color: #000000;}.flex-control-nav li a {color: #000000;}.flex-control-nav li a.active {color: #8c8c8c;}.flex-control-nav li a:hover {color: #ffffff;}.path a, .path {color: #ea0000;}
+
+#content ul.category li div {padding:0;}
+#header #header-text {top:0;}
+.sub_pesquisa {color: #fff;}

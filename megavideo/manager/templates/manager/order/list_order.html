@@ -1,0 +1,113 @@
+{% extends 'manager/list.html' %}
+{% load miniature %}
+{% load super_truncate %}
+
+{% block css_script %}
+<link href="{{STATIC_URL}}/static/manager/css/main.css" rel="stylesheet" type="text/css" media="screen" />
+<link href="{{STATIC_URL}}/static/manager/css/digg.css" rel="stylesheet" type="text/css" media="screen" />
+<link href="{{STATIC_URL}}/static/manager/css/sortListUI.css" rel="stylesheet" type="text/css" media="screen" />
+{% endblock %}
+
+{% block js_script %}
+<script type="text/javascript" src="{{STATIC_URL}}/static/manager/js/jquery.jqModal.js"></script>
+<script type="text/javascript" src="{{STATIC_URL}}/static/manager/js/jquery.dd.js"> </script>
+<script type="text/javascript" src="{{STATIC_URL}}/static/manager/js/jquery-ui.min.js"> </script>
+<script type="text/javascript" src="{{STATIC_URL}}/static/manager/js/sorlistUI.js"> </script>
+{% endblock %}
+
+{% block breadcrumb %}
+	{% for breadcrumb in request.breadcrumbs %}
+	     <a href="{{ breadcrumb.url }}"
+	     {% if forloop.first %} 
+	     class='first' 
+	     {% endif %}
+	     >{{ breadcrumb.name }}</a>
+	     {% if not forloop.last %} > {% endif %}
+	{% endfor %}
+	<span>(Obs: Dê dois cliques sobre as categorias e subcategorias para selecioná-las)</span>
+{% endblock %}
+
+{% block line_title %}
+{{ i.name }}
+{% endblock %}
+
+{% block list %}
+<li id='list_new'>
+    <table class='openOptions{{ i.id }}' cellspacing='0' cellpadding='0'  >
+        <tr>
+                <th>
+                    Categorias
+                </th>
+                <th>
+                    Subcategorias
+                </th>
+                <th>
+                    Videos
+                </th>
+        </tr>            
+    
+            <tr>
+                <td valign="top" style='padding:0px; width:250px;'>
+                   <ul id='list_category'>
+                   {% if category_list.count %}
+                   {% for i in category_list %}
+                      <li id="{{i.id}}" class="{% ifequal i.id selected %}selected{% endifequal %}">
+                         {{ i.name }} ({{ i.count_video_published }})
+                      </li>
+                   {% endfor %}  
+                   {% else %}
+                      <li>
+                        Nenhuma categoria cadastrada
+                      </li>
+                   {% endif %}
+                   </ul>
+                </td>
+                <td valign="top" style='padding:0px'>
+                    <ul id='list_subcategory'>
+                    {% if subcategory_list.count %}
+	                     {% for i in subcategory_list %}
+	                       <li id='{{i.id}}' parentid='{{i.parent.id}}' class='{% ifequal i.id selected %} selected {% endifequal %}' >
+	                           {{ i.name }} ({{ i.count_video_published }})
+	                       </li>
+	                     {% endfor %}
+                     {% else %}
+                        <li>
+                           Nenhuma subcategorias cadastradas
+                       </li>
+                     {% endif %}
+                     </ul>
+                </td>
+                <td valign="top" style='padding:0px' width='380'>
+                     <ul id='list_video'>
+                     {% if video_list.count %}
+                     {% for i in video_list %}
+                         <li id='{{i.id}}'>
+                            <table>
+	                            <tr>
+	                              <td class='tt'> {{ forloop.counter }} </td>
+	                              <td class='img'>
+	                                  <img src='{{ i.video|thumbnail:"66x37" }}' border='0' width='66' />
+	                              </td> 
+	                              <td class='desc'>
+	                                  None: {{ i.video.get_name|super_truncatewords:"10-15" }}
+	                                  <p>
+	                                   Views: <b>{{ i.video.views }}</b>
+	                                  </p>
+	                              </td> 
+	                            </tr>
+                            </table>
+                         </li>
+                      {% endfor %}
+                      {% else %}
+                          <li class='no_video'>
+                           Não existe vídeos cadastradas
+                          </li>
+                      {% endif %}
+                     </ul>
+                </td>
+            </tr>
+     </table>
+</li>
+{% endblock %}
+
+ 

@@ -1,0 +1,18 @@
+<caption>Acessos por domínio</caption>
+<thead>
+  <tr>
+    <th></th>
+    {% for i in domains %}
+        <th scope="col">{{ i.domain.domain }}</th>
+    {% endfor %}
+  </tr>
+</thead>
+<tbody>
+  {% for i in domains %}
+   <tr>
+      <th scope="row"> {{ i.domain|default:'coisa' }} ({{ i.total_visitorlog|default:0 }})</th>
+      <td>{{ i.total_visitorlog|default:0 }}</td>
+   </tr>
+ {% endfor %}
+ 
+</tbody>

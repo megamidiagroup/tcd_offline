@@ -1,0 +1,36 @@
+{% extends 'manager/form.html' %}
+
+{% block css_script %}
+            <link href="{{STATIC_URL}}/static/manager/css/main.css" rel="stylesheet" type="text/css" media="screen" />
+            
+            <link href="{{STATIC_URL}}/static/manager/css/digg.css" rel="stylesheet" type="text/css" media="screen" />
+            
+            
+            
+            
+            <link href="{{STATIC_URL}}/static/manager/css/sortListUI.css" rel="stylesheet" type="text/css" media="screen" />
+            <link href="{{STATIC_URL}}/static/manager/css/jquery-ui-1.7.1.custom.css" rel="stylesheet" type="text/css" media="screen" />
+{% endblock %}
+
+
+{% block form_title %}
+<h2>Alterar comentário</h2>
+{% endblock %}
+
+{% block tag_list %}
+{% endblock %}
+
+{% load miniature %}
+{% block form_colum %}
+    <img src='{{ video|thumbnail:"112x76" }}' width='112' height='76' />
+    <h4>{{ video.get_name }}</h4>
+
+{% endblock %}
+
+{% block serie_list_title %}
+    Series principais
+{% endblock %}
+
+
+{% block serie_list %}
+{% endblock %}

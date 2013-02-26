@@ -1,0 +1,41 @@
+table.pagination{
+	clear:both;
+	margin-top:20px;
+}
+
+/*
+table#pagination-digg {
+	width:100%;
+}
+*/
+
+table#pagination-digg tr td {
+    color: #393939;
+    display: inline;
+    font-size: 11px;
+    font-weight: bold;
+    margin: 1px;
+    padding: 3px 6px;
+}
+
+table#pagination-digg tr td.selected {
+    -moz-background-clip: border;
+    -moz-background-inline-policy: continuous;
+    -moz-background-origin: padding;
+    background: #333 none repeat scroll 0 0;
+    border: 1px solid #333;
+    color: #FFFFFF;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+table#pagination-digg tr td.ativo {
+    color: #000;
+    cursor: pointer;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 11px;
+    font-weight: bold;
+}
+
+table#django-pagination td a {
+	color: #02679D;
+}

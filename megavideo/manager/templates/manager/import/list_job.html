@@ -1,0 +1,68 @@
+{% load extra_filter %}
+{% load extra_day %}
+{% load super_truncate %}
+{% load super_diffday %}
+{% load miniature %}
+
+<div class="importtitle">Vídeo{{ job|pluralize }} em processamento</div>
+
+<table class="importlist" cellpadding="0" cellspacing="0" width="100%">
+	<tr class="top">
+		<td><span style="margin-left: 35px;">Nome do arquivo</span></td>
+		<td><span>Status</span></td>
+		<td colspan="2"><span>Data de envio</span></td>
+	</tr>
+	
+	{% for i in job %}
+		<tr>
+			<td width="40%"><span style="margin-left: 35px;">{{ i.id }} {{ i.original_name|super_truncatewords:'2-20' }}</span></td>
+			
+			{% ifequal i.status 'E' %}
+				<td width="20%"><span style="color: #c80000;">Erro</span></td>
+			{% endifequal %}
+
+			{% ifequal i.status 'A' %}
+				<td><span style="color: #00a2ff;">Processando</span></td>
+			{% endifequal %}
+
+			{% ifequal i.status 'Q' %}
+				<td><span style="color: #00a2ff;">Aguardando</span></td>
+			{% endifequal %}
+
+			<td width="20%"><span>{{ i.date|super_diffday }}</span></td>
+			<td width="20%"><span>
+				{% ifequal i.status 'DESATIVADO' %}
+					<a href="javascript:void(0);" onclick="ajaxdeljob('{{ request.channel_url }}manager/import/ajaxdeljob/', '{{ i.id }}');" title="Deseja remover da lista?">
+						<img src="{{STATIC_URL}}/static/manager/images/bg_manager_del.png" border="0" />
+					</a>
+				{% endifequal %}
+			</span></td>
+		</tr>
+	{% endfor %}
+
+</table>
+
+<div class="importtitle">Último{{ job_end|pluralize }} vídeo{{ job_end|pluralize }} inserido{{ job_end|pluralize }}</div>
+
+<table class="importlist" cellpadding="0" cellspacing="0" width="100%">
+	<tr class="top">
+		<td colspan="2"><span style="margin-left: 35px;">Vídeo</span></td>
+		<td colspan="2"><span>Data de envio</span></td>
+	</tr>
+	
+	{% for i in job_end %}
+		<tr>
+			<td width="20%" align="right" valign="middle"><span>
+				<img src="{{ i.video|thumbnail:'75x42' }}" border="0" width="75" height="42" />
+			</span></td>
+			<td width="40%"><span>{{ i.original_name|super_truncatewords:'2-20' }}</span></td>
+			<td width="20%"><span>{{ i.date|super_diffday }}</span></td>
+			<td width="20%"><span>
+				<a href="{{ request.channel_url }}manager/program/update/{{ i.video_id }}/" title="Deseja editar as informações desse vídeo?">
+					<img src="{{STATIC_URL}}/static/manager/images/bg_manager_edit.png" border="0" />
+				</a>
+			</span></td>
+		</tr>
+	{% endfor %}
+
+</table>

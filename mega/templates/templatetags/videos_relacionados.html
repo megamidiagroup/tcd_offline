@@ -1,0 +1,47 @@
+{% load util %}
+
+{% if list_video %}
+
+    <div class="bar clear">Vídeo{{ list_video|pluralize }} Relacionado{{ list_video|pluralize }}</div>
+        <div class="related-videos">
+
+            <ul>
+                {% for i in list_video %}
+                    <li>
+                        <a href="{% url treinamento rede.link i.id %}">
+                            <img src="{{ i|get_image }}" border="0" />
+                            <h4>{{ i.name }}</h4>
+                        </a>
+                    </li>
+                {% endfor %}
+            </ul>
+
+            <a id="prev" class="arrow prev" href="#"></a>
+            <a id="next" class="arrow next" href="#"></a>
+
+            <div class="clearfix"></div>
+
+        </div>
+    <script type="text/javascript">
+        $(function() {
+            $('.related-videos ul').carouFredSel({
+                width: '100%',
+                scroll: 1,
+                auto: true,
+                prev: '#prev',
+                next: '#next',
+                onResize: function(){
+                    $(".related-videos ul").trigger("configuration", ["items.visible", function( val ) {
+                        $(this).trigger("configuration", ["align", ($('.related-videos ul li').length<=val)?"left":"center"]);
+                    }]);
+                },
+                onCreate: function(itens, sizes){
+                    $(".related-videos ul").trigger("configuration", ["items.visible", function( val ) {
+                        $(this).trigger("configuration", ["align", ($('.related-videos ul li').length<=val)?"left":"center"]);
+                    }]);
+                }
+            });
+        });
+    </script>
+
+{% endif %}

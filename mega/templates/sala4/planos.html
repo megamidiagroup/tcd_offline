@@ -1,0 +1,218 @@
+{% extends 'sala4/main.html' %}
+
+{% load util %}
+
+{% block class-section %}{% endblock class-section %}
+
+{% block extra-js %}
+
+	<script type="text/javascript">
+		$(document).ready(function() {
+			
+			$('.lista.categoria').find('li:last').addClass('last');
+			
+			{% if not user.is_authenticated %}
+				$('.selecionar2').attr('onclick', 'alert("Para adquirir um plano, você deverá se cadastrar e/ou logar na plataforma.");window.location="{% url home rede.link %}";');
+			{% endif %}
+
+		});
+    </script>
+    
+{% endblock extra-js %}
+
+{% block content %}
+
+	<section id="content">
+		<div class="wrapper ">
+			<div class="titulo">
+				<h2><span>Planos</span></h2>
+			</div>
+	
+			<div class="planos">
+				
+				{% if list_plano.0 %}
+					<div class="plano esquerda">
+						<h3>{{ list_plano.0.name }}</h3>
+						<ul>
+							<li>
+								Vídeos marcados como free
+							</li>
+							<li>
+								{{ list_plano.0.q_badges }} Badge
+							</li>
+							<li>
+								{% if list_plano.0.duration > 0 %}
+									{{ list_plano.0.duration }} dias acumulativos para usar
+								{% else %}
+									ilimitado para usar
+								{% endif %}
+							</li>
+							<li class="{% if not list_plano.0.quiz %}inactive{% endif %}">
+								Quiz
+							</li>
+							<li class="{% if not list_plano.0.tutor %}inactive{% endif %}">
+								Dúvidas com o tutor
+							</li>
+						</ul>
+						<span class="preco"><img src="{{ STATIC_URL }}{{ get_tipo_template }}/images/0mes.png" border=0 /></span>
+						{% if list_plano.0.valor == '0,00' %}
+							{% if user.is_authenticated %}
+								<a href="javascript:void(0);" onclick="alert('Você já está com esse plano disponível.');window.location='{% url home rede.link %}';" class="selecionar">Selecionar</a>
+							{% else %}
+								<a href="javascript:void(0);" onclick="alert('É só se cadastrar e/ou logar para usar a plataforma.');window.location='{% url home rede.link %}';" class="selecionar">Selecionar</a>
+							{% endif %}
+						{% else %}
+							<!-- INICIO FORMULARIO BOTAO PAGSEGURO -->
+							<form id="pagseguro{{ list_plano.0.id }}" target="pagseguro" method="post" action="https://pagseguro.uol.com.br/checkout/checkout.jhtml">
+								<input type="hidden" name="email_cobranca" value="{{ email_cobranca }}" />
+								<input type="hidden" name="tipo" value="CP" />
+								<input type="hidden" name="moeda" value="BRL" />
+								<input type="hidden" name="item_id_1" value="{{ list_plano.0.id }}" />
+								<input type="hidden" name="item_descr_1" value="{{ list_plano.0.name }}" />
+								<input type="hidden" name="item_quant_1" value="1" />
+								<input type="hidden" name="item_valor_1" value="{{ list_plano.0.valor }}" />
+								<input type="hidden" name="item_frete_1" value="0" />
+								<input type="hidden" name="item_peso_1" value="0" />
+								<input type="hidden" name="ref_transacao" value="{{ user.id }}" />
+								<input type="hidden" name="tipo_frete" value="EN" />
+								<a href="javascript:void(0);" onclick="$('#pagseguro{{ list_plano.0.id }}').submit();" class="selecionar selecionar2">Selecionar</a>
+							</form>
+							<!-- FINAL FORMULARIO BOTAO PAGSEGURO -->
+						{% endif %}
+						
+						<div class="clearfix"></div>
+					</div>
+				{% endif %}
+				
+				{% if list_plano.1 %}
+					<div class="plano central">
+						<h3>{{ list_plano.1.name }}</h3>
+						<ul>
+							<li>
+								{% if list_plano.1.q_videos > 0 %}
+									{{ list_plano.1.q_videos }} vídeos
+								{% else %}
+									Todos os vídeos 
+								{% endif %}
+							</li>
+							<li>
+								{% if list_plano.1.q_badges > 0 %}
+									até {{ list_plano.1.q_badges }} Badges
+								{% else %}
+									Todos os badges 
+								{% endif %}
+							</li>
+							<li>
+								{% if list_plano.1.duration > 0 %}
+									{{ list_plano.1.duration }} dias acumulativos para usar
+								{% else %}
+									ilimitado para usar
+								{% endif %}
+							</li>
+							<li class="{% if not list_plano.1.quiz %}inactive{% endif %}">
+								Quiz
+							</li>
+							<li class="{% if not list_plano.1.tutor %}inactive{% endif %}">
+								Dúvidas com o tutor
+							</li>
+						</ul>
+						<span class="preco"><img src="{{ STATIC_URL }}{{ get_tipo_template }}/images/25mes.png" border=0 /></span>
+						{% if list_plano.1.valor == '0,00' %}
+							{% if user.is_authenticated %}
+								<a href="javascript:void(0);" onclick="alert('Você já está com esse plano disponível.');window.location='{% url home rede.link %}';" class="selecionar">Selecionar</a>
+							{% else %}
+								<a href="javascript:void(0);" onclick="alert('É só se cadastrar e/ou logar para usar a plataforma.');window.location='{% url home rede.link %}';" class="selecionar">Selecionar</a>
+							{% endif %}
+						{% else %}
+							<!-- INICIO FORMULARIO BOTAO PAGSEGURO -->
+							<form id="pagseguro{{ list_plano.1.id }}" target="pagseguro" method="post" action="https://pagseguro.uol.com.br/checkout/checkout.jhtml">
+								<input type="hidden" name="email_cobranca" value="{{ email_cobranca }}" />
+								<input type="hidden" name="tipo" value="CP" />
+								<input type="hidden" name="moeda" value="BRL" />
+								<input type="hidden" name="item_id_1" value="{{ list_plano.1.id }}" />
+								<input type="hidden" name="item_descr_1" value="{{ list_plano.1.name }}" />
+								<input type="hidden" name="item_quant_1" value="1" />
+								<input type="hidden" name="item_valor_1" value="{{ list_plano.1.valor }}" />
+								<input type="hidden" name="item_frete_1" value="0" />
+								<input type="hidden" name="item_peso_1" value="0" />
+								<input type="hidden" name="ref_transacao" value="{{ user.id }}" />
+								<input type="hidden" name="tipo_frete" value="EN" />
+								<a href="javascript:void(0);" onclick="$('#pagseguro{{ list_plano.1.id }}').submit();" class="selecionar selecionar2">Selecionar</a>
+							</form>
+							<!-- FINAL FORMULARIO BOTAO PAGSEGURO -->
+						{% endif %}
+						
+						<div class="clearfix"></div>
+					</div>
+				{% endif %}
+				
+				{% if list_plano.2 %}
+					<div class="plano direita">
+						<h3>{{ list_plano.2.name }}</h3>
+						<ul>
+							<li>
+								{% if list_plano.2.q_videos > 0 %}
+									{{ list_plano.2.q_videos }} vídeos
+								{% else %}
+									Todos os vídeos 
+								{% endif %}
+							</li>
+							<li>
+								{% if list_plano.2.q_badges > 0 %}
+									até {{ list_plano.2.q_badges }} Badges
+								{% else %}
+									Todos os badges 
+								{% endif %}
+							</li>
+							<li>
+								{% if list_plano.2.duration > 0 %}
+									{{ list_plano.2.duration }} dias acumulativos para usar
+								{% else %}
+									ilimitado para usar
+								{% endif %}
+							</li>
+							<li class="{% if not list_plano.2.quiz %}inactive{% endif %}">
+								Quiz
+							</li>
+							<li class="{% if not list_plano.2.tutor %}inactive{% endif %}">
+								Dúvidas com o tutor
+							</li>
+						</ul>
+						<span class="preco"><img src="{{ STATIC_URL }}{{ get_tipo_template }}/images/30mes.png" border=0 /></span>
+						{% if list_plano.2.valor == '0,00' %}
+							{% if user.is_authenticated %}
+								<a href="javascript:void(0);" onclick="alert('Você já está com esse plano disponível.');window.location='{% url home rede.link %}';" class="selecionar">Selecionar</a>
+							{% else %}
+								<a href="javascript:void(0);" onclick="alert('É só se cadastrar e/ou logar para usar a plataforma.');window.location='{% url home rede.link %}';" class="selecionar">Selecionar</a>
+							{% endif %}
+						{% else %}
+							<!-- INICIO FORMULARIO BOTAO PAGSEGURO -->
+							<form id="pagseguro{{ list_plano.2.id }}" target="pagseguro" method="post" action="https://pagseguro.uol.com.br/checkout/checkout.jhtml">
+								<input type="hidden" name="email_cobranca" value="{{ email_cobranca }}" />
+								<input type="hidden" name="tipo" value="CP" />
+								<input type="hidden" name="moeda" value="BRL" />
+								<input type="hidden" name="item_id_1" value="{{ list_plano.2.id }}" />
+								<input type="hidden" name="item_descr_1" value="{{ list_plano.2.name }}" />
+								<input type="hidden" name="item_quant_1" value="1" />
+								<input type="hidden" name="item_valor_1" value="{{ list_plano.2.valor }}" />
+								<input type="hidden" name="item_frete_1" value="0" />
+								<input type="hidden" name="item_peso_1" value="0" />
+								<input type="hidden" name="ref_transacao" value="{{ user.id }}" />
+								<input type="hidden" name="tipo_frete" value="EN" />
+								<a href="javascript:void(0);" onclick="$('#pagseguro{{ list_plano.2.id }}').submit();" class="selecionar selecionar2">Selecionar</a>
+							</form>
+							<!-- FINAL FORMULARIO BOTAO PAGSEGURO -->
+						{% endif %}
+						
+						<div class="clearfix"></div>
+					</div>
+				{% endif %}
+	
+			</div>
+	
+			<div class="clearfix"></div>
+	
+		</div>
+	</section>
+
+{% endblock content %}

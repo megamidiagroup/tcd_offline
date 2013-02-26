@@ -1,0 +1,260 @@
+{% extends 'manager/main.html' %}
+
+{% load miniature %}
+{% load super_truncate %}
+
+{% block css_script %}
+    <link rel="stylesheet" type="text/css" media="screen" href="{{STATIC_URL}}/static/manager/css/main.css" />
+    <link rel="stylesheet" type="text/css" media="screen" href="{{STATIC_URL}}/static/manager/css/sortListUI.css" />
+    <link rel="stylesheet" type="text/css" media="screen" href="{{STATIC_URL}}/static/manager/css/jquery-ui.css" />
+    <link rel="stylesheet" type="text/css" media="screen" href="{{STATIC_URL}}/static/manager/css/statistic.css" />
+    <link rel="stylesheet" type="text/css" media="screen" href="{{STATIC_URL}}/static/manager/css/datePicker.css" />
+	<link rel="stylesheet" type="text/css" media="screen" href="{{STATIC_URL}}/static/manager/css/jquery.checkbox.css" />
+	<link rel="stylesheet" type="text/css" media="screen" href="{{STATIC_URL}}/static/manager/css/jquery.mcdropdown.css" />
+{% endblock %}
+
+{% block js_script %}
+    <script type="text/javascript" src="{{STATIC_URL}}/static/manager/js/swfobject1.5.js"> </script>
+	<script type="text/javascript" src="{{STATIC_URL}}/static/manager/js/jquery.dd.js"> </script>
+    <script type="text/javascript" src="{{STATIC_URL}}/static/manager/js/jquery.ui.datepicker.js"> </script>
+    <script type="text/javascript" src="{{STATIC_URL}}/static/manager/js/jquery.datePicker.js"> </script>
+	<script type="text/javascript" src="{{STATIC_URL}}/static/manager/js/jquery.ui.core.js"> </script>
+	<script type="text/javascript" src="{{STATIC_URL}}/static/manager/js/jquery.ui.resizable.js"> </script>
+    <script type="text/javascript" src="{{STATIC_URL}}/static/manager/js/jquery.jqModal.js"> </script>
+    <script type="text/javascript" src="{{STATIC_URL}}/static/manager/js/jquery.mcdropdown.js"> </script>
+	<script type="text/javascript" src="{{STATIC_URL}}/static/manager/js/script_form.js"> </script>
+{% endblock %}
+
+{% load filter_url %}
+
+{% block content%}
+
+<ul class='formvideo'>
+    <li>
+        
+        {% include 'manager/menubar.html' %}
+        
+        <form id='form_enviar_ajax' action='{{ request.channel_url }}manager/program/ajaxupdate/' method='post' onsubmit='return false;'>
+        	
+        	{% csrf_token %}
+
+            <ol id='action'>
+
+            <li>
+
+                <div id='player'>
+
+                {% block form_colum %}
+
+                    <div id="flashPlayer" name="{{ code }}" url="{{ base_url }}">
+                        Aguarde, carregando o player...
+                    </div>
+                    
+                    <dl class="form">
+                    
+                    <dd>
+                        <input name="id" id="id_id" type="hidden" class="metaInput" value="{{ video.id }}" />
+                        <input name="name" id="id_name" type="text" class="metaInput" value="{{ video.get_name }}" />
+                    </dd>
+                    
+                    <dd>
+                        <textarea id='id_description' name='description' class='metaInput' >{{ video.get_description }}</textarea>
+                    </dd>
+                    
+                    <dd id='output_message' style='display:none;'>&nbsp;</dd>
+                    
+                    <dd>
+                        <a href="{{ request.channel_url }}manager/program/download/{{ video.id }}/" target="_blank"><img src='/megavideo/static/manager/images/bg_download_original.png' class='btn' id='btn_download_origin'/></a>
+                        <img src='/megavideo/static/manager/images/bt_salvar.png' class='btn' id='btn_salvar_program' />
+                    </dd>
+
+		    <dd style='padding-top:10px;'>
+                        <table id='form_embed' target='{{ video.id }}' >
+                            <tr>
+                                <td>
+                                    URL
+                                </td>
+                                <td>
+                                    <input name='url' id='id_url' type="text" value="{{ video.tv_url }}" >
+                                </td>
+                                <td>
+                                    EMBED
+                                </td>
+                                <td>
+                                    <input name='embed' id='id_embed' type="text" value='{{ video.get_embed }}' >
+                                </td>
+                            </tr>
+                            <tr>
+                                <td> 
+                                </td>
+                                 <td> 
+                                </td>
+                                <td> 
+                                </td>
+                                <td>
+                                    <span class='embed selected' title="640x360">640x360</span> <span class='embed' title="480x360">480x360</span> <span class='embed' title="320x240">320x240</span>
+                                </td>
+                            </tr>
+                        </table>
+                    </dd>
+                    
+                    </dl>
+
+                {% endblock %}
+
+                </div>
+
+                <div id='info'>
+                    
+                    <div id='resume'>
+                        <table>
+                            <tr>
+                                <th>Views</th>
+                            </tr>
+                            <tr>
+                                <td>{{video.views}}</td>
+                            </tr>
+                        </table>
+                    </div>
+                    
+                    <hr/>
+                    
+                    <div id='actions'>
+                        <ul>
+                            <li class='first'></li>
+
+                            {% if list_channel.count > 1 %}
+	                            <li>
+	                               <h4>Rede:</h4>
+	                               <div id="blockChannel" name="{{ video.id }}">
+	                               		<select name="channel" onchange="ajax_add_channel(this);">
+	                               			{% for lc in list_channel %}
+	                               				{% if request.channel_name == lc.name %}
+	                               					<option value="{{ lc.id }}" selected="selected">{{ lc.name }}</option>
+	                               				{% else %}
+	                               					<option value="{{ lc.id }}">{{ lc.name }}</option>
+	                               				{% endif %}
+	                               			{% endfor %}
+	                               		</select>
+	                               		
+	                               		<img class="concluido_channel" src="{{STATIC_URL}}/static/manager/images/bt_ativo.gif" border='0' style="display: none;" />
+	                               		
+	                               </div>
+	                            </li>
+							{% endif %}
+                            
+                            {% if list_category.count > 0 %}
+	                            <li>
+	                                <h4>Categoria:</h4>
+	                                <div id="blockCategory" name="{{ video.id }}">
+	                                	<select name="category" onchange="ajax_add_category(this);">
+	                                		<option value="">(Nenhuma)</option>
+	                               			{% for l in list_category %}
+	                               				{% if category_id == l.id %}
+	                               					<option value="{{ l.id }}" selected="selected">{{ l.name }}</option>
+	                               				{% else %}
+	                               					<option value="{{ l.id }}">{{ l.name }}</option>
+	                               				{% endif %}
+	                               			{% endfor %}
+	                               		</select>	
+	                               		
+	                               		<img class="concluido_category" src="{{STATIC_URL}}/static/manager/images/bt_ativo.gif" border='0' style="display: none;" />
+	                               		                                	
+	                                </div>
+	                            </li>
+	                        {% endif %}
+
+                            <li>
+                               <table width='100%'>
+                                <tr>
+                                  <td>
+                                      <h4>Código do video: {{ code }}</h4>
+                                  </td>
+                                  <td width='40'>
+                                    {% if video.published %}
+                                       <div class='publicado true' target='/megavideo/manager/program/publish/' id='pub_{{ video.id }}'></div>
+                                  {% else %}
+                                       <div class='publicado false' target='/megavideo/manager/program/publish/' id='pub_{{ video.id }}'></div>
+                                  {% endif %}
+                                </td>
+                              </tr>
+                              </table>
+                            </li>  
+                            
+                        </ul>
+                    </div>
+
+                </div> <!-- close info -->
+
+                </li>
+                
+                <li>
+                    <br class='clear'>
+                    <br class='clear'>
+                </li>
+
+
+
+                {% block extra_line %}
+
+                {% endblock %}
+
+                <li class='clear'>&nbsp;</li>
+
+            </ol>
+        </form>
+    </li>
+</ul>
+
+{% endblock %}
+
+{% block confirm %}
+
+<!-- Alert Dialog -->
+<div class="jqmConfirm categoria" id="confirm_categoria">
+
+    <div id="ex3b" class="jqmConfirmWindow">
+
+        <div class="jqmConfirmTitle clearfix">
+            <a href="#" class="jqmClose"><em>Close</em></a>
+        </div>
+
+        <div class="content">
+            <p class="jqmConfirmMsg msg"></p>
+            <h1>Inclua este vídeo em uma categoria antes de pública-lo</h1>
+        </div>
+
+        <input type="button" value="Clique Aqui" id="1" />
+
+    </div>
+
+</div>
+
+
+<!-- Confirm Dialog -->
+<div class="jqmConfirm" id="confirm">
+
+    <div id="ex3b" class="jqmConfirmWindow">
+
+        <div class="jqmConfirmTitle clearfix">
+            <h1>Confirmação</h1>
+            <a href="#" class="jqmClose"><em>Close</em></a>
+        </div>
+
+        <div class="jqmConfirmContent">
+            <p class="jqmConfirmMsg"></p>
+        </div>
+
+        <table class="jqmButtons">
+            <tr>
+                <td width="40%" align="right" class="sim" id='1'><img src="{{STATIC_URL}}/static/manager/images/bt_ativo.gif" title="Sim" /> Sim</td>
+                <td width="20%">&nbsp;</td>
+                <td width="40%" align="left" class="no" id='0'><img src="{{STATIC_URL}}/static/manager/images/bt_remove.gif" title="Não" /> Não</td>
+            </tr>
+        </table>
+
+    </div>
+
+</div>
+
+{% endblock %}

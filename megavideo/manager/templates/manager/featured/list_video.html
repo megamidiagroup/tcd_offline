@@ -1,0 +1,65 @@
+{% extends 'manager/list.html' %}
+{% load super_truncate %}
+
+
+{% load miniature %}
+
+	{% block js_script %}
+        <script type="text/javascript" src="{{STATIC_URL}}/static/manager/js/feature.js"></script>
+    {% endblock %}
+
+{% block list_class %}
+
+     <li class="bigBox" style="height: 100px; width:113px;">
+
+{% endblock %}
+
+{% block content_header %}
+
+<div id='select_action' align="right">
+        <table width="450" cellpadding="0" cellspacing="0">
+            <tr>
+                <td width="100%" align="right" height="30" align='right' >
+                    <input id="buscar" class='input_2' type='submit' value='' />
+                    <span class='input_2'>
+                       <input type='text' id='search' name='search' value='{{ search }}' />
+                    </span>
+                    <span class='input_1'></span>
+                </td>
+            </tr>
+        </table>
+</div>
+
+{% endblock %}
+
+{% block line_title %}
+    {{ i.get_name|truncatewords:12 }}
+	<br />
+{% endblock %}
+
+{% load stars %}
+{% block line_content %}
+	<div class='description'></div>
+{% endblock %}
+
+{% block thumb %}
+
+    <div class='list_img'>
+
+        {% if i.name %}
+            {% if i|thumbnail:"112x76" %}
+                <a href='javascript:void(0);' onclick="addVideo('{{ i.id }}', '{{ request.channel_url }}');" content="{{ i.get_name }}" class="tip">
+                    <img src='{{ i|thumbnail:"112x76" }}' width='112' height='76' />
+                </a>
+            {% endif %}
+        {% endif %}
+
+         <div content='{{i.get_name}}' class="tip">&nbsp;{{i.get_name|super_truncatewords:"10-15"}}</div>
+
+    </div>
+
+{% endblock %}
+
+{% block line_bottom %}
+
+{% endblock %}

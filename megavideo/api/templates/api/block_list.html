@@ -1,0 +1,168 @@
+{% load miniature %}
+{% load stars %}
+{% load super_truncate %}
+{% load humanize_time %}
+
+{% ifequal conf.list_as 'ul' %}
+<ul id='{{conf.id}}' class='vflow_video'>
+    {% if content_list.object_list %}
+        
+    {% for i in content_list.object_list %}
+    
+	    <li class='vflow_video_item' id='item_id' >
+	    {% if simple %}
+		        <a class='vflow_video_link' href='{{ conf.page_link }}?id={{ i.id }}&category={{ i.get_category|default:0 }}'>
+			        <span class='vflow_video_span'>{{ i.get_name|super_truncatewords:conf.truncate_title  }}</span>
+			    </a>    
+			    <span class='vflow_duration_duration'>{{ i.duration|number2time }}</span>
+	    {% else %}
+		        <a class='vflow_video_link' href='{{ conf.page_link }}?id={{ i.id }}&category={{ i.get_category|default:0 }}'>
+		            <img class='vflow_video_thumb' title="{{ i.get_description }}" width='{{conf.width}}' src='{{ base_url }}{{ i|thumbnail:conf.thumb_size }}'/>
+		        </a>
+		        <span class='vflow_stars_stars'>{% show_star i %}</span>
+		        <span class='vflow_video_comment'>{{ i.get_num_comment }}</span>
+		        <span class='vflow_video_span'>{{ i.get_name|super_truncatewords:conf.truncate_title  }}</span>
+		        <span class='vflow_desc_desc'>{{ i.get_description|super_truncatewords:conf.truncate_desc }}</span>
+	    {% endif %}
+	    </li>
+    
+    {% endfor %}
+    
+    
+    {% else %}
+    
+    <li class='noresult'>
+         <span class='noresult'>Sua busca não retornou resultados</span>
+    </li>
+        
+    {% endif %}
+    
+</ul>
+{% endifequal %}
+
+{% ifequal conf.list_as 'div' %}
+<div id='{{conf.id}}' class='vflow_video'>
+
+    {% if content_list.object_list %}
+
+    {% for i in content_list.object_list %}
+    <div class='vflow_video_item' id='item_id'>
+        {% if simple %}
+             <a class='vflow_video_link' href='{{ conf.page_link }}?id={{ i.id }}&category={{ i.get_category|default:0 }}'>
+                <span class='vflow_video_span'>{{ i.get_name|super_truncatewords:conf.truncate_title  }}</span>
+             </a>
+              <span class='vflow_duration_duration'>{{ i.duration|number2time }}</span>
+        {% else %}
+	        <a class='vflow_video_link' href='{{ conf.page_link }}?id={{ i.id }}&category={{ i.get_category|default:0 }}'>
+	            <img class='vflow_video_thumb' title="{{ i.get_description }}" width='{{conf.width}}' src='{{ base_url }}{{ i|thumbnail:conf.thumb_size }}'/>
+	        </a>
+	        
+	        <span class='vflow_stars_stars'>{% show_star i %}</span>
+	        <span class='vflow_video_comment'>{{ i.get_num_comment }}</span>
+	        <span class='vflow_video_span'>{{ i.get_name|super_truncatewords:conf.truncate_title  }}</span>
+	        <span class='vflow_desc_desc'>{{ i.get_description|super_truncatewords:conf.truncate_desc }}</span>
+        {% endif %}
+    </div>
+    {% endfor %}
+    
+    {% else %}
+    
+    <div class='noresult'>
+         <span class='noresult'>Sua busca não retornou resultados</span>
+    </div>
+    
+    {% endif %}
+    
+</div>
+{% endifequal %}
+
+{% ifequal conf.list_as 'table' %}
+<table id='{{conf.id}}' class='vflow_video'>
+    <tr>
+    
+    {% if content_list.object_list %}
+    
+    {% for i in content_list.object_list %}
+    <td class='vflow_video_item' id='item_id'>
+        {% if simple %}
+        <a class='vflow_video_link' href='{{ conf.page_link }}?id={{ i.id }}&category={{ i.get_category|default:0 }}'>
+            <span class='vflow_video_span'>{{ i.get_name|super_truncatewords:conf.truncate_title  }}</span>
+        </a>    
+        <span class='vflow_duration_duration'>{{ i.duration|number2time }}</span>
+        {% else %}
+        <a class='vflow_video_link' href='{{ conf.page_link }}?id={{ i.id }}&category={{ i.get_category|default:0 }}'>
+            <img class='vflow_video_thumb' title="{{ i.get_description }}" width='{{conf.width}}' src='{{ base_url }}{{ i|thumbnail:conf.thumb_size }}'/>
+        </a>
+        <span class='vflow_stars_stars'>{% show_star i %}</span>
+        <span class='vflow_video_comment'>{{ i.get_num_comment }}</span>
+        <span class='vflow_video_span'>{{ i.get_name|super_truncatewords:conf.truncate_title  }}</span>
+        <span class='vflow_desc_desc'>{{ i.get_description|super_truncatewords:conf.truncate_desc }}</span>
+        {% endif %}
+    </td>
+    {% endfor %}
+    
+    {% else %}
+    <td class='noresult'>
+          <span class='noresult'>Sua busca não retornou resultados</span>
+    </td>               
+    {% endif %}
+    
+    </tr>
+</table>
+{% endifequal %}
+
+
+{% ifequal conf.list_as 'cloud_search' %}
+<div id='{{ conf.id }}' class='{{ 'vflow_video' }}'>
+    {% for j in cloud %}
+        <font size='{{ j.font_size }}'>
+             <a href='result.php?search={{ j.value }}'>{{ j.value }}</a>
+        </font>
+    {% endfor %}
+</div>
+{% endifequal %}
+
+
+{% ifequal conf.list_as 'cloud_video' %}
+<div id='{{ conf.id }}' class='{{ 'vflow_video' }}'>
+    {% for j in cloud %}
+        <font size='{{ j.font_size }}'>
+             <a href='{{ conf.page_link }}?id={{ j.video.id }}&category={{ i.get_category|default:0 }}'>{{ j.name }}</a>
+        </font>
+    {% endfor %}
+</div>
+{% endifequal %}
+
+
+{% if content_list.object_list.count %}
+	{% if paginate %}
+	<div class='clear'></div>
+	<div class="pagination">
+	    {% if content_list %}
+	    <ul id='pagination-digg'>
+	        {% if content_list.has_previous %}
+	        <li class='previous'><a href='{{ url }}{{ content_list.previous_page_number }}'> &lt;&lt; Anterior </a></li>
+	        {% else %}
+	        <li class='previous'>&lt;&lt; Anterior</li>
+	        {% endif %}
+	        {% for num in content_list.page_range %}
+	        {% if not num %} ...  {# literally dots #}
+	        {% else %}
+	        {# pagelink num #}
+	        {% ifequal num content_list.number %}
+	        <li class="active">{{ num }}</li>
+	        {% else %}
+	        <li><a href="{{ url }}{{ num }}">{{ num }}</a></li>
+	        {% endifequal %}
+	        {% endif %}
+	        {% endfor %}
+	        {% if content_list.has_next %}
+	        <li class="previous"><a href="{{ url }}{{ content_list.next_page_number }}">Próximo &gt;&gt;</a></li>
+	        {% else %}
+	        <li class="previous">Próximo &gt;&gt;</li>
+	        {% endif %}
+	    </ul>
+	    {% endif %}
+	</div>
+	{% endif %}
+{% endif %}

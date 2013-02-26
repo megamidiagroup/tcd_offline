@@ -1,0 +1,150 @@
+{% extends 'manager/main.html' %}
+
+{% load paginators %}
+
+{% block menu_top %}
+{% endblock menu_top %}
+
+{% block js_script %}
+{% endblock js_script %}
+
+{% block content_header %}
+{% endblock content_header %}
+
+{% block confirm %}
+{% endblock confirm %}
+
+{% block list %}
+{% endblock list %}
+
+{% block bottom %}
+{% endblock bottom %}
+
+{% block css_script %}
+
+	<style type="text/css">
+	
+		div.videos {
+			float: left;
+			margin: 5px;
+			max-width: 640px;
+			max-height: 360px;
+		}
+		ul {
+			border: 0;
+			margin: 0;
+			padding: 0;
+		}
+		#pagination-digg li {
+			border: 0;
+			margin: 0;
+			padding: 0;
+			font-size: 16px;
+			list-style: none;
+			margin-right: 2px;
+		}
+		#pagination-digg a {
+			border: solid 1px #9aafe5;
+			margin-right : 2px;
+		}
+		#pagination-digg .previous-off, 
+		#pagination-digg .next-off {
+			border: solid 1px #DEDEDE;
+			color : #888888;
+			display: block;
+			float: left;
+			font-weight: bold;
+			margin-right: 2px;
+			padding: 3px 4px;
+		}
+		#pagination-digg .disabled {
+			display: none;
+		}
+		#pagination-digg .pontos {
+			color: #000;
+			font-weight: bold;
+			display: block;
+			float: left;
+			padding: 8px;
+			font-size: 20px;
+		}
+		#pagination-digg .next a, 
+		#pagination-digg .previous a {
+			font-weight: bold;
+		}
+		#pagination-digg .active {
+			background: #2e6ab1;
+			color: #FFFFFF;
+			font-weight: bold;
+			display: block;
+			float: left;
+			padding: 8px 12px;
+		}
+		#pagination-digg a:link, 
+		#pagination-digg a:visited {
+			color: #0e509e;
+			display :block;
+			float: left;
+			padding: 8px 12px;
+			text-decoration: none;
+		}
+		#pagination-digg a:hover {
+			border: solid 1px #0e509e
+		}
+
+	</style>
+
+{% endblock css_script %}
+
+{% block js_root %}
+{% endblock js_root %}
+
+{% block top_logo %}
+
+	<div class='float_right' style='float:right;padding:5px 10px;'>
+	
+		<form action='' method='post'>
+	
+			<table>
+				<tr>
+					<td align="right">
+					<select name='restric_channel' class='ddselect' id='restric_channel' style='width:180px' onchange='window.location.href="/megavideo/home/" + this.value + "/manager/list_embed/"'>
+						{% for i in user_channel %}
+							<option value='{{ i.name|slugify }}'
+								{% ifequal request.channel_name|slugify i.name|slugify %}
+									selected='selected'
+										{% endifequal %}> {{ i.name|slugify }} </option>
+						{% empty %}
+							<option value='{{ select_channel|slugify }}' selected='selected'> {{ select_channel|slugify }} </option>
+						{% endfor %}
+					</select></td>
+				</tr>
+			</table>
+	
+		</form>
+	
+	</div>
+	
+	<div class='float_left' style="float:left; margin-left: 5px;display:none;">
+		<a href='{{ request.channel_url }}manager/panel/' title='Painel'> <img src='{{STATIC_URL}}/static/manager/images/logo_megamidia.gif' border='0' /> </a>
+	</div>
+
+{% endblock top_logo %}
+
+{% block content %}
+	
+	{% for cl in content_list.object_list %}
+		<div class="videos">
+			<script type="text/javascript" src="{{ base_url }}api/video/embed.js?idContent={{ cl.serialize }}{% if not forloop.first %}&jquery=false{% endif %}"></script>
+		</div>
+	{% empty %}
+		Não retornou nenhum resultado.
+	{% endfor %}
+	
+	<br style='clear: both;' /><br />
+
+	{% if content_list %}
+		{% digg_paginator content_list digg_url %}
+	{% endif %}
+	
+{% endblock content %}

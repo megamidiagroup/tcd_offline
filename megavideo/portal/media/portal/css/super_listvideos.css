@@ -1,0 +1,128 @@
+div#featured {
+	background: url('../images/bg_black.png') repeat-x #151f29;
+	height: 378px;
+}
+
+div#featured div span {
+	font-family: "Trebuchet MS";
+	font-size: 20px;
+	color: #fff;
+}
+
+div#featured div.list {
+	border-bottom: 1px solid #0c1218;
+	border-top: 1px solid #222a34;
+	height: 64px;
+}
+
+div#featured div.list span {
+	display: block;
+}
+
+div#featured div.list span.title {
+	font-size: 16px;
+	color: #fff;
+	margin-top: 10px;
+}
+
+div#featured div.list span.description {
+	font-size: 13px;
+	color: #82858b;
+}
+
+div#featured div.list blockquote {
+	float: left;
+	margin: 7px 17px;
+}
+
+div#featured div.title {
+	padding: 10px 15px;
+	border-bottom: 1px solid #0c1218;
+}
+
+div#featured div.setaup {
+	position: relative;
+	float: right;
+	margin-top: -45px;
+	margin-right: 20px;
+}
+
+div#featured div.setadown {
+	height: 42px;
+	border-top: 1px solid #222a34;
+	position:absolute;
+    bottom: 0;
+    width:235px;
+}
+
+div#featured div.setadown img {
+	float: right;
+	margin-top: 10px;
+	margin-right: 20px;
+}
+
+/* list videos */
+
+div#listvideos {
+	background: url('../images/bg_portal.png') repeat-x #e0e1e1;
+	height: 378px;
+	border: 1px solid #c8cbcd;
+}
+
+div#listvideos div span {
+	font-family: "Trebuchet MS";
+	font-size: 20px;
+	color: #18212b;
+	font-weight: bold;
+}
+
+div#listvideos div.list {
+	border-bottom: 1px solid #c7c7c7;
+	border-top: 1px solid #f1f2f2;
+	height: 64px;
+}
+
+div#listvideos div.list span {
+	display: block;
+}
+
+div#listvideos div.list span.title {
+	font-size: 16px;
+	color: #000;
+	margin-top: 10px;
+	font-weight: normal;
+}
+
+div#listvideos div.list span.description {
+	font-size: 13px;
+	color: #656665;
+	font-weight: normal;
+}
+
+div#listvideos div.list blockquote {
+	float: left;
+	margin: 7px 17px;
+}
+
+div#listvideos div.title {
+	padding: 20px 17px;
+	border-bottom: 2px solid #c7c7c7;
+}
+
+div#listvideos div.setaup {
+	position: relative;
+	float: right;
+	margin-top: -45px;
+	margin-right: 20px;
+}
+
+div#listvideos div.setadown {
+	height: 42px;
+	border-top: 1px solid #f1f2f2;
+}
+
+div#listvideos div.setadown img {
+	float: right;
+	margin-top: 10px;
+	margin-right: 20px;
+}

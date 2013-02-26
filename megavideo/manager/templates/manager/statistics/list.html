@@ -1,0 +1,151 @@
+{% extends 'manager/list.html' %}
+
+{% load miniature %}
+
+{% load extra_filter %}
+
+{% block css_script %}
+    <link rel="stylesheet" type="text/css" media="screen" href="{{STATIC_URL}}/static/manager/css/main.css" />
+    
+    <link rel="stylesheet" type="text/css" media="screen" href="{{STATIC_URL}}/static/manager/css/digg.css" />
+    
+    
+    
+    
+    <link rel="stylesheet" type="text/css" media="screen" href="{{STATIC_URL}}/static/manager/css/jtips.css" />
+    <link rel="stylesheet" type="text/css" media="screen" href="{{STATIC_URL}}/static/manager/css/sortListUI.css" />
+    <link rel="stylesheet" type="text/css" media="screen" href="{{STATIC_URL}}/static/manager/css/jquery-ui.css" />
+    <link rel="stylesheet" type="text/css" media="screen" href="{{STATIC_URL}}/static/manager/css/statistic.css" />
+    <link rel="stylesheet" type="text/css" media="screen" href="{{STATIC_URL}}/static/manager/css/datePicker.css" />
+{% endblock %}
+
+{% block js_script %}
+    <script type="text/javascript" src="{{STATIC_URL}}/static/manager/js/statistic.js"> </script>
+{% endblock %}
+
+{% block content %}
+
+<ul id='statistic'>
+
+    <li id="geral">
+        <ul>
+            <li class="title"> Visão geral do conteúdo </li>
+            <p>(mais visualizados)</p>
+        </ul>
+        <ul>
+            <li>
+                <select id="maisvistos" onchange="selectMaisVistos(this, '{{ request.channel_url }}manager/statistic/list/');" style='width: 200px;' name='maisvistos'>
+                    {% for m in maisvistos %}
+                        {% ifequal busca m.id %}
+                            <option value="{{m.id}}" selected="selected">{{m.name}}</option>
+                        {% else %}
+                            <option value="{{m.id}}">{{m.name}}</option>
+                        {% endifequal %}
+                    {% endfor %}
+                </select>
+            </li>
+        </ul>
+    </li>
+
+    <li id='maisvistos'>
+
+        <fieldset>
+
+            <table width="100%" border="0">
+
+                <tr>
+                    <td width='40' align='center' class='colortable'>Vídeo</td>
+                    <td class='colortable'>Título</td>
+                    <td class='colortable'>Categoria</td>
+                    <td align='center' class='colortable'>Views</td>
+                    <td align='center' class='colortable'>Plays</td>
+                    <td align='center' class='colortable'>Hotspot</td>
+                    <td align='center' class='colortable'>%</td>
+                </tr>
+
+                {% for i in content_list.object_list %}
+                    <tr>
+                        <td align='center' class='spacetable'>
+                            <a href='{{ request.channel_url }}manager/statistic/info/{{i.id}}/'>
+                                <img class ='thumbvideo' src='{{i|thumbnail:"35x28"}}' width='35' height='28' />
+                            </a>
+                        </td>
+                        <td class='spacetable'>{{i.get_name}}</td>
+                        <td class='spacetable'>
+                            {% if i.videocategory_set.all.0 %}
+                                {{i.videocategory_set.all.0.category.name}}
+                            {% else %}
+                                Sem Categoria
+                            {% endif %}
+                        </td>
+                        <td align='center' class='spacetable'>fazer</td>
+                        <td align='center' class='spacetable'>{{i.views}}</td>
+                        <td align='center' class='spacetable'>fazer</td>
+                        <td align='center' class='spacetable'>fazer</td>
+                    </tr>
+                {% endfor %}
+
+            </table>
+
+
+        </fieldset>
+
+    </li>
+
+</ul>
+
+    {% block block_pagination %}
+
+        <div class="pagination">
+            {% if content_list %}
+             <ul id='pagination-digg'>
+                {% if content_list.has_previous %}
+                    <li class='previous'><a href='{{ request.channel_url }}{{ digg_url }}page/{{ content_list.previous_page_number }}/'> Anterior </a></li>
+                {% else %}
+                    <li class='previous'>Anterior </li>
+                {% endif %}
+                    {% for num in content_list.page_range %}
+                    {% if not num %} ...  {# literally dots #}
+                    {% else %}
+                    {# pagelink num #}
+                            {% ifequal num content_list.number %}
+                            <li class="active">{{ num }}</li>
+                            {% else %}
+                                {% if tag and not category_id %}
+                                    <li><a href="{{ request.channel_url }}{{ digg_url }}page/{{ num }}/tag/{{ filter }}/">{{ num }}</a></li>
+                                {% endif %}
+
+                                {% if tag and category_id %}
+                                    <li><a href="{{ request.channel_url }}{{ digg_url }}category/ {{ category_id }}/page/{{ num }}/tag/{{ filter }}/">{{ num }}</a></li>
+                                {% endif %}
+
+                                {% if category_id and not tag %}
+                                    <li><a href="{{ request.channel_url }}{{ digg_url }}category/{{category_id}}/page/{{ num }}">{{ num }}</a></li>
+                                {% endif %}
+
+                                {% if filtro and not page %}
+                                    <li><a href="{{ request.channel_url }}{{ digg_url }}filter/{{ filtro }}">{{ num }}</a></li>
+                                {% endif %}
+
+                                {% if filtro and page %}
+                                    <li><a href="{{ request.channel_url }}{{ digg_url }}filter/{{ filtro }}/page/{{ num }}">{{ num }}</a></li>
+                                {% endif %}
+
+                                {% if not tag and not category_id %}
+                                    <li><a href="{{ request.channel_url }}{{ digg_url }}page/{{ num }}/">{{ num }}</a></li>
+                                {% endif %}
+                            {% endifequal %}
+                    {% endif %}
+                    {% endfor %}
+                {% if content_list.has_next %}
+                    <li class="previous"><a href="{{ request.channel_url }}{{ digg_url }}page/{{ content_list.next_page_number }}/"> Próximo </a></li>
+                {% else %}
+                    <li class="previous">Próximo</li>
+                {% endif %}
+            </ul>
+            {% endif %}
+        </div>
+
+    {% endblock %}
+
+{% endblock %}

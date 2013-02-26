@@ -1,0 +1,21 @@
+.container {width:100%; margin:0 auto; position:relative;}
+.buttom,.buttom2{padding:11px 20px 10px;}
+
+#header{ padding:0;}
+#header #header-text {right:25px; text-align:right; margin:0;}
+#header #search{position:absolute; width:30%; top:60px; right:25px;}
+#header #menu{position:static;-webkit-border-radius: 0;-moz-border-radius: 0; border-radius: 0;border:none; width:100%;border-top:1px solid #000;}
+#header #menu ul li{display:inline;}
+#header #menu ul li a{float:none; -webkit-border-radius: 0;-moz-border-radius: 0; border-radius: 0; display:inline-block;}
+#header #menu ul li a:hover{background:#154F65; }
+
+#content .video .player{width:590px; height:330px; margin:0 auto 10px; float:none;}
+#content .video .player object{width:590px; height:330px;}
+#content .video .description{width:100%; height:auto; margin-bottom:10px; float:none;}
+
+#content .video .playerlive{margin:0 auto 10px; float:none;}
+#content .video .descriptionlive{margin:0 auto 10px; float:none;}
+#content .video iframe.elearning{width: 90%}
+
+#footer {padding:20px 0;}
+.tia {display: none;}

@@ -1,0 +1,15 @@
+{% load extra_filter %}
+
+<div>
+	{% for num in content_list.page_range %}
+		{% if not num %}
+			<span class="pontos">...</span>
+		{% else %}
+			{% ifequal num content_list.number %}
+				<span class="selected">{{ num|zeroleft:1 }}</span>
+			{% else %}
+				<span onclick="window.location='{{ channel_url }}{{ url }}{{ num }}/{{ var_search }}';">{{ num|zeroleft:1 }}</span>
+			{% endifequal %}
+		{% endif %}
+	{% endfor %}
+</div>

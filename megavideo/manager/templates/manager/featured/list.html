@@ -1,0 +1,143 @@
+{% extends 'manager/list.html' %}
+
+{% load miniature %}
+{% load stars %}
+
+{% block css_script %}
+
+    <link href="{{STATIC_URL}}/static/manager/css/main.css" rel="stylesheet" type="text/css" media="screen" />
+    <link href="{{STATIC_URL}}/static/manager/css/digg.css" rel="stylesheet" type="text/css" media="screen" />
+    <link href="{{STATIC_URL}}/static/manager/css/sortListUI.css" rel="stylesheet" type="text/css" media="screen" />
+	<link href="{{STATIC_URL}}/static/manager/css/jquery.mcdropdown.css" media="screen" type="text/css" rel="stylesheet">
+	
+{% endblock %}
+
+{% block js_script %}
+    <script type="text/javascript" src="{{STATIC_URL}}/static/manager/js/jquery.jqModal.js"> </script>
+    <script type="text/javascript" src="{{STATIC_URL}}/static/manager/js/jquery.mcdropdown.js"> </script>
+    <script type="text/javascript" src="{{STATIC_URL}}/static/manager/js/jquery.dd.js"> </script>
+	<script type="text/javascript" src="{{STATIC_URL}}/static/manager/js/feature.js"> </script>
+{% endblock %}
+
+{% block content_header %}
+
+{% endblock %}
+
+{% block list %}
+
+	<table cellpadding="0" cellspacing="0" width="100%" class="destaque">
+		<tr>
+			<th width="40%" class="title">
+			<div style="padding-top:4px; font-size:18px; float:left;  ">
+			Vídeo de destaque
+			</div>
+			<a href="{{ request.channel_url }}manager/featured/addvideos/" title="Adicionar video em destaque" style="float:right; text-decoration: none; color: #000;">
+                 <img src="{{STATIC_URL}}/static/manager/images/bt_selecionar_video.png" border="0" align="left" style="padding: 0 10px 0 50px;" />
+             </a>
+			</th>
+			<th width="60%" class="title">Categoria de destaque</th>
+		</tr>
+		<tr>
+			<td align="center">
+				<table cellpadding="0" cellspacing="15" width="100%">
+					<tr>
+						{% if video_list %}
+							<td>
+
+								{% for i in video_list %}
+
+									<table cellpadding="0" cellspacing="5" width="100%" class="destaque_video">
+										<tr>
+											<td>
+												<table cellpadding="0" cellspacing="0" width="112" class="video">
+													<tr>
+														<td colspan="4" style='background-color:#e2e2e2; border:1px solid #CCC; padding:5px;'>
+															{% if i.name %}
+													            {% if i|thumbnail:"435x245" %}
+													                <a href='{{ request.channel_url }}manager/featured/addvideos/' content="{{ i.get_name }}" class="tip">
+													                    <img src='{{ i|thumbnail:"435x245" }}' width='435' height='245' />
+													                </a>
+													            {% endif %}
+													        {% endif %}
+														</td>
+													</tr>
+												   <tr>
+                                                 <td height="20" colspan="2" class="titulo" align="left">
+                                                     <h2 style='width:430px; padding-top:10px'>{{ i.get_name }}</h2>
+                                                 </td>
+                                             </tr>
+                                             <tr>
+                                                 <td align="right" height="20" width="85%">
+                                                     <img src="{{STATIC_URL}}/static/manager/images/bt_excluir1.png" class='btn exclude' target_id='{{ video_id }}' 
+                                                         url="{{ request.channel_url }}manager/featured/" msg="Você tem certeza que deseja excluir este vídeo em destaque?" 
+                                                             title='Excluir vídeo' border='0' />
+                                                 <a width="15%" height="20" class="btn exclude" target_id='{{ video_id }}' 
+                                                         url="{{ request.channel_url }}manager/featured/" msg="Você tem certeza que deseja excluir este vídeo em destaque?" 
+                                                             title='Excluir vídeo' style='font-size:16px; margin-bottom:10px'>
+                                                     Remover
+                                                 </a>
+                                             </tr>
+												</table>
+											</td>
+										</tr>
+									</table>
+									
+								{% endfor %}
+
+							</td>
+						{% else %}
+							<td align="left">
+								<a href="{{ request.channel_url }}manager/featured/addvideos/" title="Adicionar video em destaque" style=" text-decoration: none; color: #000;">
+									<p style="padding-left: 50px; padding-bottom: 5px; padding-top:15px">Selecionar vídeo de destaque</p>
+									<img src="{{STATIC_URL}}/static/manager/images/bt_selecionar_video.png" border="0" align="left" style="padding: 0 10px 0 50px;" />
+								</a>
+							</td>
+						{% endif %}
+					</tr>
+				</table>
+			</td>
+			
+			<td align="center" valign="top">
+				<table cellpadding="0" cellspacing="4" width="460" class="destaque_category">
+					<tr>
+						<td align="left" style="padding-top: 20px">
+						Selecione a categoria que será exibida como destaque
+						<div id="blockCategory">{{ list_category }}</div>
+						</td>
+					</tr>
+				</table>
+			</td>
+		</tr>	
+	</table>
+
+{% endblock %}
+
+{% block confirm %}
+
+<!-- Confirm Dialog -->
+<div class="jqmConfirm" id="confirm">
+
+    <div id="ex3b" class="jqmConfirmWindow">
+
+        <div class="jqmConfirmTitle clearfix">
+            <h1>Confirmação</h1>
+            <a href="#" class="jqmClose"><em>Close</em></a>
+        </div>
+
+        <div class="jqmConfirmContent">
+            <p class="jqmConfirmMsg"></p>
+        </div>
+
+        <table class="jqmButtons">
+            <tr>
+                <td width="40%" align="right" class="sim" id='1'><img src="{{STATIC_URL}}/static/manager/images/bt_ativo.gif" title="Sim" /> Sim</td>
+                <td width="20%">&nbsp;</td>
+                <td width="40%" align="left" class="no" id='0'><img src="{{STATIC_URL}}/static/manager/images/bt_remove.gif" title="Não" /> Não</td>
+            </tr>
+        </table>
+
+    </div>
+
+</div>
+
+{% endblock %}

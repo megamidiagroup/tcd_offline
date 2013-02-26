@@ -1,0 +1,22 @@
+ul.sortListUI {
+    margin-top: 10px;
+    color: #3E455F;
+    list-style: none;
+    padding: 10px 0;
+    width: 590px;
+    position: relative;
+    list-style: none;
+    padding: 0;
+}
+
+ul.sortListUI li {
+	cursor: pointer;
+    border: 1px solid #fff;
+    display: block;
+    margin: 1px;
+    padding: 5px;
+}
+
+ul.sortListUI li:hover {
+    border: 1px solid #000;
+}

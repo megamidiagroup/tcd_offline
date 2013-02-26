@@ -1,0 +1,22 @@
+{% extends 'manager/main.html' %}
+
+{% block main %}
+<div id='main'>
+<h1>Upload de Vídeos</h1>
+<div id='upload_flash'>
+    <object  id="globalnav-object" classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000" codebase="http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=8,0,0,0" width="268" height="99" >
+        <param name="movie" value="{{STATIC_URL}}/static/manager/swf/upload.swf?uploadUrl=/vflow/upload/" />
+
+        <param name="menu" value="false" />
+        <param name="quality" value="high" />
+        <param name="wmode" value="transparent" />
+        <param name="allowFullScreen" value="true" />
+        <param name="playAuto" value="false" />
+        <embed src="{{STATIC_URL}}/static/manager/swf/upload.swf?&uploadUrl=/vflow/upload/" allowFullScreen="true" type="application/x-shockwave-flash" pluginspage="http://www.macromedia.com/go/getflashplayer" playAuto="False" FlashVars="" menu="false" quality="high" id="player_flash" width="268" height="99"></embed>
+    </object>
+</div>
+<h1>Importação FTP</h1>
+
+<h1>Envio por e-mail</h1>
+</div>
+{% endblock %}

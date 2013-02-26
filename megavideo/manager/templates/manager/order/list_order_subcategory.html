@@ -1,0 +1,13 @@
+{% load super_truncate %}
+
+{% if subcategory_list.count %}
+	{% for i in subcategory_list %}
+	   <li id='{{i.id}}' parentid='{{i.parent.id}}' class='{% ifequal i.id selected %} selected {% endifequal %}' >
+	       {{ i.name|super_truncatewords:"10-15" }}
+	   </li>
+	{% endfor %}
+{% else %}
+    <li>
+       Não existe subcategorias cadastradas
+   </li>
+{% endif %}
