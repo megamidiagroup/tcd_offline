@@ -57,6 +57,10 @@ if install and install == '--install':
     
     if os.path.islink('/etc/nginx/sites-enabled/default'):
         os.system('sudo rm /etc/nginx/sites-enabled/default')
+        
+    sh.cp('%s/tcd /etc/init.d/tcd' % MODPATH)
+    
+    os.system('sudo /etc/init.d/tcd')
     
     os.system('sudo /etc/init.d/nginx restart')
     

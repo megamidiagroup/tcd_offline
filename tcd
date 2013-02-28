@@ -1,0 +1,13 @@
+#!/bin/bash
+
+PROJDIR="/var/www/tcd_offline"
+PIDFILE="/var/run/tcd_offline.pid"
+SOCKET="$PROJDIR/tcd_offline.sock"
+
+cd $PROJDIR
+if [ -f $PIDFILE ]; then
+    kill `cat -- $PIDFILE`
+    rm -f -- $PIDFILE
+fi
+
+exec ./manage.py runfcgi socket=$SOCKET pidfile=$PIDFILE method=prefork daemonize=true
