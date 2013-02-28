@@ -78,7 +78,7 @@ if install and install == '--install':
         sp = subprocess.Popen(["/bin/bash", "-i", "-c", "mkvirtualenv tcd"])
         sp.communicate()
         
-        sp = subprocess.Popen(["/bin/bash", "-i", "-c", "source $WORKON_HOME/bin/activate"])
+        sp = subprocess.Popen(["/bin/bash", "-i", "-c", "source $WORKON_HOME/tcd/bin/activate"])
         sp.communicate()
 
         list_program = ['yolk', 'Django==1.3.2']
