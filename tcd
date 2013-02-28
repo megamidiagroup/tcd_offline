@@ -10,4 +10,8 @@ if [ -f $PIDFILE ]; then
     rm -f -- $PIDFILE
 fi
 
+export WORKON_HOME=$PROJDIR/.virtualenvs
+source /usr/local/bin/virtualenvwrapper.sh
+workon tcd
+
 exec ./manage.py runfcgi socket=$SOCKET pidfile=$PIDFILE method=prefork daemonize=true

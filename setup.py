@@ -52,15 +52,18 @@ if install and install == '--install':
                     'python-setuptools']
 
     os.system('sudo apt-get install %s' % ' '.join(list_program))
-    
-    os.system('sudo easy_install virtualenv')
-    
+
     if upgrade and upgrade == '--upgrade' and os.path.isdir('/var/www/'):
         sh.rm('-r /var/www')
     
     if not os.path.isdir('/var/www/'):
         sh.mkdir('/var/www/')
         sh.cp(' -r %s /var/www/tcd_offline' % MODPATH)
+        os.system('sudo easy_install virtualenv')
+        if not os.path.exists('/usr/local/bin/virtualenvwrapper.sh'):
+            os.system('cd /tmp/; git clone https://github.com/bernardofire/virtualenvwrapper.git; cd virtualenvwrapper; sudo python setup.py install')
+            os.system('mkvirtualenv tcd')
+        os.system('virtualenv --no-site-packages /var/www/tcd_offline/.virtualenvs')
 
     sh.find('/etc/nginx/nginx.conf -type f -exec sed -i "s/www-data/root/g" {} \;')
     
