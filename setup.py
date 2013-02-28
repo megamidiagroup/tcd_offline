@@ -48,9 +48,12 @@ if install and install == '--install':
     
     sh = Sh()
     
-    list_program = ['mysql-client', 'mysql-server', 'nginx', 'vim']
+    list_program = ['mysql-client', 'mysql-server', 'nginx', 'vim', 'python-virtualenv', \
+                    'python-setuptools']
 
     os.system('sudo apt-get install %s' % ' '.join(list_program))
+    
+    os.system('sudo easy_install virtualenv')
     
     if upgrade and upgrade == '--upgrade' and os.path.isdir('/var/www/'):
         sh.rm('-r /var/www')
