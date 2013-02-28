@@ -23,6 +23,11 @@ try:
 except:
     install  = ''
     
+try:
+    upgrade  = sys.argv[4]
+except:
+    upgrade  = ''
+    
 
 class Cmd(object):
     def __init__(self, cmd):
@@ -46,6 +51,9 @@ if install and install == '--install':
     list_program = ['mysql-client', 'mysql-server', 'nginx', 'vim']
 
     os.system('sudo apt-get install %s' % ' '.join(list_program))
+    
+    if upgrade and upgrade == '--upgrade' and os.path.isdir('/var/www/'):
+        sh.rm('-r /var/www')
     
     if not os.path.isdir('/var/www/'):
         sh.mkdir('/var/www/')
