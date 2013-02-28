@@ -115,18 +115,6 @@ $(function() {
 
     $('.flexslider').flexslider();
 	
-	var category = $('#content .category');
-	if(category.length)
-	{
-		category.each(function(e){
-			var cat = $(this).find('li');
-			for(i=0; i<cat.length; i++)
-			{
-				if(i%3 == 0)$(cat[i]).addClass("clear");
-			}
-		});
-	}
-	
 	var buttom = $('.btn_logout');
 	
 	buttom.attr('onclick', 'if (confirm("Deseja sair do sistema?")){window.location="' + buttom.attr('href') + '";}');

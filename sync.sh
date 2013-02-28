@@ -1,6 +1,6 @@
 #!/usr/bin/expect
 
-# Equipe Tecnologia 2.0 - Megamidia Group - 07/2012.
+# Equipe Tecnologia 2.0 - Megamidia Group - 02/2013.
 # Atualiza TCD - OFFLINE
 
 set timeout 120
@@ -19,3 +19,6 @@ expect {
         exit 0
     }
 }
+
+spawn python setup.py
+expect

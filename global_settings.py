@@ -205,7 +205,7 @@ STORAGE     = '/var/www/tcd_offline/mega/media/storage/'
 ### MEGAVIDEO CONFIGURACOES
 
 MV_TVNAME   = 'megavideo'
-MV_TVDOMAIN = 'localhost:8080/megavideo'
+MV_TVDOMAIN = 'localhost/megavideo'
 TV_NAME     = 'Megavideo - TCD'
 
 APPEND_SLASH = True

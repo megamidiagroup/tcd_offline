@@ -152,7 +152,10 @@ class Visitor(models.Model):
 
 
     def geo_register(self):
-        data = geo.city(self.ip.ip)
+        try:
+            data = geo.city(self.ip.ip)
+        except:
+            data = None
         _code = ''
         _region = ''
 
