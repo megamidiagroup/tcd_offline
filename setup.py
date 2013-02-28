@@ -70,13 +70,13 @@ if install and install == '--install':
             os.system('cd /tmp/; git clone https://github.com/bernardofire/virtualenvwrapper.git; cd virtualenvwrapper; python setup.py install')
             
         sp = subprocess.Popen(["/bin/bash", "-i", "-c", "export WORKON_HOME=/var/www/tcd_offline/.virtualenvs"])
-        #sp.communicate()
+        sp.communicate()
         
         sp = subprocess.Popen(["/bin/bash", "-i", "-c", "source /usr/local/bin/virtualenvwrapper.sh"])
-        #sp.communicate()
+        sp.communicate()
         
         sp = subprocess.Popen(["/bin/bash", "-i", "-c", "mkvirtualenv tcd"])
-        #sp.communicate()
+        sp.communicate()
 
         list_program = ['yolk', 'Django==1.3.2']
         
