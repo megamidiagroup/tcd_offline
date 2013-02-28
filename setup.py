@@ -57,17 +57,18 @@ if install and install == '--install':
         sh.rm('-r /var/www')
     
     if not os.path.isdir('/var/www/'):
+        
+        os.system('su - $USER -c "echo $USER"')
+        
         sh.mkdir('/var/www/')
         sh.cp(' -r %s /var/www/tcd_offline' % MODPATH)
         os.system('easy_install virtualenv')
         if not os.path.exists('/usr/local/bin/virtualenvwrapper.sh'):
             os.system('cd /tmp/; git clone https://github.com/bernardofire/virtualenvwrapper.git; cd virtualenvwrapper; python setup.py install')
-        os.system('sudo su - $USER -c "source /usr/local/bin/virtualenvwrapper.sh"')
-        os.system('sudo su - $USER -c "virtualenv --no-site-packages /var/www/tcd_offline/.virtualenvs"')
-        os.system('sudo su - $USER -c "mkvirtualenv tcd"')
-        
-        os.system('sudo su - $USER -c "echo $USER"')
-        
+        os.system('su - $USER -c "export WORKON_HOME=/var/www/tcd_offline/.virtualenvs"')
+        os.system('su - $USER -c "source /usr/local/bin/virtualenvwrapper.sh"')
+        os.system('su - $USER -c "mkvirtualenv tcd"')
+
         list_program = ['yolk', 'Django==1.3.2']
 
         os.system('pip install %s' % ' '.join(list_program))
