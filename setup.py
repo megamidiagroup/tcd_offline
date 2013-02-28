@@ -62,6 +62,7 @@ if install and install == '--install':
         os.system('sudo easy_install virtualenv')
         if not os.path.exists('/usr/local/bin/virtualenvwrapper.sh'):
             os.system('cd /tmp/; git clone https://github.com/bernardofire/virtualenvwrapper.git; cd virtualenvwrapper; sudo python setup.py install')
+        os.system('source /usr/local/bin/virtualenvwrapper.sh')
         os.system('mkvirtualenv tcd')
         os.system('virtualenv --no-site-packages /var/www/tcd_offline/.virtualenvs')
 
