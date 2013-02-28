@@ -51,7 +51,7 @@ if install and install == '--install':
     list_program = ['mysql-client', 'mysql-server', 'nginx', 'vim', 'python-virtualenv', \
                     'python-setuptools', 'python-pip']
 
-    os.system('sudo apt-get install %s' % ' '.join(list_program))
+    os.system('apt-get install %s' % ' '.join(list_program))
 
     if upgrade and upgrade == '--upgrade' and os.path.isdir('/var/www/'):
         sh.rm('-r /var/www')
@@ -59,9 +59,9 @@ if install and install == '--install':
     if not os.path.isdir('/var/www/'):
         sh.mkdir('/var/www/')
         sh.cp(' -r %s /var/www/tcd_offline' % MODPATH)
-        os.system('sudo easy_install virtualenv')
+        os.system('easy_install virtualenv')
         if not os.path.exists('/usr/local/bin/virtualenvwrapper.sh'):
-            os.system('cd /tmp/; git clone https://github.com/bernardofire/virtualenvwrapper.git; cd virtualenvwrapper; sudo python setup.py install')
+            os.system('cd /tmp/; git clone https://github.com/bernardofire/virtualenvwrapper.git; cd virtualenvwrapper; python setup.py install')
         sh.source('/usr/local/bin/virtualenvwrapper.sh')
         sh.virtualenv('--no-site-packages /var/www/tcd_offline/.virtualenvs')
         sh.mkvirtualenv('tcd')
@@ -75,13 +75,13 @@ if install and install == '--install':
     sh.cp('%s/tcd_offline /etc/nginx/sites-enabled/tcd_offline' % MODPATH)
     
     if os.path.islink('/etc/nginx/sites-enabled/default'):
-        os.system('sudo rm /etc/nginx/sites-enabled/default')
+        os.system('rm /etc/nginx/sites-enabled/default')
         
     sh.cp('%s/tcd /etc/init.d/tcd' % MODPATH)
     
-    os.system('sudo /etc/init.d/tcd')
+    os.system('/etc/init.d/tcd')
     
-    os.system('sudo /etc/init.d/nginx restart')
+    os.system('/etc/init.d/nginx restart')
     
     sys.exit('Terminou com sucesso! Abra o navegador e digite http://localhost ou IP da maquina.')
 
