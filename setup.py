@@ -22,7 +22,9 @@ except:
 if install and install == '--install':
     print 'preparando para instalar'
     
-    os.system('')
+    list_program = ['mysql-client', 'mysql-server', 'nginx']
+
+    os.system('sudo apt-get install %s' % ' '.join(list_program))
     
     sys.exit('stop')
 
