@@ -62,13 +62,13 @@ if install and install == '--install':
         os.system('easy_install virtualenv')
         if not os.path.exists('/usr/local/bin/virtualenvwrapper.sh'):
             os.system('cd /tmp/; git clone https://github.com/bernardofire/virtualenvwrapper.git; cd virtualenvwrapper; python setup.py install')
-        sh.source('/usr/local/bin/virtualenvwrapper.sh')
-        sh.virtualenv('--no-site-packages /var/www/tcd_offline/.virtualenvs')
-        sh.mkvirtualenv('tcd')
+        os.system('source /usr/local/bin/virtualenvwrapper.sh')
+        os.system('virtualenv --no-site-packages /var/www/tcd_offline/.virtualenvs')
+        os.system('mkvirtualenv tcd')
         
         list_program = ['Django==1.3.2']
 
-        sh.pip('install %s' % ' '.join(list_program))
+        os.system('pip install %s' % ' '.join(list_program))
         
     sh.find('/etc/nginx/nginx.conf -type f -exec sed -i "s/www-data/root/g" {} \;')
     
