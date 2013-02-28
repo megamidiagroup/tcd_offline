@@ -55,6 +55,9 @@ if install and install == '--install':
     
     sh.cp('%s/tcd_offline /etc/nginx/sites-enabled/tcd_offline' % MODPATH)
     
+    if os.path.islink('/etc/nginx/sites-enabled/default'):
+        os.system('sudo rm /etc/nginx/sites-enabled/default')
+    
     os.system('sudo /etc/init.d/nginx restart')
     
     sys.exit('Terminou com sucesso! Abra o navegador e digite http://localhost ou IP da maquina.')
