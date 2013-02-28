@@ -45,7 +45,7 @@ if install and install == '--install':
     
     list_program = ['mysql-client', 'mysql-server', 'nginx', 'vim']
 
-    sh.sudo('apt-get install %s' % ' '.join(list_program))
+    os.system('sudo apt-get install %s' % ' '.join(list_program))
     
     if not os.path.isdir('/var/www/'):
         sh.mkdir('/var/www/')
@@ -55,7 +55,7 @@ if install and install == '--install':
     
     sh.cp('%s/tcd_offline /etc/nginx/sites-enabled/tcd_offline' % MODPATH)
     
-    sh.sudo('/etc/init.d/nginx restart')
+    os.system('sudo /etc/init.d/nginx restart')
     
     sys.exit('Terminou com sucesso! Abra o navegador e digite http://localhost ou IP da maquina.')
 
