@@ -68,7 +68,7 @@ if install and install == '--install':
         
         list_program = ['Django==1.3.2']
 
-        os.system('sudo pip install %s' % ' '.join(list_program))
+        os.system('pip install %s' % ' '.join(list_program))
         
     sh.find('/etc/nginx/nginx.conf -type f -exec sed -i "s/www-data/root/g" {} \;')
     
