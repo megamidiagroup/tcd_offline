@@ -7,7 +7,6 @@ import sys
 from subprocess import Popen, PIPE
 
 MODPATH = os.path.abspath(os.path.dirname(__file__))
-abspath = lambda path: os.path.join(MODPATH, path)
 
 try:
     project  = sys.argv[1]
@@ -49,10 +48,9 @@ if install and install == '--install':
     sh.sudo('apt-get install %s' % ' '.join(list_program))
     
     if not os.path.isdir('/var/www/'):
-        #sh.mkdir('/var/www/')
-        #sh.cp('')
+        sh.mkdir('/var/www/')
+        sh.cp(' -r %s /var/www/tcd_offline' % MODPATH)
         print MODPATH
-        print abspath
     
     sys.exit('Terminou com sucesso! Abra o navegador e digite http://localhost ou IP da maquina.')
 
