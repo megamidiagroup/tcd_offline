@@ -9,22 +9,27 @@ from subprocess import Popen, PIPE
 MODPATH = os.path.abspath(os.path.dirname(__file__))
 
 try:
-    project  = sys.argv[1]
+    user     = sys.argv[1]
+except:
+    sys.exit("Parametro 1: digite o usuario da maquina")
+
+try:
+    project  = sys.argv[2]
 except:
     project  = 'tcd_offline'
 
 try:
-    password = sys.argv[2]
+    password = sys.argv[3]
 except:
     password = '12345678'
     
 try:
-    install  = sys.argv[3]
+    install  = sys.argv[4]
 except:
     install  = ''
     
 try:
-    upgrade  = sys.argv[4]
+    upgrade  = sys.argv[5]
 except:
     upgrade  = ''
     
@@ -56,18 +61,15 @@ if install and install == '--install':
     if upgrade and upgrade == '--upgrade' and os.path.isdir('/var/www/'):
         sh.rm('-r /var/www')
     
-    if not os.path.isdir('/var/www/'):
-        
-        os.system('su - $USER -c "echo $USER"')
-        
+    if not os.path.isdir('/var/www/'):        
         sh.mkdir('/var/www/')
         sh.cp(' -r %s /var/www/tcd_offline' % MODPATH)
         os.system('easy_install virtualenv')
         if not os.path.exists('/usr/local/bin/virtualenvwrapper.sh'):
             os.system('cd /tmp/; git clone https://github.com/bernardofire/virtualenvwrapper.git; cd virtualenvwrapper; python setup.py install')
-        os.system('su - $USER -c "export WORKON_HOME=/var/www/tcd_offline/.virtualenvs"')
-        os.system('su - $USER -c "source /usr/local/bin/virtualenvwrapper.sh"')
-        os.system('su - $USER -c "mkvirtualenv tcd"')
+        os.system('su - %s -c "export WORKON_HOME=/var/www/tcd_offline/.virtualenvs"' % user)
+        os.system('su - %s -c "source /usr/local/bin/virtualenvwrapper.sh"' % user)
+        os.system('su - %s -c "mkvirtualenv tcd"' % user)
 
         list_program = ['yolk', 'Django==1.3.2']
 
