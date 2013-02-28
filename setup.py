@@ -60,10 +60,10 @@ if install and install == '--install':
         sh.mkdir('/var/www/')
         sh.cp(' -r %s /var/www/tcd_offline' % MODPATH)
         os.system('sudo easy_install virtualenv')
-        os.system('virtualenv --no-site-packages /var/www/tcd_offline/.virtualenvs')
         if not os.path.exists('/usr/local/bin/virtualenvwrapper.sh'):
             os.system('cd /tmp/; git clone https://github.com/bernardofire/virtualenvwrapper.git; cd virtualenvwrapper; sudo python setup.py install')
         os.system('source /usr/local/bin/virtualenvwrapper.sh')
+        os.system('virtualenv --no-site-packages /var/www/tcd_offline/.virtualenvs')
         os.system('mkvirtualenv tcd')
         
         list_program = ['Django==1.3.2']
