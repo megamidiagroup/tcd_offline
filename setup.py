@@ -53,6 +53,10 @@ if install and install == '--install':
 
     sh.find('/etc/nginx/nginx.conf -type f -exec sed -i "s/www-data/root/g" {} \;')
     
+    sh.cp('%s/tcd_offline /etc/nginx/sites-enabled/tcd_offline' % MODPATH)
+    
+    sh.sudo('/etc/init.d/nginx restart')
+    
     sys.exit('Terminou com sucesso! Abra o navegador e digite http://localhost ou IP da maquina.')
 
 
