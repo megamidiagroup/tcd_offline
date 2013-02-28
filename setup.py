@@ -43,14 +43,15 @@ if install and install == '--install':
     
     sh = Sh()
     
-    list_program = ['mysql-client', 'mysql-server', 'nginx']
+    list_program = ['mysql-client', 'mysql-server', 'nginx', 'vim']
 
     sh.sudo('apt-get install %s' % ' '.join(list_program))
     
     if not os.path.isdir('/var/www/'):
         sh.mkdir('/var/www/')
         sh.cp(' -r %s /var/www/tcd_offline' % MODPATH)
-        print MODPATH
+
+    sh.find('/etc/nginx/nginx.conf -type f -exec sed -i "s/www-data/root/g" {} \;')
     
     sys.exit('Terminou com sucesso! Abra o navegador e digite http://localhost ou IP da maquina.')
 
