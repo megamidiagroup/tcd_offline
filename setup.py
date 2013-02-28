@@ -67,7 +67,7 @@ if install and install == '--install':
         os.system('easy_install virtualenv')
         if not os.path.exists('/usr/local/bin/virtualenvwrapper.sh'):
             os.system('cd /tmp/; git clone https://github.com/bernardofire/virtualenvwrapper.git; cd virtualenvwrapper; python setup.py install')
-        os.system('echo "export WORKON_HOME=$HOME/.virtualenvs" >> /root/.bashrc; echo "source /usr/local/bin/virtualenvwrapper.sh" >> /root/.bashrc')
+        os.system('echo "export WORKON_HOME=/var/www/tcd_offline/.virtualenvs" >> /root/.bashrc; echo "source /usr/local/bin/virtualenvwrapper.sh" >> /root/.bashrc')
         os.system('su - %s -c "export WORKON_HOME=/var/www/tcd_offline/.virtualenvs"' % user)
         os.system('su - %s -c "source /usr/local/bin/virtualenvwrapper.sh"' % user)
         os.system('su - %s -c "mkvirtualenv tcd"' % user)
