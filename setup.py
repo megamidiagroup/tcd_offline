@@ -3,6 +3,7 @@
 
 import os
 import sys
+import subprocess
 
 from subprocess import Popen, PIPE
 
@@ -67,13 +68,26 @@ if install and install == '--install':
         os.system('easy_install virtualenv')
         if not os.path.exists('/usr/local/bin/virtualenvwrapper.sh'):
             os.system('cd /tmp/; git clone https://github.com/bernardofire/virtualenvwrapper.git; cd virtualenvwrapper; python setup.py install')
-        os.system('export WORKON_HOME=/var/www/tcd_offline/.virtualenvs')
-        os.system('source /usr/local/bin/virtualenvwrapper.sh')
-        os.system('mkvirtualenv tcd')
+            
+        sp = subprocess.Popen(["/bin/bash", "-i", "-c", "export WORKON_HOME=/var/www/tcd_offline/.virtualenvs"])
+        sp.communicate()
+        
+        sp = subprocess.Popen(["/bin/bash", "-i", "-c", "source /usr/local/bin/virtualenvwrapper.sh"])
+        sp.communicate()
+        
+        sp = subprocess.Popen(["/bin/bash", "-i", "-c", "mkvirtualenv tcd"])
+        sp.communicate()
+        
+        #os.system('export WORKON_HOME=/var/www/tcd_offline/.virtualenvs')
+        #os.system('source /usr/local/bin/virtualenvwrapper.sh')
+        #os.system('mkvirtualenv tcd')
 
         list_program = ['yolk', 'Django==1.3.2']
 
-        os.system('pip install %s' % ' '.join(list_program))
+        #os.system('pip install %s' % ' '.join(list_program))
+        
+        sp = subprocess.Popen(["/bin/bash", "-i", "-c", "pip install %s" % ' '.join(list_program)])
+        sp.communicate()
         
     sh.find('/etc/nginx/nginx.conf -type f -exec sed -i "s/www-data/root/g" {} \;')
     
