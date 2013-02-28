@@ -68,9 +68,9 @@ if install and install == '--install':
         if not os.path.exists('/usr/local/bin/virtualenvwrapper.sh'):
             os.system('cd /tmp/; git clone https://github.com/bernardofire/virtualenvwrapper.git; cd virtualenvwrapper; python setup.py install')
         os.system('echo "export WORKON_HOME=/var/www/tcd_offline/.virtualenvs" >> /root/.bashrc; echo "source /usr/local/bin/virtualenvwrapper.sh" >> /root/.bashrc')
-        os.system('export WORKON_HOME=/var/www/tcd_offline/.virtualenvs' % user)
-        os.system('source /usr/local/bin/virtualenvwrapper.sh' % user)
-        os.system('mkvirtualenv tcd' % user)
+        os.system('export WORKON_HOME=/var/www/tcd_offline/.virtualenvs')
+        os.system('source /usr/local/bin/virtualenvwrapper.sh')
+        os.system('mkvirtualenv tcd')
 
         list_program = ['yolk', 'Django==1.3.2']
 
