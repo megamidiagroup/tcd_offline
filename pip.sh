@@ -6,4 +6,4 @@ source /usr/local/bin/virtualenvwrapper.sh
 
 mkvirtualenv tcd
 
-pip install yolk Django==1.3.2 django-simple-captcha django_mobile south state mysql-python
+pip install yolk Django==1.3.2 django-simple-captcha django_mobile south state
