@@ -61,11 +61,13 @@ if install and install == '--install':
     
     os.system('apt-get build-dep python-mysqldb')
 
-    if upgrade and upgrade == '--upgrade' and os.path.isdir('/var/www/'):
-        sh.rm('-r /var/www')
+    if upgrade and upgrade == '--upgrade' and os.path.isdir('/var/www/tcd_offline'):
+        sh.rm('-r /var/www/tcd_offline')
     
     if not os.path.isdir('/var/www/'):        
         sh.mkdir('/var/www/')
+        if not os.path.isdir('/var/www/tcd_offline'):        
+            sh.mkdir('/var/www/tcd_offline')
         sh.cp(' -r %s /var/www/tcd_offline' % MODPATH)
         os.system('easy_install -U virtualenv south')
         if not os.path.exists('/usr/local/bin/virtualenvwrapper.sh'):
