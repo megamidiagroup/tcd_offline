@@ -106,10 +106,10 @@ if install and install == '--install':
 if not os.path.islink('/var/www/media/tcd/mega'):
     os.symlink('/var/www/tcd_offline/mega/media/mega', '/var/www/media/tcd/mega')
     
-if not os.path.islink('/var/www/media/tcd/mega'):
+if not os.path.islink('/var/www/media/tcd/ckeditor'):
     os.symlink('/var/www/tcd_offline/mega/media/ckeditor', '/var/www/media/tcd/ckeditor')
     
-if not os.path.islink('/var/www/media/tcd/mega'):
+if not os.path.islink('/var/www/media/tcd/admin_tools'):
     os.symlink('/var/www/tcd_offline/mega/media/admin_tools', '/var/www/media/tcd/admin_tools')
 
 os.system('mysql -u root -p%s %s < /var/www/tcd.sql' % (password, project))
