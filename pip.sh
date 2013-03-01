@@ -16,6 +16,7 @@ pip install south
 pip install state
 pip install MySQL-python
 pip install django-ckeditor
+pip install django-crequest
 
 cd /tmp
 git clone https://github.com/guillaumeesquevin/django-colors.git
