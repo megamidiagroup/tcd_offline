@@ -8,4 +8,11 @@ mkvirtualenv tcd
 
 workon tcd
 
-pip install yolk Django==1.3.2 django-simple-captcha django_mobile south state MySQL-python django-admin-tools
+pip install yolk
+pip install Django==1.3.2
+pip install django-simple-captcha
+pip install django_mobile
+pip install south
+pip install state
+pip install MySQL-python
+pip install django-admin-tools
