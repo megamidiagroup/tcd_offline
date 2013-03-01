@@ -65,7 +65,7 @@ if install and install == '--install':
     if not os.path.isdir('/var/www/'):        
         sh.mkdir('/var/www/')
         sh.cp(' -r %s /var/www/tcd_offline' % MODPATH)
-        os.system('easy_install -U virtualenv south mysql-python')
+        os.system('easy_install -U virtualenv south')
         if not os.path.exists('/usr/local/bin/virtualenvwrapper.sh'):
             os.system('cd /tmp/; git clone https://github.com/bernardofire/virtualenvwrapper.git; cd virtualenvwrapper; python setup.py install')
             
