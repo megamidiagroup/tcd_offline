@@ -55,7 +55,7 @@ if install and install == '--install':
     sh = Sh()
     
     list_program = ['mysql-client', 'mysql-server', 'nginx', 'vim', 'python-virtualenv', \
-                    'python-setuptools', 'python-pip', 'python-mysqldb']
+                    'python-setuptools', 'python-pip', 'build-dep', 'python-mysqldb']
 
     os.system('apt-get install %s' % ' '.join(list_program))
 
