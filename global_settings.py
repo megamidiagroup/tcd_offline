@@ -167,7 +167,7 @@ EMAIL_PORT = 587
 EMAIL_SUBJECT_PREFIX = u'[TCD]'
 EMAIL_USE_TLS = True
 
-CKEDITOR_UPLOAD_PATH = '/var/www/media/tcd/storage/uploads'
+CKEDITOR_UPLOAD_PATH = '/var/www/tcd_offline/mega/media/storage/uploads'
 
 CKEDITOR_CONFIGS = {
     'default': {

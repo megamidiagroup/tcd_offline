@@ -15,4 +15,14 @@ pip install django_mobile
 pip install south
 pip install state
 pip install MySQL-python
-pip install django-admin-tools
+pip install django-ckeditor
+
+cd /tmp
+git clone https://github.com/guillaumeesquevin/django-colors.git
+cd django-colors
+python setup.py install
+
+cd /tmp
+git clone https://github.com/coxmediagroup/django-admin-tools.git
+cd django-admin-tools
+python setup.py install
