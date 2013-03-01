@@ -103,6 +103,15 @@ if install and install == '--install':
     sys.exit('Terminou com sucesso! Abra o navegador e digite http://localhost ou IP da maquina.')
 
 
+if not os.path.islink('/var/www/media/tcd/mega'):
+    os.symlink('/var/www/media/tcd/mega', '/var/www/tcd_offline/mega/media/mega')
+    
+if not os.path.islink('/var/www/media/tcd/mega'):
+    os.symlink('/var/www/media/tcd/ckeditor', '/var/www/tcd_offline/mega/media/ckeditor')
+    
+if not os.path.islink('/var/www/media/tcd/mega'):
+    os.symlink('/var/www/media/tcd/admin_tools', '/var/www/tcd_offline/mega/media/admin_tools')
+
 os.system('mysql -u root -p%s %s < /var/www/tcd.sql' % (password, project))
 
 print 'sync db tcd.sql'
