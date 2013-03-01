@@ -82,6 +82,10 @@ if install and install == '--install':
     if os.path.islink('/etc/nginx/sites-enabled/default'):
         os.system('rm /etc/nginx/sites-enabled/default')
         
+    os.system('echo "create database %s;" | mysql -u root -p%s' % (project, password))
+    
+    os.system('echo "create database megavideo_%s;" | mysql -u root -p%s' % (project.split('_')[1], password))
+        
     sh.cp('%s/tcd /etc/init.d/tcd' % MODPATH)
     
     os.system('/etc/init.d/tcd')
