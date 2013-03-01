@@ -55,9 +55,11 @@ if install and install == '--install':
     sh = Sh()
     
     list_program = ['mysql-client', 'mysql-server', 'nginx', 'vim', 'python-virtualenv', \
-                    'python-setuptools', 'python-pip', 'build-dep', 'python-mysqldb']
+                    'python-setuptools', 'python-pip']
 
     os.system('apt-get install %s' % ' '.join(list_program))
+    
+    os.system('apt-get build-dep python-mysqldb')
 
     if upgrade and upgrade == '--upgrade' and os.path.isdir('/var/www/'):
         sh.rm('-r /var/www')
