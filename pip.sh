@@ -19,6 +19,11 @@ pip install django-ckeditor
 pip install django-crequest
 pip install BeautifulSoup
 pip install flup
+pip install django-flash
+pip install django-tagging
+pip install PIL
+pip install reportlab
+pip install simplejson
 
 cd /tmp
 git clone https://github.com/guillaumeesquevin/django-colors.git

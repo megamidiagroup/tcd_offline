@@ -88,6 +88,12 @@ if install and install == '--install':
         
     sh.cp('%s/tcd /etc/init.d/tcd' % MODPATH)
     
+    if not os.path.isdir('/var/log/megavideo'):        
+        sh.mkdir('/var/log/megavideo')
+        
+    if not os.path.isdir('/var/log/tcd'):
+        sh.mkdir('/var/log/tcd')
+    
     os.system('/etc/init.d/tcd')
     
     os.system('/etc/init.d/nginx restart')

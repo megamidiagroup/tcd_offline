@@ -20,5 +20,5 @@ expect {
     }
 }
 
-spawn python setup.py 'root'
+spawn python setup.py root
 expect

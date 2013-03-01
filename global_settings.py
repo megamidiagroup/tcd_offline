@@ -324,7 +324,7 @@ THUMBNAIL_PROCESSORS = (
     'sorl.thumbnail.processors.filters',
 )
 
-GEOIP_PATH = '/var/www/geoip'
+GEOIP_PATH = '/var/www/tcd_offline/geoip'
 
 STATIC_ROOT = MEDIA_ROOT + 'megavideo/static/'
 
