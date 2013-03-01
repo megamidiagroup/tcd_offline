@@ -65,11 +65,13 @@ if install and install == '--install':
     if not os.path.isdir('/var/www/'):        
         sh.mkdir('/var/www/')
         sh.cp(' -r %s /var/www/tcd_offline' % MODPATH)
-        os.system('easy_install -U virtualenv south distribute')
+        os.system('easy_install -U virtualenv south distribute mysql-python')
         if not os.path.exists('/usr/local/bin/virtualenvwrapper.sh'):
             os.system('cd /tmp/; git clone https://github.com/bernardofire/virtualenvwrapper.git; cd virtualenvwrapper; python setup.py install')
             
         os.system('./pip.sh')
+        os.system('chmod 775 /home/%s/.virtualenvs/hook.log' % user)
+        os.system('chown root:%s /home/%s/.virtualenvs/hook.log' % (user, user))
         
     sh.find('/etc/nginx/nginx.conf -type f -exec sed -i "s/www-data/root/g" {} \;')
     
