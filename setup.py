@@ -69,7 +69,7 @@ if install and install == '--install':
     if not os.path.isdir('/var/www/tcd_offline'):        
         sh.mkdir('/var/www/tcd_offline')
         sh.cp(' -r %s /var/www/' % MODPATH)
-        os.system('easy_install -U virtualenv south')
+        os.system('easy_install -U virtualenv south lxml pyamf')
         if not os.path.exists('/usr/local/bin/virtualenvwrapper.sh'):
             os.system('cd /tmp/; git clone https://github.com/bernardofire/virtualenvwrapper.git; cd virtualenvwrapper; python setup.py install')
             

@@ -24,6 +24,9 @@ pip install django-tagging
 pip install PIL
 pip install reportlab
 pip install simplejson
+pip install lxml
+pip install pyamf
+pip install django-grappelli
 
 cd /tmp
 git clone https://github.com/guillaumeesquevin/django-colors.git
