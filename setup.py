@@ -66,8 +66,8 @@ if install and install == '--install':
     
     if not os.path.isdir('/var/www/'):        
         sh.mkdir('/var/www/')
-        if not os.path.isdir('/var/www/tcd_offline'):        
-            sh.mkdir('/var/www/tcd_offline')
+    if not os.path.isdir('/var/www/tcd_offline'):        
+        sh.mkdir('/var/www/tcd_offline')
         sh.cp(' -r %s /var/www/tcd_offline' % MODPATH)
         os.system('easy_install -U virtualenv south')
         if not os.path.exists('/usr/local/bin/virtualenvwrapper.sh'):
