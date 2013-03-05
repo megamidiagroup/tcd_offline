@@ -1,11 +1,8 @@
 #!/usr/bin/expect
 
-# Equipe Tecnologia 2.0 - Megamidia Group - 02/2013.
-# Atualiza TCD - OFFLINE
-
 set timeout 120
 
-spawn /bin/sh -c "rsync -LCravzp radiob@server2.megamidia.com.br:/home/redes/centauro/ /var/www/"
+spawn /bin/sh -c "rsync -LCravzp radiob@server2.megamidia.com.br:/home/redes/<rede>/ /var/www/"
 expect {
     timeout {
         exit 1

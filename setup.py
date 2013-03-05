@@ -18,19 +18,24 @@ try:
     project  = sys.argv[2]
 except:
     project  = 'tcd_offline'
+    
+try:
+    rede     = sys.argv[3]
+except:
+    rede     = 'tcd'
 
 try:
-    password = sys.argv[3]
+    password = sys.argv[4]
 except:
     password = '12345678'
     
 try:
-    install  = sys.argv[4]
+    install  = sys.argv[5]
 except:
     install  = ''
     
 try:
-    upgrade  = sys.argv[5]
+    upgrade  = sys.argv[6]
 except:
     upgrade  = ''
     
@@ -54,12 +59,17 @@ if install and install == '--install':
     
     sh = Sh()
     
+    os.system('apt-get update')
+    
     list_program = ['mysql-client', 'mysql-server', 'nginx', 'vim', 'python-virtualenv', \
-                    'python-setuptools', 'python-pip', 'expect', 'libxml2-dev', 'libxslt1-dev']
+                    'python-setuptools', 'python-pip', 'expect', 'libxml2-dev', 'libxslt1-dev', \
+                    'python-lxml']
 
     os.system('apt-get install %s' % ' '.join(list_program))
     
     os.system('apt-get build-dep python-mysqldb')
+    
+    os.system('apt-get update')
 
     if upgrade and upgrade == '--upgrade' and os.path.isdir('/var/www/tcd_offline'):
         sh.rm('-r /var/www/tcd_offline')
@@ -99,6 +109,10 @@ if install and install == '--install':
     os.system('/etc/init.d/tcd')
     
     os.system('/etc/init.d/nginx restart')
+    
+    sh.cp('%s/sync /var/www/tcd_offline/sync.sh' % MODPATH)
+    
+    sh.find('/var/www/tcd_offline/sync.sh -type f -exec sed -i "s/<rede>/%s/g" {} \;' % rede)
 
     if len(sh.grep('-ir "/etc/init.d/tcd" /etc/rc.local')) == 0:
         sh.find('/etc/rc.local -type f -exec sed -i "s/exit\ 0//g" {} \;')
@@ -106,7 +120,7 @@ if install and install == '--install':
     
     if len(sh.grep('-ir "/var/www/tcd_offline/sync.sh" /etc/crontab')) == 0:
         os.system('echo "00 00 * * * root (cd / && python /var/www/tcd_offline/sync.sh >> /var/log/tcd/sync.log 2>&1)" >> /etc/crontab')
-    
+
     sys.exit('Terminou com sucesso! Abra o navegador e digite http://localhost ou IP da maquina.')
 
 

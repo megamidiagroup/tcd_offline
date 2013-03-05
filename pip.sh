@@ -8,25 +8,9 @@ mkvirtualenv tcd
 
 workon tcd
 
-pip install yolk
-pip install Django==1.3.2
-pip install django-simple-captcha
-pip install django_mobile
-pip install south
-pip install state
-pip install MySQL-python
-pip install django-ckeditor
-pip install django-crequest
-pip install BeautifulSoup
-pip install flup
-pip install django-flash
-pip install django-tagging
-pip install PIL
-pip install reportlab
-pip install simplejson
-pip install lxml
-pip install pyamf
-pip install django-grappelli
+pip install yolk Django==1.3.2 django-simple-captcha django_mobile south state MySQL-python \
+				django-ckeditor django-crequest BeautifulSoup flup django-flash django-tagging \
+					PIL reportlab simplejson lxml pyamf django-grappelli
 
 cd /tmp
 git clone https://github.com/guillaumeesquevin/django-colors.git
