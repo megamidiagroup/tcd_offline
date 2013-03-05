@@ -50,16 +50,9 @@ python setup.py install
 
 ### pip install south
 
-#cd /tmp
-#git clone ssh://deploy@$URL/var/django/tcd_offline/dependences/state.git
-#cd state
-#python setup.py install
-
-### pip install state
-
 cd /tmp
-git clone ssh://deploy@$URL/var/django/tcd_offline/dependences/MySQL-python.git
-cd MySQL-python
+git clone ssh://deploy@$URL/var/django/tcd_offline/dependences/mysql-python.git
+cd mysql-python
 python setup.py install
 
 ### pip install MySQL-python
@@ -85,10 +78,10 @@ python setup.py install
 
 ### pip install BeautifulSoup
 
-#cd /tmp
-#git clone ssh://deploy@$URL/var/django/tcd_offline/dependences/flup.git
-#cd flup
-#python setup.py install
+cd /tmp
+git clone ssh://deploy@$URL/var/django/tcd_offline/dependences/flup.git
+cd flup
+python setup.py install
 
 ### pip install flup
 
@@ -126,6 +119,13 @@ cd simplejson
 python setup.py install
 
 ### pip install simplejson
+
+cd /tmp
+git clone ssh://deploy@$URL/var/django/tcd_offline/dependences/cython.git
+cd cython
+python setup.py install
+
+### pip install "Cython>=0.17.3"
 
 cd /tmp
 git clone ssh://deploy@$URL/var/django/tcd_offline/dependences/lxml.git
