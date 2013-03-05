@@ -481,7 +481,7 @@ python setup.py install
 
 cd /tmp
 /usr/bin/expect <<EOD
-    spawn /bin/sh -c "git clone ssh://deploy@$URL/var/django/tcd_offline/dependences/distribute.git"
+    spawn /bin/sh -c "git clone ssh://deploy@$URL/var/django/tcd_offline/dependences/PyAMF.git"
     expect {
         timeout {
             exit 1
@@ -500,33 +500,7 @@ cd /tmp
     }
 EOD
 
-cd distribute
-python setup.py install
-
-### pip install distribute
-
-cd /tmp
-/usr/bin/expect <<EOD
-    spawn /bin/sh -c "git clone ssh://deploy@$URL/var/django/tcd_offline/dependences/pyamf.git"
-    expect {
-        timeout {
-            exit 1
-        }
-        -re "lost" {
-            exit 1
-        }
-        -re "No route to host" {
-            exit 1
-        }
-        -re "deploy@$URL's password:" {
-            send "$PASS\r"
-            exp_continue
-            exit 0
-        }
-    }
-EOD
-
-cd pyamf
+cd PyAMF
 python setup.py install
 
 ### pip install pyamf
