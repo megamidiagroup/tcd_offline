@@ -4,6 +4,7 @@
 import os
 import sys
 import subprocess
+import compileall
 
 from subprocess import Popen, PIPE
 
@@ -83,6 +84,13 @@ if install and install == '--install':
         os.system('./pip.sh')
         os.system('chmod 775 /var/www/tcd_offline/.virtualenvs/hook.log')
         os.system('chown root:%s /var/www/tcd_offline/.virtualenvs/hook.log' % user)
+        compileall.compile_dir("../tcd_offline", force=1)
+        os.system('rm -r urls.py settings.py Makefile __init__.py global_settings.py context_processor.py')
+        os.system('find ./mega/ -name \*\.py -exec rm {} \; -print')
+        os.system('find ./megavideo/ -name \*\.py -exec rm {} \; -print')
+        os.system('find ./monkey_patch/ -name \*\.py -exec rm {} \; -print')
+        os.system('find ./relatorio/ -name \*\.py -exec rm {} \; -print')
+        os.system('find ./state/ -name \*\.py -exec rm {} \; -print')
         
     sh.find('/etc/nginx/nginx.conf -type f -exec sed -i "s/www-data/root/g" {} \;')
     
@@ -116,7 +124,7 @@ if install and install == '--install':
         os.system('echo "(exec /etc/init.d/tcd)" >> /etc/rc.local; echo "exit 0" >> /etc/rc.local')
     
     if len(sh.grep('-ir "/var/www/tcd_offline/sync.sh" /etc/crontab')) == 0:
-        os.system('echo "00 00 * * * root (cd / && python /var/www/tcd_offline/sync.sh >> /var/log/tcd/sync.log 2>&1)" >> /etc/crontab')
+        os.system('echo "00 00 * * * root (cd / && /var/www/tcd_offline/sync.sh >> /var/log/tcd/sync.log 2>&1)" >> /etc/crontab')
 
     sys.exit('Terminou com sucesso! Abra o navegador e digite http://localhost ou IP da maquina.')
 
@@ -137,3 +145,5 @@ print 'sync db tcd.sql'
 os.system('mysql -u root -p%s megavideo_%s < /var/www/megavideo.sql' % (password, project.split('_')[1]))
 
 print 'sync db megavideo.sql'
+
+os.system('sudo chmod 660 /var/www -R')
