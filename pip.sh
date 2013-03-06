@@ -41,6 +41,7 @@ if [ $? == 1 ]; then
 echo "erro, vamos tentar pela rede interna"
 URL='10.0.1.133'
 /usr/bin/expect <<EOD
+	set timeout 120
     spawn /bin/sh -c "git clone ssh://deploy@$URL/var/django/tcd_offline/dependences/yolk.git"
     expect {
         timeout {
@@ -80,6 +81,7 @@ echo "<<<<<<<<<<<<<<<<<<<<<<"
 
 cd /tmp
 /usr/bin/expect <<EOD
+	set timeout 600
     spawn /bin/sh -c "git clone ssh://deploy@$URL/var/django/tcd_offline/dependences/django.git"
     expect {
         timeout {
@@ -113,6 +115,7 @@ echo "<<<<<<<<<<<<<<<<<<<<<<"
 
 cd /tmp
 /usr/bin/expect <<EOD
+	set timeout 600
     spawn /bin/sh -c "git clone ssh://deploy@$URL/var/django/tcd_offline/dependences/django-simple-captcha.git"
     expect {
         timeout {
@@ -146,6 +149,7 @@ echo "<<<<<<<<<<<<<<<<<<<<<<"
 
 cd /tmp
 /usr/bin/expect <<EOD
+	set timeout 600
     spawn /bin/sh -c "git clone ssh://deploy@$URL/var/django/tcd_offline/dependences/django-mobile.git"
     expect {
         timeout {
@@ -179,6 +183,7 @@ echo "<<<<<<<<<<<<<<<<<<<<<<"
 
 cd /tmp
 /usr/bin/expect <<EOD
+	set timeout 600
     spawn /bin/sh -c "git clone ssh://deploy@$URL/var/django/tcd_offline/dependences/south.git"
     expect {
         timeout {
@@ -212,6 +217,7 @@ echo "<<<<<<<<<<<<<<<<<<<<<<"
 
 cd /tmp
 /usr/bin/expect <<EOD
+	set timeout 600
     spawn /bin/sh -c "git clone ssh://deploy@$URL/var/django/tcd_offline/dependences/mysql-python.git"
     expect {
         timeout {
@@ -244,6 +250,7 @@ echo "<<<<<<<<<<<<<<<<<<<<<<"
 
 cd /tmp
 /usr/bin/expect <<EOD
+	set timeout 600
     spawn /bin/sh -c "git clone ssh://deploy@$URL/var/django/tcd_offline/dependences/django-ckeditor.git"
     expect {
         timeout {
@@ -276,6 +283,7 @@ echo "<<<<<<<<<<<<<<<<<<<<<<"
 
 cd /tmp
 /usr/bin/expect <<EOD
+	set timeout 600
     spawn /bin/sh -c "git clone ssh://deploy@$URL/var/django/tcd_offline/dependences/django-crequest.git"
     expect {
         timeout {
@@ -309,6 +317,7 @@ echo "<<<<<<<<<<<<<<<<<<<<<<"
 
 cd /tmp
 /usr/bin/expect <<EOD
+	set timeout 600
     spawn /bin/sh -c "git clone ssh://deploy@$URL/var/django/tcd_offline/dependences/BeautifulSoup.git"
     expect {
         timeout {
@@ -342,6 +351,7 @@ echo "<<<<<<<<<<<<<<<<<<<<<<"
 
 cd /tmp
 /usr/bin/expect <<EOD
+	set timeout 600
     spawn /bin/sh -c "git clone ssh://deploy@$URL/var/django/tcd_offline/dependences/flup.git"
     expect {
         timeout {
@@ -375,6 +385,7 @@ echo "<<<<<<<<<<<<<<<<<<<<<<"
 
 cd /tmp
 /usr/bin/expect <<EOD
+	set timeout 600
     spawn /bin/sh -c "git clone ssh://deploy@$URL/var/django/tcd_offline/dependences/django-flash.git"
     expect {
         timeout {
@@ -408,6 +419,7 @@ echo "<<<<<<<<<<<<<<<<<<<<<<"
 
 cd /tmp
 /usr/bin/expect <<EOD
+	set timeout 600
     spawn /bin/sh -c "git clone ssh://deploy@$URL/var/django/tcd_offline/dependences/django-tagging.git"
     expect {
         timeout {
@@ -441,6 +453,7 @@ echo "<<<<<<<<<<<<<<<<<<<<<<"
 
 cd /tmp
 /usr/bin/expect <<EOD
+	set timeout 600
     spawn /bin/sh -c "git clone ssh://deploy@$URL/var/django/tcd_offline/dependences/PIL.git"
     expect {
         timeout {
@@ -474,6 +487,7 @@ echo "<<<<<<<<<<<<<<<<<<<<<<"
 
 cd /tmp
 /usr/bin/expect <<EOD
+	set timeout 600
     spawn /bin/sh -c "git clone ssh://deploy@$URL/var/django/tcd_offline/dependences/ReportLab.git"
     expect {
         timeout {
@@ -507,6 +521,7 @@ echo "<<<<<<<<<<<<<<<<<<<<<<"
 
 cd /tmp
 /usr/bin/expect <<EOD
+	set timeout 600
     spawn /bin/sh -c "git clone ssh://deploy@$URL/var/django/tcd_offline/dependences/simplejson.git"
     expect {
         timeout {
@@ -540,6 +555,7 @@ echo "<<<<<<<<<<<<<<<<<<<<<<"
 
 cd /tmp
 /usr/bin/expect <<EOD
+	set timeout 600
     spawn /bin/sh -c "git clone ssh://deploy@$URL/var/django/tcd_offline/dependences/cython.git"
     expect {
         timeout {
@@ -573,6 +589,7 @@ echo "<<<<<<<<<<<<<<<<<<<<<<"
 
 cd /tmp
 /usr/bin/expect <<EOD
+	set timeout 600
     spawn /bin/sh -c "git clone ssh://deploy@$URL/var/django/tcd_offline/dependences/lxml.git"
     expect {
         timeout {
@@ -606,6 +623,7 @@ echo "<<<<<<<<<<<<<<<<<<<<<<"
 
 cd /tmp
 /usr/bin/expect <<EOD
+	set timeout 600
     spawn /bin/sh -c "git clone ssh://deploy@$URL/var/django/tcd_offline/dependences/PyAMF.git"
     expect {
         timeout {
@@ -639,6 +657,7 @@ echo "<<<<<<<<<<<<<<<<<<<<<<"
 
 cd /tmp
 /usr/bin/expect <<EOD
+	set timeout 600
     spawn /bin/sh -c "git clone ssh://deploy@$URL/var/django/tcd_offline/dependences/django-grappelli.git"
     expect {
         timeout {
@@ -672,6 +691,7 @@ echo "<<<<<<<<<<<<<<<<<<<<<<"
 
 cd /tmp
 /usr/bin/expect <<EOD
+	set timeout 600
     spawn /bin/sh -c "git clone ssh://deploy@$URL/var/django/tcd_offline/dependences/django-colors.git"
     expect {
         timeout {
@@ -703,6 +723,7 @@ echo "<<<<<<<<<<<<<<<<<<<<<<"
 
 cd /tmp
 /usr/bin/expect <<EOD
+	set timeout 600
     spawn /bin/sh -c "git clone ssh://deploy@$URL/var/django/tcd_offline/dependences/django-admin-tools.git"
     expect {
         timeout {
