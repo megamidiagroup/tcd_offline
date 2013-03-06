@@ -1,7 +1,5 @@
 #!/bin/bash
 
-set timeout 120
-
 export WORKON_HOME=/var/www/tcd_offline/.virtualenvs
 
 source /usr/local/bin/virtualenvwrapper.sh
