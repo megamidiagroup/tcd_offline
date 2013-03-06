@@ -1,21 +1,11 @@
 #!/bin/bash
 
-export WORKON_HOME=/var/www/tcd_offline/.virtualenvs
-
-source /usr/local/bin/virtualenvwrapper.sh
-
-mkvirtualenv tcd
-
-workon tcd
-
 URL='200.195.168.7'
 PASS='deploy'
 
-rm -rf /tmp/yolk
-
 cd /tmp
 /usr/bin/expect <<EOD
-    spawn /bin/sh -c "git clone ssh://deploy@$URL/var/django/tcd_offline/dependences/yolk.git"
+    spawn /bin/sh -c "git clone ssh://deploy@$URL/var/django/tcd_offline/dependences/virtualenvwrapper.git"
     expect {
         timeout {
             exit 1
@@ -44,7 +34,7 @@ echo "erro, vamos tentar pela rede interna"
 URL='10.0.1.133'
 /usr/bin/expect <<EOD
 	set timeout 120
-    spawn /bin/sh -c "git clone ssh://deploy@$URL/var/django/tcd_offline/dependences/yolk.git"
+    spawn /bin/sh -c "git clone ssh://deploy@$URL/var/django/tcd_offline/dependences/virtualenvwrapper.git"
     expect {
         timeout {
             exit 1
@@ -69,22 +59,32 @@ URL='10.0.1.133'
 EOD
 fi
 
-cd yolk
+cd virtualenvwrapper
 python setup.py install
 
 echo ">>>>>>>>>>>>>>>>>>>>>>"
 
-python -c 'import yolk'
-echo "yolk >> ok"
+python -c 'import virtualenvwrapper'
+echo "virtualenvwrapper >> ok"
 
 echo "<<<<<<<<<<<<<<<<<<<<<<"
 
-### pip install yolk
+### pip install virtualenvwrapper
+
+
+export WORKON_HOME=/var/www/tcd_offline/.virtualenvs
+
+source /usr/local/bin/virtualenvwrapper.sh
+
+mkvirtualenv tcd
+
+workon tcd
+
 
 cd /tmp
 /usr/bin/expect <<EOD
 	set timeout 600
-    spawn /bin/sh -c "git clone ssh://deploy@$URL/var/django/tcd_offline/dependences/virtualenvwrapper.git"
+    spawn /bin/sh -c "git clone ssh://deploy@$URL/var/django/tcd_offline/dependences/yolk.git"
     expect {
         timeout {
             exit 1
@@ -103,17 +103,17 @@ cd /tmp
     }
 EOD
 
-cd virtualenvwrapper
+cd yolk
 python setup.py install
 
 echo ">>>>>>>>>>>>>>>>>>>>>>"
 
-python -c 'import virtualenvwrapper'
-echo "virtualenvwrapper >> ok"
+python -c 'import yolk'
+echo "yolk >> ok"
 
 echo "<<<<<<<<<<<<<<<<<<<<<<"
 
-### pip install virtualenvwrapper
+### pip install yolk
 
 cd /tmp
 /usr/bin/expect <<EOD
