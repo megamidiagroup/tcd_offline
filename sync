@@ -10,6 +10,14 @@ expect {
     -re "lost" {
         exit 1
     }
+    -re "No route to host" {
+        exit 1
+    }
+    -re "continue connecting" {
+    	send "yes\r"
+        exp_continue
+        exit 0
+    }
     -re "radiob@server2.megamidia.com.br's password:" {
         send "radiob\r"
         exp_continue

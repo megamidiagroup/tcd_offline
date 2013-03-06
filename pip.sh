@@ -26,6 +26,11 @@ cd /tmp
         -re "No route to host" {
             exit 1
         }
+        -re "continue connecting" {
+        	send "yes\r"
+            exp_continue
+            exit 0
+        }
         -re "deploy@$URL's password:" {
             send "$PASS\r"
             exp_continue
@@ -48,6 +53,11 @@ URL='10.0.1.133'
         }
         -re "No route to host" {
             exit 1
+        }
+        -re "continue connecting" {
+        	send "yes\r"
+            exp_continue
+            exit 0
         }
         -re "deploy@$URL's password:" {
             send "$PASS\r"
