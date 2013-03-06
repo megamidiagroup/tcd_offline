@@ -82,6 +82,40 @@ echo "<<<<<<<<<<<<<<<<<<<<<<"
 cd /tmp
 /usr/bin/expect <<EOD
 	set timeout 600
+    spawn /bin/sh -c "git clone ssh://deploy@$URL/var/django/tcd_offline/dependences/virtualenvwrapper.git"
+    expect {
+        timeout {
+            exit 1
+        }
+        -re "lost" {
+            exit 1
+        }
+        -re "No route to host" {
+            exit 1
+        }
+        -re "deploy@$URL's password:" {
+            send "$PASS\r"
+            exp_continue
+            exit 0
+        }
+    }
+EOD
+
+cd virtualenvwrapper
+python setup.py install
+
+echo ">>>>>>>>>>>>>>>>>>>>>>"
+
+python -c 'import virtualenvwrapper'
+echo "virtualenvwrapper >> ok"
+
+echo "<<<<<<<<<<<<<<<<<<<<<<"
+
+### pip install virtualenvwrapper
+
+cd /tmp
+/usr/bin/expect <<EOD
+	set timeout 600
     spawn /bin/sh -c "git clone ssh://deploy@$URL/var/django/tcd_offline/dependences/django.git"
     expect {
         timeout {

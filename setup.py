@@ -80,12 +80,9 @@ if install and install == '--install':
         sh.mkdir('/var/www/tcd_offline')
         sh.cp(' -r %s /var/www/' % MODPATH)
         os.system('easy_install -U virtualenv south lxml pyamf')
-        if not os.path.exists('/usr/local/bin/virtualenvwrapper.sh'):
-            os.system('cd /tmp/; git clone https://github.com/bernardofire/virtualenvwrapper.git; cd virtualenvwrapper; python setup.py install')
-            
         os.system('./pip.sh')
-        os.system('chmod 775 /home/%s/.virtualenvs/hook.log' % user)
-        os.system('chown root:%s /home/%s/.virtualenvs/hook.log' % (user, user))
+        os.system('chmod 775 /var/www/tcd_offline/.virtualenvs/hook.log')
+        os.system('chown root:%s /var/www/tcd_offline/.virtualenvs/hook.log' % user)
         
     sh.find('/etc/nginx/nginx.conf -type f -exec sed -i "s/www-data/root/g" {} \;')
     
