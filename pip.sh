@@ -6,10 +6,10 @@ source /usr/local/bin/virtualenvwrapper.sh
 
 mkvirtualenv tcd
 
-workon tcd
-
 URL='200.195.168.7'
 PASS='deploy'
+
+rm -rf /tmp/yolk
 
 cd /tmp
 /usr/bin/expect <<EOD
