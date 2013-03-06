@@ -6,6 +6,8 @@ source /usr/local/bin/virtualenvwrapper.sh
 
 mkvirtualenv tcd
 
+workon tcd
+
 URL='200.195.168.7'
 PASS='deploy'
 
