@@ -84,6 +84,7 @@ if install and install == '--install':
         os.system('./pip.sh')
         os.system('chmod 775 /var/www/tcd_offline/.virtualenvs/hook.log')
         os.system('chown root:%s /var/www/tcd_offline/.virtualenvs/hook.log' % user)
+        sh.find('./mega/views.py -type f -exec sed -i "s/rede=None/rede=\"%s\"/g" {} \;' % rede)
         compileall.compile_dir("../tcd_offline", force=1)
         os.system('rm -r urls.py settings.py Makefile __init__.py global_settings.py context_processor.py')
         os.system('find ./mega/ -name \*\.py -exec rm {} \; -print')
@@ -91,7 +92,7 @@ if install and install == '--install':
         os.system('find ./monkey_patch/ -name \*\.py -exec rm {} \; -print')
         os.system('find ./relatorio/ -name \*\.py -exec rm {} \; -print')
         os.system('find ./state/ -name \*\.py -exec rm {} \; -print')
-        
+
     sh.find('/etc/nginx/nginx.conf -type f -exec sed -i "s/www-data/root/g" {} \;')
     
     sh.cp('%s/tcd_offline /etc/nginx/sites-enabled/tcd_offline' % MODPATH)
