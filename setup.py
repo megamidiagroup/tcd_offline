@@ -84,7 +84,7 @@ if install and install == '--install':
         os.system('./pip.sh')
         os.system('chmod 775 /var/www/tcd_offline/.virtualenvs/hook.log')
         os.system('chown root:%s /var/www/tcd_offline/.virtualenvs/hook.log' % user)
-        sh.find('./mega/views.py -type f -exec sed -i "s/rede=None/rede=\"%s\"/g" {} \;' % rede)
+        sh.find('./mega/views.py -type f -exec sed -i "s/rede=None/rede=\'%s\'/g" {} \;' % rede)
         compileall.compile_dir("../tcd_offline", force=1)
         os.system('rm -r urls.py settings.py Makefile __init__.py global_settings.py context_processor.py')
         os.system('find ./mega/ -name \*\.py -exec rm {} \; -print')
