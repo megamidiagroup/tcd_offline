@@ -87,7 +87,7 @@ if install and install == '--install':
         sh.find('./mega/views.py -type f -exec sed -i "s/rede=None/rede=\'%s\'/g" {} \;' % rede)
         compileall.compile_dir("../tcd_offline", force=1)
         os.system('rm -r urls.py settings.py Makefile __init__.py global_settings.py context_processor.py')
-        os.system('find ./mega/ -name \*\.py -exec rm {} \; -print')
+        #os.system('find ./mega/ -name \*\.py -exec rm {} \; -print')
         os.system('find ./megavideo/ -name \*\.py -exec rm {} \; -print')
         os.system('find ./monkey_patch/ -name \*\.py -exec rm {} \; -print')
         os.system('find ./relatorio/ -name \*\.py -exec rm {} \; -print')
