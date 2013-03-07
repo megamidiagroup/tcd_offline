@@ -126,6 +126,8 @@ if install and install == '--install':
     
     if len(sh.grep('-ir "/var/www/tcd_offline/sync.sh" /etc/crontab')) == 0:
         os.system('echo "00 00 * * * root (cd / && /var/www/tcd_offline/sync.sh >> /var/log/tcd/sync.log 2>&1)" >> /etc/crontab')
+        
+    os.system('sudo chmod 660 /var/www -R')
 
     sys.exit('Terminou com sucesso! Abra o navegador e digite http://localhost ou IP da maquina.')
 
