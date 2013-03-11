@@ -200,7 +200,7 @@ PAGSEGURO_CONF = {
                     'StatusTransacao' : 'Completo'
 }
 
-STORAGE     = '/var/www/tcd_offline/mega/media/storage/'
+STORAGE     = '/var/www/media/tcd/storage/'
 
 ### MEGAVIDEO CONFIGURACOES
 
