@@ -61,9 +61,9 @@ if action.count('--install') == 1 or action.count('--upgrade') == 1:
                     'python-setuptools', 'python-pip', 'expect', 'libxml2-dev', 'libxslt1-dev', \
                     'python-lxml']
 
-    os.system('apt-get install %s' % ' '.join(list_program))
+    os.system('apt-get install -y %s' % ' '.join(list_program))
     
-    os.system('apt-get build-dep python-mysqldb')
+    os.system('apt-get build-dep -y python-mysqldb')
     
     os.system('apt-get update')
 
