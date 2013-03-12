@@ -31,14 +31,9 @@ except:
     password = '12345678'
     
 try:
-    install  = sys.argv[5]
+    action   = sys.argv
 except:
-    install  = ''
-    
-try:
-    upgrade  = sys.argv[6]
-except:
-    upgrade  = ''
+    action   = 'no-actions'
     
 
 class Cmd(object):
@@ -55,7 +50,7 @@ class Sh(object):
         return Cmd(attribute)
 
 
-if install and install == '--install':
+if action.count('--install') == 1 or action.count('--upgrade') == 1:
     print 'preparando para instalar'
     
     sh = Sh()
@@ -72,7 +67,7 @@ if install and install == '--install':
     
     os.system('apt-get update')
 
-    if upgrade and upgrade == '--upgrade' and os.path.isdir('/var/www/tcd_offline'):
+    if action.count('--upgrade') == 1 and os.path.isdir('/var/www/tcd_offline'):
         sh.rm('-r /var/www/tcd_offline')
     
     if not os.path.isdir('/var/www/'):        
@@ -129,7 +124,17 @@ if install and install == '--install':
         
     os.system('sudo chmod 661 /var/www -R')
 
-    sys.exit('Terminou com sucesso! Abra o navegador e digite http://localhost ou IP da maquina.')
+    if action.count('--block') == 0:
+        sys.exit('Terminou com sucesso! Abra o navegador e digite http://localhost ou IP da maquina.')
+    print 'Terminou com sucesso! Abra o navegador e digite http://localhost ou IP da maquina.'
+ 
+    
+if action.count('--block') == 1:
+    print 'preparando para bloquear notebook'
+    
+    
+    
+    sys.exit('Terminou com sucesso! O computador está bloqueado. Reinicie o sistema.')
 
 
 if not os.path.islink('/var/www/media/tcd/mega'):

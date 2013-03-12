@@ -1,6 +1,6 @@
 #!/bin/bash
 
-URL='200.195.168.7'
+URL='10.0.1.133'
 PASS='deploy'
 
 cd /tmp
@@ -31,7 +31,7 @@ EOD
 
 if [ $? == 1 ]; then
 echo "erro, vamos tentar pela rede interna"
-URL='10.0.1.133'
+URL='200.195.168.7'
 /usr/bin/expect <<EOD
 	set timeout 120
     spawn /bin/sh -c "git clone ssh://deploy@$URL/var/django/tcd_offline/dependences/virtualenvwrapper.git"
