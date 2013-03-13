@@ -132,7 +132,7 @@ if action.count('--install') == 1 or action.count('--upgrade') == 1:
 if action.count('--block') == 1:
     print 'preparando para bloquear notebook'
     
-    
+    os.system('apt-get install -y xbindkeys')
     
     sys.exit('Terminou com sucesso! O computador está bloqueado. Reinicie o sistema.')
 
@@ -145,6 +145,11 @@ if not os.path.islink('/var/www/media/tcd/ckeditor'):
     
 if not os.path.islink('/var/www/media/tcd/admin_tools'):
     os.symlink('/var/www/tcd_offline/mega/media/admin_tools', '/var/www/media/tcd/admin_tools')
+    
+if os.path.isdir('/var/www/media/tcd/mega/css/template'):
+    os.system('rm -r /var/www/media/tcd/mega/css/template')
+if os.path.isdir('/var/www/media/tcd/storage/template'):
+    os.symlink('/var/www/media/tcd/storage/template', '/var/www/tcd_offline/mega/media/mega/css/template')
 
 os.system('mysql -u root -p%s %s < /var/www/tcd.sql' % (password, project))
 

@@ -1,7 +1,0 @@
-/* template do Cencosud */
-
-body {background: #ffffff ;}#header {background: url("http://10.0.1.95/../media/tcd/storage/uploads/template/2012/12/untitled-2_1.png") repeat-x #ffc165 ;border-bottom: none;}#highlights {background: none;border-top: none;border-bottom: none;}#header #search button {background-color: #f5821e ;}#header #menu {background-color: #f5821e;border: none;}#header #menu ul li a {color: #ffffff;background-color: #f5821e;}#header #menu ul li a:hover {color: #ffffff;background-color: #007dc5;}#content {border-top: none;border-bottom: none;}#footer {color: #1f4a79;background: #d0d3da ;border-top: none;}#content .bar, .path .back {color: #ffffff;background-color: #1f4a79;}#content .barra_parceiros {color: #000000;background-color: #cccccc;}#content ul.category li a {background: none;}#content ul.category li a:hover {background: none;}#content ul.category li div {border: 2px solid #007dc5;}#content ul.category li h2 {font-size: 24px;color: #007dc5;}#login form label {color: #007dc5;}.buttom {background-color: #007dc5;color: #fafafa;}.buttom:hover {background-color: #6ba3c6;color: #ffc165;}h3, .box-title {color: #007dc5;}.flex-control-nav li a {color: #007dc5;}.flex-control-nav li a.active {color: #f5821e;}.flex-control-nav li a:hover {color: #ffc165;}.path a, .path {color: #1f4a79;}
-
-.sub_pesquisa {color: #ffffff}
-
-#login #logo {background-color: #53a7d8;border-radius: 10px;margin: 20px;}
