@@ -100,7 +100,7 @@ if action.count('--install') == 1 or action.count('--upgrade') == 1:
     os.system('echo "CREATE DATABASE IF NOT EXISTS megavideo_%s;" | mysql -u root -p%s' % (project.split('_')[1], password))
         
     sh.cp('%s/tcd /etc/init.d/tcd' % MODPATH)
-    sh.find('/etc/init.d/tcd -type f -exec sed -i "s/<rede>/%s/g" {} \;' % rede)
+    sh.find('/etc/init.d/tcd -type f -exec sed -i "s/<rede>/%s/g" {} \;' % user)
     
     if not os.path.isdir('/var/log/megavideo'):        
         sh.mkdir('/var/log/megavideo')
