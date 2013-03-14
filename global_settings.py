@@ -188,7 +188,7 @@ CACHES = {
     }
 }
 
-AUTO_LOGOUT_DELAY = 10000 # minutos inativo == logout
+AUTO_LOGOUT_DELAY = 15 # minutos inativo == logout
 
 FACEBOOK_APP_ID = {
                     'sala4' : '198334286958308' ## teste do fulano de tal

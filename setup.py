@@ -100,6 +100,7 @@ if action.count('--install') == 1 or action.count('--upgrade') == 1:
     os.system('echo "CREATE DATABASE IF NOT EXISTS megavideo_%s;" | mysql -u root -p%s' % (project.split('_')[1], password))
         
     sh.cp('%s/tcd /etc/init.d/tcd' % MODPATH)
+    sh.find('/etc/init.d/tcd -type f -exec sed -i "s/<rede>/%s/g" {} \;' % rede)
     
     if not os.path.isdir('/var/log/megavideo'):        
         sh.mkdir('/var/log/megavideo')
@@ -133,6 +134,17 @@ if action.count('--block') == 1:
     print 'preparando para bloquear notebook'
     
     os.system('apt-get install -y xbindkeys')
+    
+    os.system('apt-get remove -y unity')
+    
+    os.system('mv /etc/init/tty* ~')
+    os.system('mv ~/tty1.conf /etc/init/')
+    
+    if not os.path.islink('/usr/local/bin/webserver.conf'):
+        os.symlink('/var/www/tcd_offline/webserver.conf', '/usr/local/bin/webserver.conf')
+        
+    if not os.path.islink('/home/%s/.xbindkeysrc' % rede):    
+        os.symlink('/var/www/tcd_offline/.xbindkeysrc', '/home/%s/.xbindkeysrc' % rede)
     
     sys.exit('Terminou com sucesso! O computador está bloqueado. Reinicie o sistema.')
 
