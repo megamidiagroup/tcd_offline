@@ -143,8 +143,8 @@ if action.count('--block') == 1:
     if not os.path.islink('/usr/local/bin/webserver.conf'):
         os.symlink('/var/www/tcd_offline/webserver.conf', '/usr/local/bin/webserver.conf')
         
-    if not os.path.islink('/home/%s/.xbindkeysrc' % rede):    
-        os.symlink('/var/www/tcd_offline/.xbindkeysrc', '/home/%s/.xbindkeysrc' % rede)
+    if not os.path.islink('/home/%s/.xbindkeysrc' % user):    
+        os.symlink('/var/www/tcd_offline/.xbindkeysrc', '/home/%s/.xbindkeysrc' % user)
     
     sys.exit('Terminou com sucesso! O computador está bloqueado. Reinicie o sistema.')
 
