@@ -59,7 +59,7 @@ if action.count('--install') == 1 or action.count('--upgrade') == 1:
     
     list_program = ['mysql-client', 'mysql-server', 'nginx', 'vim', 'python-virtualenv', \
                     'python-setuptools', 'python-pip', 'expect', 'libxml2-dev', 'libxslt1-dev', \
-                    'python-lxml']
+                    'python-lxml', 'ssh']
 
     os.system('apt-get install -y %s' % ' '.join(list_program))
     
@@ -133,12 +133,17 @@ if action.count('--install') == 1 or action.count('--upgrade') == 1:
 if action.count('--block') == 1:
     print 'preparando para bloquear notebook'
     
-    os.system('apt-get install -y xbindkeys')
+    os.system('apt-get install -y xbindkeys flashplugin-installer')
     
     os.system('apt-get remove -y unity')
     
     os.system('mv /etc/init/tty* ~')
     os.system('mv ~/tty1.conf /etc/init/')
+    
+    os.system('mv /usr/share/xsessions/* ~/')
+    
+    if not os.path.islink('/usr/share/xsessions/kiosk.desktop'):    
+        os.symlink('/var/www/tcd_offline/kiosk.desktop', '/usr/share/xsessions/kiosk.desktop')
     
     if not os.path.islink('/usr/local/bin/webserver.conf'):
         os.symlink('/var/www/tcd_offline/webserver.conf', '/usr/local/bin/webserver.conf')
