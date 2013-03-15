@@ -142,8 +142,8 @@ if action.count('--block') == 1:
     
     os.system('mv /usr/share/xsessions/* ~/')
     
-    if not os.path.islink('/usr/share/xsessions/kiosk.desktop'):    
-        os.symlink('/var/www/tcd_offline/kiosk.desktop', '/usr/share/xsessions/kiosk.desktop')
+    sh.cp('/var/www/tcd_offline/kiosk.desktop', '/usr/share/xsessions/kiosk.desktop')
+    os.system('chmod 644 /usr/share/xsessions/kiosk.desktop')
     
     if not os.path.islink('/usr/local/bin/webserver.conf'):
         os.symlink('/var/www/tcd_offline/webserver.conf', '/usr/local/bin/webserver.conf')
@@ -176,4 +176,9 @@ os.system('mysql -u root -p%s megavideo_%s < /var/www/megavideo.sql' % (password
 
 print 'sync db megavideo.sql'
 
-os.system('sudo chmod 661 /var/www -R')
+os.system('chmod 661 /var/www -R')
+
+os.system('mysqldump -u root -p%s %s > /var/www/tcd_%s.sql' % (password, project, rede))
+
+os.system('python /var/www/tcd_offline/send.py %s' % rede)
+
