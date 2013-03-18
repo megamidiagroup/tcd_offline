@@ -173,7 +173,7 @@ def _prepare_vars(request, rede=None, p={}):
     p['interno'] = False
     p['class']   = 'home'
 
-    p['list_certificado_account']         = Certificado.objects.filter( Q(rede = p['rede']) & Q(visible = True) & Q(treinamento__visible = True) & Q(treinamento__category__visible = True) ).order_by('-date')
+    p['list_certificado_account']         = Certificado.objects.filter( Q(rede = p['rede']) & Q(visible = True) & Q(treinamento__visible = True) & Q(treinamento__category__visible = True) ).distinct().order_by('-date')
     
     try:
         if request.user.infouser.filial:
