@@ -233,13 +233,11 @@
     {% if first %}
 	    <!-- modal content -->
 		<div id="osx-modal-content">
-			<div id="osx-modal-title">Aviso Importante</div>
-			<div class="close"></div>
-			<div id="osx-modal-data">
-				<h2>Bem vindo ao Portal de Videos.</h2>
-				<p>Este é seu primeiro acesso e os seus dados precisam ser preenchidos antes de utiliza-lo.</p>
-				<p>Após o cadastro realizado, os demais acessos já estarão liberados.</p>
-				<p><button onclick="window.location='{% url conta_edit rede.link %}?edit=first';" style="float: right">Ok, completar cadastro</button><br /></p>
+			<div class="popup">
+				<h3>Bem-vindo ao Portal de Vídeos.</h3>
+			    <p>Este é seu primeiro acesso e os seus dados precisam ser preenchidos antes de utilizá-lo.</p>
+			    <p>Após o cadastro realizado, os demais acessos já estarão liberados.</p>
+			    <input onclick="window.location='{% url conta_edit rede.link %}?edit=first';" type="button" class="botao-popup" />
 			</div>
 		</div>
 	{% endif %}
@@ -247,13 +245,11 @@
 	{% if first_cpf %}
 	    <!-- modal content -->
 		<div id="osx-modal-content">
-			<div id="osx-modal-title">Aviso Importante - CPF</div>
-			<div class="close"></div>
-			<div id="osx-modal-data">
-				<h2>Você logou usando seu CPF e sua senha padrão.</h2>
-				<p>Favor preencher o campo E-mail, apartir deste momente seu login não será mais o seu CPF mas sim o E-mail que você adicionar.</p>
+			<div class="popup">
+				<h3>Você logou usando seu CPF e sua senha padrão.</h3>
+			    <p>Favor preencher o campo E-mail, apartir deste momente seu login não será mais o seu CPF mas sim o E-mail que você adicionar.</p>
 				<p>Importante mencionar que, se depois você trocar seu e-mail, o login permanecerá com seu e-mail antigo.</p>
-				<p><button onclick="$('#osx-container, #osx-overlay').remove();" style="float: right">Ok, completar cadastro</button><br /></p>
+				<input onclick="$('#osx-container, #osx-overlay').remove();" type="button" class="botao-popup" />
 			</div>
 		</div>
 	{% endif %}

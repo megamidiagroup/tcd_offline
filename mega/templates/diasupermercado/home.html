@@ -116,6 +116,18 @@
                             </li>
                         {% endfor %}
                     </ul>
+                {% else %}
+                	{% if not list_treinamento %}
+					    <!-- modal content -->
+						<div id="osx-modal-content">
+							<div class="popup">
+								<h3 style="margin-top: 40px;font-size: 19px;">
+									Esta categoria não tem conteúdo cadastrado.
+								</h3>
+							    <input onclick="history.back();" type="button" class="botao-popup2" />
+							</div>
+						</div>
+					{% endif %}
                 {% endif %}
 
                 {% if list_treinamento %}
