@@ -66,6 +66,10 @@ if action.count('--install') == 1 or action.count('--upgrade') == 1:
     os.system('apt-get build-dep -y python-mysqldb')
     
     os.system('apt-get update')
+    
+    os.system('echo "CREATE DATABASE IF NOT EXISTS %s;" | mysql -u root -p%s' % (project, password))
+    
+    os.system('echo "CREATE DATABASE IF NOT EXISTS megavideo_%s;" | mysql -u root -p%s' % (project.split('_')[1], password))
 
     if action.count('--upgrade') == 1 and os.path.isdir('/var/www/tcd_offline'):
         sh.rm('-r /var/www/tcd_offline')
@@ -94,11 +98,7 @@ if action.count('--install') == 1 or action.count('--upgrade') == 1:
     
     if os.path.islink('/etc/nginx/sites-enabled/default'):
         os.system('rm /etc/nginx/sites-enabled/default')
-        
-    os.system('echo "CREATE DATABASE IF NOT EXISTS %s;" | mysql -u root -p%s' % (project, password))
-    
-    os.system('echo "CREATE DATABASE IF NOT EXISTS megavideo_%s;" | mysql -u root -p%s' % (project.split('_')[1], password))
-        
+          
     sh.cp('%s/tcd /etc/init.d/tcd' % MODPATH)
     sh.find('/etc/init.d/tcd -type f -exec sed -i "s/<rede>/%s/g" {} \;' % user)
     
