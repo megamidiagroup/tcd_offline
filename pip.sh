@@ -808,12 +808,7 @@ echo "<<<<<<<<<<<<<<<<<<<<<<"
             exp_continue
             exit 0
         }
-        -re "Password:" {
-            send "admin\r"
-            exp_continue
-            exit 0
-        }
-        -re "Password (again):" {
+        -re "Password" {
             send "admin\r"
             exp_continue
             exit 0
