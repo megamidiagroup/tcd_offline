@@ -789,3 +789,5 @@ echo "admin_tools >> ok"
 
 echo "<<<<<<<<<<<<<<<<<<<<<<"
 
+/var/www/tcd_offline/manage.py syncdb
+
