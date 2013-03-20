@@ -106,7 +106,6 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'django.contrib.messages',
     'django.contrib.admin',
-    #'gunicorn',
     'state',
     'tcd_offline.mega',
     'tcd_offline.relatorio',

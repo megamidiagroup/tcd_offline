@@ -107,6 +107,8 @@ if action.count('--install') == 1 or action.count('--upgrade') == 1:
         
     if not os.path.isdir('/var/log/tcd'):
         sh.mkdir('/var/log/tcd')
+        
+    os.system('/var/www/tcd_offline/manager.py syncdb')
     
     os.system('/etc/init.d/tcd')
     
