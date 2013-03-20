@@ -789,5 +789,37 @@ echo "admin_tools >> ok"
 
 echo "<<<<<<<<<<<<<<<<<<<<<<"
 
-/var/www/tcd_offline/manage.py syncdb
+/usr/bin/expect <<EOD
+	set timeout 600
+    spawn /bin/sh -c "/var/www/tcd_offline/manage.py syncdb"
+    expect {
+        -re "Would you like to create one now?" {
+            send "yes\r"
+            exp_continue
+            exit 0
+        }
+        -re "Username" {
+            send "admin\r"
+            exp_continue
+            exit 0
+        }
+        -re "E-mail address:" {
+            send "admin@domain.com\r"
+            exp_continue
+            exit 0
+        }
+        -re "Password:" {
+            send "admin\r"
+            exp_continue
+            exit 0
+        }
+        -re "Password (again):" {
+            send "admin\r"
+            exp_continue
+            exit 0
+        }
+    }
+EOD
+
+/var/www/tcd_offline/manage.py migrate
 
