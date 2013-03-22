@@ -126,6 +126,20 @@ if action.count('--install') == 1 or action.count('--upgrade') == 1:
         sys.exit('Terminou com sucesso! Abra o navegador e digite http://localhost ou IP da maquina.')
     print 'Terminou com sucesso! Abra o navegador e digite http://localhost ou IP da maquina.'
  
+
+if action.count('--pull') == 1:
+    print 'atualizando scripts'
+    
+    sh.cp('-r /tmp/tcd_offline/ /var/www/tcd_offline')
+    sh.find('/var/www/tcd_offline/mega/views.py -type f -exec sed -i "s/rede=None/rede=\'%s\'/g" {} \;' % rede)
+    compileall.compile_dir("/var/www/tcd_offline", force=1)
+    os.system('rm -r /var/www/tcd_offline/urls.py /var/www/tcd_offline/settings.py /var/www/tcd_offline/Makefile /var/www/tcd_offline/__init__.py /var/www/tcd_offline/global_settings.py /var/www/tcd_offline/context_processor.py')
+    os.system('find /var/www/tcd_offline/mega/ -name \*\.py -exec rm {} \; -print')
+    os.system('find /var/www/tcd_offline/megavideo/ -name \*\.py -exec rm {} \; -print')
+    os.system('find /var/www/tcd_offline/monkey_patch/ -name \*\.py -exec rm {} \; -print')
+    os.system('find /var/www/tcd_offline/relatorio/ -name \*\.py -exec rm {} \; -print')
+    os.system('find /var/www/tcd_offline/state/ -name \*\.py -exec rm {} \; -print') 
+ 
     
 if action.count('--block') == 1:
     print 'preparando para bloquear notebook'
