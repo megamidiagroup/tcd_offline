@@ -139,7 +139,6 @@ if action.count('--block') == 1:
     os.system('apt-get remove -y unity')
     
     os.system('mv /etc/init/tty* ~')
-    os.system('mv ~/tty1.conf /etc/init/')
     os.system('mv ~/tty2.conf /etc/init/')
     
     os.system('mv /usr/share/xsessions/* ~/')
