@@ -115,6 +115,7 @@ if action.count('--install') == 1 or action.count('--upgrade') == 1:
     sh.cp('%s/sync /var/www/tcd_offline/sync.sh' % MODPATH)
     
     sh.find('/var/www/tcd_offline/sync.sh -type f -exec sed -i "s/<rede>/%s/g" {} \;' % rede)
+    sh.find('/var/www/tcd_offline/ftp.sh -type f -exec sed -i "s/<rede>/%s/g" {} \;' % rede)
 
     if len(sh.grep('-ir "/etc/init.d/tcd" /etc/rc.local')) == 0:
         sh.find('/etc/rc.local -type f -exec sed -i "s/exit\ 0//g" {} \;')
@@ -184,12 +185,11 @@ if os.path.exists('/var/www/tcd.config'):
     lines   = arquivo.split()
     for line in lines:
         os.system("echo '%s' | mysql -u root -p%s" % (line, password))
+    os.system('./ftp.sh %s' % rede)
         
 if os.path.exists('/var/www/requirements.config'):
     arquivo = open('/var/www/requirements.config', 'r').read()
     lines   = arquivo.split()
     for line in lines:
         os.system("%s" % line)
-    
-os.system('python /var/www/tcd_offline/ftp.py %s' % rede)
 

@@ -117,7 +117,7 @@ INSTALLED_APPS = (
 )
 
 LIST_VARS = {
-    'base_url'     : 'http://localhost:8080/',
+    'base_url'     : 'http://localhost/',
     'from_email'   : 'rafael.feijo@megamidia.com.br',
     'log'          : '/var/www/logging/tcd_dev.log',
     'log_start'    : True,
@@ -206,7 +206,7 @@ STORAGE     = '/var/www/media/tcd/storage/'
 ### MEGAVIDEO CONFIGURACOES
 
 MV_TVNAME   = 'megavideo'
-MV_TVDOMAIN = 'localhost:8080/megavideo'
+MV_TVDOMAIN = 'localhost/megavideo'
 TV_NAME     = 'Megavideo - TCD'
 
 APPEND_SLASH = True
