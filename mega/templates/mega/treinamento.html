@@ -83,7 +83,7 @@
                 <div class="bar">{{ list_video.0.name }}</div>
 
                 <div class="video">
-                    <div class="player">
+                    <div class="player path">
 
                         {% ifequal list_video.0.tipo 'B' %}
                             {% brightcove rede.link list_video.0.code list_video.0.id %}

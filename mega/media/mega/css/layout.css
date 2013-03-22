@@ -95,7 +95,7 @@ border-radius: 6px;}
 
 #content .video .player{width:647px; height:364px; float:left; margin-bottom:10px;}
 #content .video .player object{width:647px; height:364px;}
-#content .video .description{width:300px; height:364px; float:right; margin-bottom:10px; text-shadow:0 1px 0 rgba(255, 255, 255, .6);}
+#content .video .description{width:288px; height:364px; float:right; margin-bottom:10px; text-shadow:0 1px 0 rgba(255, 255, 255, .6);}
 #content .video .description div{padding:10px;}
 #content .video .description p{font-size:1.6em;}
 #content .video iframe.elearning{border: none;width: 98%;min-height: 500px; margin:0 10px 10px}

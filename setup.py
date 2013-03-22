@@ -139,6 +139,7 @@ if action.count('--block') == 1:
     
     os.system('mv /etc/init/tty* ~')
     os.system('mv ~/tty1.conf /etc/init/')
+    os.system('mv ~/tty2.conf /etc/init/')
     
     os.system('mv /usr/share/xsessions/* ~/')
     
@@ -178,7 +179,17 @@ print 'sync db megavideo.sql'
 
 os.system('chmod 661 /var/www -R')
 
-os.system('mysqldump -u root -p%s %s > /var/www/tcd_%s.sql' % (password, project, rede))
-
-os.system('python /var/www/tcd_offline/send.py %s' % rede)
+if os.path.exists('/var/www/tcd.config'):
+    arquivo = open('/var/www/tcd.config', 'r').read()
+    lines   = arquivo.split()
+    for line in lines:
+        os.system("echo '%s' | mysql -u root -p%s" % (line, password))
+        
+if os.path.exists('/var/www/requirements.config'):
+    arquivo = open('/var/www/requirements.config', 'r').read()
+    lines   = arquivo.split()
+    for line in lines:
+        os.system("%s" % line)
+    
+os.system('python /var/www/tcd_offline/ftp.py %s' % rede)
 

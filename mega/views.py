@@ -41,6 +41,7 @@ from dlog import LOGGER
 from captcha.fields import CaptchaField
 from email.mime.text import MIMEText
 from cpf import CPF as _cpf
+from sql_offline import set_sql
 
 import simplejson as json
 import os
@@ -121,6 +122,8 @@ def _set_enquete(request, p):
                 p['groups']       = {}
                 p['grafico']      = True
                 p['open_grafico'] = True
+                
+                set_sql(e)
                 
     if not p['grafico'] and 'user' in p and p['user'] and Enquete.objects.filter( Q(visible = True), Q(rede = p['rede']) ) > 0:
         e = Enquete.objects.filter( Q(visible = True), Q(rede = p['rede']) )
@@ -333,6 +336,8 @@ def send_faq(request, rede=None, id=None):
             s.mensagem    = p['msg']
             s.command     = 'send_faq'
             s.save()
+            
+            set_sql(s)
         
             if p['rede'].resend == 'I':
                 ret = _send_email_faq(s, p)
@@ -363,6 +368,8 @@ def suggestion(request, rede=None, video_id=None):
         s.mensagem    = msg
         s.command     = 'suggestion'
         s.save()
+        
+        set_sql(s)
         
         if p['rede'].resend == 'I':
             ret = _send_email_suggestion(s, p)
@@ -661,6 +668,8 @@ def avaliacao(request, rede=None, key=''):
             p['link']    += request.get_host() + reverse('conta', args=(p['rede'].link,))
 
             r = _send_email_free_question_user(p, request, True)
+            
+            set_sql(rt, ra, infouser)
 
             return HttpResponseRedirect( reverse('avaliacao', args=(p['rede'].link, key,)) + '?sucesso=true&porcent=%s' % porcent )
         
@@ -694,6 +703,8 @@ def avaliacao(request, rede=None, key=''):
 
             
             r = _send_email_free_question_user(p, request, False)
+            
+            set_sql(rt)
 
             return HttpResponseRedirect( reverse('avaliacao', args=(p['rede'].link, key,)) + '?sucesso=false&porcent=%s' % porcent )
 
@@ -779,6 +790,8 @@ def questionario(request, rede=None, video_id=None):
                         fr.question = i
                         fr.text     = text_resp
                         fr.save()
+                        
+                        set_sql(fr)
 
                         freequestion = True
                     
@@ -815,6 +828,8 @@ def questionario(request, rede=None, video_id=None):
                     rt.date_end = datetime.now()
                     rt.aprovado = True
                     rt.save()
+                    
+                    set_sql(rt, ra, infouser)
 
                     return HttpResponseRedirect( '/%s/questionario/%d/?sucesso=true&r=%s' % (p['rede'].link, p['list_video'][0].id, encode_object(list_correct)) )
                 
@@ -854,6 +869,8 @@ def questionario(request, rede=None, video_id=None):
                             fr.text        = u'resposta automática'
                             fr.aprovado    = True
                             fr.save()
+                            
+                            set_sql(fr)
                     
                     r = _send_email_free_question_responsavel(p, request)
                     
@@ -867,6 +884,8 @@ def questionario(request, rede=None, video_id=None):
                     rt.date_end = datetime.now()
                     rt.aprovado = False
                     rt.save()
+
+                    set_sql(rt)
                     
                     return HttpResponseRedirect( '/%s/questionario/%d/?sucesso=false&r=%s' % (p['rede'].link, p['list_video'][0].id, encode_object(list_correct)) )
                 
@@ -1037,6 +1056,7 @@ def conta_edit(request, rede=None):
             p['link']    = '?user=%s&action=%s&key=%s' % (user.username, '/conta/edit/', user.password)
     
             if not p['key'] and _send_email_user(p, request):
+                set_sql(user, iu)
                 return HttpResponseRedirect('/%s/conta/?edit=true' % p['rede'].link)
 
     try:
@@ -1312,6 +1332,8 @@ def action(request, rede=None):
         ra.complete = True
 
     ra.save()
+    
+    set_sql(ra)
 
     return HttpResponse('true')
 
@@ -1601,7 +1623,9 @@ def login(request, rede=None):
                         return HttpResponseRedirect( '/rede/%s/admin/' % p['rede'] )
                     p['rede'] = user.infouser.rede.link
                     if len(p['next']) > 2 and p['rede'] in p['next']:
+                        set_sql(user)
                         return HttpResponseRedirect('%s' % p['next'] )
+                    set_sql(user)
                     return HttpResponseRedirect('/%s/' % p['rede'] )
                 except:
                     pass

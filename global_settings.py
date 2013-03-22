@@ -9,6 +9,8 @@ abspath = lambda path: os.path.join(MODPATH, path)
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
+OFFLINE = True
+
 ADMINS = (
     ('Rafael', 'rafael.feijo@megamidia.com.br'),
 )
@@ -115,7 +117,7 @@ INSTALLED_APPS = (
 )
 
 LIST_VARS = {
-    'base_url'     : 'http://localhost/',
+    'base_url'     : 'http://localhost:8080/',
     'from_email'   : 'rafael.feijo@megamidia.com.br',
     'log'          : '/var/www/logging/tcd_dev.log',
     'log_start'    : True,
@@ -204,7 +206,7 @@ STORAGE     = '/var/www/media/tcd/storage/'
 ### MEGAVIDEO CONFIGURACOES
 
 MV_TVNAME   = 'megavideo'
-MV_TVDOMAIN = 'localhost/megavideo'
+MV_TVDOMAIN = 'localhost:8080/megavideo'
 TV_NAME     = 'Megavideo - TCD'
 
 APPEND_SLASH = True

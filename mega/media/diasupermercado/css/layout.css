@@ -103,9 +103,9 @@ border-radius: 10px; font-family:'vagroundedStdBold';}
 #content ul.videos li span{font-size:1.2em;}
 #content ul.videos li a.last{border: none}
 
-#content .video .player{width:647px; height:364px; float:left; margin-bottom:10px;}
+#content .video .player{width:647px; height:364px; float:left; margin:0 0 10px 10px;}
 #content .video .player object{width:647px; height:364px;}
-#content .video .description{width:280px; height:364px; float:right; margin-bottom:10px; text-shadow:0 1px 0 rgba(255, 255, 255, .6);}
+#content .video .description{width:264px; height:364px; float:right; margin-bottom:10px; text-shadow:0 1px 0 rgba(255, 255, 255, .6);}
 #content .video .description div{padding:10px;}
 #content .video .description p{font-size:1.6em;}
 #content .video iframe.elearning{border: none;width: 98%;min-height: 500px; margin:0 10px 10px}
@@ -199,7 +199,7 @@ background:none repeat scroll 0 0 #fff; border:1px solid #BEBEBE;-webkit-border-
 #login form input{ width:100%; padding:5px; margin:0 0 10px -5px;}
 #login form input.buttom{width:50%; margin-top:5px;}
 .busca {color: #999;}
-.tia {cursor: pointer;margin: 0;position: absolute;right: 24px;top: 28px;}
+.tia {cursor: pointer;margin: 0;position: absolute;right: 24px;}
 
 .clearfix:after {content: "."; display: block; height: 0; clear: both; visibility: hidden;}
 .clearfix {display: inline-block;}

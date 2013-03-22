@@ -156,16 +156,16 @@
 	
 	                    <p><b>Telefone Comercial: </b><input type="text" name="txt_fone_com" value="{% if txt_fone_com %}{{ txt_fone_com }}{% else %}{{ infouser.fone_com }}{% endif %}" style="width: 200px;" /></p>
 	                    <p><b>Telefone Celular:   </b><input type="text" name="txt_fone_cel" value="{% if txt_fone_cel %}{{ txt_fone_cel }}{% else %}{{ infouser.fone_cel }}{% endif %}" style="width: 200px;" /></p>
-	                    <a class="buttom" href="javascript:void(0);" onclick="$('form').submit();">Salvar</a>
-	
+	                    <a style="font-size: 16px; text-decoration: underline" href="javascript:void(0);" onclick="$('.pass').slideToggle();">trocar senha</a>
+						<br /><br />
 	                    {% if is_pass %}
-	                        <p><b>Senha atual: </b><input type="password" name="txt_pass" value="" style="width: 200px;" /></p>
+	                        <p class="pass" style="display: none"><b>Senha atual: </b><input type="password" name="txt_pass" value="" style="width: 200px;" /></p>
 	                    {% endif %}
 	
-	                    <p><b>Nova senha: </b><input type="password" name="txt_newpass" value="" style="width: 200px;" /></p>
-	                    <p><b>Confirma: </b><input type="password" name="txt_confirm" value="" style="width: 200px;" /></p>
+	                    <p class="pass" style="display: none"><b>Nova senha: </b><input type="password" name="txt_newpass" value="" style="width: 200px;" /></p>
+	                    <p class="pass" style="display: none"><b>Confirma: </b><input type="password" name="txt_confirm" value="" style="width: 200px;" /></p>
 
-	                    <a class="buttom" href="javascript:void(0);" onclick="$('form').submit();">Trocar senha</a>
+	                    <a class="buttom" href="javascript:void(0);" onclick="$('form').submit();">Salvar</a>
 	
 	                    <input type="hidden" name="user" value="{{ user.username }}" />
 	                    <input type="hidden" name="key" value="{{ key }}" />
