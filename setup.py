@@ -59,7 +59,7 @@ if action.count('--install') == 1 or action.count('--upgrade') == 1:
     
     list_program = ['mysql-client', 'mysql-server', 'nginx', 'vim', 'python-virtualenv', \
                     'python-setuptools', 'python-pip', 'expect', 'libxml2-dev', 'libxslt1-dev', \
-                    'python-lxml', 'ssh']
+                    'python-lxml', 'ssh', 'python-alsaaudio']
 
     os.system('apt-get install -y %s' % ' '.join(list_program))
     
@@ -121,6 +121,8 @@ if action.count('--install') == 1 or action.count('--upgrade') == 1:
         os.system('echo "00 00 * * * root (cd / && /var/www/tcd_offline/sync.sh >> /var/log/tcd/sync.log 2>&1)" >> /etc/crontab')
         
     os.system('sudo chmod 661 /var/www -R')
+    
+    os.system('sudo -i -u %s python -c "import alsaaudio; alsaaudio.Mixer().setvolume(100)"' % user)
 
     if action.count('--block') == 0:
         sys.exit('Terminou com sucesso! Abra o navegador e digite http://localhost ou IP da maquina.')

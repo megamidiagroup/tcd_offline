@@ -10,18 +10,8 @@ if [ -f $PIDFILE ]; then
     rm -f -- $PIDFILE
 fi
 
-/etc/init.d/mysql restart
-
-sleep 5
-
 export WORKON_HOME=$PROJDIR/.virtualenvs
 source /usr/local/bin/virtualenvwrapper.sh
 workon tcd
 
 /var/www/tcd_offline/manage.py runfcgi socket=$SOCKET pidfile=$PIDFILE method=prefork daemonize=true
-
-sleep 1
-
-export DISPLAY=:0.0
-
-su - <rede> -c "firefox http://localhost"

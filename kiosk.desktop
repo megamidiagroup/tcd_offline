@@ -1,5 +1,5 @@
 [Desktop Entry]
 Name=Kiosk (No effects)
 Comment=Modo Kiosk
-Exec=/usr/bin/firefox http://localhost -width 1024 -height 600
+Exec=/usr/bin/firefox http://localhost/loading.html -width 1024 -height 600
 Type=Application
