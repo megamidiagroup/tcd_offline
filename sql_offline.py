@@ -20,6 +20,8 @@ def set_sql(*args):
     
         count = 0
         
+        print 'query: ', query
+        
         for i in query:
             if check_not_tables(i['sql']) and i['sql'].count('INSERT') > 0 or i['sql'].count('UPDATE') > 0 or i['sql'].count('DELETE') > 0:
                 sql = i['sql']
