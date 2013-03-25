@@ -48,12 +48,11 @@ class Cmd(object):
 class Sh(object):
     def __getattr__(self, attribute):
         return Cmd(attribute)
-
+    
+sh = Sh()
 
 if action.count('--install') == 1 or action.count('--upgrade') == 1:
     print 'preparando para instalar'
-    
-    sh = Sh()
     
     os.system('apt-get update')
     
