@@ -119,6 +119,11 @@ if action.count('--install') == 1 or action.count('--upgrade') == 1:
     if len(sh.grep('-ir "/var/www/tcd_offline/sync.sh" /etc/crontab')) == 0:
         os.system('echo "00 00 * * * root (cd / && /var/www/tcd_offline/sync.sh >> /var/log/tcd/sync.log 2>&1)" >> /etc/crontab')
         
+    if len(sh.grep('-ir "(exec /etc/init.d/tcd)" /etc/rc.local')) == 0:
+        sh.find('/etc/rc.local -type f -exec sed -i "s/exit 0//g" {} \;')
+        os.system('echo "(exec /etc/init.d/tcd)" >> /etc/rc.local')
+        os.system('echo "exit 0" >> /etc/rc.local')
+        
     os.system('sudo chmod 661 /var/www -R')
 
     if action.count('--block') == 0:
