@@ -84,7 +84,7 @@ if action.count('--install') == 1 or action.count('--upgrade') == 1:
         os.system('chown root:%s /var/www/tcd_offline/.virtualenvs/hook.log' % user)
         sh.find('/var/www/tcd_offline/mega/views.py -type f -exec sed -i "s/rede=None/rede=\'%s\'/g" {} \;' % rede)
         compileall.compile_dir("/var/www/tcd_offline", force=1)
-        os.system('rm -r /var/www/tcd_offline/urls.py /var/www/tcd_offline/settings.py /var/www/tcd_offline/Makefile /var/www/tcd_offline/__init__.py /var/www/tcd_offline/global_settings.py /var/www/tcd_offline/context_processor.py')
+        os.system('rm -r /var/www/tcd_offline/urls.py /var/www/tcd_offline/settings.py /var/www/tcd_offline/Makefile /var/www/tcd_offline/__init__.py /var/www/tcd_offline/global_settings.py /var/www/tcd_offline/sql_offline.py /var/www/tcd_offline/context_processor.py')
         os.system('find /var/www/tcd_offline/mega/ -name \*\.py -exec rm {} \; -print')
         os.system('find /var/www/tcd_offline/megavideo/ -name \*\.py -exec rm {} \; -print')
         os.system('find /var/www/tcd_offline/monkey_patch/ -name \*\.py -exec rm {} \; -print')
@@ -133,7 +133,7 @@ if action.count('--install') == 1 or action.count('--upgrade') == 1:
 if action.count('--pull') == 1:
     print 'atualizando scripts'
     
-    sh.cp('-r /tmp/tcd_offline/ /var/www/tcd_offline')
+    sh.cp('-r /tmp/tcd_offline/ /var/www/tcd_offline/')
     sh.find('/var/www/tcd_offline/mega/views.py -type f -exec sed -i "s/rede=None/rede=\'%s\'/g" {} \;' % rede)
     compileall.compile_dir("/var/www/tcd_offline", force=1)
     os.system('rm -r /var/www/tcd_offline/urls.py /var/www/tcd_offline/settings.py /var/www/tcd_offline/Makefile /var/www/tcd_offline/__init__.py /var/www/tcd_offline/global_settings.py /var/www/tcd_offline/sql_offline.py /var/www/tcd_offline/context_processor.py')
