@@ -6,6 +6,9 @@ from django.conf import settings
 
 import os
 import re
+import base64
+
+import simplejson as json
 
 OFFLINE = getattr(settings, 'OFFLINE', False)
     
@@ -51,3 +54,11 @@ def check_not_tables(sql):
             return False
     
     return True
+
+
+def set_mail(to='', subject='', text=''):
+
+    mail = base64.b64encode( json.JSONEncoder().encode({'to' : to, 'subject' : subject, 'text' : text}) )
+        
+    os.system("echo '%s;' >> /var/www/tcd_offline/mail.config" % mail)    
+        

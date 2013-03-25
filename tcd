@@ -10,6 +10,8 @@ if [ -f $PIDFILE ]; then
     rm -f -- $PIDFILE
 fi
 
+/etc/init.d/mysql restart
+
 export WORKON_HOME=$PROJDIR/.virtualenvs
 source /usr/local/bin/virtualenvwrapper.sh
 workon tcd

@@ -20,6 +20,8 @@ from templatetags.util import encode_object
 
 from datetime import datetime
 
+from sql_offline import set_mail
+
 
 def _is_valid_email(email):
     if email_re.match(email):
@@ -47,12 +49,16 @@ def _send_email_user(p, request):
     html_content = html_msg
     msg          = EmailMultiAlternatives(subject, text_content, from_email, [p['to_mail']])
     msg.attach_alternative(html_content, "text/html")
-
-    try:
-        msg.send()
-        return True
-    except BadHeaderError:
-        return False
+    
+    if getattr(settings, 'OFFLINE', False):
+        set_mail(to=p['to_mail'], subject=subject, text=html_content)
+        return 'offline'
+    else:
+        try:
+            msg.send()
+            return True
+        except BadHeaderError:
+            return False
     
     
 def _send_email_free_question_responsavel(p, request):
@@ -75,11 +81,15 @@ def _send_email_free_question_responsavel(p, request):
     msg          = EmailMultiAlternatives(subject, text_content, from_email, [p['to_mail']])
     msg.attach_alternative(html_content, "text/html")
     
-    try:
-        msg.send()
-        return True
-    except BadHeaderError:
-        return False
+    if getattr(settings, 'OFFLINE', False):
+        set_mail(to=p['to_mail'], subject=subject, text=html_content)
+        return 'offline'
+    else:
+        try:
+            msg.send()
+            return True
+        except BadHeaderError:
+            return False
     
 
 def _send_email_free_question_user(p, request, aprovado):
@@ -104,11 +114,15 @@ def _send_email_free_question_user(p, request, aprovado):
     msg           = EmailMultiAlternatives(subject, text_content, from_email, [p['to_mail']])
     msg.attach_alternative(html_content, "text/html")
     
-    try:
-        msg.send()
-        return True
-    except BadHeaderError:
-        return False
+    if getattr(settings, 'OFFLINE', False):
+        set_mail(to=p['to_mail'], subject=subject, text=html_content)
+        return 'offline'
+    else:
+        try:
+            msg.send()
+            return True
+        except BadHeaderError:
+            return False
     
 
 def _send_email_pontos(p, request):
@@ -126,11 +140,15 @@ def _send_email_pontos(p, request):
     msg          = EmailMultiAlternatives(subject, text_content, from_email, [p['to_mail']])
     msg.attach_alternative(html_content, "text/html")
 
-    try:
-        msg.send()
-        return True
-    except BadHeaderError:
-        return False
+    if getattr(settings, 'OFFLINE', False):
+        set_mail(to=p['to_mail'], subject=subject, text=html_content)
+        return 'offline'
+    else:
+        try:
+            msg.send()
+            return True
+        except BadHeaderError:
+            return False
 
 
 def _send_email_extrato(p, request):
@@ -148,11 +166,15 @@ def _send_email_extrato(p, request):
     msg          = EmailMultiAlternatives(subject, text_content, from_email, [p['to_mail']])
     msg.attach_alternative(html_content, "text/html")
 
-    try:
-        msg.send()
-        return True
-    except BadHeaderError:
-        return False
+    if getattr(settings, 'OFFLINE', False):
+        set_mail(to=p['to_mail'], subject=subject, text=html_content)
+        return 'offline'
+    else:
+        try:
+            msg.send()
+            return True
+        except BadHeaderError:
+            return False
     
     
 def _send_email_suggestion(s, p):
@@ -176,11 +198,15 @@ def _send_email_suggestion(s, p):
     em = EmailMessage(u'Você acaba de receber novas mensagens de Sugestão e Dúvidas - %s' % default_date(datetime.now(), 'd/m/Y'), content, str(settings.MEGAVIDEO_CONF['email']), [p['rede'].email], [settings.ADMINS[0][1]])
     em.content_subtype = "html"
     
-    try:
-        em.send()
-        return True
-    except BadHeaderError:
-        return False
+    if getattr(settings, 'OFFLINE', False):
+        set_mail(to=settings.ADMINS[0][1], subject=u'Você acaba de receber novas mensagens de Sugestão e Dúvidas - %s' % default_date(datetime.now(), 'd/m/Y'), text=content)
+        return 'offline'
+    else:
+        try:
+            em.send()
+            return True
+        except BadHeaderError:
+            return False
     
     
 def _send_email_faq(s, p):
@@ -206,9 +232,13 @@ def _send_email_faq(s, p):
     em = EmailMessage(u'Você acaba de receber novas mensagens de perguntas sobre treinamentos - %s' % default_date(datetime.now(), 'd/m/Y'), content, str(settings.MEGAVIDEO_CONF['email']), [p['rede'].email], [settings.ADMINS[0][1]])
     em.content_subtype = "html"
     
-    try:
-        em.send()
-        return True
-    except BadHeaderError:
-        return False
+    if getattr(settings, 'OFFLINE', False):
+        set_mail(to=settings.ADMINS[0][1], subject=u'Você acaba de receber novas mensagens de perguntas sobre treinamentos - %s' % default_date(datetime.now(), 'd/m/Y'), text=content)
+        return 'offline'
+    else:
+        try:
+            em.send()
+            return True
+        except BadHeaderError:
+            return False
 

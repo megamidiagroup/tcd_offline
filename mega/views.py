@@ -41,7 +41,7 @@ from dlog import LOGGER
 from captcha.fields import CaptchaField
 from email.mime.text import MIMEText
 from cpf import CPF as _cpf
-from sql_offline import set_sql
+from sql_offline import set_sql, set_mail
 
 import simplejson as json
 import os
@@ -1585,7 +1585,9 @@ def login(request, rede=None):
                 p['to_mail'] = user.email
                 p['name']    = user.get_full_name()
                 p['link']    = '%slogin/?user=%s&action=%s&key=%s' % (settings.LIST_VARS.get('base_url', ''), user.username, '/conta/edit/', user.password)
-                if _send_email_user(p, request):
+                if _send_email_user(p, request) == 'offline':
+                    p['error'] = u'Em 24 horas, verifique seu email, uma requisição de nova senha foi enviado.'
+                elif _send_email_user(p, request):
                     p['error'] = u'Verifique seu email, uma requisição de nova senha foi enviado.'
                 else:
                     p['error'] = u'Houve algum erro interno, tente novamente mais tarde.'
@@ -1983,18 +1985,25 @@ def server_error_500(request, template_name='500.html'):
     
     corpo = "%s\n\n%s" % ( '\n'.join(traceback.format_exception(*(exc_info or sys.exc_info()))) , request_repr)
 
-    gm = smtplib.SMTP(settings.EMAIL_HOST, settings.EMAIL_PORT)
-    gm.ehlo()
-    if settings.EMAIL_USE_TLS:
-        gm.starttls()
+    if getattr(settings, 'OFFLINE', False):
+        mail            = MIMEText(corpo)
+        mail["Subject"] = subject
+        for e in list_email:
+            mail["To"]  = e
+            set_mail(to=mail["To"], subject=mail["Subject"], text=mail)
+    else:
+        gm = smtplib.SMTP(settings.EMAIL_HOST, settings.EMAIL_PORT)
         gm.ehlo()
-    gm.login(settings.EMAIL_HOST_USER, settings.EMAIL_HOST_PASSWORD) 
-    mail            = MIMEText(corpo)
-    mail["Subject"] = subject
-    for e in list_email:
-        mail["To"]  = e
-        gm.sendmail(settings.DEFAULT_FROM_EMAIL, e, mail.as_string())
-    gm.close()
+        if settings.EMAIL_USE_TLS:
+            gm.starttls()
+            gm.ehlo()
+        gm.login(settings.EMAIL_HOST_USER, settings.EMAIL_HOST_PASSWORD) 
+        mail            = MIMEText(corpo)
+        mail["Subject"] = subject
+        for e in list_email:
+            mail["To"]  = e
+            gm.sendmail(settings.DEFAULT_FROM_EMAIL, e, mail.as_string())
+        gm.close()
     
     sys.exc_clear()
 

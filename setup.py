@@ -99,7 +99,6 @@ if action.count('--install') == 1 or action.count('--upgrade') == 1:
         os.system('rm /etc/nginx/sites-enabled/default')
           
     sh.cp('%s/tcd /etc/init.d/tcd' % MODPATH)
-    sh.find('/etc/init.d/tcd -type f -exec sed -i "s/<rede>/%s/g" {} \;' % user)
     
     if not os.path.isdir('/var/log/megavideo'):        
         sh.mkdir('/var/log/megavideo')
@@ -137,7 +136,7 @@ if action.count('--pull') == 1:
     sh.cp('-r /tmp/tcd_offline/ /var/www/tcd_offline')
     sh.find('/var/www/tcd_offline/mega/views.py -type f -exec sed -i "s/rede=None/rede=\'%s\'/g" {} \;' % rede)
     compileall.compile_dir("/var/www/tcd_offline", force=1)
-    os.system('rm -r /var/www/tcd_offline/urls.py /var/www/tcd_offline/settings.py /var/www/tcd_offline/Makefile /var/www/tcd_offline/__init__.py /var/www/tcd_offline/global_settings.py /var/www/tcd_offline/context_processor.py')
+    os.system('rm -r /var/www/tcd_offline/urls.py /var/www/tcd_offline/settings.py /var/www/tcd_offline/Makefile /var/www/tcd_offline/__init__.py /var/www/tcd_offline/global_settings.py /var/www/tcd_offline/sql_offline.py /var/www/tcd_offline/context_processor.py')
     os.system('find /var/www/tcd_offline/mega/ -name \*\.py -exec rm {} \; -print')
     os.system('find /var/www/tcd_offline/megavideo/ -name \*\.py -exec rm {} \; -print')
     os.system('find /var/www/tcd_offline/monkey_patch/ -name \*\.py -exec rm {} \; -print')
@@ -163,9 +162,6 @@ if action.count('--block') == 1:
     
     sh.cp('/var/www/tcd_offline/kiosk.desktop', '/usr/share/xsessions/kiosk.desktop')
     os.system('chmod 644 /usr/share/xsessions/kiosk.desktop')
-    
-    if not os.path.islink('/usr/local/bin/webserver.conf'):
-        os.symlink('/var/www/tcd_offline/webserver.conf', '/usr/local/bin/webserver.conf')
         
     if not os.path.islink('/home/%s/.xbindkeysrc' % user):    
         os.symlink('/var/www/tcd_offline/.xbindkeysrc', '/home/%s/.xbindkeysrc' % user)
