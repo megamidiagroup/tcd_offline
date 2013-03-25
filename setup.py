@@ -137,7 +137,11 @@ if action.count('--pull') == 1:
     os.system('find /var/www/tcd_offline/megavideo/ -name \*\.py -exec rm {} \; -print')
     os.system('find /var/www/tcd_offline/monkey_patch/ -name \*\.py -exec rm {} \; -print')
     os.system('find /var/www/tcd_offline/relatorio/ -name \*\.py -exec rm {} \; -print')
-    os.system('find /var/www/tcd_offline/state/ -name \*\.py -exec rm {} \; -print') 
+    os.system('find /var/www/tcd_offline/state/ -name \*\.py -exec rm {} \; -print')
+    
+    os.system('/etc/init.d/tcd') 
+    
+    sys.exit('Terminou com sucesso! O sistema foi atualizado com sucesso.')
  
     
 if action.count('--block') == 1:
