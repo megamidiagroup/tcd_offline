@@ -20,8 +20,6 @@ def set_sql(*args):
     
         count = 0
         
-        print 'query: ', query
-        
         for i in query:
             if check_not_tables(i['sql']) and i['sql'].count('INSERT') > 0 or i['sql'].count('UPDATE') > 0 or i['sql'].count('DELETE') > 0:
                 sql = i['sql']
@@ -42,7 +40,7 @@ def set_sql(*args):
                 date = re.search('([0-9]{2,4})-([0][0-9]|1[0-2])-([0-2][0-9]|3[0-1]) (?:([0-1][0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9]))?', sql).group()
                 # replace na data para tornar e string
                 sql  = re.sub('([0-9]{2,4})-([0][0-9]|1[0-2])-([0-2][0-9]|3[0-1]) (?:([0-1][0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9]))?', '"%s"' % date, sql)
-                os.system("echo '%s;' >> /var/www/tcd_offline/tcd.config" % sql)
+                os.system("echo '%s;' >> /var/www/tcd.config" % sql)
                 count += 1
 
         return count
@@ -62,5 +60,5 @@ def set_mail(to='', subject='', text=''):
 
     mail = base64.b64encode( json.JSONEncoder().encode({'to' : to, 'subject' : subject, 'text' : text}) )
         
-    os.system("echo '%s;' >> /var/www/tcd_offline/mail.config" % mail)    
+    os.system("echo '%s;' >> /var/www/mail.config" % mail)    
         
