@@ -228,7 +228,7 @@ def kaltura(rede, code, id, w='640', h='360'):
 @register.inclusion_tag('templatetags/megavideo.html')
 def megavideo(rede, code, id, w='640', h='360', logo_url='', logo_link=''):
     
-    base_url = [settings.MEGAVIDEO_CONF.get('base_url', ''), 'https://www.treinandoequipes.com.br/megavideo/'][settings.DEBUG]
+    base_url = [settings.MEGAVIDEO_CONF.get('base_url', ''), 'https://www.treinandoequipes.com.br/megavideo/'][settings.DEBUG and not getattr(settings, 'OFFLINE', False)]
 
     return {'rede' : rede, 'code' : code, 'id' : id, 'w' : w, 'h' : h, 'base_url' : base_url, 'logo_url' : settings.STATIC_URL + logo_url, 'logo_link' : logo_link}
 

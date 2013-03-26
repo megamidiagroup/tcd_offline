@@ -1637,7 +1637,7 @@ def login(request, rede=None):
             p['error'] = u'Digite o usuário e senha.'
             
     ## regra temporária para o sala4 (www.sala04.com.br) para o teaser
-    if not settings.DEBUG and p['get_tipo_template'] == 'sala4':
+    if not settings.DEBUG and p['get_tipo_template'] == 'sala4' and not getattr(settings, 'OFFLINE', False):
         if 'sala04.com.br' in request.get_host():
             return HttpResponseRedirect('/teaser/')
         return HttpResponseRedirect('/sala4/teaser/')
