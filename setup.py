@@ -211,14 +211,14 @@ os.system('chmod 661 /var/www -R')
 
 if os.path.exists('/var/www/tcd.config'):
     arquivo = open('/var/www/tcd.config', 'r').read()
-    lines   = arquivo.split()
+    lines   = arquivo.split('\n')
     for line in lines:
-        os.system("echo '%s' | mysql -u root -p%s" % (line, password))
+        os.system("echo '%s' | mysql -u root -p%s %s" % (line, password, project))
     os.system('./ftp.sh %s' % rede)
         
 if os.path.exists('/var/www/requirements.config'):
     arquivo = open('/var/www/requirements.config', 'r').read()
-    lines   = arquivo.split()
+    lines   = arquivo.split('\n')
     for line in lines:
         os.system("%s" % line)
 

@@ -1619,10 +1619,6 @@ def login(request, rede=None):
             if user.is_active:
                 django_login(request, user)
                 try:
-                    sleep(1)
-                    if user.is_staff and user.rede_set.filter(visible=True).count() == 1:
-                        p['rede'] = user.rede_set.filter(visible=True)[0].link
-                        return HttpResponseRedirect( '/rede/%s/admin/' % p['rede'] )
                     p['rede'] = user.infouser.rede.link
                     if len(p['next']) > 2 and p['rede'] in p['next']:
                         set_sql(user)

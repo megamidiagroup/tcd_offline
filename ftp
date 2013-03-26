@@ -2,7 +2,7 @@
 
 set timeout 3600
 
-spawn /bin/sh -c "rsync -LCravzp /var/www/tcd.config tcd_offline@server2.megamidia.com.br:/home/redes/<rede>/ /var/www/"
+spawn /bin/sh -c "rsync -LCravzp /var/www/tcd.config tcd_offline@server2.megamidia.com.br:/home/redes/<rede>/"
 expect {
     timeout {
         exit 1
