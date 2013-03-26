@@ -146,17 +146,18 @@ if action.count('--pull') == 1:
     sh.cp('%s/tcd_offline /etc/nginx/sites-enabled/tcd_offline' % MODPATH)
           
     sh.cp('%s/tcd /etc/init.d/tcd' % MODPATH)
-    
-    os.system('/etc/init.d/tcd')
-    
-    os.system('/etc/init.d/nginx restart')
-    
+
     sh.cp('%s/sync /var/www/tcd_offline/sync.sh' % MODPATH)
+    sh.cp('%s/ftp /var/www/tcd_offline/ftp.sh' % MODPATH)
     
     sh.find('/var/www/tcd_offline/sync.sh -type f -exec sed -i "s/<rede>/%s/g" {} \;' % rede)
     sh.find('/var/www/tcd_offline/ftp.sh -type f -exec sed -i "s/<rede>/%s/g" {} \;' % rede)
         
     os.system('sudo chmod 661 /var/www -R')
+    
+    os.system('/etc/init.d/nginx restart')
+    
+    os.system('/etc/init.d/tcd')
     
     sys.exit('Terminou com sucesso! O sistema foi atualizado com sucesso.')
  

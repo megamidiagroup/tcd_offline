@@ -1,6 +1,6 @@
 from global_settings import *
  
-DEBUG = not False
+DEBUG = False
 TEMPLATE_DEBUG = DEBUG
 
 DATABASES['default']['USER'] = 'root'
