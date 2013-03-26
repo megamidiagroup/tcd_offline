@@ -143,7 +143,20 @@ if action.count('--pull') == 1:
     os.system('find /var/www/tcd_offline/relatorio/ -name \*\.py -exec rm {} \; -print')
     os.system('find /var/www/tcd_offline/state/ -name \*\.py -exec rm {} \; -print')
     
-    os.system('/etc/init.d/tcd') 
+    sh.cp('%s/tcd_offline /etc/nginx/sites-enabled/tcd_offline' % MODPATH)
+          
+    sh.cp('%s/tcd /etc/init.d/tcd' % MODPATH)
+    
+    os.system('/etc/init.d/tcd')
+    
+    os.system('/etc/init.d/nginx restart')
+    
+    sh.cp('%s/sync /var/www/tcd_offline/sync.sh' % MODPATH)
+    
+    sh.find('/var/www/tcd_offline/sync.sh -type f -exec sed -i "s/<rede>/%s/g" {} \;' % rede)
+    sh.find('/var/www/tcd_offline/ftp.sh -type f -exec sed -i "s/<rede>/%s/g" {} \;' % rede)
+        
+    os.system('sudo chmod 661 /var/www -R')
     
     sys.exit('Terminou com sucesso! O sistema foi atualizado com sucesso.')
  
