@@ -232,7 +232,7 @@ if os.path.exists('/var/www/tcd.config'):
     if os.path.exists('/var/www/mail.config'):
         mail = '1'
         arquivo_mail = '%s_mail.config' % hash
-    os.system('./ftp.sh %s %s' % (rede, mail, hash))
+    os.system('./ftp.sh %s %s %s' % (rede, mail, hash))
     conn    = httplib.HTTPSConnection(url)
     headers = {"Content-type": "application/x-www-form-urlencoded", "Accept": "text/plain"}
     params  = urllib.urlencode({'@sql_config': '%s_tcd.config' % hash, '@mail_config': arquivo_mail})
