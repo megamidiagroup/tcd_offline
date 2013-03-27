@@ -12,12 +12,12 @@ import simplejson as json
 OFFLINE = getattr(settings, 'OFFLINE', False)
 
 
-def check_not_tables(sql):
+def check_is_tables(sql):
     
-    for i in ['django_session']:
+    for i in ['`auth_', '`captcha_', '`django_', '`mega_']:
         if sql.count(i) > 0:
-            return False
-    return True
+            return True
+    return False
 
     
 def set_sql(*args):
@@ -28,7 +28,7 @@ def set_sql(*args):
         
         o = open('/var/log/mysql/mysql.log', 'r').read()
         for i in o.split('\n'):
-            if check_not_tables(i) and (i.count('INSERT') > 0 or i.count('UPDATE') > 0 or i.count('DELETE') > 0) and not i.count('`django_session`') > 0:
+            if check_is_tables(i) and (i.count('INSERT') > 0 or i.count('UPDATE') > 0 or i.count('DELETE') > 0) and not i.count('`django_session`') > 0:
                 sql = i.replace("\\'", '&#39;')
                 sql = sql.replace("'", '"')
                 if sql.count('INSERT') > 0:
