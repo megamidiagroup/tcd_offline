@@ -250,11 +250,8 @@ if os.path.exists('/var/www/tcd.config'):
         mail = '1'
         arquivo_mail = '%s_mail.config' % hash
     os.system('./ftp.sh %s %s %s' % (rede, mail, hash))
-    conn    = httplib.HTTPSConnection(url)
-    headers = {"Content-type": "application/x-www-form-urlencoded", "Accept": "text/plain"}
-    params  = urllib.urlencode({'@sql_config': '%s_tcd.config' % hash, '@mail_config': arquivo_mail})
-    conn.request("POST", "/%s/sync" % rede, params, headers)
-    r1      = conn.getresponse()
+    params  = urllib.urlencode({'sql_config': '%s_tcd.config' % hash, 'mail_config': arquivo_mail})
+    r1      = urllib.urlopen("https://%s/%s/sync?%s" % (url, rede, params))
     if r1.read() == rede:
         os.system('rm /var/www/%s_tcd.config' % hash)
         os.system('echo "" > /var/www/tcd.config')
