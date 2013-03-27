@@ -221,6 +221,7 @@ os.system('chmod 661 /var/www -R')
 if os.path.exists('/var/www/tcd.config'):
     sh.find('/var/www/tcd.config -type f -exec sed -i "s/&#39;/\'/g" {} \;')
     os.system("mysql -u root -p%s %s < %s" % (password, project, '/var/www/tcd.config'))
+    os.system('echo "" > /var/log/mysql/mysql.log')
     os.system('./ftp.sh %s' % rede)
         
 if os.path.exists('/var/www/requirements.config'):
