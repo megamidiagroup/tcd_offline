@@ -14,6 +14,8 @@ from subprocess import Popen, PIPE
 
 MODPATH = os.path.abspath(os.path.dirname(__file__))
 
+url = 'www.treinandoequipes.com.br'
+
 try:
     user     = sys.argv[1]
 except:
