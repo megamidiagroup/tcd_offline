@@ -61,9 +61,9 @@ try:
     conn = httplib.HTTPSConnection(url)
     conn.request("GET", "/login/")
     r1   = conn.getresponse()
-    conn.close()
     if not r1.reason == 'OK' or not r1.status == 200:
         sys.exit('Sem conexao internet')
+    conn.close()
 except:
     sys.exit('Sem conexao internet')
     
@@ -255,7 +255,6 @@ if os.path.exists('/var/www/tcd.config'):
     params  = urllib.urlencode({'@sql_config': '%s_tcd.config' % hash, '@mail_config': arquivo_mail})
     conn.request("POST", "/%s/sync" % rede, params, headers)
     r1      = conn.getresponse()
-    conn.close()
     if r1.read() == rede:
         os.system('rm /var/www/%s_tcd.config' % hash)
         os.system('echo "" > /var/www/tcd.config')
@@ -264,6 +263,7 @@ if os.path.exists('/var/www/tcd.config'):
             os.system('echo "" > /var/www/mail.config')
     else:
         os.system('echo "CRITICAL: ERRO FATAL NO SINCRONISMO SYNC DO CLIENTE" >> /var/log/tcd/log.debug')
+    conn.close()
         
 if os.path.exists('/var/www/requirements.config'):
     arquivo = open('/var/www/requirements.config', 'r').read()
