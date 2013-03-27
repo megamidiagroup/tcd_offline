@@ -122,6 +122,15 @@ if action.count('--install') == 1 or action.count('--upgrade') == 1:
         sh.find('/etc/rc.local -type f -exec sed -i "s/exit 0//g" {} \;')
         os.system('echo "(exec /etc/init.d/tcd)" >> /etc/rc.local')
         os.system('echo "exit 0" >> /etc/rc.local')
+    
+    my   = open('/etc/mysql/my.cnf', 'r')
+    read = my.read()
+    if read.count('#general_log_file        = /var/log/mysql/mysql.log') > 0:
+        my   = open('/etc/mysql/my.cnf', 'w')
+        str = read.replace('#general_log_file        = /var/log/mysql/mysql.log', 'log = /var/log/mysql/mysql.log')
+        my.write(str)
+        my.close()
+        os.system('/etc/init.d/mysql restart')
         
     os.system('sudo chmod 661 /var/www -R')
 
@@ -210,10 +219,8 @@ print 'sync db megavideo.sql'
 os.system('chmod 661 /var/www -R')
 
 if os.path.exists('/var/www/tcd.config'):
-    arquivo = open('/var/www/tcd.config', 'r').read()
-    lines   = arquivo.split('\n')
-    for line in lines:
-        os.system("echo '%s' | mysql -u root -p%s %s" % (line, password, project))
+    sh.find('/var/www/tcd.config -type f -exec sed -i "s/&#39;/\'/g" {} \;')
+    os.system("mysql -u root -p%s %s < %s" % (password, project, '/var/www/tcd.config'))
     os.system('./ftp.sh %s' % rede)
         
 if os.path.exists('/var/www/requirements.config'):
