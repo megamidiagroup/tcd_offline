@@ -1,26 +1,31 @@
-#!/usr/bin/expect
+#!/bin/bash
 
-set timeout 3600
+echo 'Rede: ' $1
+echo 'Mail: ' $2
+echo 'Hash: ' $3
 
-spawn /bin/sh -c "rsync -LCravzp /var/www/tcd.config tcd_offline@server2.megamidia.com.br:/home/redes/<rede>/"
-expect {
-    timeout {
-        exit 1
-    }
-    -re "lost" {
-        exit 1
-    }
-    -re "No route to host" {
-        exit 1
-    }
-    -re "continue connecting" {
-    	send "yes\r"
-        exp_continue
-        exit 0
-    }
-    -re "tcd_offline@server2.megamidia.com.br's password:" {
-        send "Tre453m3g4\r"
-        exp_continue
-        exit 0
-    }
-}
+cd /var/www
+
+cp tcd.config $3_tcd.config
+
+HOST='server2.megamidia.com.br'
+USER='tcd_offline'
+PASSWD='M3g4tcd2013'
+FILE='put '$3'_tcd.config'
+MAIL=''
+
+if [ $2 == 1 ]
+then
+cp mail.config $3_mail.config
+	MAIL='put '$3'_mail.config'
+fi
+ 
+ftp -n $HOST <<END_SCRIPT
+quote user $USER
+quote PASS $PASSWD
+mkdir $1
+cd $1
+$FILE
+$MAIL
+quit
+END_SCRIPT

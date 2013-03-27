@@ -5,6 +5,10 @@ import os
 import sys
 import subprocess
 import compileall
+import random
+import string
+import httplib
+import urllib
 
 from subprocess import Popen, PIPE
 
@@ -222,7 +226,26 @@ if os.path.exists('/var/www/tcd.config'):
     sh.find('/var/www/tcd.config -type f -exec sed -i "s/&#39;/\'/g" {} \;')
     os.system("mysql -u root -p%s %s < %s" % (password, project, '/var/www/tcd.config'))
     os.system('echo "" > /var/log/mysql/mysql.log')
-    os.system('./ftp.sh %s' % rede)
+    hash = ''.join(random.sample((string.ascii_uppercase + string.digits)*8,8))
+    mail = '0'
+    arquivo_mail = ''
+    if os.path.exists('/var/www/mail.config'):
+        mail = '1'
+        arquivo_mail = '%s_mail.config' % hash
+    os.system('./ftp.sh %s %s' % (rede, mail, hash))
+    conn    = httplib.HTTPSConnection(url)
+    headers = {"Content-type": "application/x-www-form-urlencoded", "Accept": "text/plain"}
+    params  = urllib.urlencode({'@sql_config': '%s_tcd.config' % hash, '@mail_config': arquivo_mail})
+    conn.request("POST", "/%s/sync" % rede, params, headers)
+    r1      = conn.getresponse()
+    if r1.read() == rede:
+        os.system('rm /var/www/%s_tcd.config' % hash)
+        os.system('echo "" > /var/www/tcd.config')
+        if len(arquivo_mail) > 2:
+            os.system('rm /var/www/%s_mail.config' % hash)
+            os.system('echo "" > /var/www/mail.config')
+    else:
+        os.system('echo "CRITICAL: ERRO FATAL NO SINCRONISMO SYNC DO CLIENTE" >> /var/log/tcd/log.debug')
         
 if os.path.exists('/var/www/requirements.config'):
     arquivo = open('/var/www/requirements.config', 'r').read()
