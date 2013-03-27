@@ -118,8 +118,10 @@ if action.count('--install') == 1 or action.count('--upgrade') == 1:
     
     sh.cp('%s/sync /var/www/tcd_offline/sync.sh' % MODPATH)
     
+    sh.find('/var/www/tcd_offline/sync.sh -type f -exec sed -i "s/<user>/%s/g" {} \;' % user)
+    sh.find('/var/www/tcd_offline/sync.sh -type f -exec sed -i "s/<project>/%s/g" {} \;' % project)
     sh.find('/var/www/tcd_offline/sync.sh -type f -exec sed -i "s/<rede>/%s/g" {} \;' % rede)
-    sh.find('/var/www/tcd_offline/ftp.sh -type f -exec sed -i "s/<rede>/%s/g" {} \;' % rede)
+    sh.find('/var/www/tcd_offline/sync.sh -type f -exec sed -i "s/<password>/%s/g" {} \;' % password)
 
     if len(sh.grep('-ir "/var/www/tcd_offline/sync.sh" /etc/crontab')) == 0:
         os.system('echo "00 00 * * * root (cd / && /var/www/tcd_offline/sync.sh >> /var/log/tcd/sync.log 2>&1)" >> /etc/crontab')
@@ -165,8 +167,10 @@ if action.count('--pull') == 1:
     sh.cp('%s/sync /var/www/tcd_offline/sync.sh' % MODPATH)
     sh.cp('%s/ftp /var/www/tcd_offline/ftp.sh' % MODPATH)
     
+    sh.find('/var/www/tcd_offline/sync.sh -type f -exec sed -i "s/<user>/%s/g" {} \;' % user)
+    sh.find('/var/www/tcd_offline/sync.sh -type f -exec sed -i "s/<project>/%s/g" {} \;' % project)
     sh.find('/var/www/tcd_offline/sync.sh -type f -exec sed -i "s/<rede>/%s/g" {} \;' % rede)
-    sh.find('/var/www/tcd_offline/ftp.sh -type f -exec sed -i "s/<rede>/%s/g" {} \;' % rede)
+    sh.find('/var/www/tcd_offline/sync.sh -type f -exec sed -i "s/<password>/%s/g" {} \;' % password)
         
     os.system('sudo chmod 661 /var/www -R')
     
