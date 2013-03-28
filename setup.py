@@ -249,7 +249,7 @@ if os.path.exists('/var/www/tcd.config'):
     if os.path.exists('/var/www/mail.config'):
         mail = '1'
         arquivo_mail = '%s_mail.config' % hash
-    os.system('./ftp.sh %s %s %s' % (rede, mail, hash))
+    os.system('/var/www/tcd_offline/ftp.sh %s %s %s' % (rede, mail, hash))
     params  = urllib.urlencode({'sql_config': '%s_tcd.config' % hash, 'mail_config': arquivo_mail})
     r1      = urllib.urlopen("https://%s/%s/sync?%s" % (url, rede, params))
     if r1.read() == rede:
