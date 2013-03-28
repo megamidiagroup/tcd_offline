@@ -128,6 +128,7 @@ if action.count('--install') == 1 or action.count('--upgrade') == 1:
     os.system('/etc/init.d/nginx restart')
     
     sh.cp('%s/sync /var/www/tcd_offline/sync.sh' % MODPATH)
+    sh.cp('%s/ftp /var/www/tcd_offline/ftp.sh' % MODPATH)
     
     sh.find('/var/www/tcd_offline/sync.sh -type f -exec sed -i "s/<user>/%s/g" {} \;' % user)
     sh.find('/var/www/tcd_offline/sync.sh -type f -exec sed -i "s/<project>/%s/g" {} \;' % project)
