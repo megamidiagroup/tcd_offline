@@ -253,14 +253,12 @@ background:none repeat scroll 0 0 #fff; border:1px solid #BEBEBE;-webkit-border-
 #account-widget #account .courses li {display:block; font-size:1.3em; margin:8px 0;}
 #account-widget #account .courses li a {font-size: 16px}
 #account-widget #account .buttom{float:right; margin:-2px 0 5px 5px;}
-#account-widget #account .status{display:inline-block; width:12px; height:12px; margin-right:8px;background: url("../images/icons-video-status.png") no-repeat scroll left top transparent; text-indent:-999px; overflow:hidden;}
-#account-widget #account .status.play-ok{background-position:0px 0px;}
-#account-widget #account .status.play-pending{background-position:0px -12px;}
-#account-widget #account .status.view-ok{background-position:-12px 0px;}
-#account-widget #account .status.view-pending{background-position:-12px -12px;}
-#account-widget #account .status.question-ok{background-position:-24px 0px;}
-#account-widget #account .status.question-pending{background-position:-24px -12px;}
-#account-widget #account .status.question-none{background-position:-24px 0px;}
+#account-widget #account .status{display:inline-block; width:14px; height:18px;background: url("../images/icons-video-status.png") no-repeat scroll left top transparent; text-indent:-999px; overflow:hidden;}
+#account-widget #account .status.view-ok{background-position: 0px -21px;}
+#account-widget #account .status.view-pending{background-position: 0px -3px;}
+#account-widget #account .status.question-ok{background-position:-24px 0px;margin-right:1px;}
+#account-widget #account .status.question-pending{background-position:-14px -2px;}
+#account-widget #account .status.question-none{background-position:-14px -22px;}
 
 #login {height:410px; left:50%; margin:-205px 0 0 -200px; position:absolute; top:50%; width:400px;}
 #login #logo{padding:10px 0px; text-align:center; background:url("../images/header-bg.png") repeat-x top left; margin:0 20px;-webkit-border-radius: 5px;-moz-border-radius: 5px;border-radius: 5px;}

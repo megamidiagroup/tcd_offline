@@ -171,14 +171,12 @@ background:none repeat scroll 0 0 #F4F4F4; border:1px solid #BEBEBE;-webkit-bord
 #account-widget #account .courses li {display:block; font-size:1.2em; margin:1px 0;}
 #account-widget #account .courses li a {font-size: 16px}
 #account-widget #account .buttom{float:right; margin:-2px 0 5px 5px;}
-#account-widget #account .status{display:inline-block; width:12px; height:12px; margin-right:2px;background: url("../images/icons-video-status.png") no-repeat scroll left top transparent; text-indent:-999px; overflow:hidden;}
-#account-widget #account .status.play-ok{background-position:0px 0px;}
-#account-widget #account .status.play-pending{background-position:0px -12px;}
-#account-widget #account .status.view-ok{background-position:-12px 0px;}
-#account-widget #account .status.view-pending{background-position:-12px -12px;}
+#account-widget #account .status{display:inline-block; width:14px; height:18px;background: url("../images/icons-video-status.png") no-repeat scroll left top transparent; text-indent:-999px; overflow:hidden;}
+#account-widget #account .status.view-ok{background-position: 0px -21px;}
+#account-widget #account .status.view-pending{background-position: 0px -3px;}
 #account-widget #account .status.question-ok{background-position:-24px 0px;margin-right:1px;}
-#account-widget #account .status.question-pending{background-position:-24px -12px;margin-right:1px;}
-#account-widget #account .status.question-none{background-position:-24px 0px;margin-right:1px;}
+#account-widget #account .status.question-pending{background-position:-14px -2px;}
+#account-widget #account .status.question-none{background-position:-14px -22px;}
 
 #enquete-widget{position:fixed; top:290px; right:0; z-index:9999;}
 #enquete-widget .enquete{margin:2px 0 0 2px; display:block;width:50px; height:70px; background:none repeat scroll 0 0 #F4F4F4; 

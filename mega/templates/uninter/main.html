@@ -90,6 +90,11 @@
 	                            </div>
 	                        </a>
                         </h5>
+                        {% if list_aproveitamento_account %}
+	                        <h3 style="font-size: 14px; color: red">
+	                        	Clique no{{ list_aproveitamento_account|pluralize }} vídeo{{ list_aproveitamento_account|pluralize }} abaixo e aumente seu aproveitamento
+	                        </h3>
+	                    {% endif %}
                         <ul class="courses">
                             {% for laa in list_aproveitamento_account %}
                             	{% if laa|aproveitamento_append:user %}

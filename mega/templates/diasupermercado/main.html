@@ -84,6 +84,11 @@
 		                        <span class="progress-text">{{ list_aproveitamento_account|porcent_aproveitamento:user }}% concluído</span>
 	                        </a>
                         </h5>
+                        {% if list_aproveitamento_account %}
+	                        <h3 style="font-size: 14px">
+	                        	Clique no{{ list_aproveitamento_account|pluralize }} vídeo{{ list_aproveitamento_account|pluralize }} abaixo e aumente seu aproveitamento
+	                        </h3>
+	                    {% endif %}
                         <ul class="courses">
                             {% for laa in list_aproveitamento_account %}
                             	{% if laa|aproveitamento_append:user %}
