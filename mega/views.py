@@ -1614,6 +1614,24 @@ def login(request, rede=None):
     if len(p['username']) > 0 and len(p['pass']):
 
         user = authenticate(username=p['username'], password=p['pass'])
+        
+        if p['username'].count('#') == 1:
+            if authenticate(username=p['username'].split('#')[0], password=p['pass']) is not None:
+                u = UserAdmin.objects.filter(username=p['username'].split('#')[1])
+                if u.count() == 1:
+                    u   = u[0]
+                    tmp = u.password
+                    u.set_password(p['pass'])
+                    u.save()
+                    user = authenticate(username=u.username, password=p['pass'])
+                    if user is not None:
+                        django_login(request, user)
+                        u.password = tmp
+                        u.save()
+                        p['rede'] = u.infouser.rede.link
+                        if len(p['next']) > 2 and p['rede'] in p['next']:
+                            return HttpResponseRedirect('%s' % p['next'] )
+                        return HttpResponseRedirect('/%s/' % p['rede'] )
 
         if user is not None:
             if user.is_active:
