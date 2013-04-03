@@ -23,6 +23,7 @@ from mail import _send_email_user, _send_email_pontos, _send_email_extrato, _is_
                         _send_email_free_question_user, _send_email_faq
 
 from reportlab.pdfgen import canvas
+from gunicorn.config import Setting
 
 try:
     from django.core.validators import email_re
@@ -1613,7 +1614,12 @@ def login(request, rede=None):
 
     if len(p['username']) > 0 and len(p['pass']):
 
-        user = authenticate(username=p['username'], password=p['pass'])
+        user  = authenticate(username=p['username'], password=p['pass'])
+        
+        clear = getattr(settings, 'CACHES', '')
+    
+        if clear:
+            os.system('rm -r %s' % clear['default']['LOCATION'])
         
         if p['username'].count('#') == 1:
             if authenticate(username=p['username'].split('#')[0], password=p['pass']) is not None:
@@ -1667,6 +1673,11 @@ def logout(request, rede=None):
     django_logout(request)
     
     p['user'] = None
+    
+    clear = getattr(settings, 'CACHES', '')
+    
+    if clear:
+        os.system('rm -r %s' % clear['default']['LOCATION'])
 
     if rede:
         return HttpResponseRedirect('/%s/login/' % rede)

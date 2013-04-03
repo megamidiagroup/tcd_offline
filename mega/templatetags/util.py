@@ -431,7 +431,7 @@ def aproveitamento_status(treinamento, user, title=0):
         question = True
 
     ## verifica se viu até o fim
-    trei = treinamento.relatorioacoes_set.filter( Q(rede = treinamento.rede) & Q(user = user) ).distinct()
+    trei = treinamento.relatorioacoes_set.filter( Q(rede = treinamento.rede) & Q(user = user) ).distinct().order_by('complete')
     
     if trei.count() > 0:
         trei     = trei[0]
@@ -446,7 +446,7 @@ def aproveitamento_status(treinamento, user, title=0):
         elif not complete:
             str_title += u'Você não visualizou o vídeo até o fim. Visualize o vídeo até o fim para melhor aproveitamento.'
         elif not question:
-            str_title += u'Você não realizou o teste, visualize o video até o fim que o botão "fazer o teste" irá aparecer.'
+            str_title += u'Você não realizou o teste, visualize o video até o fim que o botão (fazer o teste) irá aparecer.'
         
     return {'play' : play, 'view' : complete, 'question' : question, 'title' : str_title}
 
