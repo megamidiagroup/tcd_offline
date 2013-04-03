@@ -219,11 +219,8 @@ if action.count('--block') == 1:
 if not os.path.islink('/var/www/media/tcd/mega'):
     os.symlink('/var/www/tcd_offline/mega/media/mega', '/var/www/media/tcd/mega')
     
-if not os.path.islink('/var/www/media/tcd/ckeditor'):
-    os.symlink('/var/www/tcd_offline/mega/media/ckeditor', '/var/www/media/tcd/ckeditor')
-    
-if not os.path.islink('/var/www/media/tcd/admin_tools'):
-    os.symlink('/var/www/tcd_offline/mega/media/admin_tools', '/var/www/media/tcd/admin_tools')
+if os.path.exists('/var/www/media/tcd/icone_%s.png' % rede) and not os.path.islink('/var/www/media/tcd/mega/images/icone_%s.png' % rede):
+    os.symlink('/var/www/media/tcd/icone_%s.png' % rede, '/var/www/media/tcd/mega/images/icone_%s.png' % rede)
     
 if os.path.isdir('/var/www/media/tcd/mega/css/template'):
     os.system('rm -r /var/www/media/tcd/mega/css/template')
