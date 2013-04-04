@@ -1315,25 +1315,34 @@ def action(request, rede=None):
     p['video_id'] = request.REQUEST.get('video_id' , 0)
     p['action']   = request.REQUEST.get('action'   , 'play')
 
-    ra = RelatorioAcoes.objects.filter( Q(rede = p['rede']), Q(user = p['user']), Q(video__id = int(p['video_id'])) )
+    ra = RelatorioAcoes.objects.filter( Q(rede = p['rede']) & Q(user = p['user']) & Q(video__id = int(p['video_id'])) ).distinct().order_by('-complete')
 
-    if ra.count() > 0:
-        ra       = ra[0]
+    if ra.count() == 1:
+        ra        = ra[0]
     else:
-        ra       = RelatorioAcoes()
-        ra.rede  = p['rede']
-        ra.user  = p['user']
-        ra.video = Treinamento.objects.get(id = p['video_id'])
+        tmpra     = ra
+        ra        = RelatorioAcoes()
+        ra.rede   = p['rede']
+        ra.user   = p['user']
+        ra.video  = Treinamento.objects.get(id = p['video_id'])
+        if tmpra.count() > 1:
+            play, complete = False, False
+            for i in tmpra:
+                if i.play:
+                    play     = True
+                if i.complete:
+                    complete = True
+            tmpra.delete()
+            ra.play     = play
+            ra.complete = complete
 
     if p['action'] == 'play' and not ra.play:
-        ra.play = True
+        ra.play     = True
 
     if p['action'] == 'complete' and not ra.complete:
         ra.complete = True
 
     ra.save()
-    
-    set_sql()
 
     return HttpResponse('true')
 
