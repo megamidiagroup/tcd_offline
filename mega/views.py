@@ -23,7 +23,6 @@ from mail import _send_email_user, _send_email_pontos, _send_email_extrato, _is_
                         _send_email_free_question_user, _send_email_faq
 
 from reportlab.pdfgen import canvas
-from gunicorn.config import Setting
 
 try:
     from django.core.validators import email_re
