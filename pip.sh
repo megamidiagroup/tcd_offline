@@ -757,6 +757,8 @@ echo "colors >> ok"
 
 echo "<<<<<<<<<<<<<<<<<<<<<<"
 
+### pip install django-colors
+
 cd /tmp
 /usr/bin/expect <<EOD
 	set timeout 600
@@ -788,4 +790,6 @@ python -c 'import admin_tools'
 echo "admin_tools >> ok"
 
 echo "<<<<<<<<<<<<<<<<<<<<<<"
+
+### pip install django-admin-tools
 

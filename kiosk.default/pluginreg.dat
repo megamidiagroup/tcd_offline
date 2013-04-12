@@ -1,0 +1,94 @@
+Generated File. Do not edit.
+
+[HEADER]
+Version:0.15:$
+Arch:x86-gcc3:$
+
+[PLUGINS]
+libflashplayer.so:$
+/usr/lib/flashplugin-installer/libflashplayer.so:$
+:$
+1365767634000:0:1:$
+Shockwave Flash 11.2 r202:$
+Shockwave Flash:$
+2
+0:application/x-shockwave-flash:Shockwave Flash:swf:$
+1:application/futuresplash:FutureSplash Player:spl:$
+librhythmbox-itms-detection-plugin.so:$
+/usr/lib/mozilla/plugins/librhythmbox-itms-detection-plugin.so:$
+:$
+1346199325000:0:5:$
+This plug-in detects the presence of iTunes when opening iTunes Store URLs in a web page with Firefox.:$
+iTunes Application Detector:$
+1
+0:application/itunes-plugin:::$
+libtotem-cone-plugin.so:$
+/usr/lib/mozilla/plugins/libtotem-cone-plugin.so:$
+:$
+1345744273000:0:5:$
+The <a href="http://www.gnome.org/projects/totem/">Totem</a> 3.0.1 plugin handles video and audio streams.:$
+VLC Multimedia Plugin (compatible Totem 3.0.1):$
+21
+0:application/x-vlc-plugin:VLC Multimedia Plugin::$
+1:application/vlc:VLC Multimedia Plugin::$
+2:video/x-google-vlc-plugin:VLC Multimedia Plugin::$
+3:application/x-ogg:Arquivo multimídia Ogg:ogg:$
+4:application/ogg:Arquivo multimídia Ogg:ogg:$
+5:audio/ogg:Áudio Ogg:oga:$
+6:audio/x-ogg:Áudio Ogg:ogg:$
+7:video/ogg:Vídeo Ogg:ogv:$
+8:video/x-ogg:Vídeo Ogg:ogg:$
+9:application/annodex:Formato de troca Annodex:anx:$
+10:audio/annodex:Áudio Annodex:axa:$
+11:video/annodex:Vídeo Annodex:axv:$
+12:video/mpeg:Vídeo MPEG:mpg, mpeg, mpe:$
+13:audio/wav:Áudio WAV:wav:$
+14:audio/x-wav:Áudio WAV:wav:$
+15:audio/mpeg:Áudio MP3:mp3:$
+16:application/x-nsv-vp3-mp3:Vídeo do Nullsoft:nsv:$
+17:video/flv:Vídeo Flash:flv:$
+18:video/webm:Vídeo WebM:webm:$
+19:application/x-totem-plugin:Totem Multimedia plugin::$
+20:audio/midi:Áudio MIDI:mid, midi:$
+libtotem-gmp-plugin.so:$
+/usr/lib/mozilla/plugins/libtotem-gmp-plugin.so:$
+:$
+1345744273000:0:5:$
+The <a href="http://www.gnome.org/projects/totem/">Totem</a> 3.0.1 plugin handles video and audio streams.:$
+Windows Media Player Plug-in 10 (compatible; Totem):$
+13
+0:application/x-mplayer2:Vídeo AVI:avi, wma, wmv:$
+1:video/x-ms-asf-plugin:Vídeo ASF:asf, wmv:$
+2:video/x-msvideo:Vídeo AVI:asf, wmv:$
+3:video/x-ms-asf:Vídeo ASF:asf:$
+4:video/x-ms-wmv:Vídeo do Windows Media:wmv:$
+5:video/x-wmv:Vídeo do Windows Media:wmv:$
+6:video/x-ms-wvx:Vídeo do Windows Media:wmv:$
+7:video/x-ms-wm:Vídeo do Windows Media:wmv:$
+8:video/x-ms-wmp:Vídeo do Windows Media:wmv:$
+9:application/x-ms-wms:Vídeo do Windows Media:wms:$
+10:application/x-ms-wmp:Vídeo do Windows Media:wmp:$
+11:application/asx:Lista de execução do Microsoft ASX:asx:$
+12:audio/x-ms-wma:Áudio do Windows Media:wma:$
+libtotem-narrowspace-plugin.so:$
+/usr/lib/mozilla/plugins/libtotem-narrowspace-plugin.so:$
+:$
+1345744273000:0:5:$
+The <a href="http://www.gnome.org/projects/totem/">Totem</a> 3.0.1 plugin handles video and audio streams.:$
+QuickTime Plug-in 7.6.6:$
+5
+0:video/quicktime:Vídeo do QuickTime:mov:$
+1:video/mp4:Vídeo MPEG-4:mp4:$
+2:image/x-macpaint:Imagem de bitmap do MacPaint:pntg:$
+3:image/x-quicktime:Desenho do Macintosh Quickdraw/PICT:pict, pict1, pict2:$
+4:video/x-m4v:Vídeo MPEG-4:m4v:$
+libtotem-mully-plugin.so:$
+/usr/lib/mozilla/plugins/libtotem-mully-plugin.so:$
+:$
+1345744273000:0:5:$
+DivX Web Player version 1.4.0.233:$
+DivX® Web Player:$
+1
+0:video/divx:Vídeo AVI:divx:$
+
+[INVALID]

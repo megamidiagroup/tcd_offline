@@ -209,6 +209,9 @@ if action.count('--block') == 1:
     sh.cp('/var/www/tcd_offline/kiosk.desktop', '/usr/share/xsessions/kiosk.desktop')
     os.system('chmod 644 /usr/share/xsessions/kiosk.desktop')
         
+    if not os.path.islink('/home/%s/.mozilla/firefox/kiosk.default' % user):    
+        os.symlink('/var/www/tcd_offline/kiosk.default', '/home/%s/.mozilla/firefox/kiosk.default' % user)
+        
     if not os.path.islink('/home/%s/.xbindkeysrc' % user):    
         os.symlink('/var/www/tcd_offline/.xbindkeysrc', '/home/%s/.xbindkeysrc' % user)
         

@@ -1020,9 +1020,9 @@ def conta_edit(request, rede=None):
         else:
             iu   = p['infouser']
             user = p['user']
-            user.first_name = p['txt_name'].split(' ')[0]
+            user.first_name    = p['txt_name'].split(' ')[0].strip()
             try:
-                user.last_name = ' '.join(n for n in p['txt_name'].split(' ')[1:])
+                user.last_name = ' '.join(n for n in p['txt_name'].split(' ')[1:]).strip()
             except:
                 user.last_name = ''
             user.email   = p['txt_email']
