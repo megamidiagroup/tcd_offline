@@ -1,6 +1,7 @@
 #!/usr/bin/expect
 
-set timeout 14400 ## 4 horas de janela
+## 4 horas de janela
+set timeout 14400
 
 spawn /bin/sh -c "rsync -LCravzp radiob@server2.megamidia.com.br:/home/redes/<rede>/ /var/www/"
 expect {
