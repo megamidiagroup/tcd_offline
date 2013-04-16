@@ -137,7 +137,8 @@ if action.count('--install') == 1 or action.count('--upgrade') == 1:
     sh.find('/var/www/tcd_offline/sync.sh -type f -exec sed -i "s/<password>/%s/g" {} \;' % password)
 
     if len(sh.grep('-ir "/var/www/tcd_offline/sync.sh" /etc/crontab')) == 0:
-        os.system('echo "00 00 * * * root (cd / && /var/www/tcd_offline/sync.sh >> /var/log/tcd/sync.log 2>&1)" >> /etc/crontab')
+        os.system('echo "00 0 * * * root (cd / && /var/www/tcd_offline/sync.sh >> /var/log/tcd/sync.log 2>&1)" >> /etc/crontab')
+        os.system('echo "00 5 * * * root (cd / && /var/www/tcd_offline/sync.sh >> /var/log/tcd/sync.log 2>&1)" >> /etc/crontab')
         
     if len(sh.grep('-ir "(exec /etc/init.d/tcd)" /etc/rc.local')) == 0:
         sh.find('/etc/rc.local -type f -exec sed -i "s/exit 0//g" {} \;')
