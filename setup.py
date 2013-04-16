@@ -198,7 +198,7 @@ if action.count('--pull') == 1:
 if action.count('--block') == 1:
     print 'preparando para bloquear notebook'
     
-    os.system('apt-get install -y xbindkeys flashplugin-installer')
+    os.system('apt-get install -y xbindkeys flashplugin-installer xscreensaver')
     
     os.system('apt-get remove -y unity')
     
