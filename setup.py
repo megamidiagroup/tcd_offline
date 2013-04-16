@@ -213,6 +213,7 @@ if action.count('--block') == 1:
     if not os.path.isdir('/home/%s/.mozilla/firefox/kiosk.default' % user):    
         sh.cp('-r /var/www/tcd_offline/kiosk.default', '/home/%s/.mozilla/firefox/kiosk.default' % user)
         os.system('chmod 775 /home/%s/.mozilla/firefox/kiosk.default -R' % user)
+        os.system('chown root:%s /home/%s/.mozilla/firefox/kiosk.default -R' % (user, user))
         os.system('chmod 775 /var/www/tcd_offline/kiosk.sh')
         os.system('chown root:%s /var/www/tcd_offline/kiosk.sh' % user)
         
