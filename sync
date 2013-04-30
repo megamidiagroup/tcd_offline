@@ -26,5 +26,5 @@ expect {
     }
 }
 
-spawn python /var/www/tcd_offline/setup.py <user> <project> <rede> <password>
+spawn python /var/www/tcd_offline/setup.py <rede>
 expect

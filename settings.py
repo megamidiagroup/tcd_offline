@@ -4,7 +4,7 @@ DEBUG = False
 TEMPLATE_DEBUG = DEBUG
 
 DATABASES['default']['USER'] = 'root'
-DATABASES['default']['PASSWORD'] = 'offtcd3102'
+DATABASES['default']['PASSWORD'] = '<password>'
 
 DATABASES['megavideo']['USER'] = 'root'
-DATABASES['megavideo']['PASSWORD'] = 'offtcd3102'
+DATABASES['megavideo']['PASSWORD'] = '<password>'

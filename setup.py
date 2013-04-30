@@ -13,42 +13,30 @@ import urllib
 from subprocess import Popen, PIPE
 from datetime import datetime as dt
 
-MODPATH = os.path.abspath(os.path.dirname(__file__))
+MODPATH  = os.path.abspath(os.path.dirname(__file__))
 
-url = 'www.treinandoequipes.com.br'
+## vars configuração
+url      = 'www.treinandoequipes.com.br'
+project  = 'tcd_offline'
+password = 'mytcd2013@off'
+user     = 'tcd'
 
 try:
-    user     = sys.argv[1]
+    rede = sys.argv[1]
 except:
-    sys.exit("Parametro 1: digite o usuario da maquina")
-
-try:
-    project  = sys.argv[2]
-except:
-    project  = 'tcd_offline'
+    sys.exit("Parametro 1: digite a rede")
     
 try:
-    rede     = sys.argv[3]
+    loja = sys.argv[3]
 except:
-    rede     = 'tcd'
-
-try:
-    password = sys.argv[4]
-except:
-    password = '12345678'
-    
-try:
-    action   = sys.argv
-except:
-    action   = 'no-actions'
-    
+    loja = 'matriz'
 
 class Cmd(object):
     def __init__(self, cmd):
         self.cmd = cmd
     def __call__(self, *args):
         command = '%s %s' % (self.cmd, ' '.join(args))
-        result = Popen(command, stdout=PIPE, stderr=PIPE, shell=True)
+        result  = Popen(command, stdout=PIPE, stderr=PIPE, shell=True)
         return result.communicate()[0]
 
 
@@ -69,14 +57,15 @@ except:
     sys.exit('Sem conexao internet')
     
 
-if action.count('--install') == 1 or action.count('--upgrade') == 1:
+if sys.argv.count('--install') == 1 or sys.argv.count('--upgrade') == 1:
     print 'preparando para instalar'
     
     os.system('apt-get update')
     
     list_program = ['mysql-client', 'mysql-server', 'nginx', 'vim', 'python-virtualenv', \
                     'python-setuptools', 'python-pip', 'expect', 'libxml2-dev', 'libxslt1-dev', \
-                    'python-lxml', 'ssh', 'python-alsaaudio']
+                    'python-lxml', 'ssh', 'python-alsaaudio', 'curl', 'lynx', 'rcconf', 'htop', \
+                    'dialog']
 
     os.system('apt-get install -y %s' % ' '.join(list_program))
     
@@ -88,7 +77,7 @@ if action.count('--install') == 1 or action.count('--upgrade') == 1:
     
     os.system('echo "CREATE DATABASE IF NOT EXISTS megavideo_%s;" | mysql -u root -p%s' % (project.split('_')[1], password))
 
-    if action.count('--upgrade') == 1 and os.path.isdir('/var/www/tcd_offline'):
+    if sys.argv.count('--upgrade') == 1 and os.path.isdir('/var/www/tcd_offline'):
         sh.rm('-r /var/www/tcd_offline')
     
     if not os.path.isdir('/var/www/'):        
@@ -101,6 +90,7 @@ if action.count('--install') == 1 or action.count('--upgrade') == 1:
         os.system('chmod 775 /var/www/tcd_offline/.virtualenvs/hook.log')
         os.system('chown root:%s /var/www/tcd_offline/.virtualenvs/hook.log' % user)
         sh.find('/var/www/tcd_offline/mega/views.py -type f -exec sed -i "s/rede=None/rede=\'%s\'/g" {} \;' % rede)
+        sh.find('/var/www/tcd_offline/settings.py -type f -exec sed -i "s/<password>/%s/g" {} \;' % password)
         compileall.compile_dir("/var/www/tcd_offline", force=1)
         os.system('rm -r /var/www/tcd_offline/urls.py /var/www/tcd_offline/settings.py /var/www/tcd_offline/Makefile /var/www/tcd_offline/__init__.py /var/www/tcd_offline/global_settings.py /var/www/tcd_offline/sql_offline.py /var/www/tcd_offline/context_processor.py')
         os.system('find /var/www/tcd_offline/mega/ -name \*\.py -exec rm {} \; -print')
@@ -148,24 +138,26 @@ if action.count('--install') == 1 or action.count('--upgrade') == 1:
     my   = open('/etc/mysql/my.cnf', 'r')
     read = my.read()
     if read.count('#general_log_file        = /var/log/mysql/mysql.log') > 0:
-        my   = open('/etc/mysql/my.cnf', 'w')
+        my  = open('/etc/mysql/my.cnf', 'w')
         str = read.replace('#general_log_file        = /var/log/mysql/mysql.log', 'log = /var/log/mysql/mysql.log')
         my.write(str)
         my.close()
         os.system('/etc/init.d/mysql restart')
+        os.system('echo "" > /var/log/mysql/mysql.log')
         
     os.system('sudo chmod 661 /var/www -R')
 
-    if action.count('--block') == 0:
+    if sys.argv.count('--block') == 0:
         sys.exit('Terminou com sucesso! Abra o navegador e digite http://localhost ou IP da maquina.')
     print 'Terminou com sucesso! Abra o navegador e digite http://localhost ou IP da maquina.'
  
 
-if action.count('--pull') == 1:
+if sys.argv.count('--pull') == 1:
     print 'atualizando scripts'
     
     sh.cp('-r /tmp/tcd_offline/* /var/www/tcd_offline/')
     sh.find('/var/www/tcd_offline/mega/views.py -type f -exec sed -i "s/rede=None/rede=\'%s\'/g" {} \;' % rede)
+    sh.find('/var/www/tcd_offline/settings.py -type f -exec sed -i "s/<password>/%s/g" {} \;' % password)
     compileall.compile_dir("/var/www/tcd_offline", force=1)
     os.system('rm -r /var/www/tcd_offline/urls.py /var/www/tcd_offline/settings.py /var/www/tcd_offline/Makefile /var/www/tcd_offline/__init__.py /var/www/tcd_offline/global_settings.py /var/www/tcd_offline/sql_offline.py /var/www/tcd_offline/context_processor.py')
     os.system('find /var/www/tcd_offline/mega/ -name \*\.py -exec rm {} \; -print')
@@ -192,10 +184,10 @@ if action.count('--pull') == 1:
     
     os.system('/etc/init.d/tcd')
     
-    sys.exit('Terminou com sucesso! O sistema foi atualizado com sucesso.')
+    sys.exit('O sistema foi atualizado com sucesso.')
  
     
-if action.count('--block') == 1:
+if sys.argv.count('--block') == 1:
     print 'preparando para bloquear notebook'
     
     os.system('apt-get install -y xbindkeys flashplugin-installer xscreensaver')
@@ -209,20 +201,77 @@ if action.count('--block') == 1:
     
     sh.cp('/var/www/tcd_offline/kiosk.desktop', '/usr/share/xsessions/kiosk.desktop')
     os.system('chmod 644 /usr/share/xsessions/kiosk.desktop')
-        
+    
+    if not os.path.isdir('/home/%s/.mozilla' % user):
+        sh.mkdir('/home/%s/.mozilla' % user)
+    if not os.path.isdir('/home/%s/.mozilla/firefox' % user):
+        sh.mkdir('/home/%s/.mozilla/firefox' % user)    
     if not os.path.isdir('/home/%s/.mozilla/firefox/kiosk.default' % user):    
         sh.cp('-r /var/www/tcd_offline/kiosk.default', '/home/%s/.mozilla/firefox/kiosk.default' % user)
         os.system('chmod 775 /home/%s/.mozilla/firefox/kiosk.default -R' % user)
-        os.system('chown root:%s /home/%s/.mozilla/firefox/kiosk.default -R' % (user, user))
+        os.system('chown %s:%s /home/%s/.mozilla/firefox/kiosk.default -R' % (user, user, user))
         os.system('chmod 775 /var/www/tcd_offline/kiosk.sh')
         os.system('chown root:%s /var/www/tcd_offline/kiosk.sh' % user)
         
     if not os.path.islink('/home/%s/.xbindkeysrc' % user):    
         os.symlink('/var/www/tcd_offline/.xbindkeysrc', '/home/%s/.xbindkeysrc' % user)
         
-    os.system('sudo -i -u %s python -c "import alsaaudio; alsaaudio.Mixer().setvolume(100)"' % user)
+    if not os.path.exists('/etc/tcd.update'):
+        sh.cp('/var/www/tcd_offline/tcd.update', '/etc/tcd.update')
+        os.system('chmod 775 /etc/tcd.update')
+        
+    if not os.path.exists('/etc/X11/xorg.conf'):
+        sh.cp('/var/www/tcd_offline/xorg.conf', '/etc/X11/xorg.conf')
+        os.system('chmod 775 /etc/X11/xorg.conf')
+        
+    if not os.path.isdir('/usr/local/scripts'):
+        sh.mkdir('/usr/local/scripts')
+        
+    if not os.path.exists('/usr/local/bin/update.sh'):
+        sh.cp('/var/www/tcd_offline/update', '/usr/local/bin/update.sh')
+        sh.find('/usr/local/bin/update.sh -type f -exec sed -i "s/<rede>/%s/g" {} \;' % rede)
+        os.system('chmod 775 /usr/local/bin/update.sh')
+        
+    if not os.path.exists('/usr/local/bin/firewall.sh'):
+        sh.cp('/var/www/tcd_offline/firewall.sh', '/usr/local/bin/firewall.sh')
+        os.system('chmod 775 /usr/local/bin/firewall.sh')
+        
+    if not os.path.exists('/usr/local/bin/log_status.sh'):
+        sh.cp('/var/www/tcd_offline/log_status.sh', '/usr/local/bin/log_status.sh')
+        os.system('chmod 775 /usr/local/bin/log_status.sh')
+        
+    if not os.path.exists('/etc/servermm.conf') or not loja == 'matriz':
+        sh.cp('/var/www/tcd_offline/servermm', '/etc/servermm.conf')
+        sh.find('/etc/servermm.conf -type f -exec sed -i "s/<rede>/%s/g" {} \;' % rede)
+        sh.find('/etc/servermm.conf -type f -exec sed -i "s/<loja>/%s/g" {} \;' % loja)
+        
+    if len(sh.grep('-ir "/usr/local/bin/firewall.sh" /etc/rc.local')) == 0:
+        sh.find('/etc/rc.local -type f -exec sed -i "s/exit 0//g" {} \;')
+        os.system('echo "/usr/local/bin/firewall.sh start &" >> /etc/rc.local')
+        os.system('echo "exit 0" >> /etc/rc.local')
+        
+    sh.cp('/var/www/tcd_offline/sudoers', '/etc/sudoers')
     
-    sys.exit('Terminou com sucesso! O computador está bloqueado. Reinicie o sistema.')
+    list_rcconf = ['acpi-support', 'apparmor', 'brltty', 'grub-common', 'kerneloops', 'nginx', \
+                        'ondemand', 'ppd-dns', 'saned', 'speech-dispatcher', 'sudo', \
+                            'x11-common', 'cron']
+    
+    os.system('rcconf --list > /tmp/rcconf.list')
+    
+    rcconf = open('/tmp/rcconf.list', 'r').read().split('\n')
+    
+    sh.rm('/tmp/rcconf.list')
+    
+    if len(sh.grep('-ir "/usr/local/bin/log_status.sh" /etc/crontab')) == 0:
+        os.system('echo "00 */1 * * * root /usr/local/bin/log_status.sh" >> /etc/crontab')
+        os.system('echo "*/5 * * * * root /usr/local/bin/update.sh" >> /etc/crontab')
+
+    try:    
+        os.system('sudo -i -u %s python -c "import alsaaudio; alsaaudio.Mixer().setvolume(130)"' % user)
+    except:
+        pass
+    
+    sys.exit('Terminou com sucesso! O computador está bloqueado com firewall.')
 
 
 if not os.path.islink('/var/www/media/tcd/mega'):
