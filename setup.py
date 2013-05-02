@@ -253,7 +253,7 @@ if sys.argv.count('--block') == 1:
     sh.cp('/var/www/tcd_offline/sudoers', '/etc/sudoers')
     
     list_rcconf = ['acpi-support', 'apparmor', 'brltty', 'grub-common', 'kerneloops', 'nginx', \
-                        'ondemand', 'ppd-dns', 'saned', 'speech-dispatcher', 'sudo', \
+                        'ondemand', 'pppd-dns', 'saned', 'speech-dispatcher', 'sudo', \
                             'x11-common', 'cron']
     
     os.system('rcconf --list > /tmp/rcconf.list')
@@ -261,6 +261,13 @@ if sys.argv.count('--block') == 1:
     rcconf = open('/tmp/rcconf.list', 'r').read().split('\n')
     
     sh.rm('/tmp/rcconf.list')
+    
+    for rcc in rcconf:
+        if rcc.count(' on') > 0:
+            os.system('rcconf --off %s' % rcc.replace(' on', ''))
+            
+    for lrcc in list_rcconf:
+        os.system('rcconf --on %s' % lrcc)    
     
     if len(sh.grep('-ir "/usr/local/bin/log_status.sh" /etc/crontab')) == 0:
         os.system('echo "00 */1 * * * root /usr/local/bin/log_status.sh" >> /etc/crontab')
