@@ -65,7 +65,7 @@ if sys.argv.count('--install') == 1 or sys.argv.count('--upgrade') == 1:
     list_program = ['mysql-client', 'mysql-server', 'nginx', 'vim', 'python-virtualenv', \
                     'python-setuptools', 'python-pip', 'expect', 'libxml2-dev', 'libxslt1-dev', \
                     'python-lxml', 'ssh', 'python-alsaaudio', 'curl', 'lynx', 'rcconf', 'htop', \
-                    'dialog']
+                    'dialog', 'xscreensaver']
 
     os.system('apt-get install -y %s' % ' '.join(list_program))
     
@@ -279,6 +279,15 @@ if sys.argv.count('--block') == 1:
         pass
     
     sys.exit('Terminou com sucesso! O computador está bloqueado com firewall.')
+    
+    
+if sys.argv.count('--finish') == 1:
+    
+    os.system('echo "" > /etc/udev/rules.d/70-persistent-net.rules')
+    os.system('echo "" > /var/log/mysql/mysql.log')
+    os.system('echo "" > /var/log/tcd/log.debug')
+    
+    sys.exit('Finalizou com sucesso! O computador está terminado.')
 
 
 if not os.path.islink('/var/www/media/tcd/mega'):
