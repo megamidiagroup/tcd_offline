@@ -256,9 +256,7 @@ if sys.argv.count('--block') == 1:
         os.system('sudo -i -u %s python -c "import alsaaudio; alsaaudio.Mixer().setvolume(130)"' % user)
     except:
         pass    
-        
-    sh.cp('/var/www/tcd_offline/sudoers', '/etc/sudoers')
-    
+
     list_rcconf = ['acpi-support', 'apparmor', 'brltty', 'grub-common', 'kerneloops', 'nginx', \
                         'ondemand', 'pppd-dns', 'saned', 'speech-dispatcher', 'sudo', \
                             'x11-common', 'cron']
@@ -288,6 +286,8 @@ if sys.argv.count('--finish') == 1:
     os.system('echo "" > /etc/udev/rules.d/70-persistent-net.rules')
     os.system('echo "" > /var/log/mysql/mysql.log')
     os.system('echo "" > /var/log/tcd/log.debug')
+    
+    sh.cp('/var/www/tcd_offline/sudoers', '/etc/sudoers')
     
     sys.exit('Finalizou com sucesso! O computador está terminado.')
 
