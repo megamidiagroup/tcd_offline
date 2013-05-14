@@ -210,6 +210,8 @@ if sys.argv.count('--block') == 1:
         sh.cp('-r /var/www/tcd_offline/kiosk.default', '/home/%s/.mozilla/firefox/kiosk.default' % user)
         os.system('chmod 775 /home/%s/.mozilla/firefox/kiosk.default -R' % user)
         os.system('chown %s:%s /home/%s/.mozilla/firefox/kiosk.default -R' % (user, user, user))
+    
+    if os.path.exists('/var/www/tcd_offline/kiosk.sh'):
         os.system('chmod 775 /var/www/tcd_offline/kiosk.sh')
         os.system('chown root:%s /var/www/tcd_offline/kiosk.sh' % user)
         
@@ -250,6 +252,11 @@ if sys.argv.count('--block') == 1:
         os.system('echo "/usr/local/bin/firewall.sh start &" >> /etc/rc.local')
         os.system('echo "exit 0" >> /etc/rc.local')
         
+    try:    
+        os.system('sudo -i -u %s python -c "import alsaaudio; alsaaudio.Mixer().setvolume(130)"' % user)
+    except:
+        pass    
+        
     sh.cp('/var/www/tcd_offline/sudoers', '/etc/sudoers')
     
     list_rcconf = ['acpi-support', 'apparmor', 'brltty', 'grub-common', 'kerneloops', 'nginx', \
@@ -273,11 +280,6 @@ if sys.argv.count('--block') == 1:
         os.system('echo "00 */1 * * * root /usr/local/bin/log_status.sh" >> /etc/crontab')
         os.system('echo "*/5 * * * * root /usr/local/bin/update.sh" >> /etc/crontab')
 
-    try:    
-        os.system('sudo -i -u %s python -c "import alsaaudio; alsaaudio.Mixer().setvolume(130)"' % user)
-    except:
-        pass
-    
     sys.exit('Terminou com sucesso! O computador está bloqueado com firewall.')
     
     
