@@ -27,7 +27,7 @@ except:
     sys.exit("Parametro 1: digite a rede")
     
 try:
-    loja = sys.argv[3]
+    loja = sys.argv[2]
 except:
     loja = 'matriz'
 
