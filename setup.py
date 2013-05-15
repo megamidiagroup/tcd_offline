@@ -85,8 +85,8 @@ if sys.argv.count('--install') == 1 or sys.argv.count('--upgrade') == 1:
     if not os.path.isdir('/var/www/tcd_offline'):        
         sh.mkdir('/var/www/tcd_offline')
         sh.cp(' -r %s /var/www/' % MODPATH)
-        os.system('easy_install -U virtualenv south lxml pyamf')
-        os.system('./pip.sh')
+        os.system('/usr/bin/easy_install -U virtualenv south lxml pyamf')
+        os.system('/tmp/tcd_offline/pip.sh')
         os.system('chmod 775 /var/www/tcd_offline/.virtualenvs/hook.log')
         os.system('chown root:%s /var/www/tcd_offline/.virtualenvs/hook.log' % user)
         sh.find('/var/www/tcd_offline/mega/views.py -type f -exec sed -i "s/rede=None/rede=\'%s\'/g" {} \;' % rede)
