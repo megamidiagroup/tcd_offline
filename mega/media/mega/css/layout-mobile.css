@@ -20,8 +20,12 @@ border:0; position:absolute; right:0; display:block; top:0;-webkit-border-radius
 #header #menu ul li a:hover{background:none; }
 #header #logo{text-align:center;}
 
+#content div.desc_geral img {float: none; text-align: center; width: 85%; margin: 2% 8%}
+#content div.desc_geral span {float: right; display: block; width: 100%; text-align: center; margin: 0; font-size: 13px;}
+
 #content ul.category li,
 #content ul.category2 li{display:block; width:100%; float:none;}
+#content ul.arquivos li{display:block; width:100%; float:left;}
 #content ul.category li a,
 #content ul.category2 li a{padding:5px;border-bottom:1px dotted #114C35;}
 #content ul.category li div,

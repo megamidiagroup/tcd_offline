@@ -7,6 +7,7 @@ from django.conf.urls.defaults import include, patterns, url
 from django.db.models import Q, Sum
 from django.utils.safestring import mark_safe
 from django.utils.safestring import SafeString
+from django.template.defaultfilters import striptags
 
 try:
     from django.core.validators import email_re
@@ -228,9 +229,12 @@ def kaltura(rede, code, id, w='640', h='360'):
 @register.inclusion_tag('templatetags/megavideo.html')
 def megavideo(rede, code, id, w='640', h='360', logo_url='', logo_link=''):
     
-    base_url = [settings.MEGAVIDEO_CONF.get('base_url', ''), 'https://www.treinandoequipes.com.br/megavideo/'][settings.DEBUG and not getattr(settings, 'OFFLINE', False)]
+    base_url = [settings.MEGAVIDEO_CONF.get('base_url', ''), 'https://www.treinandoequipes.com.br/megavideo/'][settings.DEBUG]
+    
+    if len(logo_url) > 1 and logo_url.count('http') == 0:
+        logo_url = settings.STATIC_URL + logo_url
 
-    return {'rede' : rede, 'code' : code, 'id' : id, 'w' : w, 'h' : h, 'base_url' : base_url, 'logo_url' : settings.STATIC_URL + logo_url, 'logo_link' : logo_link}
+    return {'rede' : rede, 'code' : code, 'id' : id, 'w' : w, 'h' : h, 'base_url' : base_url, 'logo_url' : logo_url, 'logo_link' : logo_link}
 
 
 @register.inclusion_tag('templatetags/live.html')
@@ -372,7 +376,7 @@ def porcent_aproveitamento(list, user, complete=True):
                 porcent -= float( float(div) / total )
 
         ## verifica se viu até o fim
-        ra = l.relatorioacoes_set.filter( Q(rede = l.rede) & Q(user = user) ).distinct()
+        ra = l.relatorioacoes_set.filter( Q(rede = l.rede) & Q(user = user) ).distinct().order_by('-complete')
         
         if ra.count() > 0:
             ra = ra[0]
@@ -409,7 +413,7 @@ def aproveitamento_append(treinamento, user):
     else:
         ## verifica se viu até o fim
         try:
-            is_ra = treinamento.relatorioacoes_set.filter( Q(rede = treinamento.rede) & Q(user = user) ).distinct()
+            is_ra = treinamento.relatorioacoes_set.filter( Q(rede = treinamento.rede) & Q(user = user) ).distinct().order_by('-complete')
             if is_ra:
                 return treinamento.relatorioacoes_set.filter( Q(rede = treinamento.rede) & Q(user = user) & ( Q(play = False) | Q(complete = False) ) ).distinct().count() > 0
             else:
@@ -431,7 +435,7 @@ def aproveitamento_status(treinamento, user, title=0):
         question = True
 
     ## verifica se viu até o fim
-    trei = treinamento.relatorioacoes_set.filter( Q(rede = treinamento.rede) & Q(user = user) ).distinct().order_by('complete')
+    trei = treinamento.relatorioacoes_set.filter( Q(rede = treinamento.rede) & Q(user = user) ).distinct().order_by('-complete')
     
     if trei.count() > 0:
         trei     = trei[0]
@@ -691,7 +695,7 @@ def is_aprovado(treinamento, user=None):
 @register.filter()
 def date_assistido(treinamento, user=None):
     
-    ra = treinamento.relatorioacoes_set.filter( Q(user = user) & ( Q(play = True) | Q(complete = True) ) ).distinct()
+    ra = treinamento.relatorioacoes_set.filter( Q(user = user) & ( Q(play = True) | Q(complete = True) ) ).distinct().order_by('-complete')
         
     if ra.count() > 0:
         ra = ra[0]
@@ -869,3 +873,23 @@ def faq(video):
 
     return p
 
+
+@register.filter()
+def get_type_arquive(arq):
+    
+    p = {}
+    
+    list_img = ['pdf.png', 'ppt.png', 'doc.png']
+
+    if list_img.count( '%s.png' % arq.file.name.split('.')[-1].lower() ) > 0:
+        return '%s.png' % arq.file.name.split('.')[-1].lower()
+    elif 'docx' in arq.file.name.split('.')[-1].lower():
+        return 'doc.png'
+    
+    return 'default.png'
+
+
+@register.filter()
+def length_title_desc(desc):
+    
+    return len( striptags( desc.replace('&nbsp;', '').strip() ) )

@@ -63,6 +63,10 @@ border-radius: 6px;}
 #content .bar{ text-align:center; padding:7px 0 5px 0; margin:0 10px 10px 10px; color:#FFF; font-size:1.6em; font-weight:bold; text-transform:uppercase; background-color:#0d3e51;text-shadow:0 1px 0 rgba(0, 0, 0, .6);-webkit-border-radius: 6px;
 -moz-border-radius: 6px;
 border-radius: 6px;}
+
+#content div.desc_geral img {float: right}
+#content div.desc_geral span {float: right; display: block; width: 250px; text-align: right; margin: 10px 20px; font-size: 13px;}
+
 #content .wrap{padding:10px 20px;}
 #content .wrap p b {display: inline-block;width: 180px;}
 #content form select {color: #464646;display: inline-block;margin-left: -7px;width: 233px;}
@@ -75,7 +79,7 @@ border-radius: 6px;}
 #content ul.category li div {padding:5px;border:1px solid #0d3e51; margin-bottom:5px; position:relative;}
 #content ul.category li div .play-video{display:none; width:100%; height:100%; background:url(../images/play-icon.png) no-repeat center center; position:absolute; top:0; left:0;}
 #content ul.category li h2{color:#0d3e51; font-size:2em; margin-bottom:5px;text-align: center;}
-#content ul.category li span{font-size:1.6em;}
+#content ul.category li span{font-size:1.6em;display: block; height: 70px}
 
 #content ul.category2 li {display:block; width:50%; height:auto; float:left; }
 #content ul.category2 li a{display:block; height:100%; overflow:hidden; padding:10px; text-shadow:0 1px 0 rgba(255, 255, 255, .6);}
@@ -91,6 +95,13 @@ border-radius: 6px;}
 #content ul.videos li h2{font-size:1.6em; margin-bottom:5px;text-align: left;}
 #content ul.videos li span{font-size:1.2em;}
 #content ul.videos li a.last{border-bottom: 0 none;}
+/* end new list videos */
+
+/* new list arquivos */
+#content ul.arquivos li{display:block; width:100%; float:float;}
+#content ul.arquivos li div{border:0; margin:5px 10px 5px 0; float:left;}
+#content ul.arquivos li h2{font-size:1.6em; margin-bottom:5px;text-align: left;}
+#content ul.arquivos li span{font-size:1.2em;}
 /* end new list videos */
 
 #content .video .player{width:647px; height:364px; float:left; margin-bottom:10px;}

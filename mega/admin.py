@@ -6,7 +6,7 @@ from django.db.models import Q, Count, Sum
 from django.contrib import admin
 from django import forms
 from django.forms import ModelForm
-from django.http import HttpResponseRedirect, Http404
+from django.http import HttpResponseRedirect, Http404, HttpResponse
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm, AdminPasswordChangeForm
 from django.views.decorators.csrf import csrf_protect
 from django.contrib import messages
@@ -23,13 +23,14 @@ from django.contrib.admin.widgets import FilteredSelectMultiple
 from models import Rede, Filial, Category, Treinamento, Certificado, Question, Response, Parceiro, Banner, \
                         Faq, InfoUser, Menu, RelatorioAcoes, RelatorioAvalicao, RelatorioTentativa, \
                             TipoTemplate, Template, WebChat, Live, Elearning, Anexo, Quiz, FreeResponse, \
-                                Plano, Transation, Enquete
+                                Plano, Transation, Enquete, Url
 
 from crequest.middleware import CrequestMiddleware
                                         
 from django.conf import settings
 
-from mail import _send_email_user
+from mail import _send_email_user, _is_valid_email
+from cpf import CPF as _cpf
 
 from views import _get_rec, _quiz, _quiz_delete
 
@@ -41,8 +42,20 @@ class RedeForm(ModelForm):
     def __init__(self, *args, **kwargs):
         super(RedeForm, self).__init__(*args, **kwargs)
         
+        cm = CrequestMiddleware.get_request()
+    
+        try:
+            rede = cm.rede
+        except:
+            rede = None
+            
+        qsu = User.objects.all()
+        
+        if rede:
+            qsu = qsu.filter( infouser__rede = rede )
+        
         self.fields['user'].widget   = FilteredSelectMultiple(_(u'usuários'), False)
-        self.fields['user'].queryset = User.objects.all().order_by('username')
+        self.fields['user'].queryset = qsu.order_by('username')
     
     class Meta:
         model = Rede
@@ -138,7 +151,7 @@ class CategoryForm(ModelForm):
 
 
 class CategoryAdmin(admin.ModelAdmin):
-    list_display = ('name', 'categoria', 'rede', 'Filiais', 'visible', 'access', 'order')
+    list_display = ('name', 'categoria', 'rede', 'Filiais', 'visible', 'access', 'order', 'is_desc_g')
     list_filter  = ('visible',)
     
     filter_horizontal = ('filial',)
@@ -154,9 +167,9 @@ class CategoryAdmin(admin.ModelAdmin):
     ## para limitar os combo das redes
     def get_form(self, request, obj=None, **kwargs):
         if request.rede:
-            self.fields = ['parent', 'name', 'is_name', 'home', 'visible', 'order', 'image', 'desc', 'access', 'filial']
+            self.fields = ['parent', 'name', 'is_name', 'home', 'visible', 'order', 'image', 'desc', 'is_desc_g', 'desc_g', 'access', 'filial']
         else:
-            self.fields = ['rede', 'parent', 'name', 'is_name', 'home', 'visible', 'order', 'image', 'desc', 'access', 'filial']
+            self.fields = ['rede', 'parent', 'name', 'is_name', 'home', 'visible', 'order', 'image', 'desc', 'is_desc_g', 'desc_g', 'access', 'filial']
         self.form       = CategoryForm
         return super(CategoryAdmin, self).get_form(request, obj=None, **kwargs)
     
@@ -167,7 +180,14 @@ class CategoryAdmin(admin.ModelAdmin):
             obj.rede = rede
         except:
             pass
+
+        if not obj.is_desc_g:
+            obj.desc_g = ''
+            
         obj.save()
+        
+    class Media:
+            js = ('mega/js/category_admin.js',)    
 
 
 admin.site.register(Category, CategoryAdmin)
@@ -933,7 +953,8 @@ class UserAdminCustom(admin.ModelAdmin):
         obj.save()
 
         try:
-            iu = obj.infouser
+            iu   = obj.infouser
+            rede = iu.rede
         except:
             if request.rede:
                 rede    = request.rede
@@ -946,16 +967,25 @@ class UserAdminCustom(admin.ModelAdmin):
             iu.cpf      = '999.999.999-99'
             iu.matricul = 'XXXYYYZZZ'
             iu.save()
+            
+        #username = obj.username.replace('_', '')
+        
+        #if not _cpf(username).isValid() and not _is_valid_email(username) and username.isdigit():
+        #    obj.username = username
+        #    obj.save()
 
         if change and obj.email:
 
             p = {}
 
-            p['to_mail'] = obj.email
-            p['name']    = obj.get_full_name()
-            p['rede']    = obj.infouser.rede
+            p['to_mail']    = obj.email
+            p['name']       = obj.get_full_name()
+            p['rede']       = obj.infouser.rede
 
-            p['link']    = '%slogin/?user=%s&action=%s&key=%s' % (settings.LIST_VARS.get('base_url', ''), obj.username, '/conta/edit/', obj.password)
+            p['link']       = '%slogin/?user=%s&action=%s&key=%s' % (settings.LIST_VARS.get('base_url', ''), obj.username, '/conta/edit/', obj.password)
+            p['this_user']  = obj
+            
+            p['STATIC_URL'] = getattr(settings, 'STATIC_URL', '')
 
             r = _send_email_user(p, request)
 
@@ -1153,11 +1183,14 @@ class AnexoForm(ModelForm):
             rede = None
             
         qst = Treinamento.objects.all()
+        qsc = Category.objects.all()
         
         if rede:
             qst = qst.filter( rede = rede )
+            qsc = qsc.filter( rede = rede )
         
         self.fields['treinamento'].queryset = qst.order_by('name')
+        self.fields['category'].queryset    = qsc.order_by('name')
 
     class Meta:
         model = Anexo
@@ -1165,7 +1198,7 @@ class AnexoForm(ModelForm):
 
 class AnexoAdmin(admin.ModelAdmin):
 
-    list_display = ('name', 'rede', 'treinamento', 'visible',)
+    list_display = ('name', 'rede', 'treinamento', 'category', 'visible',)
     
     def queryset(self, request):
         qs = super(AnexoAdmin, self).queryset(request)
@@ -1178,9 +1211,9 @@ class AnexoAdmin(admin.ModelAdmin):
     ## para limitar os combo das redes
     def get_form(self, request, obj=None, **kwargs):
         if request.rede:
-            self.fields = ['treinamento', 'name', 'visible', 'file', 'desc']
+            self.fields = ['category', 'treinamento', 'name', 'visible', 'file', 'desc']
         else:
-            self.fields = ['rede', 'treinamento', 'name', 'visible', 'file', 'desc']
+            self.fields = ['rede', 'category', 'treinamento', 'name', 'visible', 'file', 'desc']
         self.form = AnexoForm
         return super(AnexoAdmin, self).get_form(request, obj=None, **kwargs)
     
@@ -1288,3 +1321,38 @@ class EnqueteAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Enquete, EnqueteAdmin)
+
+
+class UrlAdmin(admin.ModelAdmin):
+    
+    list_display = ('rede', 'type', 'active', 'key', 'date_v',)
+
+    def queryset(self, request):
+        qs = super(UrlAdmin, self).queryset(request)
+        if request.user.is_superuser:
+            if request.rede:
+                return qs.filter(rede = request.rede)
+            return qs.all()
+        return qs.filter(rede__user = request.user)
+
+    ## para limitar os combo das redes
+    def get_form(self, request, obj=None, **kwargs):
+        if request.rede:
+            self.fields = ['type', 'key', 'link', 'mto', 'mfrom', 'active', 'date_v']
+        else:
+            self.fields = ['rede', 'type', 'key', 'link', 'mto', 'mfrom', 'active', 'date_v']
+        return super(UrlAdmin, self).get_form(request, obj=None, **kwargs)
+    
+    ## para salvar automaticamente a rede que está na session
+    def save_model(self, request, obj, form, change):
+        try:
+            rede     = request.rede
+            obj.rede = rede
+        except:
+            pass
+        obj.save()
+
+
+admin.site.register(Url, UrlAdmin)
+
+

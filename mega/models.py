@@ -15,6 +15,7 @@ from django.db.models.signals import pre_delete
 from django.dispatch.dispatcher import receiver
 
 from state.models import City, State
+from mail import _is_valid_email
 
 from BeautifulSoup import BeautifulSoup
 from PIL import Image
@@ -68,7 +69,7 @@ class Rede(models.Model):
     visible   = models.BooleanField(default = True, verbose_name='Habilitado')
     is_faq    = models.BooleanField(default = False, blank = True, verbose_name='Faq treinamento', help_text='Habilita Faq dos treinamentos, tanto para envio quanto para visualização')
     is_login  = models.BooleanField(default = True, verbose_name='Área de login', help_text='Habilita área de login da rede')
-    email     = models.EmailField(max_length = 255, verbose_name='E-mail responsável', null = True, blank = True, help_text='Somente adicione o email caso o cliente deseje receber as sugestões ou dúvidas.')
+    email     = models.CharField(max_length = 255, verbose_name='E-mail responsável', null = True, blank = True, help_text='Somente adicione o e-mail caso o cliente deseje receber as sugestões ou dúvidas, caso deseje mais de um e-mail, favor adicionar os e-mails separados por vírgula.')
     date_send = models.DateField(verbose_name='Apartir da data', null = True, blank = True, help_text='Caso for diário, semanal, mensal ou anual, favor inserir a data para inicio do processo.')
     resend    = models.CharField(max_length = 1, choices = CHOICE_RESEND, null = True, blank = True, verbose_name='Envio acontece', help_text='O envio acontece todos os dias à meia-noite, caso for imediato, a sugestão ou dúvida é registrada e enviada imediatamente para o cliente, caso contrário, é enviado a opção selecionada.')
     date      = models.DateTimeField(auto_now_add=True, verbose_name='Data')
@@ -93,6 +94,17 @@ class Rede(models.Model):
         if user and user.infouser.filial:
             return '%s - %s' % (self.name, user.infouser.filial.name)
         return self.name
+    
+    def is_suggestion(self):
+        if self.resend and len(self.email) > 0:
+            if self.email.count(',') > 0:
+                for e in self.email.replace(' ', '').split(','):
+                    if not _is_valid_email(e):
+                        return False
+                return True
+            elif _is_valid_email(self.email):  
+                return True
+        return False
 
     class Meta:
         verbose_name = u'Rede'
@@ -118,18 +130,20 @@ class Filial(models.Model):
         
 ### Tabela para as Categorias de Redes
 class Category(models.Model):
-    rede    = models.ForeignKey(Rede, related_name='+', verbose_name='Rede')
-    filial  = models.ManyToManyField(Filial, blank=True, null=True, related_name='+', help_text='Filial que aparecerá a categoria. Segure CTRL e clique para selecionar mais de uma opção.')
-    parent  = models.ForeignKey('self', null=True, blank=True, verbose_name='Categoria')
-    name    = models.CharField(max_length = 255, verbose_name='Nome')
-    is_name = models.BooleanField(default = True, verbose_name='Mostrar Título', help_text='Mostra o título abaixo da categoria')
-    visible = models.BooleanField(default = True, verbose_name='Habilitado')
-    home    = models.BooleanField(default = True, verbose_name='Visível na Home', help_text='Selecione para mostrar a categoria na home caso tenha selecionado que não seja um parceiro')
-    order   = models.IntegerField(default = 0, verbose_name='Posição', help_text='posição do campo no menu ex: 4. Se todos os campos estiverem com valor "0" será ordena pelo nome')
-    image   = models.ImageField(upload_to = upload_file, blank=True, max_length=255, help_text='As imagens seram ajustadas para melhor visualização no site, tamanho padrão é de: 276 x 153 pixels', verbose_name='Imagem')
-    desc    = RichTextField(verbose_name='Descrição', null=True, blank=True)
-    access  = models.BooleanField(default = False, verbose_name='Acesso Restrito', help_text='Bloqueia o acesso aos usuários que não possuem permissão para acessar as categorias restritas.')
-    date    = models.DateTimeField(auto_now_add=True, verbose_name='Data')
+    rede      = models.ForeignKey(Rede, related_name='+', verbose_name='Rede')
+    filial    = models.ManyToManyField(Filial, blank=True, null=True, related_name='+', help_text='Filial que aparecerá a categoria. Segure CTRL e clique para selecionar mais de uma opção.')
+    parent    = models.ForeignKey('self', null=True, blank=True, verbose_name='Categoria')
+    name      = models.CharField(max_length = 255, verbose_name='Nome')
+    is_name   = models.BooleanField(default = True, verbose_name='Mostrar Título', help_text='Mostra o título abaixo da categoria')
+    visible   = models.BooleanField(default = True, verbose_name='Habilitado')
+    home      = models.BooleanField(default = True, verbose_name='Visível na Home', help_text='Selecione para mostrar a categoria na home caso tenha selecionado que não seja um parceiro')
+    order     = models.IntegerField(default = 0, verbose_name='Posição', help_text='posição do campo no menu ex: 4. Se todos os campos estiverem com valor "0" será ordena pelo nome')
+    image     = models.ImageField(upload_to = upload_file, blank=True, max_length=255, help_text='As imagens seram ajustadas para melhor visualização no site, tamanho padrão é de: 276 x 153 pixels', verbose_name='Imagem')
+    desc      = RichTextField(verbose_name='Descrição', null=True, blank=True)
+    is_desc_g = models.BooleanField(default = False, verbose_name='Habilitado descrição Geral')
+    desc_g    = RichTextField(verbose_name='Descrição Geral', null=True, blank=True)
+    access    = models.BooleanField(default = False, verbose_name='Acesso Restrito', help_text='Bloqueia o acesso aos usuários que não possuem permissão para acessar as categorias restritas.')
+    date      = models.DateTimeField(auto_now_add=True, verbose_name='Data')
 
     def __unicode__(self):
         return '%s - %s' % (self.rede.name, self.name)
@@ -493,7 +507,6 @@ class InfoUser(models.Model):
     access   = models.BooleanField(default = False, verbose_name='Acesso Restrito', help_text='Liberá o acesso do usuario as categorias restritas.')
     envia    = models.BooleanField(default = False, verbose_name='Envia e-mail', help_text='Se marcado e o status for igual a ativo envia o email de confirmação para o usuário.')
     matricul = models.CharField(max_length=60, verbose_name='Matricula')
-    ## verificar offline (pontos)
     pontos   = models.IntegerField(editable=False, default=0, verbose_name='Pontos', help_text='Somente números')
     date     = models.DateTimeField(auto_now_add=True, verbose_name='Data')
 
@@ -787,7 +800,8 @@ class Suggestion(models.Model):
 ### Tabela para as lista de Anexos para downloads
 class Anexo(models.Model):
     rede        = models.ForeignKey(Rede, verbose_name='Rede', help_text='Selecione a rede para filtrar os anexos.')
-    treinamento = models.ForeignKey(Treinamento, verbose_name='Treinamento')
+    category    = models.ForeignKey(Category, blank = True, null = True, verbose_name='Categoria')
+    treinamento = models.ForeignKey(Treinamento, blank = True, null = True, verbose_name='Treinamento')
     name        = models.CharField(max_length = 255, verbose_name='Nome do arquivo')
     visible     = models.BooleanField(default = True, verbose_name='Habilitado')
     desc        = models.TextField(null = True, blank = True, verbose_name='Descrição')
@@ -810,7 +824,7 @@ class Quiz(models.Model):
     list_response = models.ManyToManyField(Response, related_name='Lista de Respostas', verbose_name='Lista de Respostas', help_text='Segure CTRL e clique para selecionar mais de uma opção.')
     porcent       = models.IntegerField(default = 100, verbose_name='Porcentagem de acerto para aprovação', help_text='Valor númerico sem a %')
     responsavel   = models.ManyToManyField(UserAdmin, verbose_name='Responsável', help_text='Responsável por aprovar um usuário. Segure CTRL e clique para selecionar mais de uma opção.', blank = True, null = True)
-    email_respon  = models.EmailField(max_length = 255, verbose_name='E-mail responsável', null = True, blank = True, help_text='Somente adicione o email caso o responsável não estiver na lista.')
+    email_respon  = models.CharField(max_length = 255, verbose_name='E-mail responsável', null = True, blank = True, help_text='Somente adicione o email caso o responsável não estiver na lista.')
     date          = models.DateTimeField(auto_now_add = True, verbose_name='Data')
 
     def __unicode__(self):
@@ -912,4 +926,25 @@ class Enquete(models.Model):
     class Meta:
         verbose_name = u'Enquete'
         ordering     = ['-date']
+
+
+### Tabela para url's por e-mail
+class Url(models.Model):
+    rede   = models.ForeignKey(Rede, verbose_name='Rede', help_text='Selecione a rede para filtrar as url\'s.')
+    type   = models.CharField(max_length = 255, verbose_name='Tipo')
+    key    = models.TextField(verbose_name='Chave')
+    link   = models.TextField(verbose_name='Link')
+    mto    = models.CharField(max_length = 255, verbose_name='Quem enviou')
+    mfrom  = models.CharField(max_length = 255, verbose_name='Quem recebeu')
+    active = models.BooleanField(default = True, verbose_name='Ativo')
+    date_v = models.DateTimeField(blank = True, null = True, verbose_name='Data e hora visualização')
+    date   = models.DateTimeField(auto_now_add=True, verbose_name='Data')
+    
+    def __unicode__(self):
+        return self.type
+
+    class Meta:
+        verbose_name        = u'Url'
+        verbose_name_plural = u'Url\'s'
+        ordering            = ['-date']
 

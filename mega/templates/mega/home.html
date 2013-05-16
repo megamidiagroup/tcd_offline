@@ -84,6 +84,14 @@
                         {% sub_menu list_category rede list_treinamento %}
                     </div>
                 {% endif %}
+		
+		{% if category.0.is_desc_g %}
+		    <div class="path desc_geral">
+                        <img src="{{ category|get_image }}" border="0" width="200" />
+			<span>{{ category.0.desc_g|safe|striptags }}</span>
+			<div class="clearfix"></div>
+                    </div>
+		{% endif %}
 
                 {% if list_treinamento.count > 1 %}
                     <div class="bar">Selecione um dos {{ list_treinamento.count }} vídeos abaixo</div>
@@ -105,26 +113,26 @@
                     <ul class="category clearfix">
                         {% for i in list_category %}
                             <li>
-                                <a href="{% url home %}{{ rede.link }}/category/{{ i.id }}/" title="{{ i.desc|safe|striptags }}">
+                                <a href="{% url home %}{{ rede.link }}/category/{{ i.id }}/" {% if i.desc|length_title_desc > 0 %} title="{{ i.desc|safe|striptags }}" {% endif %}>
                                     <div class="{{ i|css_hiraquia_cat }} {% if not i.is_name %}no-name-category{% endif %}"><img src="{{ i|get_image }}" border="0" /></div>
                                     {% if i.is_name %}<h2 class="box-title">{{ i.name }}</h2>{% endif %}
-                                    {% if i.is_name %}<span>{{ i.desc|safe|truncatewords_html:8 }}</span>{% endif %}
+                                    {% if i.is_name %}{% if i.desc|length_title_desc > 0 %}<span>{{ i.desc|striptags|super_truncatewords:'100-105'|safe }}</span>{% endif %}{% endif %}
                                 </a>
                             </li>
                         {% endfor %}
                     </ul>
                 {% else %}
                 	{% if not list_treinamento %}
-					    <!-- modal content -->
-						<div id="osx-modal-content">
-							<div class="popup">
-								<h3 style="margin-top: 40px;font-size: 22px;">
-									Esta categoria não tem conteúdo cadastrado.
-								</h3>
-							    <input onclick="history.back();" type="button" class="botao-popup2" />
-							</div>
-						</div>
-					{% endif %}
+			    <!-- modal content -->
+			    <div id="osx-modal-content">
+				    <div class="popup">
+					<h3 style="margin-top: 40px;font-size: 22px;">
+						Esta categoria não tem conteúdo cadastrado.
+					</h3>
+					<input onclick="history.back();" type="button" class="botao-popup2" />
+				    </div>
+			    </div>
+			{% endif %}
                 {% endif %}
 
                 {% if list_treinamento %}
@@ -132,7 +140,7 @@
                         {% for i in list_treinamento %}
                         	{% if i.tipo == 'L' %}
                         		<li>
-		                            <a href="{% url live rede.link i.id %}" title="{{ i.desc|safe|striptags }}" class="{% if forloop.last %}last{% endif %}">
+		                            <a href="{% url live rede.link i.id %}" {% if i.desc|length_title_desc > 0 %} title="{{ i.desc|safe|striptags }}" {% endif %} class="{% if forloop.last %}last{% endif %}">
 		                                <div class="{{ i|css_hiraquia_video }}"><img src="{{ i|get_image }}" border="0" /></div>
 		                                <h2 class="box-title">{{ i.name }}</h2>
 		                                <span>{{ i.desc|safe|truncatewords_html:8 }}</span>
@@ -142,7 +150,7 @@
 		                        </li>
                         	{% else %}
 		                        <li>
-		                            <a href="{% url home %}{{ rede.link }}/treinamento/{{ i.id }}/" title="{{ i.desc|safe|striptags }}" class="{% if forloop.last %}last{% endif %}">
+		                            <a href="{% url home %}{{ rede.link }}/treinamento/{{ i.id }}/" {% if i.desc|length_title_desc > 0 %} title="{{ i.desc|safe|striptags }}" {% endif %} class="{% if forloop.last %}last{% endif %}">
 		                                <div class="{{ i|css_hiraquia_video }}"><img src="{{ i|get_image }}" border="0" /></div>
 		                                <h2 class="box-title">{{ i.name }}</h2>
 		                                <span>{{ i.desc|safe|truncatewords_html:8 }}</span>
@@ -164,7 +172,7 @@
 	                        {% for lp in list_parceiro %}
 	                        	{% if lp.link %}
 	                        		<li>
-		                                <a href="{{ lp.link }}" title="{{ lp.name }}">
+		                                <a href="{{ lp.link }}" {% if lp.name|length_title_desc > 0 %} title="{{ lp.name }}" {% endif %}>
 		                                    <div class="{{ lp|css_hiraquia_cat }} no-name-category"><img src="{{ lp|get_image }}" border="0" /></div>
 		                                    {% if lp.is_name %}<h2 class="box-title" style="text-align: center;">{{ lp.name }}</h2>{% endif %}
 		                                </a>

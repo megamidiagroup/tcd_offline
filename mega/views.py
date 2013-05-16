@@ -255,6 +255,7 @@ def category(request, rede=None, cat_id=None):
 
     list_category      = Category.objects.filter( Q(rede = p['rede']), Q(visible=True) ).order_by('order', 'name')
 
+    p['category']      = list_category.filter(id = int(cat_id))
     p['list_category'] = list_category.filter( Q(parent__id = int(cat_id)) ).order_by('order', 'name')
     p['list_banner']   = Banner.objects.filter( Q(rede = p['rede']), Q(visible=True), Q(category__id = int(cat_id)) ).order_by('order', 'name')
     p['list_parceiro'] = Parceiro.objects.filter( Q(rede = p['rede']), Q(category__id = int(cat_id)), Q(visible=True) ).order_by('order', 'name')
