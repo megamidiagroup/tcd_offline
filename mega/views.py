@@ -55,6 +55,8 @@ import smtplib
 # quant de itens por pagina
 per_page = 15
 
+offline  = getattr(settings, 'OFFLINE', False)
+
 
 class CaptchaTestForm(Form):
     captcha = CaptchaField()
@@ -101,7 +103,7 @@ def _set_enquete(request, p):
         
         if count > 1:
             count = 1
-            for e in Enquete.objects.filter( Q(visible = True), Q(rede = p['rede']) ).order_by('-date'):
+            for e in Enquete.objects.filter( Q(visible = True) & Q(rede = p['rede']) ).order_by('-date'):
                 id     = p['groups']['group%s' % count]
                 count += 1
                 if id == 1:
@@ -125,8 +127,8 @@ def _set_enquete(request, p):
                 
                 set_sql()
                 
-    if not p['grafico'] and 'user' in p and p['user'] and Enquete.objects.filter( Q(visible = True), Q(rede = p['rede']) ) > 0:
-        e = Enquete.objects.filter( Q(visible = True), Q(rede = p['rede']) )
+    if not p['grafico'] and 'user' in p and p['user'] and Enquete.objects.filter( Q(visible = True) & Q(rede = p['rede']) ) > 0:
+        e = Enquete.objects.filter( Q(visible = True) & Q(rede = p['rede']) )
         if e.count() > 0 and e[0].users.filter(id = p['user'].id):
             p['grafico'] = True
 
@@ -150,21 +152,24 @@ def _prepare_vars(request, rede=None, p={}):
     p['title']            = u'TCD - Plataforma de Treinamento e Comunicação a Distância'
 
     if rede:
-        r = Rede.objects.filter( Q(link = rede), Q(visible=True) )
+        r = Rede.objects.filter( Q(link = rede) & Q(visible=True) )
         if r.count() > 0:
             p['rede'] = r[0]
             try:
-                p['pontos'] = RelatorioAvalicao.objects.filter( Q(rede = p['rede']), Q(user = request.user) ).aggregate(Sum('pontos'))['pontos__sum']
+                p['pontos'] = RelatorioAvalicao.objects.filter( Q(rede = p['rede']) & Q(user = request.user) ).aggregate(Sum('pontos'))['pontos__sum']
                 p['user']   = request.user
             except:
                 pass
 
-    p['list_menu']  = Menu.objects.filter( Q(rede = p['rede']), Q(visible=True) ).order_by('order', 'name')
+    p['list_menu']     = Menu.objects.filter( Q(rede = p['rede']) & Q(visible=True) ).order_by('order', 'name')
+    
+    if offline:
+        p['list_menu'] = p['list_menu'].exclude( url__icontains = 'docs' )
 
-    p['STATIC_URL'] = settings.STATIC_URL
-    p['target']     = 'home' #default
+    p['STATIC_URL']    = settings.STATIC_URL
+    p['target']        = 'home' #default
 
-    template = Template.objects.filter( Q(rede = p['rede']), Q(visible=True) ).order_by('name')
+    template = Template.objects.filter( Q(rede = p['rede']) & Q(visible=True) ).order_by('name')
 
     p['get_template'] = []
     p['get_tipo_template'] = 'mega' ## default
@@ -225,9 +230,9 @@ def home(request, rede=None):
     if not p['rede']:
         return HttpResponseRedirect('/login/')
 
-    p['list_category'] = Category.objects.filter( Q(visible = True), Q(rede = p['rede']), Q(parent__isnull = True), Q(home = True) ).order_by('order', 'name')
-    p['list_banner']   = Banner.objects.filter( Q(visible = True), Q(rede = p['rede']), ( Q(home = True) or Q(category__isnull = True) ) ).order_by('order', 'name')
-    p['list_parceiro'] = Parceiro.objects.filter( Q(visible = True), Q(rede = p['rede']), ( Q(home = True) or Q(category__isnull = True) ) ).order_by('order', 'name')
+    p['list_category'] = Category.objects.filter( Q(visible = True) & Q(rede = p['rede']) & Q(parent__isnull = True) & Q(home = True) ).order_by('order', 'name')
+    p['list_banner']   = Banner.objects.filter( Q(visible = True) & Q(rede = p['rede']), ( Q(home = True) or Q(category__isnull = True) ) ).order_by('order', 'name')
+    p['list_parceiro'] = Parceiro.objects.filter( Q(visible = True) & Q(rede = p['rede']), ( Q(home = True) or Q(category__isnull = True) ) ).order_by('order', 'name')
 
     # regras para usuário restrito
     if not p['is_access']:
@@ -253,17 +258,17 @@ def category(request, rede=None, cat_id=None):
     if not p['rede']:
         return HttpResponseRedirect('/login/')
 
-    list_category      = Category.objects.filter( Q(rede = p['rede']), Q(visible=True) ).order_by('order', 'name')
+    list_category      = Category.objects.filter( Q(rede = p['rede']) & Q(visible=True) ).order_by('order', 'name')
 
     p['category']      = list_category.filter(id = int(cat_id))
     p['list_category'] = list_category.filter( Q(parent__id = int(cat_id)) ).order_by('order', 'name')
-    p['list_banner']   = Banner.objects.filter( Q(rede = p['rede']), Q(visible=True), Q(category__id = int(cat_id)) ).order_by('order', 'name')
-    p['list_parceiro'] = Parceiro.objects.filter( Q(rede = p['rede']), Q(category__id = int(cat_id)), Q(visible=True) ).order_by('order', 'name')
+    p['list_banner']   = Banner.objects.filter( Q(rede = p['rede']) & Q(visible=True) & Q(category__id = int(cat_id)) ).order_by('order', 'name')
+    p['list_parceiro'] = Parceiro.objects.filter( Q(rede = p['rede']) & Q(category__id = int(cat_id)) & Q(visible=True) ).order_by('order', 'name')
 
     # regras para usuário restrito
     if not p['is_access']:
         p['list_category'] = p['list_category'].filter( Q(access = p['is_access']) ).order_by('order', 'name')
-        if not list_category.filter( Q(id = int(cat_id)), Q(access = p['is_access']) ):
+        if not list_category.filter( Q(id = int(cat_id)) & Q(access = p['is_access']) ):
             return HttpResponseRedirect('/%s/' % p['rede'].link)
 
     # regras para quem está em uma filial
@@ -276,7 +281,7 @@ def category(request, rede=None, cat_id=None):
     p['interno']  = True
 
     if not p['list_category']:
-        p['list_treinamento'] = Treinamento.objects.filter( Q(rede = p['rede']), Q(visible=True), Q(category__id = int(cat_id)) ).order_by('order', 'name')
+        p['list_treinamento'] = Treinamento.objects.filter( Q(rede = p['rede']) & Q(visible=True) & Q(category__id = int(cat_id)) ).order_by('order', 'name')
 
     return render_to_response('%s/home.html' % p['get_tipo_template'], p, context_instance=RequestContext(request))
 
@@ -295,7 +300,7 @@ def treinamento(request, rede=None, video_id=None):
         return HttpResponseRedirect('/login/')
 
     p['url_logo']     = p['rede'].logo.url
-    p['list_video']   = Treinamento.objects.filter( Q(rede = p['rede']), Q(visible=True), Q(id = int(video_id)) ).order_by('order', 'name')
+    p['list_video']   = Treinamento.objects.filter( Q(rede = p['rede']) & Q(visible=True) & Q(id = int(video_id)) ).order_by('order', 'name')
 
     # regras para usuário restrito
     if not p['is_access']:
@@ -309,11 +314,11 @@ def treinamento(request, rede=None, video_id=None):
         
     if p['list_video'] and p['list_video'].count() > 0:
         video = p['list_video'][0]
-        p['list_anexo'] = Anexo.objects.filter( Q(visible = True), Q(rede = p['rede']), Q(treinamento = video) ).order_by('name')
+        p['list_anexo'] = Anexo.objects.filter( Q(visible = True) & Q(rede = p['rede']) & Q(treinamento = video) ).order_by('name')
         if is_not_video(video) == 'elearning':
             return HttpResponseRedirect('/%s/elearning/%s/' % (p['rede'].link, video.id) )
         
-    p['elearning'] = Elearning.objects.filter( Q(rede = p['rede']), Q(visible=True), Q(treinamento__in = p['list_video']) ).count() > 0
+    p['elearning'] = Elearning.objects.filter( Q(rede = p['rede']) & Q(visible=True) & Q(treinamento__in = p['list_video']) ).count() > 0
 
     return render_to_response('%s/treinamento.html' % p['get_tipo_template'], p, context_instance=RequestContext(request))
 
@@ -393,7 +398,7 @@ def elearning(request, rede=None, video_id=None):
         return HttpResponseRedirect('/login/')
 
     p['url_logo']   = p['rede'].logo.url
-    p['list_video'] = Treinamento.objects.filter( Q(rede = p['rede']), Q(visible=True), Q(id = int(video_id)) ).order_by('order', 'name')
+    p['list_video'] = Treinamento.objects.filter( Q(rede = p['rede']) & Q(visible=True) & Q(id = int(video_id)) ).order_by('order', 'name')
 
     # regras para usuário restrito
     if not p['is_access']:
@@ -407,7 +412,7 @@ def elearning(request, rede=None, video_id=None):
         
     dir   = settings.MEDIA_ROOT + settings.UPLOAD_STORAGE_DIR + 'uploads/elearning/'
     
-    elear = Elearning.objects.filter( Q(rede = p['rede']), Q(visible=True), Q(treinamento__in = p['list_video']) )
+    elear = Elearning.objects.filter( Q(rede = p['rede']) & Q(visible=True) & Q(treinamento__in = p['list_video']) )
     
     if elear.count() > 0:
         elear   = elear[0]
@@ -440,7 +445,7 @@ def live(request, rede=None, video_id=None):
         return HttpResponseRedirect('/login/')
 
     p['url_logo']     = p['rede'].logo.url
-    p['list_video']   = Treinamento.objects.filter( Q(rede = p['rede']), Q(visible=True), Q(id = int(video_id)) ).order_by('order', 'name')
+    p['list_video']   = Treinamento.objects.filter( Q(rede = p['rede']) & Q(visible=True) & Q(id = int(video_id)) ).order_by('order', 'name')
 
     # regras para usuário restrito
     if not p['is_access']:
@@ -452,11 +457,11 @@ def live(request, rede=None, video_id=None):
         if p['list_video'] and not p['list_video'].filter( Q(filial__isnull = True) | Q(category__filial = p['is_filial']) ):
             return HttpResponseRedirect('/%s/' % p['rede'].link)
         
-    p['history'] = WebChat.objects.filter( Q(rede = p['rede']), Q(live__id = int(video_id)) ).count() > 0
+    p['history'] = WebChat.objects.filter( Q(rede = p['rede']) & Q(live__id = int(video_id)) ).count() > 0
     
     ## ---   limpa caixa   --- ##
     
-    list = WebChat.objects.filter( Q(rede = p['rede']), Q(live__id = int(video_id)) ).exclude(user_lido = request.user)
+    list = WebChat.objects.filter( Q(rede = p['rede']) & Q(live__id = int(video_id)) ).exclude(user_lido = request.user)
 
     for li in list:
         ul = li.user_lido
@@ -474,7 +479,7 @@ def live_load(request, rede=None, video_id=0):
     array = []
     tmp   = {}
     
-    r = Rede.objects.filter( Q(link = rede), Q(visible=True) )
+    r = Rede.objects.filter( Q(link = rede) & Q(visible=True) )
     
     if r.count() > 0:
         rede = r[0]
@@ -506,7 +511,7 @@ def live_load(request, rede=None, video_id=0):
         
         return HttpResponse('arr_msg=%s;' % json.dumps(array))
 
-    list = WebChat.objects.filter( Q(rede = rede), Q(live__id = video_id) )
+    list = WebChat.objects.filter( Q(rede = rede) & Q(live__id = video_id) )
 
     if request.REQUEST.get('history', '') == 'false':
         list2 = list.exclude(user_lido = request.user).exclude(user = request.user)
@@ -515,7 +520,7 @@ def live_load(request, rede=None, video_id=0):
         
     if lidos and len(lidos) > 0:
         for li in lidos.split('-'):
-            if not list.filter( Q(id = int(li)), Q(user_lido = request.user) ).count() > 0:
+            if not list.filter( Q(id = int(li)) & Q(user_lido = request.user) ).count() > 0:
                 ul = list.get(id = int(li)).user_lido
                 ul.add(request.user)
         
@@ -578,8 +583,8 @@ def avaliacao(request, rede=None, key=''):
         list_correct    = {}
         quant           = 0
         
-        rt              = RelatorioTentativa.objects.filter( Q(rede = p['rede']), Q(user = p['user']), Q(treinamento = p['list_question'][0].treinamento) )
-        p['list_video'] = Treinamento.objects.filter( Q(rede = p['rede']), Q(visible=True), Q(id = int(p['list_question'][0].treinamento.id)) ).order_by('order', 'name')
+        rt              = RelatorioTentativa.objects.filter( Q(rede = p['rede']) & Q(user = p['user']) & Q(treinamento = p['list_question'][0].treinamento) )
+        p['list_video'] = Treinamento.objects.filter( Q(rede = p['rede']) & Q(visible=True) & Q(id = int(p['list_question'][0].treinamento.id)) ).order_by('order', 'name')
     
         if rt.count() > 0:
             rt = rt[0]
@@ -736,7 +741,7 @@ def questionario(request, rede=None, video_id=None):
         return HttpResponseRedirect('/login/')
 
     p['url_logo']     = p['rede'].logo.url
-    p['list_video']   = Treinamento.objects.filter( Q(rede = p['rede']), Q(visible=True), Q(id = int(video_id)) ).order_by('order', 'name')
+    p['list_video']   = Treinamento.objects.filter( Q(rede = p['rede']) & Q(visible=True) & Q(id = int(video_id)) ).order_by('order', 'name')
     
     try:
         porcent_quiz  = p['list_video'][0].quiz_set.all()[0].porcent
@@ -745,7 +750,7 @@ def questionario(request, rede=None, video_id=None):
         
     p['porcent_quiz'] = porcent_quiz
     
-    rt = RelatorioTentativa.objects.filter( Q(rede = p['rede']), Q(user = p['user']), Q(treinamento__id = int(video_id)) )
+    rt = RelatorioTentativa.objects.filter( Q(rede = p['rede']) & Q(user = p['user']) & Q(treinamento__id = int(video_id)) )
     
     if rt.count() > 0:
         rt = rt[0]
@@ -762,7 +767,7 @@ def questionario(request, rede=None, video_id=None):
 
     if not p['sucesso']:
         if p['list_video'].count() > 0:
-            p['list_question'] = Question.objects.filter( Q(treinamento = p['list_video'][0]), Q(visible=True) ).order_by('id')
+            p['list_question'] = Question.objects.filter( Q(treinamento = p['list_video'][0]) & Q(visible=True) ).order_by('id')
 
             # regras para usuário restrito
             if not p['is_access']:
@@ -913,7 +918,7 @@ def questionario(request, rede=None, video_id=None):
             p['porcent'] = 0
 
         if p['list_video'].count() > 0:
-            p['list_question'] = Question.objects.filter( Q(treinamento = p['list_video'][0]), Q(visible=True) )
+            p['list_question'] = Question.objects.filter( Q(treinamento = p['list_video'][0]) & Q(visible=True) )
             
     p['get_host']  = request.get_host()
     p['is_secure'] = request.is_secure()
@@ -939,7 +944,7 @@ def conta(request, rede=None):
     except:
         pass
 
-    q = [i.treinamento.id for i in Quiz.objects.filter( Q(rede = p['rede']), Q(relatorioavalicao__isnull = False), Q(relatorioavalicao__user = p['user']) ).distinct()]
+    q = [i.treinamento.id for i in Quiz.objects.filter( Q(rede = p['rede']) & Q(relatorioavalicao__isnull = False) & Q(relatorioavalicao__user = p['user']) ).distinct()]
 
     p['list_treinamento'] = Treinamento.objects.filter(id__in = q)
 
@@ -965,7 +970,7 @@ def conta_edit(request, rede=None):
     p['is_pass'] = True
 
     if len(p['user']) > 0 and len(p['key']) > 0:
-        ua = UserAdmin.objects.filter( Q(username__exact=p['user']), Q(password=p['key']), Q(is_active=True) )
+        ua = UserAdmin.objects.filter( Q(username__exact=p['user']) & Q(password=p['key']) & Q(is_active=True) )
         if ua.count() > 0:
             ua = ua[0]
             p['user']     = ua
@@ -1066,7 +1071,7 @@ def conta_edit(request, rede=None):
             p['list_city'] = City.objects.filter( state__id = int(p['estado']) )
         else:
             p['list_city'] = City.objects.filter( state = p['infouser'].estado )
-        p['list_filial']   = Filial.objects.filter( Q(visible = True), Q(rede = p['rede']) ).order_by('name')
+        p['list_filial']   = Filial.objects.filter( Q(visible = True) & Q(rede = p['rede']) ).order_by('name')
     except:
         pass
     
@@ -1096,7 +1101,7 @@ def conta_add(request, rede=None):
     p['class'] = ''
     
     if len(p['user']) > 0 and len(p['key']) > 0:
-        ua = UserAdmin.objects.filter( Q(username__exact=p['user']), Q(password=p['key']) )
+        ua = UserAdmin.objects.filter( Q(username__exact=p['user']) & Q(password=p['key']) )
         p['class'] = 'home'
         if ua.count() > 0:
             ua = ua[0]
@@ -1189,12 +1194,12 @@ def certificado(request, rede=None, tipo=''):
     p['key']     = request.REQUEST.get('key', '')
 
     ### são os treinamentos que fui aprovado
-    q    = [i.treinamento.id for i in Quiz.objects.filter( Q(rede = p['rede']), Q(relatorioavalicao__isnull = False), Q(relatorioavalicao__user = p['user']) ).distinct()]
+    q    = [i.treinamento.id for i in Quiz.objects.filter( Q(rede = p['rede']) & Q(relatorioavalicao__isnull = False) & Q(relatorioavalicao__user = p['user']) ).distinct()]
 
     tmp  = []
     cert = None
 
-    cer  = Certificado.objects.filter( Q(rede = p['rede']), Q(visible=True), Q(treinamento__id__in = q) ).distinct()
+    cer  = Certificado.objects.filter( Q(rede = p['rede']) & Q(visible=True) & Q(treinamento__id__in = q) ).distinct()
 
     if len(p['key']) > 0:
         cer = cer.filter( id__in = list_id_certificado(p['key']) )
@@ -1252,6 +1257,8 @@ def certificado(request, rede=None, tipo=''):
         p['to_mail'] = p['user'].email
         p['name']    = p['user'].get_full_name()
         p['sucesso'] = _send_email_extrato(p, request)
+        
+    p['offline']     = offline
 
     return render_to_response('%s/certificado.html' % p['get_tipo_template'], p, context_instance=RequestContext(request))
 
@@ -1479,8 +1486,8 @@ def agendamento(request, rede=None):
     except:
         return HttpResponseRedirect(reverse('home', args=(rede,)))
     
-    if email and Rede.objects.filter( Q(email = email), Q(visible = True) ).count() > 0:
-        r = Rede.objects.filter( Q(email = email), Q(visible = True) )[0]
+    if email and Rede.objects.filter( Q(email = email) & Q(visible = True) ).count() > 0:
+        r = Rede.objects.filter( Q(email = email) & Q(visible = True) )[0]
         if p['salvar']:
             try:
                 r.resend = p['resend']
@@ -1512,8 +1519,8 @@ def faq_edit(request, rede=None, id=0):
     except:
         return HttpResponseRedirect(reverse('home', args=(rede,)))
     
-    if email and Rede.objects.filter( Q(link = rede), Q(email = email), Q(visible = True) ).count() > 0:
-        r = Rede.objects.filter( Q(link = rede), Q(email = email), Q(visible = True) )[0]
+    if email and Rede.objects.filter( Q(link = rede) & Q(email = email) & Q(visible = True) ).count() > 0:
+        r = Rede.objects.filter( Q(link = rede) & Q(email = email) & Q(visible = True) )[0]
         if p['salvar']:
             
             count = 1
@@ -1589,7 +1596,7 @@ def login(request, rede=None):
     if len(p['repass']) > 0:
 
         if len(p['username']) > 0:
-            user = UserAdmin.objects.filter( Q(username__exact=p['username']), Q(is_active=True) )
+            user = UserAdmin.objects.filter( Q(username__exact=p['username']) & Q(is_active=True) )
             if user.count() > 0:
                 user = user[0]
                 p['to_mail'] = user.email
@@ -1612,7 +1619,7 @@ def login(request, rede=None):
         is_active = True
         if 'add' in p['action']:
             is_active = False
-        ua = UserAdmin.objects.filter( Q(username__exact=p['username']), Q(is_active=is_active) )
+        ua = UserAdmin.objects.filter( Q(username__exact=p['username']) & Q(is_active=is_active) )
         if ua.count() > 0:
             ua = ua[0]
             try:
@@ -1698,7 +1705,7 @@ def favicon(request):
     
     try:
         rede = request.user.infouser.rede
-        t    = Template.objects.filter( Q(rede = rede), Q(visible=True) )
+        t    = Template.objects.filter( Q(rede = rede) & Q(visible=True) )
 
         if t.count() > 0 and t[0].image6:
             return HttpResponseRedirect('%s' % t[0].image6.url)
@@ -1747,11 +1754,11 @@ def _get_rec(request, live_id=0):
     
     p['user']  = request.user
     
-    p['history'] = WebChat.objects.filter( Q(rede = p['rede']), Q(live = p['video']) ).count() > 0
+    p['history'] = WebChat.objects.filter( Q(rede = p['rede']) & Q(live = p['video']) ).count() > 0
     
     ## ---   limpa caixa   --- ##
     
-    list = WebChat.objects.filter( Q(rede = p['rede']), Q(live = p['video']) ).exclude(user_lido = request.user)
+    list = WebChat.objects.filter( Q(rede = p['rede']) & Q(live = p['video']) ).exclude(user_lido = request.user)
 
     for li in list:
         ul = li.user_lido
