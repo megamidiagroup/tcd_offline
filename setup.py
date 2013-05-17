@@ -145,7 +145,7 @@ if sys.argv.count('--install') == 1 or sys.argv.count('--upgrade') == 1:
         os.system('/etc/init.d/mysql restart')
         os.system('echo "" > /var/log/mysql/mysql.log')
         
-    os.system('sudo chmod 661 /var/www -R')
+    os.system('sudo chmod 771 /var/www -R')
 
     if sys.argv.count('--block') == 0:
         sys.exit('Terminou com sucesso! Abra o navegador e digite http://localhost ou IP da maquina.')
@@ -178,7 +178,7 @@ if sys.argv.count('--pull') == 1:
     sh.find('/var/www/tcd_offline/sync.sh -type f -exec sed -i "s/<rede>/%s/g" {} \;' % rede)
     sh.find('/var/www/tcd_offline/sync.sh -type f -exec sed -i "s/<password>/%s/g" {} \;' % password)
         
-    os.system('sudo chmod 661 /var/www -R')
+    os.system('sudo chmod 771 /var/www -R')
     
     os.system('/etc/init.d/nginx restart')
     
@@ -213,7 +213,7 @@ if sys.argv.count('--block') == 1:
     
     if os.path.exists('/var/www/tcd_offline/kiosk.sh'):
         os.system('chmod 775 /var/www/tcd_offline/kiosk.sh')
-        os.system('chown root:%s /var/www/tcd_offline/kiosk.sh' % user)
+        os.system('chown %s:%s /var/www/tcd_offline/kiosk.sh' % (user, user))
         
     if not os.path.islink('/home/%s/.xbindkeysrc' % user):    
         os.symlink('/var/www/tcd_offline/.xbindkeysrc', '/home/%s/.xbindkeysrc' % user)
@@ -311,7 +311,7 @@ os.system('mysql -u root -p%s megavideo_%s < /var/www/megavideo.sql' % (password
 
 print 'sync db megavideo.sql'
 
-os.system('chmod 661 /var/www -R')
+os.system('chmod 771 /var/www -R')
 
 if os.path.exists('/var/www/tcd.config'):
     sh.find('/var/www/tcd.config -type f -exec sed -i "s/&#39;/\'/g" {} \;')
