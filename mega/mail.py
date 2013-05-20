@@ -242,3 +242,25 @@ def _send_email_faq(s, p):
         except BadHeaderError:
             return False
 
+
+
+def _send_email_robot(p, request, to, subject, text):
+    
+    if not _is_valid_email( to ):
+        return False
+
+    from_email   = settings.LIST_VARS.get('from_email', '')
+    html_msg     = text
+
+    text_content = strip_tags(html_msg)
+    html_content = html_msg
+    msg          = EmailMultiAlternatives(subject, text_content, from_email, [to])
+    msg.attach_alternative(html_content, "text/html")
+
+    try:
+        msg.send()
+        return True
+    except BadHeaderError:
+        pass
+        
+    return False
