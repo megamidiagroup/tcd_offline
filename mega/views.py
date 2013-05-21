@@ -1327,6 +1327,8 @@ def action(request, rede=None):
         ra.complete = True
 
     ra.save()
+    
+    set_sql()
 
     return HttpResponse('true')
 
