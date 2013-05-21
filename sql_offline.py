@@ -28,12 +28,12 @@ def set_sql(*args):
         
         o = open('/var/log/mysql/mysql.log', 'r').read()
         for i in o.split('\n'):
-            if check_is_tables(i) and (i.count('UPDATE') > 0 or i.count('DELETE') > 0) and not i.count('`django_session`') > 0:
+            if check_is_tables(i) and (i.count('INSERT') > 0 or i.count('UPDATE') > 0 or i.count('DELETE') > 0) and not i.count('`django_session`') > 0:
                 sql = i.replace("\\'", '&#39;')
                 sql = sql.replace("'", '"')
-                #if sql.count('INSERT') > 0:
-                #    sql = 'INSERT %s' % ''.join(sql.split('INSERT')[1:])
-                if sql.count('UPDATE') > 0:
+                if sql.count('INSERT') > 0:
+                    sql = 'INSERT %s' % ''.join(sql.split('INSERT')[1:])
+                elif sql.count('UPDATE') > 0:
                     sql = 'UPDATE %s' % ''.join(sql.split('UPDATE')[1:])
                 elif sql.count('DELETE') > 0:
                     sql = 'DELETE %s' % ''.join(sql.split('DELETE')[1:])

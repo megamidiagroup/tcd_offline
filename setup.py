@@ -302,11 +302,13 @@ if os.path.isdir('/var/www/media/tcd/mega/css/template'):
     os.system('rm -r /var/www/media/tcd/mega/css/template')
 if os.path.isdir('/var/www/media/tcd/storage/template'):
     os.symlink('/var/www/media/tcd/storage/template', '/var/www/tcd_offline/mega/media/mega/css/template')
-
+    
+os.system('echo "DROP DATABASE %s; CREATE DATABASE %s;" | mysql -u root -p%s' % (project, project, password))
 os.system('mysql -u root -p%s %s < /var/www/tcd.sql' % (password, project))
 
 print 'sync db tcd.sql'
 
+os.system('echo "DROP DATABASE megavideo_%s; CREATE DATABASE megavideo_%s;" | mysql -u root -p%s' % (project.split('_')[1], project.split('_')[1], password))
 os.system('mysql -u root -p%s megavideo_%s < /var/www/megavideo.sql' % (password, project.split('_')[1]))
 
 print 'sync db megavideo.sql'
