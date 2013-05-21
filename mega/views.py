@@ -20,7 +20,7 @@ from django.forms import Form
 
 from mail import _send_email_user, _send_email_pontos, _send_email_extrato, _is_valid_email, \
                     _send_email_suggestion, _send_email_free_question_responsavel, \
-                        _send_email_free_question_user, _send_email_faq
+                        _send_email_free_question_user, _send_email_faq, _send_email_extrato_pdf
 
 from reportlab.pdfgen import canvas
 
@@ -1203,6 +1203,8 @@ def certificado(request, rede=None, tipo=''):
 
     if len(p['key']) > 0:
         cer = cer.filter( id__in = list_id_certificado(p['key']) )
+    elif len(tipo) > 0:
+        cer = []    
 
     for c in cer:
         cert  = c.image
@@ -1214,44 +1216,18 @@ def certificado(request, rede=None, tipo=''):
             tmp.append( c )
 
     p['list_certificado'] = tmp
+    
+    if len(tipo) > 0 and not tmp:
+        return HttpResponse('Acesso negado!')    
 
     ###########
 
     if len(tipo) > 0 and tipo == 'pdf':
-        response = HttpResponse(mimetype='application/pdf')
-        response['Content-Disposition'] = 'attachment; filename=certificado-%s.pdf' % slugify( p['user'].get_full_name() )
-
-        # Create the PDF object, using the response object as its "file."
-        can = canvas.Canvas(response)
-
-        can.drawImage(cert.path, 1, 30, width=600, height=780, preserveAspectRatio=True, anchor='c')
-
-        can.drawString(240, 605, p['user'].get_full_name())
-
-        start = 530
-
-        for i in p['list_certificado']:
-            can.setFontSize(12)
-            can.drawString(110, start, '- %s' % i.name)
-            can.drawString(390, start, default_date(i.date, 'd/m/Y à\s H:i'))
-            can.setFontSize(9)
-            for t in i.get_list_treinamento():
-                can.drawString(120, (start-15), t)
-                start = start - 12
-
-        can.setFontSize(11)
-        
-        if p['user'].infouser.cidade:
-            cidade = p['user'].infouser.cidade.name
-        else:
-            cidade = u'(Nenhum)'
-        
-        can.drawString(230, 170, '%s, %s de %s de %s' % (cidade, datetime.now().day, default_mes[datetime.now().month], datetime.now().year))
-
-        can.showPage()
-        can.save()
-
-        return response
+        p['to_mail'] = p['user'].email
+        p['name']    = p['user'].get_full_name()
+        p['tipo']    = tipo
+        p['sucesso'] = _send_email_extrato_pdf(p, request)
+        return render_to_response('%s/certificado.html' % p['get_tipo_template'], p, context_instance=RequestContext(request))
 
     if request.REQUEST.get('sucesso', False):
         p['to_mail'] = p['user'].email
@@ -1633,7 +1609,7 @@ def login(request, rede=None):
         user  = authenticate(username=p['username'], password=p['pass'])
         
         clear = getattr(settings, 'CACHES', '')
-    
+
         if clear:
             os.system('rm -r %s' % clear['default']['LOCATION'])
         
@@ -1658,6 +1634,12 @@ def login(request, rede=None):
         if user is not None:
             if user.is_active:
                 django_login(request, user)
+                
+                if getattr(settings, 'OFFLINE', False) and not getattr(user.infouser, 'offline', False):
+                    iu         = user.infouser
+                    iu.offline = True
+                    iu.save()
+                
                 try:
                     p['rede'] = user.infouser.rede.link
                     if len(p['next']) > 2 and p['rede'] in p['next']:

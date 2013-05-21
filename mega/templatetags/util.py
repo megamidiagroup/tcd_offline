@@ -309,9 +309,15 @@ def base64decode(value):
 def list_id_certificado(key):
 
     c = []
+    
+    if not key[:-1]:
+        return []
 
     for i in key[:-1].split('-'):
-        c.append(base64decode(i))
+        try:
+            c.append(base64decode(i))
+        except:
+            return []
 
     return c
 

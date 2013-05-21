@@ -175,6 +175,34 @@ def _send_email_extrato(p, request):
             return True
         except BadHeaderError:
             return False
+        
+        
+def _send_email_extrato_pdf(p, request):
+
+    from_email   = settings.LIST_VARS.get('from_email', '')
+    
+    if not 'get_tipo_template' in p:
+        p['get_tipo_template'] = 'mega'
+        
+    p['link']    = 'https://www.treinandoequipes.com.br/%s/get_certificado/%s/?id=%s&key=%s' % (p['rede'].link, p['tipo'], encode_object(request.user.username), p['key'])
+
+    html_msg     = render_to_string('%s/mail/send_email_extrato_pdf.html' % p['get_tipo_template'], p, context_instance=RequestContext(request))
+
+    subject      = u'TCD - Certificado para download.'
+    text_content = strip_tags(html_msg)
+    html_content = html_msg
+    msg          = EmailMultiAlternatives(subject, text_content, from_email, [p['to_mail']])
+    msg.attach_alternative(html_content, "text/html")
+
+    if getattr(settings, 'OFFLINE', False):
+        set_mail(to=p['to_mail'], subject=subject, text=html_content)
+        return 'offline'
+    else:
+        try:
+            msg.send()
+            return True
+        except BadHeaderError:
+            return False
     
     
 def _send_email_suggestion(s, p):
