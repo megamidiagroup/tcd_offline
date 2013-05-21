@@ -507,6 +507,7 @@ class InfoUser(models.Model):
     access   = models.BooleanField(default = False, verbose_name='Acesso Restrito', help_text='Liberá o acesso do usuario as categorias restritas.')
     envia    = models.BooleanField(default = False, verbose_name='Envia e-mail', help_text='Se marcado e o status for igual a ativo envia o email de confirmação para o usuário.')
     matricul = models.CharField(max_length=60, verbose_name='Matricula')
+    offline  = models.BooleanField(default = False, verbose_name='OffLine', help_text='Se marcado o usuário só pode acessar offline.')
     pontos   = models.IntegerField(editable=False, default=0, verbose_name='Pontos', help_text='Somente números')
     date     = models.DateTimeField(auto_now_add=True, verbose_name='Data')
 
