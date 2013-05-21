@@ -105,7 +105,8 @@
                 {% endif %}
                 
                 <div class="wrap">
-                	
+		
+			<p><b>Login:       			</b>{{ user.username }}</p>	
                 	<p><b>Nome:       			</b>{{ user.get_full_name }}</p>
 	                <p><b>CPF:        			</b>{% if infouser.cpf %}{{ infouser.cpf }}{% endif %}</p>
 	                <p><b>E-mail:     			</b>{{ user.email }}</p>
