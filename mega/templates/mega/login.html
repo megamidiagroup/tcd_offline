@@ -5,14 +5,14 @@
 <head>
 
     <title>{{ title }}</title>
-    
+
     <meta http-equiv="Content-Type" CONTENT="text/html; charset=UTF-8" />
 
     <link rel="stylesheet" href="{{ STATIC_URL }}{{ get_tipo_template }}/css/no-ie6.css" type="text/css" />
 
     <link rel="stylesheet" href="{{ STATIC_URL }}{{ get_tipo_template }}/css/flexslider.css" type="text/css" media="screen" />
     <link rel="stylesheet" href="{{ STATIC_URL }}{{ get_tipo_template }}/css/layout.css" type="text/css" />
-    
+
     {% if get_template.rede %}
         <link rel="stylesheet" href="{{ STATIC_URL }}{{ get_tipo_template }}/css/template/{{ get_template.rede.link }}.css" type="text/css" />
     {% endif %}
@@ -24,22 +24,22 @@
 
     <script src="{{ STATIC_URL }}{{ get_tipo_template }}/js/jquery-1.7.2.js"></script>
     <script src="{{ STATIC_URL }}{{ get_tipo_template }}/js/jquery.flexslider-min.js"></script>
-    
+
     <script src="{{ STATIC_URL }}{{ get_tipo_template }}/js/scripts.js" type="text/javascript"></script>
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=3.0, user-scalable=yes" />
     <meta name="HandheldFriendly" content="true" />
 
     <link href="{{ rede|favicon }}" rel="shortcut icon" type="image/x-icon" />
-    
+
     <meta name="robots" content="index,follow" />
-    
+
     <meta name="description" content="Seja bem vindo ao treinamento a distância TCD, www.treinandoequipes.com.br" />
 
 </head>
 
 <body>
-	
+
 	<div url="{{ base_url }}" class="no-ie6"></div>
 
     {% block content %}
@@ -72,18 +72,31 @@
 
                 {% csrf_token %}
 
-                <label for="user">Login:</label>
-                <input type="text" name="user" id="user" />
-                
+				<a href="{% url login %}" title="Cancelar">
+                	<img src="{{ STATIC_URL }}{{ get_tipo_template }}/images/close.png" border="0" width="28" class="ngerente" style="float:right;margin:-8px -20px 0 0;{% if not gerente %}display:none{% endif %}" />
+                </a>
+
+                <label for="user" class="seulogin">{% if gerente %}Seu login:{% else %}Login:{% endif %}</label>
+                <input type="text" name="user" id="user" value="{{ username }}" />
+
                 {% set_keyboard_buttom get_tipo_template %}
 
-                <label for="pass">Senha:</label>
-                <input type="password" name="pass" id="pass" />
+				{% if not gerente %}
+	                <label for="pass" class="nuser">Senha:</label>
+	                <input type="password" name="pass" id="pass" class="nuser" />
+	                <input type="submit" name="submit" value="Entrar" class="buttom nuser" />
+                {% endif %}
 
-                <input type="submit" name="submit" value="Entrar" class="buttom" />
+                <input class="repass nuser" type="button" name="repass" value="Esqueci minha senha" {% if gerente %}style="display:none"{% endif %} />
 
-                <input class="repass" type="submit" name="repass" value="Esqueci minha senha" />
-                
+                <label for="ugerente" class="ngerente" style="{% if not gerente %}display:none{% endif %}">Login do Gerente:</label>
+                <input type="text" name="ugerente" id="user" class="ngerente" value="{{ ugerente }}" style="{% if not gerente %}display:none{% endif %}" />
+
+                <label for="pgerente" class="ngerente" style="{% if not gerente %}display:none{% endif %}">Senha do Gerente:</label>
+                <input type="password" name="pgerente" id="pass" class="ngerente" style="{% if not gerente %}display:none{% endif %}" />
+
+                <input type="submit" name="submit" value="Entrar" class="buttom ngerente" style="{% if not gerente %}display:none{% endif %}" />
+
                 <input type="hidden" name="next" value="{{ next }}" />
 
             </form>
@@ -97,6 +110,19 @@
     {% endblock content %}
 
     <script src="{{ STATIC_URL }}{{ get_tipo_template }}/js/ios-orientationchange-fix.js" type="text/javascript"></script>
+
+    <script type="text/javascript">
+    	$(function() {
+    		$('input[name=repass]').click(function(e){
+    			$('.nuser').slideUp('fast', function oncomplete(){
+    				$('.nuser').remove();
+    				$('.ngerente').slideDown();
+    				$('.seulogin').html('Seu login:');
+    				$('form').get(0).reset();
+    			});
+    		});
+    	});
+    </script>
 
 </body>
 

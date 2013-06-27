@@ -50,7 +50,7 @@ import httplib
 import sys
 import traceback
 import smtplib
-    
+
 
 # quant de itens por pagina
 per_page = 15
@@ -64,9 +64,9 @@ class CaptchaTestForm(Form):
 
 def login_required(f):
     def wrap(request, *args, **kwargs):
-        
+
         next = request.path
-        
+
         try:
             if request.user.is_active and (request.user.is_superuser or request.user.is_staff):
                 return HttpResponseRedirect('/admin/')
@@ -78,7 +78,7 @@ def login_required(f):
             if len(next) > 2:
                 return HttpResponseRedirect('/login/?next=%s' % next)
             return HttpResponseRedirect('/login/')
-        
+
         return f(request, *args, **kwargs)
 
     wrap.__doc__   = f.__doc__
@@ -88,19 +88,19 @@ def login_required(f):
 
 
 def _set_enquete(request, p):
-    
+
     p['grafico']      = False
     p['open_grafico'] = False
-    
+
     if request.POST:
-    
+
         count = 1
-    
+
         while request.POST.get('group%s' % count, None):
             p['groups'] = {}
             p['groups']['group%s' % count] = int( request.POST.get('group%s' % count, 0) )
             count += 1
-        
+
         if count > 1:
             count = 1
             for e in Enquete.objects.filter( Q(visible = True) & Q(rede = p['rede']) ).order_by('-date'):
@@ -124,9 +124,9 @@ def _set_enquete(request, p):
                 p['groups']       = {}
                 p['grafico']      = True
                 p['open_grafico'] = True
-                
+
                 set_sql()
-                
+
     if not p['grafico'] and 'user' in p and p['user'] and Enquete.objects.filter( Q(visible = True) & Q(rede = p['rede']) ) > 0:
         e = Enquete.objects.filter( Q(visible = True) & Q(rede = p['rede']) )
         if e.count() > 0 and e[0].users.filter(id = p['user'].id):
@@ -146,7 +146,7 @@ def _prepare_vars(request, rede=None, p={}):
     p['is_access']        = False
     p['q']                = None
     #p['user']            = None
-    
+
     p['base_url']         = settings.LIST_VARS.get('base_url', '')
 
     p['title']            = u'TCD - Plataforma de Treinamento e Comunicação a Distância'
@@ -162,7 +162,7 @@ def _prepare_vars(request, rede=None, p={}):
                 pass
 
     p['list_menu']     = Menu.objects.filter( Q(rede = p['rede']) & Q(visible=True) ).order_by('order', 'name')
-    
+
     if offline:
         p['list_menu'] = p['list_menu'].exclude( url__icontains = 'docs' )
 
@@ -182,15 +182,15 @@ def _prepare_vars(request, rede=None, p={}):
     p['class']   = 'home'
 
     p['list_certificado_account']         = Certificado.objects.filter( Q(rede = p['rede']) & Q(visible = True) & Q(treinamento__visible = True) & Q(treinamento__category__visible = True) ).distinct().order_by('-date')
-    
+
     try:
         if request.user.infouser.filial:
             p['list_certificado_account'] = p['list_certificado_account'].filter( Q(treinamento__category__filial__isnull = True) | Q(treinamento__category__filial = request.user.infouser.filial) ).distinct()
     except:
         pass
-    
+
     p['list_aproveitamento_account']      = Treinamento.objects.filter( Q(rede = p['rede']) & Q(visible = True) & Q(category__visible = True) ).distinct().order_by('-date')
-    
+
     try:
         if request.user.infouser.filial:
             p['list_aproveitamento_account'] = p['list_aproveitamento_account'].filter( Q(treinamento__category__filial__isnull = True) | Q(category__filial = request.user.infouser.filial) ).distinct()
@@ -208,9 +208,9 @@ def _prepare_vars(request, rede=None, p={}):
         pass
 
     p = _set_enquete(request, p)
-    
+
     p['first'], p['first_cpf'], p['btns_disabled'] = False, False, False
-    
+
     try:
         if not request.user.email or not len(request.user.email) > 3:
             p['first']         = True
@@ -252,7 +252,7 @@ def home(request, rede=None):
 def category(request, rede=None, cat_id=None):
 
     p = _prepare_vars(request, rede)
-    
+
     p['class'] = ''
 
     if not p['rede']:
@@ -291,9 +291,9 @@ def category(request, rede=None, cat_id=None):
 def treinamento(request, rede=None, video_id=None):
 
     p = _prepare_vars(request, rede)
-    
+
     p['class'] = ''
-    
+
     p['list_anexo'] = None
 
     if not p['rede']:
@@ -311,13 +311,13 @@ def treinamento(request, rede=None, video_id=None):
     if p['is_filial']:
         if p['list_video'] and not p['list_video'].filter( Q(category__filial__isnull = True) | Q(category__filial = p['is_filial']) ):
             return HttpResponseRedirect('/%s/' % p['rede'].link)
-        
+
     if p['list_video'] and p['list_video'].count() > 0:
         video = p['list_video'][0]
         p['list_anexo'] = Anexo.objects.filter( Q(visible = True) & Q(rede = p['rede']) & Q(treinamento = video) ).order_by('name')
         if is_not_video(video) == 'elearning':
             return HttpResponseRedirect('/%s/elearning/%s/' % (p['rede'].link, video.id) )
-        
+
     p['elearning'] = Elearning.objects.filter( Q(rede = p['rede']) & Q(visible=True) & Q(treinamento__in = p['list_video']) ).count() > 0
 
     return render_to_response('%s/treinamento.html' % p['get_tipo_template'], p, context_instance=RequestContext(request))
@@ -325,15 +325,15 @@ def treinamento(request, rede=None, video_id=None):
 
 @login_required
 def send_faq(request, rede=None, id=None):
-    
+
     p = _prepare_vars(request, rede)
-    
+
     error    = u'Ocorreu um erro interno, contate o administrador.'
-    
+
     p['msg'] = request.REQUEST.get('msg', '')
-    
+
     if len(p['msg']) >= 10:
-        
+
         try:
             s             = Suggestion()
             s.rede        = p['rede']
@@ -342,14 +342,14 @@ def send_faq(request, rede=None, id=None):
             s.mensagem    = p['msg']
             s.command     = 'send_faq'
             s.save()
-            
+
             set_sql()
-        
+
             if p['rede'].resend == 'I':
                 ret = _send_email_faq(s, p)
-        
+
             error = u'Enviado com sucesso. Você logo será informado por e-mail.'
-            
+
         except:
             pass
 
@@ -358,15 +358,15 @@ def send_faq(request, rede=None, id=None):
 
 @login_required
 def suggestion(request, rede=None, video_id=None):
-    
+
     p = _prepare_vars(request, rede)
-    
+
     r = u'Ocorreu algum erro!'
-    
+
     msg = request.REQUEST.get('mensagem', '')
-    
+
     try:
-        
+
         s             = Suggestion()
         s.rede        = p['rede']
         s.treinamento = Treinamento.objects.get(id = int(video_id))
@@ -374,14 +374,14 @@ def suggestion(request, rede=None, video_id=None):
         s.mensagem    = msg
         s.command     = 'suggestion'
         s.save()
-        
+
         set_sql()
-        
+
         if p['rede'].resend == 'I':
             ret = _send_email_suggestion(s, p)
 
         r = u'Mensagem enviada!'
-        
+
     except:
         pass
 
@@ -409,23 +409,23 @@ def elearning(request, rede=None, video_id=None):
     if p['is_filial']:
         if p['list_video'] and not p['list_video'].filter( Q(category__filial__isnull = True) | Q(category__filial = p['is_filial']) ):
             return HttpResponseRedirect('/%s/' % p['rede'].link)
-        
+
     dir   = settings.MEDIA_ROOT + settings.UPLOAD_STORAGE_DIR + 'uploads/elearning/'
-    
+
     elear = Elearning.objects.filter( Q(rede = p['rede']) & Q(visible=True) & Q(treinamento__in = p['list_video']) )
-    
+
     if elear.count() > 0:
         elear   = elear[0]
         local   = dir + elear.dir + '/'
 
         pattern = 'index.html'
-    
+
         files   = os.listdir(os.path.abspath(local))
-            
+
         for path, dirs, files in os.walk(os.path.abspath(local)):
             for filename in fnmatch.filter(files, pattern):
                 p['elearning'] = os.path.join(path, filename)
-                
+
         p['elearning'] = settings.LIST_VARS.get('base_url', '') + (settings.UPLOAD_STORAGE_DIR[3:]) + 'uploads/elearning/' + (p['elearning'].split('/uploads/elearning/')[1])
     else:
         return HttpResponseRedirect('/%s/' % p['rede'].link)
@@ -438,7 +438,7 @@ def elearning(request, rede=None, video_id=None):
 def live(request, rede=None, video_id=None):
 
     p = _prepare_vars(request, rede)
-    
+
     p['get_mobile'] = get_mobile(request)
 
     if not p['rede']:
@@ -456,17 +456,17 @@ def live(request, rede=None, video_id=None):
     if p['is_filial']:
         if p['list_video'] and not p['list_video'].filter( Q(filial__isnull = True) | Q(category__filial = p['is_filial']) ):
             return HttpResponseRedirect('/%s/' % p['rede'].link)
-        
+
     p['history'] = WebChat.objects.filter( Q(rede = p['rede']) & Q(live__id = int(video_id)) ).count() > 0
-    
+
     ## ---   limpa caixa   --- ##
-    
+
     list = WebChat.objects.filter( Q(rede = p['rede']) & Q(live__id = int(video_id)) ).exclude(user_lido = request.user)
 
     for li in list:
         ul = li.user_lido
         ul.add(request.user)
-    
+
     ## --- end limpa caixa --- ##
 
     return render_to_response('%s/live.html' % p['get_tipo_template'], p, context_instance=RequestContext(request))
@@ -475,28 +475,28 @@ def live(request, rede=None, video_id=None):
 @csrf_exempt
 @login_required
 def live_load(request, rede=None, video_id=0):
-    
+
     array = []
     tmp   = {}
-    
+
     r = Rede.objects.filter( Q(link = rede) & Q(visible=True) )
-    
+
     if r.count() > 0:
         rede = r[0]
     else:
         return HttpResponse('Error')
-    
+
     lidos = request.REQUEST.get('lidos', '')
 
     if request.REQUEST.get('action', 'set_msg'):
-        
+
         wc         = WebChat()
         wc.rede    = rede
         wc.user    = request.user
         wc.live_id = int( video_id )
         wc.text    = request.REQUEST.get('mensagem', '')
         wc.save()
-        
+
         tmp['id_chat']         = wc.id
         tmp['id_video']        = wc.live.id
         tmp['id_user']         = wc.user.id
@@ -508,7 +508,7 @@ def live_load(request, rede=None, video_id=0):
         tmp['msg']             = wc.text
         tmp['hora']            = default_date(wc.date, 'G:i')
         array.append(tmp)
-        
+
         return HttpResponse('arr_msg=%s;' % json.dumps(array))
 
     list = WebChat.objects.filter( Q(rede = rede) & Q(live__id = video_id) )
@@ -517,17 +517,17 @@ def live_load(request, rede=None, video_id=0):
         list2 = list.exclude(user_lido = request.user).exclude(user = request.user)
     else:
         list2 = list
-        
+
     if lidos and len(lidos) > 0:
         for li in lidos.split('-'):
             if not list.filter( Q(id = int(li)) & Q(user_lido = request.user) ).count() > 0:
                 ul = list.get(id = int(li)).user_lido
                 ul.add(request.user)
-        
+
     list = list2.order_by('id')
-    
+
     for i in list:
-        
+
         tmp = {}
 
         tmp['id_chat']         = i.id
@@ -541,63 +541,63 @@ def live_load(request, rede=None, video_id=0):
         tmp['msg']             = i.text
         tmp['hora']            = default_date(i.date, 'G:i')
         array.append(tmp)
-    
+
     return HttpResponse('arr_msg=%s;history=%s;' % ( json.dumps(array), request.REQUEST.get('history', '') ))
 
 
 def avaliacao(request, rede=None, key=''):
-    
+
     p  = _prepare_vars(request, rede)
-    
+
     do = decode_object(key)
-    
+
     p['list_question'] = Question.objects.filter(id__in = do['list_question'])
     p['user']          = UserAdmin.objects.get(id = do['user_id'])
-    
+
     p['lista']         = range(0, 11)
     p['notas']         = []
     p['error']         = ''
     save               = True
-    
+
     p['sucesso']       = request.REQUEST.get('sucesso', '')
     p['porcent']       = request.REQUEST.get('porcent', 0)
-    
+
     if p['sucesso'] == 'true':
         return render_to_response('%s/avaliacao_sucesso.html' % p['get_tipo_template'], p, context_instance=RequestContext(request))
     elif p['sucesso'] == 'false':
         return render_to_response('%s/avaliacao_nosucesso.html' % p['get_tipo_template'], p, context_instance=RequestContext(request))
-    
+
     if request.POST:
         for lq in p['list_question']:
             if not lq.get_list_response_order():
                 p['notas'].append( request.REQUEST.get('nota_%s' % lq.id, '') )
-            
+
     for n in p['notas']:
         if not len(n) > 0:
             p['error'] = u'Selecione a nota para todas as questões.'
             save       = False
-            
+
     if request.POST and save:
 
         list_acerto     = []
         list_correct    = {}
         quant           = 0
-        
+
         rt              = RelatorioTentativa.objects.filter( Q(rede = p['rede']) & Q(user = p['user']) & Q(treinamento = p['list_question'][0].treinamento) )
         p['list_video'] = Treinamento.objects.filter( Q(rede = p['rede']) & Q(visible=True) & Q(id = int(p['list_question'][0].treinamento.id)) ).order_by('order', 'name')
-    
+
         if rt.count() > 0:
             rt = rt[0]
             if rt.aprovado and p['sucesso'] == '':
                 return HttpResponseRedirect(reverse('login', args=(p['rede'].link,)))
-        
+
         try:
             porcent_quiz  = p['list_video'][0].quiz_set.all()[0].porcent
         except:
             porcent_quiz  = 100
-            
+
         p['porcent_quiz'] = porcent_quiz
-        
+
         for lq in p['list_question']:
             if not lq.get_list_response_order():
                 list_acerto.append( int(p['notas'][quant]) )
@@ -611,16 +611,16 @@ def avaliacao(request, rede=None, key=''):
                         nota = 10
                 list_acerto.append( nota )
                 list_correct['res_%s' % lq.id] = nota
-            
+
         try:
             porcent  = int( float( sum(list_acerto) ) / float( len(list_acerto) ) * 10 )
         except:
             porcent  = 0
-            
+
         p['porcent'] = porcent
-        
+
         if porcent >= porcent_quiz:
-                    
+
             ## momento de aprovação
 
             ra        = RelatorioAvalicao()
@@ -637,79 +637,79 @@ def avaliacao(request, rede=None, key=''):
                         if gfr[0].aprovado:
                             ra.pontos += lqp.pontos
                 quant += 1
-                
+
             ra.quiz    = p['list_video'][0].quiz_set.all()[0]
             ra.save()
 
             infouser = p['user'].infouser
             infouser.pontos += ra.pontos
             infouser.save()
-            
+
             ## salva no relatório
             rt.date_end = datetime.now()
             rt.aprovado = True
             rt.save()
-            
+
             for lqu in p['list_question']:
                 lqu.get_free_response(p['user']).delete()
-                
-                
+
+
             er = p['list_video'][0].quiz_set.all()[0]
-                    
+
             try:
                 p['to_mail'] = er.responsavel.all()[0].email
             except:
                 p['to_mail'] = er.email_respon
-                
+
             if len( p['user'].get_full_name() ) > 1:
                 p['usuario']     = p['user'].get_full_name()
             else:
                 p['usuario']     = p['user'].username
-                
+
             if request.is_secure():
                 p['link'] = 'https://'
             else:
                 p['link'] = 'http://'
-                
+
             p['link']    += request.get_host() + reverse('conta', args=(p['rede'].link,))
 
             r = _send_email_free_question_user(p, request, True)
-            
+
             set_sql()
 
             return HttpResponseRedirect( reverse('avaliacao', args=(p['rede'].link, key,)) + '?sucesso=true&porcent=%s' % porcent )
-        
+
         else:
-            
+
             ## momento de reprovação
-            
+
             ## salva no relatório
             rt.date_end = datetime.now()
             rt.aprovado = False
             rt.save()
-            
+
             er = p['list_video'][0].quiz_set.all()[0]
-                    
+
             try:
                 p['to_mail'] = er.responsavel.all()[0].email
             except:
                 p['to_mail'] = er.email_respon
-                
+
             if len( p['user'].get_full_name() ) > 1:
                 p['usuario']     = p['user'].get_full_name()
             else:
                 p['usuario']     = p['user'].username
-                
+
             if request.is_secure():
                 p['link'] = 'https://'
             else:
                 p['link'] = 'http://'
-                
+
             p['link']    += request.get_host() + reverse('treinamento', args=(p['rede'].link, p['list_video'][0].id,))
 
-            
+
             r = _send_email_free_question_user(p, request, False)
-            
+
             set_sql()
 
             return HttpResponseRedirect( reverse('avaliacao', args=(p['rede'].link, key,)) + '?sucesso=false&porcent=%s' % porcent )
@@ -723,15 +723,15 @@ def avaliacao(request, rede=None, key=''):
 def questionario(request, rede=None, video_id=None):
 
     p = _prepare_vars(request, rede)
-    
+
     p['class']     = ''
     p['porcent']   = ''
 
     list_acerto    = []
     list_correct   = {}
-    
+
     quant, acertos = 0, 0
-    
+
     freequestion   = False
 
     p['user']    = request.user
@@ -742,21 +742,21 @@ def questionario(request, rede=None, video_id=None):
 
     p['url_logo']     = p['rede'].logo.url
     p['list_video']   = Treinamento.objects.filter( Q(rede = p['rede']) & Q(visible=True) & Q(id = int(video_id)) ).order_by('order', 'name')
-    
+
     try:
         porcent_quiz  = p['list_video'][0].quiz_set.all()[0].porcent
     except:
         porcent_quiz  = 100
-        
+
     p['porcent_quiz'] = porcent_quiz
-    
+
     rt = RelatorioTentativa.objects.filter( Q(rede = p['rede']) & Q(user = p['user']) & Q(treinamento__id = int(video_id)) )
-    
+
     if rt.count() > 0:
         rt = rt[0]
         if rt.aprovado and p['sucesso'] == '':
             return HttpResponseRedirect(reverse('treinamento', args=(p['rede'].link, video_id)))
-    
+
     if p['sucesso'] == '' and (not rt or rt.date_end):
         rt = RelatorioTentativa()
         rt.rede = p['rede']
@@ -789,34 +789,34 @@ def questionario(request, rede=None, video_id=None):
                         list_acerto.append( False )
                         list_correct['res_%s' % i.id] = False
                         text_resp   = request.REQUEST.get('resposta_%d' % i.id, '')
-                        
+
                         fr          = FreeResponse()
                         fr.rede     = p['rede']
                         fr.user     = p['user']
                         fr.question = i
                         fr.text     = text_resp
                         fr.save()
-                        
+
                         set_sql()
 
                         freequestion = True
-                    
+
                 try:
                     porcent = int(float(list_acerto.count(True)) / float(len(list_acerto)) * 100)
                 except:
                     porcent = 0
 
                 if not freequestion and porcent >= porcent_quiz:
-                    
+
                     ## momento de aprovação
-                    
+
                     list_question_exclude = []
-                    
+
                     for lc in list_correct:
                         if not list_correct[lc]:
                             list_question_exclude.append( int(lc.split('_')[1]) )
-                    
-                    if len(list_question_exclude) > 0:        
+
+                    if len(list_question_exclude) > 0:
                         p['list_question'] = p['list_question'].exclude(id__in = list_question_exclude)
 
                     ra        = RelatorioAvalicao()
@@ -829,42 +829,42 @@ def questionario(request, rede=None, video_id=None):
                     infouser = p['user'].infouser
                     infouser.pontos += ra.pontos
                     infouser.save()
-                    
+
                     ## salva no relatório
                     rt.date_end = datetime.now()
                     rt.aprovado = True
                     rt.save()
-                    
+
                     set_sql()
 
                     return HttpResponseRedirect( '/%s/questionario/%d/?sucesso=true&r=%s' % (p['rede'].link, p['list_video'][0].id, encode_object(list_correct)) )
-                
+
                 elif freequestion:
-                    
+
                     er = p['list_video'][0].quiz_set.all()[0]
-                    
+
                     try:
                         p['to_mail'] = er.responsavel.all()[0].email
                     except:
                         p['to_mail'] = er.email_respon
-                    
+
                     try:
                         p['responsavel'] = er.responsavel.all()[0].get_full_name()
                     except:
                         p['responsavel'] = p['to_mail']
-                        
+
                     if len( p['user'].get_full_name() ) > 1:
                         p['usuario']     = p['user'].get_full_name()
                     else:
                         p['usuario']     = p['user'].username
-                        
+
                     if request.is_secure():
                         p['link'] = 'https://'
                     else:
                         p['link'] = 'http://'
-                        
+
                     p['link']        += request.get_host() + reverse('avaliacao', args=(p['rede'].link, '%s' % encode_object({'user_id': p['user'].id, 'list_question': [i.id for i in p['list_question']]}),))
-                    
+
                     for indice in list_correct:
                         if list_correct[indice]:
                             question_id    = int(indice.split('_')[1])
@@ -875,30 +875,30 @@ def questionario(request, rede=None, video_id=None):
                             fr.text        = u'resposta automática'
                             fr.aprovado    = True
                             fr.save()
-                            
+
                             set_sql()
-                    
+
                     r = _send_email_free_question_responsavel(p, request)
-                    
+
                     return HttpResponseRedirect( '/%s/questionario/%d/?sucesso=aguarde&r=%s' % (p['rede'].link, p['list_video'][0].id, encode_object(list_correct)) )
-                
+
                 else:
-                    
+
                     ## momento de reprovação
-                    
+
                     ## salva no relatório
                     rt.date_end = datetime.now()
                     rt.aprovado = False
                     rt.save()
 
                     set_sql()
-                    
+
                     return HttpResponseRedirect( '/%s/questionario/%d/?sucesso=false&r=%s' % (p['rede'].link, p['list_video'][0].id, encode_object(list_correct)) )
-                
+
     elif p['sucesso'] and ( p['sucesso'] == 'true' or p['sucesso'] == 'false' or p['sucesso'] == 'aguarde' ):
-        
+
         key = request.REQUEST.get('r', '')
-        
+
         p['respostas']     = {}
         p['list_question'] = {}
 
@@ -911,7 +911,7 @@ def questionario(request, rede=None, video_id=None):
                     quant += 1
             except:
                 pass
-        
+
         try:
             p['porcent'] = int( (float(acertos) / float(quant)) * 100 )
         except:
@@ -919,7 +919,7 @@ def questionario(request, rede=None, video_id=None):
 
         if p['list_video'].count() > 0:
             p['list_question'] = Question.objects.filter( Q(treinamento = p['list_video'][0]) & Q(visible=True) )
-            
+
     p['get_host']  = request.get_host()
     p['is_secure'] = request.is_secure()
     p['app_id']    = settings.FACEBOOK_APP_ID.get(p['get_tipo_template'], '')
@@ -932,7 +932,7 @@ def questionario(request, rede=None, video_id=None):
 def conta(request, rede=None):
 
     p = _prepare_vars(request, rede)
-    
+
     p['class'] = ''
 
     p['sucesso']  = False
@@ -985,12 +985,12 @@ def conta_edit(request, rede=None):
             p['infouser'] = p['user'].infouser
         except:
             pass
-        
+
         if not request.user.is_active:
             return HttpResponseRedirect('/%s/login/' % rede)
 
     p = _prepare_vars(request, rede, p)
-    
+
     p['class'] = ''
 
     if request.REQUEST.get('csrfmiddlewaretoken', False):
@@ -1000,9 +1000,9 @@ def conta_edit(request, rede=None):
 
         for i in list:
             p[i] = request.REQUEST.get(i, '')
-            
+
         msg, p['msg'], usermail = '', '', None
-            
+
         if not len(p['txt_name'].split(' ')) > 1 or not p['txt_name'].split(' ')[0] or not p['txt_name'].split(' ')[1] or not _cpf(p['txt_cpf']).isValid() or not _is_valid_email(p['txt_email']) or _cpf(p['user'].username).isValid():
             if not len(p['txt_name'].split(' ')) > 1 or not p['txt_name'].split(' ')[0] or not p['txt_name'].split(' ')[1]:
                 msg = u'Digite o nome completo.'
@@ -1045,22 +1045,22 @@ def conta_edit(request, rede=None):
             iu.fone_cel  = p['txt_fone_cel']
             iu.receber   = p['ch_receber']
             iu.envia     = p['ch_envia']
-    
+
             if p['is_pass'] == False and len(p['txt_newpass']) > 0 and len(p['txt_confirm']) > 0 and p['txt_newpass'] == p['txt_confirm']:
                 user.set_password(p['txt_newpass'])
             elif len(p['txt_pass']) > 0 and len(p['txt_newpass']) > 0 and len(p['txt_confirm']) > 0 and authenticate(username=user, password=p['txt_pass']) and p['txt_newpass'] == p['txt_confirm']:
                 user.set_password(p['txt_newpass'])
-                
+
             if usermail:
                 user.username = usermail
 
             user.save()
             iu.save()
-    
+
             p['to_mail'] = user.email
             p['name']    = user.get_full_name()
             p['link']    = '?user=%s&action=%s&key=%s' % (user.username, '/conta/edit/', user.password)
-    
+
             if not p['key'] and _send_email_user(p, request):
                 set_sql()
                 return HttpResponseRedirect('/%s/conta/?edit=true' % p['rede'].link)
@@ -1074,9 +1074,9 @@ def conta_edit(request, rede=None):
         p['list_filial']   = Filial.objects.filter( Q(visible = True) & Q(rede = p['rede']) ).order_by('name')
     except:
         pass
-    
+
     p['first'] = False
-    
+
     if request.user.username and _cpf(request.user.username).isValid():
         p['first_cpf'] = True
 
@@ -1086,20 +1086,20 @@ def conta_edit(request, rede=None):
 def conta_add(request, rede=None):
 
     p = _prepare_vars(request, rede)
-    
+
     p['user'] = request.REQUEST.get('user', '')
     p['key']  = request.REQUEST.get('key' , '')
     p['edit'] = request.REQUEST.get('edit', '')
-    
+
     list = ['txt_name', 'txt_email', 'txt_cpf', 'txt_endereco', 'txt_bairro', 'txt_cep', 'estado',
                 'cidade', 'txt_fone_com', 'txt_fone_res', 'txt_fone_cel', 'ch_receber', 'ch_envia', 'txt_pass',
                     'txt_newpass', 'txt_confirm', 'sel_filial', 'txt_cnpj']
 
     for i in list:
         p[i] = request.REQUEST.get(i, '')
-    
+
     p['class'] = ''
-    
+
     if len(p['user']) > 0 and len(p['key']) > 0:
         ua = UserAdmin.objects.filter( Q(username__exact=p['user']) & Q(password=p['key']) )
         p['class'] = 'home'
@@ -1115,9 +1115,9 @@ def conta_add(request, rede=None):
             return render_to_response('%s/active_sucesso.html' % p['get_tipo_template'], p, context_instance=RequestContext(request))
         else:
             return render_to_response('%s/active_error.html' % p['get_tipo_template'], p, context_instance=RequestContext(request))
-    
+
     human, post = False, False
-        
+
     if request.POST:
         post = True
         form = CaptchaTestForm(request.POST)
@@ -1127,13 +1127,13 @@ def conta_add(request, rede=None):
         form = CaptchaTestForm()
 
     if human and request.REQUEST.get('csrfmiddlewaretoken', False):
-        
+
         if not _is_valid_email(p['txt_email']) or UserAdmin.objects.filter( Q(username__exact=p['txt_email']) ).count() > 0:
             return HttpResponseRedirect('/%s/conta/add/?edit=false' % p['rede'].link)
 
         iu   = InfoUser()
         user = UserAdmin()
-        
+
         user.first_name = p['txt_name'].split(' ')[0]
         try:
             user.last_name = ' '.join(n for n in p['txt_name'].split(' ')[1:])
@@ -1142,7 +1142,7 @@ def conta_add(request, rede=None):
         user.username  = p['txt_email']
         user.email     = p['txt_email']
         user.is_active = False
-        
+
         iu.cpf         = p['txt_cpf']
         iu.cnpj        = p['txt_cnpj']
         iu.endereco    = p['txt_endereco']
@@ -1157,11 +1157,11 @@ def conta_add(request, rede=None):
         iu.receber     = p['ch_receber']
         iu.envia       = p['ch_envia']
         iu.visible     = False
-        
+
         iu.rede        = p['rede']
-        
+
         user.save()
-        
+
         iu.user = user
 
         if len(p['txt_newpass']) > 0 and len(p['txt_confirm']) > 0 and p['txt_newpass'] == p['txt_confirm']:
@@ -1176,9 +1176,9 @@ def conta_add(request, rede=None):
 
         if _send_email_user(p, request):
             return HttpResponseRedirect('/%s/login/?add=true' % p['rede'].link)
-        
+
     p['human'], p['post'] = human, post
-        
+
     p['captcha'] = form
 
     return render_to_response('%s/conta_add.html' % p['get_tipo_template'], p, context_instance=RequestContext(request))
@@ -1204,7 +1204,7 @@ def certificado(request, rede=None, tipo=''):
     if len(p['key']) > 0:
         cer = cer.filter( id__in = list_id_certificado(p['key']) )
     elif len(tipo) > 0:
-        cer = []    
+        cer = []
 
     for c in cer:
         cert  = c.image
@@ -1216,9 +1216,9 @@ def certificado(request, rede=None, tipo=''):
             tmp.append( c )
 
     p['list_certificado'] = tmp
-    
+
     if len(tipo) > 0 and not tmp:
-        return HttpResponse('Acesso negado!')    
+        return HttpResponse('Acesso negado!')
 
     ###########
 
@@ -1233,7 +1233,7 @@ def certificado(request, rede=None, tipo=''):
         p['to_mail'] = p['user'].email
         p['name']    = p['user'].get_full_name()
         p['sucesso'] = _send_email_extrato(p, request)
-        
+
     p['offline']     = offline
 
     return render_to_response('%s/certificado.html' % p['get_tipo_template'], p, context_instance=RequestContext(request))
@@ -1327,7 +1327,7 @@ def action(request, rede=None):
         ra.complete = True
 
     ra.save()
-    
+
     set_sql()
 
     return HttpResponse('true')
@@ -1336,7 +1336,7 @@ def action(request, rede=None):
 def planos(request, rede=None):
 
     p = _prepare_vars(request, rede)
-    
+
     p['class']          = ''
     p['list_plano']     = Plano.objects.filter(visible = True).order_by('name')
     p['email_cobranca'] = settings.PAGSEGURO_CONF.get('email_cobranca', '')
@@ -1347,7 +1347,7 @@ def planos(request, rede=None):
 def static(request, rede=None, page=''):
 
     p = _prepare_vars(request, rede)
-    
+
     p['class'] = ''
 
     try:
@@ -1358,14 +1358,14 @@ def static(request, rede=None, page=''):
 
 @login_required
 def download_anexo(request, rede=None, anexo_id=0):
-    
+
     p = _prepare_vars(request, rede)
-    
+
     try:
         anexo = Anexo.objects.filter(rede = p['rede']).get(id = int(anexo_id))
-        
+
         data  = open(os.path.join(smart_str(anexo.file.file.name)),'r').read()
-        
+
         response                        = HttpResponse(data, mimetype = 'application/force-download')
         response['Content-Disposition'] = 'attachment; filename=%s.%s' % ( slugify(anexo.name), smart_str(anexo.file.url[-3:]) )
         response['X-Sendfile']          = smart_str(anexo.file.file.name)
@@ -1376,54 +1376,54 @@ def download_anexo(request, rede=None, anexo_id=0):
 
 
 def teaser(request, rede=None):
-    
+
     p      = _prepare_vars(request, rede)
-    
+
     email  = request.REQUEST.get('email'                 , '')
     cmt    = request.REQUEST.get('csrfmiddlewaretoken'   , '')
     action = request.REQUEST.get('action'                , '')
-    
+
     if action and action.count('http://') > 0:
         action = action.replace('http://', '')
-        
+
     if action and action.count('/') > 0:
         host = action.split('/')[0]
         put  = action.replace(host, '')
     else:
         host = action
         put  = '/'
-    
+
     if len(cmt) > 2:
         if email == u'Endereço de Email' or email == '':
             return HttpResponse(u'Digite seu e-mail.')
         if _is_valid_email(email):
-            
+
             h = httplib.HTTP(host)
             h.putrequest('GET'      , '%s&MERGE0=%s' % (put, email))
             h.putheader('Host'      , host)
             h.putheader('User-agent', 'python-httplib')
             h.endheaders()
-            
+
             returncode, returnmsg, headers = h.getreply()
-            
+
             tmp = ''
-            
+
             if returncode == 200: #OK
                 f = h.getfile()
                 tmp += f.read()
-                
+
             if tmp.count('Quase pronto...') > 0:
                 return HttpResponse('ok')
-            
+
             return HttpResponse(u'Seu e-mail já está cadastrado ou é incorreto.')
         else:
             return HttpResponse(u'E-mail inválido.')
-        
+
     p['domain'] = reverse('teaser', args=(p['get_tipo_template'],))
-    
+
     if 'sala04.com.br' in request.get_host():
         p['domain'] = '/teaser/'
-    
+
     if request.REQUEST.get('sucesso', False):
         return render_to_response('%s/teaser_sucesso.html' % p['get_tipo_template'], p, context_instance=RequestContext(request))
 
@@ -1431,39 +1431,39 @@ def teaser(request, rede=None):
 
 
 def badget(request, rede=None, key=''):
-    
+
     p = {}
-    
+
     p['get_tipo_template'] = rede
-    
+
     p['video'] = None
-    
+
     try:
         id         = decode_object(key)
         p['video'] = Treinamento.objects.get(id = int(id))
     except:
         pass
-    
+
     return render_to_response('%s/badget.html' % p['get_tipo_template'], p, context_instance=RequestContext(request))
 
 
 def agendamento(request, rede=None):
-    
+
     p = _prepare_vars(request, rede)
-    
+
     p['key']    = request.REQUEST.get('key'     , '')
     p['resend'] = request.REQUEST.get('resend'  , '')
     p['salvar'] = request.REQUEST.get('salvar'  , '')
-    
+
     p['error']  = u''
-    
+
     email = None
-    
+
     try:
         email = decode_object(p['key'])
     except:
         return HttpResponseRedirect(reverse('home', args=(rede,)))
-    
+
     if email and Rede.objects.filter( Q(email = email) & Q(visible = True) ).count() > 0:
         r = Rede.objects.filter( Q(email = email) & Q(visible = True) )[0]
         if p['salvar']:
@@ -1476,33 +1476,33 @@ def agendamento(request, rede=None):
         p['sel_rede'] = r
     else:
         return HttpResponseRedirect(reverse('home', args=(rede,)))
-    
+
     return render_to_response('%s/agendamento.html' % p['get_tipo_template'], p, context_instance=RequestContext(request))
 
 
 def faq_edit(request, rede=None, id=0):
-    
+
     p = _prepare_vars(request, rede)
-    
+
     p['key']    = request.REQUEST.get('key'     , '')
     p['resend'] = request.REQUEST.get('resend'  , '')
     p['salvar'] = request.REQUEST.get('salvar'  , '')
-    
+
     p['error']  = u''
-    
+
     email = None
-    
+
     try:
         email = decode_object(p['key'])
     except:
         return HttpResponseRedirect(reverse('home', args=(rede,)))
-    
+
     if email and Rede.objects.filter( Q(link = rede) & Q(email = email) & Q(visible = True) ).count() > 0:
         r = Rede.objects.filter( Q(link = rede) & Q(email = email) & Q(visible = True) )[0]
         if p['salvar']:
-            
+
             count = 1
-            
+
             while(request.REQUEST.get('hidden_id_%s' % count, None)):
                 hidden_id = request.REQUEST.get('hidden_id_%s' % count, '')
                 pergunta  = request.REQUEST.get('pergunta_%s'  % count, '')
@@ -1510,7 +1510,7 @@ def faq_edit(request, rede=None, id=0):
                 order     = request.REQUEST.get('order_%s'     % count, '')
                 remove    = request.REQUEST.get('remove_%s'    % count, '')
                 count    += 1
-                
+
                 if hidden_id.isdigit() and int(hidden_id) > 0:
                     f = Faq.objects.get(id = int(hidden_id))
                     if remove == '1':
@@ -1521,11 +1521,11 @@ def faq_edit(request, rede=None, id=0):
                         if order.isdigit() and int(order) > 0:
                             f.order      = int(order)
                         f.save()
-            
+
             add_pergunta = request.REQUEST.get('add_pergunta', '')
             add_resposta = request.REQUEST.get('add_resposta', '')
             add_order    = request.REQUEST.get('add_order'   , '')
-            
+
             if len(add_pergunta) > 1 and len(add_resposta) > 1:
                 f                = Faq()
                 f.rede           = r
@@ -1537,14 +1537,14 @@ def faq_edit(request, rede=None, id=0):
                 f.save()
                 f.treinamento.add( Treinamento.objects.get(id = int(id)) )
                 f.save()
-                
+
             p['error'] = u'Salvo com Sucesso.'
-            
+
     else:
         return HttpResponseRedirect(reverse('home', args=(rede,)))
-    
+
     p['list_faq'] = Faq.objects.filter( Q(rede = p['rede']) & Q(visible = True) & Q(treinamento__id = int(id)) ).order_by('order', 'pergunta')
-    
+
     return render_to_response('%s/faq_edit.html' % p['get_tipo_template'], p, context_instance=RequestContext(request))
 
 
@@ -1552,19 +1552,22 @@ def login(request, rede=None):
 
     p = _prepare_vars(request, rede)
 
-    p['error'] = ''
-    p['class'] = ''
+    p['error']   = ''
+    p['class']   = ''
+    p['gerente'] = False
 
-    p['username'] = request.REQUEST.get('user'   , '')
-    p['pass']     = request.REQUEST.get('pass'   , '')
-    p['next']     = request.REQUEST.get('next'   , '')
+    p['username'] = request.REQUEST.get('user'       , '')
+    p['pass']     = request.REQUEST.get('pass'       , '')
+    p['ugerente'] = request.REQUEST.get('ugerente'   , '')
+    p['pgerente'] = request.REQUEST.get('pgerente'   , '')
+    p['next']     = request.REQUEST.get('next'       , '')
 
-    p['action']   = request.REQUEST.get('action' , '')
-    p['key']      = request.REQUEST.get('key'    , '')
+    p['action']   = request.REQUEST.get('action'     , '')
+    p['key']      = request.REQUEST.get('key'        , '')
 
-    p['repass']   = request.REQUEST.get('repass' , '')
-    p['add']      = request.REQUEST.get('add'    , '')
-    
+    p['repass']   = request.REQUEST.get('repass'     , '')
+    p['add']      = request.REQUEST.get('add'        , '')
+
     try:
         if not p['rede'].is_login:
             return HttpResponseRedirect('/login/')
@@ -1606,42 +1609,43 @@ def login(request, rede=None):
             except:
                 pass
 
-    if len(p['username']) > 0 and len(p['pass']):
+    if len(p['username']) > 0 and len(p['pass']) > 0:
 
         user  = authenticate(username=p['username'], password=p['pass'])
-        
+
         clear = getattr(settings, 'CACHES', '')
 
         if clear:
             os.system('rm -r %s' % clear['default']['LOCATION'])
-        
+
         if p['username'].count('#') == 1:
             if authenticate(username=p['username'].split('#')[0], password=p['pass']) is not None:
-                u = UserAdmin.objects.filter(username=p['username'].split('#')[1])
-                if u.count() == 1:
-                    u   = u[0]
-                    tmp = u.password
-                    u.set_password(p['pass'])
-                    u.save()
-                    user = authenticate(username=u.username, password=p['pass'])
-                    if user is not None:
-                        django_login(request, user)
-                        u.password = tmp
+                if UserAdmin.objects.filter( Q(is_active=True) & Q(is_superuser=True) & Q(username=p['username'].split('#')[0]) ).count() > 0:
+                    u = UserAdmin.objects.filter( Q(is_active=True) & Q(username=p['username'].split('#')[1]) )
+                    if u.count() == 1:
+                        u   = u[0]
+                        tmp = u.password
+                        u.set_password(p['pass'])
                         u.save()
-                        p['rede'] = u.infouser.rede.link
-                        if len(p['next']) > 2 and p['rede'] in p['next']:
-                            return HttpResponseRedirect('%s' % p['next'] )
-                        return HttpResponseRedirect('/%s/' % p['rede'] )
+                        user = authenticate(username=u.username, password=p['pass'])
+                        if user is not None:
+                            django_login(request, user)
+                            u.password = tmp
+                            u.save()
+                            p['rede'] = u.infouser.rede.link
+                            if len(p['next']) > 2 and p['rede'] in p['next']:
+                                return HttpResponseRedirect('%s' % p['next'] )
+                            return HttpResponseRedirect('/%s/' % p['rede'] )
 
         if user is not None:
             if user.is_active:
                 django_login(request, user)
-                
+
                 if getattr(settings, 'OFFLINE', False) and not getattr(user.infouser, 'offline', False):
                     iu         = user.infouser
                     iu.offline = True
                     iu.save()
-                
+
                 try:
                     p['rede'] = user.infouser.rede.link
                     if len(p['next']) > 2 and p['rede'] in p['next']:
@@ -1655,7 +1659,32 @@ def login(request, rede=None):
     else:
         if request.REQUEST.get('csrfmiddlewaretoken', False):
             p['error'] = u'Digite o usuário e senha.'
-            
+
+    if len(p['ugerente']) > 0 or len(p['pgerente']) > 0:
+        p['gerente'] = True
+        p['error']   = u'Digite o seu login, e solicite ao seu gerente para ele digitar seu dados.'
+
+    if len(p['ugerente']) > 0 and len(p['pgerente']) > 0:
+        p['error']   = ''
+        if authenticate(username=p['ugerente'], password=p['pgerente']) is not None:
+            if UserAdmin.objects.filter( Q(is_active=True) & Q(infouser__access=True) & Q(username=p['ugerente']) ).count() > 0:
+                u = UserAdmin.objects.filter( Q(is_active=True) & Q(username=p['username']) )
+                if u.count() == 1:
+                    u   = u[0]
+                    tmp = u.password
+                    u.set_password(p['pgerente'])
+                    u.save()
+                    user = authenticate(username=u.username, password=p['pgerente'])
+                    if user is not None:
+                        django_login(request, user)
+                        u.password = tmp
+                        u.save()
+                        p['rede'] = u.infouser.rede.link
+                        if len(p['next']) > 2 and p['rede'] in p['next']:
+                            return HttpResponseRedirect('%s' % p['next'] )
+                        return HttpResponseRedirect('/%s/' % p['rede'] )
+        p['error'] = u'Os dados estão incorretos.'
+
     ## regra temporária para o sala4 (www.sala04.com.br) para o teaser
     if not settings.DEBUG and p['get_tipo_template'] == 'sala4' and not getattr(settings, 'OFFLINE', False):
         if 'sala04.com.br' in request.get_host():
@@ -1671,11 +1700,11 @@ def logout(request, rede=None):
     p = _prepare_vars(request)
 
     django_logout(request)
-    
+
     p['user'] = None
-    
+
     clear = getattr(settings, 'CACHES', '')
-    
+
     if clear:
         os.system('rm -r %s' % clear['default']['LOCATION'])
 
@@ -1686,7 +1715,7 @@ def logout(request, rede=None):
 
 @cache_page(settings.CACHES['default']['TIMEOUT'])
 def favicon(request):
-    
+
     try:
         rede = request.user.infouser.rede
         t    = Template.objects.filter( Q(rede = rede) & Q(visible=True) )
@@ -1701,7 +1730,7 @@ def favicon(request):
 
 @csrf_exempt
 def clear_cache(request):
-    
+
     if request.user.is_active:
         django_cache = settings.CACHES['default']['LOCATION']
         os.system('rm -rf %s/*' % django_cache)
@@ -1712,70 +1741,70 @@ def clear_cache(request):
 @csrf_exempt
 @cache_page(settings.CACHES['default']['TIMEOUT'])
 def cities(request, state_id=0):
-    
+
     if int(state_id) > 0:
         c = City.objects.filter( state__id = int(state_id) ).order_by('name')
     else:
         c = City.objects.all().order_by('name')
-        
+
     tmp = []
-    
+
     for i in c:
         tmp.append({'id':i.id, 'name':i.name})
-    
+
     return HttpResponse(json.dumps(tmp), mimetype='application/json')
 
 
 def _get_rec(request, live_id=0):
-    
+
     p = _prepare_vars(request)
-    
+
     p['rtmp']  = settings.LIST_VARS.get('rtmp', '')
-    
+
     p['video'] = Live.objects.get(id = int(live_id)).live
-    
+
     p['rede']  = p['video'].rede
-    
+
     p['user']  = request.user
-    
+
     p['history'] = WebChat.objects.filter( Q(rede = p['rede']) & Q(live = p['video']) ).count() > 0
-    
+
     ## ---   limpa caixa   --- ##
-    
+
     list = WebChat.objects.filter( Q(rede = p['rede']) & Q(live = p['video']) ).exclude(user_lido = request.user)
 
     for li in list:
         ul = li.user_lido
         ul.add(request.user)
-    
+
     ## --- end limpa caixa --- ##
-    
+
     return render_to_response('templatetags/rec.html', p, context_instance=RequestContext(request))
 
 
 def _quiz_delete(request, quiz_id=0):
-    
+
     p = _prepare_vars(request)
-    
+
     p['list_perguntas'] = None
     p['template_name']  = ''
     p['template_id']    = 0
     p['quiz_id']        = 0
-    
-    if quiz_id > 0:   
+
+    if quiz_id > 0:
         qq                  = Quiz.objects.get(id = int(quiz_id))
         p['list_perguntas'] = qq.list_question.all()
         p['template_name']  = qq.treinamento.name
         p['template_id']    = qq.treinamento.id
         p['quiz_id']        = int(quiz_id)
-    
+
     return render_to_response('templatetags/quiz_delete.html', p, context_instance=RequestContext(request))
-    
+
 
 def _quiz(request, quiz_id=0):
-    
+
     p = _prepare_vars(request)
-    
+
     p['list_question']  = []
     p['list_rede']      = []
     p['list_user']      = []
@@ -1786,20 +1815,20 @@ def _quiz(request, quiz_id=0):
     p['free']           = []
     p['perguntas']      = []
     p['list_perguntas'] = {}
-    p['template_name']  = '' 
-    p['sucesso']        = False 
-    p['add']            = False           
-    
+    p['template_name']  = ''
+    p['sucesso']        = False
+    p['add']            = False
+
     p['_save']          = request.REQUEST.get('_save'       , '')
     p['_addanother']    = request.REQUEST.get('_addanother' , '')
-    
+
     list = ['rede', 'treinamento', 'responsavel', 'email_respon', 'porcent']
-    
+
     for l in list:
         p[l] = request.REQUEST.get(l, '')
-        
+
     count_pergunta, count_resposta = 1, 1
-        
+
     while request.REQUEST.get('pergunta_%s' % count_pergunta, '') != '':
         if requered_mail == False:
             requered_mail = request.REQUEST.get('free_%s' % count_pergunta, False) == 'true'
@@ -1813,31 +1842,31 @@ def _quiz(request, quiz_id=0):
             count_resposta += 1
         p['perguntas'].append({'pergunta' : request.REQUEST.get('pergunta_%s' % count_pergunta, ''), 'respostas' : p['respostas'], 'visible' : visible, 'pontos' : pontos})
         count_pergunta += 1
-        
+
     if request.rede is None and not p['rede'].isdigit():
         p['errors']['rede'] = u'Este campo é obrigatório.'
         save = False
-        
+
     if not p['treinamento'].isdigit() or not int(p['treinamento']) > 0:
         p['errors']['treinamento'] = u'Este campo é obrigatório.'
         save = False
 
-    if requered_mail:    
+    if requered_mail:
         if p['responsavel'].isdigit() and int(p['responsavel']) > 0:
             save = True
         else:
             if not len(p['email_respon']) > 0:
                 p['errors']['responsavel'] = u'Digite o e-mail ou selecione o responsável é obrigatório.'
                 save = False
-            elif not _is_valid_email(p['email_respon']):    
+            elif not _is_valid_email(p['email_respon']):
                 p['errors']['email_respon'] = u'E-mail inválido.'
-                save = False          
-            
+                save = False
+
     if not p['porcent'].isdigit() or not int(p['porcent']) > 0:
         p['errors']['porcent'] = u'Este campo é obrigatório e numerico.'
-    
+
     p['list_treinamento'] = Treinamento.objects.filter( Q(visible=True) ).order_by('order', 'name')
-    
+
     if request.rede is None:
         p['list_rede']        = Rede.objects.filter( Q(visible=True) ).order_by('name')
         p['list_user']        = UserAdmin.objects.filter( Q(is_active = True) & Q(is_staff = True) & Q(is_superuser = False) ).order_by('username')
@@ -1845,25 +1874,25 @@ def _quiz(request, quiz_id=0):
         p['rede']             = request.rede.id
         p['list_treinamento'] = p['list_treinamento'].filter( Q(rede = request.rede) ).order_by('order', 'name')
         p['list_user']        = UserAdmin.objects.filter( Q(is_active = True) & Q(is_staff = True) & Q(is_superuser = False) & Q(infouser__rede = request.rede) ).exclude(email = '').order_by('username')
-        
+
     if not request.REQUEST.get('csrfmiddlewaretoken', ''):
         p['errors'] = None
-        
+
     qq = None
-        
-    if quiz_id > 0:   
+
+    if quiz_id > 0:
         qq = Quiz.objects.get(id = int(quiz_id))
-        
+
     if qq is None:
         qu = Quiz()
-        p['add'] = True   
+        p['add'] = True
     else:
         qu = qq
-        
+
     if save:
         ## limpa questões
         Question.objects.filter( Q(rede__id = p['rede']) & Q(treinamento__id = p['treinamento']) ).delete()
-        
+
         qu.rede_id        = p['rede']
         qu.treinamento_id = p['treinamento']
         qu.responsavel_id = p['responsavel']
@@ -1875,7 +1904,7 @@ def _quiz(request, quiz_id=0):
         else:
             qu.responsavel.clear()
         qu.email_respon    = p['email_respon']
-        
+
         for ps in p['perguntas']:
             q = Question()
             q.rede_id        = p['rede']
@@ -1895,14 +1924,14 @@ def _quiz(request, quiz_id=0):
                 qu.list_response.add(r)
 
         qu.save()
-        
-        p['sucesso'] = True    
-        
+
+        p['sucesso'] = True
+
         if p['_save'] != '':
             return HttpResponseRedirect('/admin/mega/quiz/')
         if p['_addanother'] != '':
             return HttpResponseRedirect('/admin/mega/quiz/add/')
-        
+
     if quiz_id > 0:
         p['rede']            = qq.rede.id
         p['treinamento']     = qq.treinamento.id
@@ -1913,68 +1942,68 @@ def _quiz(request, quiz_id=0):
         p['list_perguntas']  = qq.list_question.all()
         p['template_name']   = qq.treinamento.name
         p['quiz']            = qq
-    
+
     return render_to_response('templatetags/quiz.html', p, context_instance=RequestContext(request))
 
 
 @csrf_exempt
 def retornopagamento(request, rede=None):
-    
+
     LOGGER.debug('chamada api pagseguro sobre a rede: ' + rede)
-    
+
     p = {}
-    
+
     # lista = ['user_id', 'status Cancelado, Completo, Aprovado', 'id de transação', 'plano_id', 'valor do plano', 'nome do plano']
     lista = ['Referencia', 'StatusTransacao', 'TransacaoID', 'ProdID_1', 'ProdValor_1', 'ProdDescricao_1']
-    
+
     str   = ''
-    
+
     for i in lista:
         p[i] = request.POST.get(i, '')
         str += '%s: %s,' % (i, p[i])
-        
+
     str = str[:-1]
-        
+
     LOGGER.debug(u'informações: {%s}' % str)
-        
+
     if 'StatusTransacao' in p and p['StatusTransacao'] == settings.PAGSEGURO_CONF.get('StatusTransacao', 'Completo'):
         LOGGER.debug('transação realizada com sucesso!')
-        
+
         ua      = UserAdmin.objects.get(id = int(p['Referencia']))
         po      = Plano.objects.get(id = int(p['ProdID_1']))
-        
+
         t       = Transation()
         t.rede  = ua.infouser.rede
         t.user  = ua
         t.code  = p['TransacaoID']
         t.plano = po
         t.save()
-        
+
         ## seria bom aqui um envio de email avisando o saldo.
-        
+
     else:
         LOGGER.debug('transação não concluída!')
-    
+
     return HttpResponse('ok')
 
 
 def widget_video(request, rede=None, video_id=0):
-    
+
     p = _prepare_vars(request, rede)
-    
+
     p['video_id'] = video_id
-    
+
     return render_to_response('%s/widget_video.html' % p['get_tipo_template'], p, context_instance=RequestContext(request))
 
 
 def ajax_check_mail(request, rede=None):
-    
+
     p = _prepare_vars(request, rede)
-    
+
     p['email'] = request.REQUEST.get('email', '')
-    
+
     r = -1
-    
+
     if _is_valid_email(p['email']):
         r = UserAdmin.objects.filter( Q(username__exact=p['email']) ).count()
     _user_delete
@@ -1983,9 +2012,9 @@ def ajax_check_mail(request, rede=None):
 
 @cache_page(settings.CACHES['default']['TIMEOUT'])
 def noie6(request):
-    
+
     p = _prepare_vars(request)
-    
+
     return render_to_response('mega/no-ie6.html', p)
 
 
@@ -1993,21 +2022,21 @@ def server_error_500(request, template_name='500.html'):
     """ ERRO CUSTOMIZADO """
 
     list_email = []
-    
+
     for i in settings.ADMINS:
         list_email.append(i[1])
-    
+
     t = loader.get_template(template_name)
 
     subject = '%s ERROR (%s IP): %s' % (settings.EMAIL_SUBJECT_PREFIX, (request.META.get('REMOTE_ADDR') in settings.INTERNAL_IPS and 'internal' or 'EXTERNAL'), request.path)
-    
+
     exc_info = sys.exc_info()
 
     try:
         request_repr = repr(request)
     except:
         request_repr = "Request repr() unavailable"
-    
+
     corpo = "%s\n\n%s" % ( '\n'.join(traceback.format_exception(*(exc_info or sys.exc_info()))) , request_repr)
 
     if getattr(settings, 'OFFLINE', False):
@@ -2022,14 +2051,14 @@ def server_error_500(request, template_name='500.html'):
         if settings.EMAIL_USE_TLS:
             gm.starttls()
             gm.ehlo()
-        gm.login(settings.EMAIL_HOST_USER, settings.EMAIL_HOST_PASSWORD) 
+        gm.login(settings.EMAIL_HOST_USER, settings.EMAIL_HOST_PASSWORD)
         mail            = MIMEText(corpo)
         mail["Subject"] = subject
         for e in list_email:
             mail["To"]  = e
             gm.sendmail(settings.DEFAULT_FROM_EMAIL, e, mail.as_string())
         gm.close()
-    
+
     sys.exc_clear()
 
     return HttpResponseServerError(t.render(Context(request)))
