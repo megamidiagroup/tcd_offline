@@ -69,6 +69,7 @@ class Rede(models.Model):
     visible   = models.BooleanField(default = True, verbose_name='Habilitado')
     is_faq    = models.BooleanField(default = False, blank = True, verbose_name='Faq treinamento', help_text='Habilita Faq dos treinamentos, tanto para envio quanto para visualização')
     is_login  = models.BooleanField(default = True, verbose_name='Área de login', help_text='Habilita área de login da rede')
+    image     = models.ImageField(upload_to = upload_file, max_length=255, null = True, blank = True, help_text='A imagem deverá ser gerada em png com cantos arredondados com tamanho de 540x198px, caso contrário, deixe o campo vazio.', verbose_name='Imagem de fundo')
     email     = models.CharField(max_length = 255, verbose_name='E-mail responsável', null = True, blank = True, help_text='Somente adicione o e-mail caso o cliente deseje receber as sugestões ou dúvidas, caso deseje mais de um e-mail, favor adicionar os e-mails separados por vírgula.')
     date_send = models.DateField(verbose_name='Apartir da data', null = True, blank = True, help_text='Caso for diário, semanal, mensal ou anual, favor inserir a data para inicio do processo.')
     resend    = models.CharField(max_length = 1, choices = CHOICE_RESEND, null = True, blank = True, verbose_name='Envio acontece', help_text='O envio acontece todos os dias à meia-noite, caso for imediato, a sugestão ou dúvida é registrada e enviada imediatamente para o cliente, caso contrário, é enviado a opção selecionada.')

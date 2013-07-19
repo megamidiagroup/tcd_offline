@@ -1,0 +1,17 @@
+<!-- modal content -->
+{% if not img %}
+	<div id="osx-modal-content">
+		<div class="popup path">
+		    <h3 style="margin-top: 40px;font-size: 22px;">
+			    Esta categoria não tem conteúdo cadastrado.
+		    </h3>
+		    <input onclick="history.back();" type="button" class="botao-popup2" />
+		</div>
+	</div>
+{% else %}
+	<div id="osx-modal-content" style="background: url({{ img.url }});height:{{ img.height }}px">
+		<div class="popup path" style="background: none;">
+		    <a href="javascript:history.back();" class="back">Clique aqui para voltar</a>
+		</div>
+	</div>
+{% endif %}

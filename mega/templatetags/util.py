@@ -880,6 +880,14 @@ def faq(video):
     return p
 
 
+@register.inclusion_tag('templatetags/get_msg.html', takes_context=True)
+def get_msg(context, rede=None):
+
+    context['img'] = rede.image
+
+    return context
+
+
 @register.filter()
 def get_type_arquive(arq):
     
