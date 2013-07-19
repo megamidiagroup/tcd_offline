@@ -2,9 +2,10 @@
 /* Overlay */
 #osx-overlay {background-color:#000;}
 /* Container */
-#osx-container {background-image:url(../images/osx-bg-repeat.jpg); background-color: #d1d2d4; color:#000; font: 16px/24px "Lucida Grande",Arial,sans-serif; padding-bottom:4px; width:540px; -moz-border-radius-bottomleft:9px; -webkit-border-bottom-left-radius:9px; -moz-border-radius-bottomright:9px; -webkit-border-bottom-right-radius:9px; border-radius: 9px; -moz-box-shadow:0 0 64px #000; -webkit-box-shadow:0 0 64px #000; box-shadow:0 0 64px #000;}
+#osx-container {background-image:url(../images/osx-bg-repeat.jpg); background-color: #d1d2d4; color:#000; font: 16px/24px "Lucida Grande",Arial,sans-serif; width:540px; -moz-border-radius-bottomleft:9px; -webkit-border-bottom-left-radius:9px; -moz-border-radius-bottomright:9px; -webkit-border-bottom-right-radius:9px; border-radius: 9px; -moz-box-shadow:0 0 64px #000; -webkit-box-shadow:0 0 64px #000; box-shadow:0 0 64px #000;}
 #osx-modal-content .popup {width:510px;height:153px;background:url(../images/osx-bg.png);padding: 40px 15px 0px 15px;color:#414042;font-size:12px;}
 #osx-modal-content .popup h3 {color: #414042;font-size: 18px;font-weight: bold;margin-top: 10px;}
 #osx-modal-content .popup p {color: #414042;font-size: 14px;margin: 0;padding: 0;}
 #osx-modal-content .botao-popup{background:url(../images/osx-clique-aqui.jpg);width:210px;height:29px;border:none;cursor:pointer;float:right;margin-top: 5px;display:none}
 #osx-modal-content .botao-popup2{background:url(../images/osx-clique-voltar.jpg);width:139px;height:29px;border:none;cursor:pointer;float:right;margin-top:5px;bottom:15px;right:15px;position:absolute;display:none}
+#osx-modal-content .back {float:right;margin-top:5px;bottom:15px;right:15px;position:absolute;display:none; padding: 3px 10px}

@@ -26,7 +26,7 @@ jQuery(function ($) {
 				d.container.slideDown('slow', function () {
 					setTimeout(function () {
 						$(".popup", self.container).show();
-						$(".popup input", self.container).fadeIn(200);
+						$(".popup input, .popup a", self.container).fadeIn(200);
 					}, 300);
 				});
 			})
