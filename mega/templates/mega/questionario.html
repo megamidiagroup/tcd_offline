@@ -21,15 +21,29 @@
                                 </button>
                             </div>
                         </form>
-                        <span class="sub_pesquisa">Pesquisa de vídeos</span>
+                        {% if rede.link|lower == 'carvalho' %}
+                        	<span class="sub_pesquisa">Pesquisa de Produtos</span>
+                        {% else %}
+                        	<span class="sub_pesquisa">Pesquisa de vídeos</span>
+                        {% endif %}
                     </div>
                 {% endif %}
             {% endfor %}
 
             <div id="menu">
                 <div class="user-button">
-                	{% aproveitamento_count_append list_aproveitamento_account user %}
+		    {% aproveitamento_count_append list_aproveitamento_account user %}
                 </div>
+		{% if grafico or enquete %}
+		    <div class="enquete">
+			{% if enquete %}
+			    <span class="jewelCount"><span>1</span></span>
+			{% endif %}
+		    </div>
+		{% endif %}
+		{% if technical %}
+		    <div class="technical" {% if not grafico and not enquete %}style="left: 38px;"{% endif %}></div>
+		{% endif %}
                 <div class="menu-button">MENU</div>
                 {% if list_menu|tipobusca %}<div class="search-button"></div>{% endif %}
                 <ul>
@@ -73,6 +87,17 @@
                         <input type="button" value="Concluído" class="buttom" onclick="window.location='{% url home rede.link %}'" style="cursor: pointer;" />
                     </div>
 
+                    {% if active_certificado %}
+					    <!-- modal content -->
+						<div id="osx-modal-content">
+							<div class="popup">
+								<h3>Parabéns,</h3>
+			    				<p>Você acaba de conquistar um certificado. <a href="{% url certificado rede.link %}">Clique aqui</a> para ver seus certificados, você pode fazer download ou enviar por e-mail.</p>
+							    <input onclick="$('#osx-container, #osx-overlay').remove();" type="button" class="botao-popup2" />
+							</div>
+						</div>
+					{% endif %}
+
                 {% else %}
 
                     {% if sucesso == 'false' %}
@@ -88,20 +113,24 @@
                         </div>
 
                     {% else %}
-                    
+
                     	{% if sucesso == 'aguarde' %}
-                    	
+
                     		<div class="wrap">
 
 	                            <h3>Aguarde...</h3>
-	                            <p>Infelizmente não podemos avaliar você neste momento, porém, estamos encaminhando suas respostas para o responsável para estar avaliando.</p>
-	                            <p>Em até 48 horas você receberá um email informando sobre a sua avaliação.</p>
+	                            {% if mode == '1' %}
+	                            	<p>Seu questionário ainda está em processo de avaliação.</p>
+	                            {% else %}
+	                            	<p>Infelizmente não podemos avaliar você neste momento, porém, estamos encaminhando suas respostas para o responsável para estar avaliando.</p>
+	                            {% endif %}
+	                            <p>Em até 48 horas você receberá um e-mail informando sobre a sua avaliação.</p>
 	                            <br />
 	                            <input type="button" value="Ok, entendi!" class="buttom" onclick="window.location='{% url home rede.link %}'" style="cursor: pointer;" />
 	                        </div>
 
                     	{% else %}
-                    
+
 			                <div class="wrap">
 			                	{% if porcent_quiz < 100 %}
 			                		<p>Para ser aprovado neste treinamento você deverá acertar pelo menos <strong>{{ porcent_quiz }}%</strong> das questões, boa sorte! Lembrando que quanto <strong>mais</strong> acertar mais pontos irá ganhar.</p>
@@ -109,16 +138,25 @@
 			                		<p>Para ser aprovado neste treinamento você deverá acertar <strong>todas</strong> as questões abaixo, boa sorte!</p>
 			                	{% endif %}
 			                </div>
-	
+
+			                {% if quiz.instrucao|length > 3 %}
+								<div class="wrap instrucao">
+									<span class="aspas"></span>
+									{{ quiz.instrucao|safe }}
+									<span class="aspas end"></span>
+								</div>
+								<div class="clear"></div>
+			                {% endif %}
+
 	                        <form id="questions" method="post" action="./">
-	
+
 	                            {% csrf_token %}
-	
+
 	                            {% for lq in list_question %}
-	
+
 	                                <p class="number">{{ forloop.counter }}</p>
 	                                <p class="question">{{ lq.text|safe }}</p>
-	
+
 	                                <div class="responses">
 	                                    {% for glr in lq.get_list_response %}
 	                                        <p>
@@ -127,19 +165,19 @@
 	                                                {{ glr.text }}
 	                                            </label>
 	                                        </p>
-	                                    {% empty %}    
+	                                    {% empty %}
 	                                        <p>
 	                                        	<textarea name="resposta_{{ lq.id }}" rows="4" style="width: 100%;"></textarea>
 	                                        </p>
 	                                    {% endfor %}
 	                                </div>
-	
+
 	                            {% endfor %}
-	
+
 	                            <input type="submit" class="buttom" title="Certificação" value="Finalizar" style="cursor: pointer;" />
-	
+
 	                        </form>
-                        
+
                         {% endif %}
 
                     {% endif %}

@@ -24,6 +24,7 @@
 
     <script src="{{ STATIC_URL }}{{ get_tipo_template }}/js/jquery-1.7.2.js"></script>
     <script src="{{ STATIC_URL }}{{ get_tipo_template }}/js/jquery.flexslider-min.js"></script>
+    <script src="{{ STATIC_URL }}{{ get_tipo_template }}/js/jquery.lazyload.js?v=1.8.3" type="text/javascript"></script>
 
     <script src="{{ STATIC_URL }}{{ get_tipo_template }}/js/scripts.js" type="text/javascript"></script>
 
@@ -41,6 +42,7 @@
 <body>
 
 	<div url="{{ base_url }}" class="no-ie6"></div>
+	<div class="static_url" media="{{ STATIC_URL }}{{ get_tipo_template }}/" style="display:none"></div>
 
     {% block content %}
 
@@ -65,37 +67,26 @@
         <div id="login">
 
             <div id="logo">
-                <img src="{{ rede|logo:get_tipo_template }}" border="0" />
+                <img src="{{ rede|logo_log:get_tipo_template }}" border="0" />
             </div>
 
             <form name="login" action="./" enctype="multipart/form-data" method="POST">
 
                 {% csrf_token %}
 
-				<a href="{% url login %}" title="Cancelar">
-                	<img src="{{ STATIC_URL }}{{ get_tipo_template }}/images/close.png" border="0" width="28" class="ngerente" style="float:right;margin:-8px -20px 0 0;{% if not gerente %}display:none{% endif %}" />
-                </a>
-
-                <label for="user" class="seulogin">{% if gerente %}Seu login:{% else %}Login:{% endif %}</label>
-                <input type="text" name="user" id="user" value="{{ username }}" />
+                <label for="user">Login:</label>
+                <input type="text" name="user" id="user" />
 
                 {% set_keyboard_buttom get_tipo_template %}
 
-				{% if not gerente %}
-	                <label for="pass" class="nuser">Senha:</label>
-	                <input type="password" name="pass" id="pass" class="nuser" />
-	                <input type="submit" name="submit" value="Entrar" class="buttom nuser" />
+                <label for="pass">Senha:</label>
+                <input type="password" name="pass" id="pass" />
+
+                <input type="submit" name="submit" value="Entrar" class="buttom" />
+
+				{% if autopass %}
+                	<input class="repass" type="submit" name="repass" value="Esqueci minha senha" />
                 {% endif %}
-
-                <input class="repass nuser" type="button" name="repass" value="Esqueci minha senha" {% if gerente %}style="display:none"{% endif %} />
-
-                <label for="ugerente" class="ngerente" style="{% if not gerente %}display:none{% endif %}">Login do Gerente:</label>
-                <input type="text" name="ugerente" id="user" class="ngerente" value="{{ ugerente }}" style="{% if not gerente %}display:none{% endif %}" />
-
-                <label for="pgerente" class="ngerente" style="{% if not gerente %}display:none{% endif %}">Senha do Gerente:</label>
-                <input type="password" name="pgerente" id="pass" class="ngerente" style="{% if not gerente %}display:none{% endif %}" />
-
-                <input type="submit" name="submit" value="Entrar" class="buttom ngerente" style="{% if not gerente %}display:none{% endif %}" />
 
                 <input type="hidden" name="next" value="{{ next }}" />
 
@@ -109,20 +100,11 @@
 
     {% endblock content %}
 
-    <script src="{{ STATIC_URL }}{{ get_tipo_template }}/js/ios-orientationchange-fix.js" type="text/javascript"></script>
+    {% block aviso %}
 
-    <script type="text/javascript">
-    	$(function() {
-    		$('input[name=repass]').click(function(e){
-    			$('.nuser').slideUp('fast', function oncomplete(){
-    				$('.nuser').remove();
-    				$('.ngerente').slideDown();
-    				$('.seulogin').html('Seu login:');
-    				$('form').get(0).reset();
-    			});
-    		});
-    	});
-    </script>
+    {% endblock aviso %}
+
+    <script src="{{ STATIC_URL }}{{ get_tipo_template }}/js/ios-orientationchange-fix.js" type="text/javascript"></script>
 
 </body>
 

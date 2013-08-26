@@ -20,19 +20,19 @@
             <div class="container">
 
                 <div class="bar">Resultado da Avaliação</div>
-                
+
                 <div class="wrap">
                     <img src="{{ STATIC_URL }}{{ get_tipo_template }}/images/success.png" border="0" />
                     <br /><br />
                     <h3>Aprovado!</h3>
                     <p>O usuário: {{ user.get_full_name }} acertou <strong>{{ porcent }}%</strong> das respostas e a pontuação do teste foi atingida.</p>
-                    <p>Não se preocupe, nós já enviamos um email para notificá-lo!</p>
+                    <p>Não se preocupe, nós já enviamos um e-mail para notificá-lo!</p>
                 </div>
 
 				<div class="wrap">
                 	<input type="button" value="Concluído" class="buttom" onclick="window.location='{% url home rede.link %}'" style="cursor: pointer;" />
                	</div>
-                    
+
             </div>
         </div>
 

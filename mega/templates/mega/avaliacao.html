@@ -22,26 +22,26 @@
                 <div class="bar">Avaliação de Usuário</div>
 
                 <div class="wrap">
-                	
+
                     <p>Analise as respostas abaixo e avalie o usuário: {{ user.get_full_name }}<br />As notas variam de 0 ao 10 (a nota aplicada será um fator importante na geração dos pontos)</p>
-                    
+
                 </div>
-                
-                <form action="./" method="post" id="questions">
-                	
+
+                <form action="./#msg" method="post" id="questions">
+
                 	{% csrf_token %}
 
                     {% for lq in list_question %}
-                    
+
                     	{% if not lq.get_list_response_order %}
-                    
+
 	                    	<p class="number">{{ forloop.counter }}</p>
 		                    <p class="question">{{ lq.text|safe }}</p>
-	
+
 			                <div class="responses">
-		                       
-		                        <p style="width: 85%;float: left">{{ lq|get_free_response:user }}</p>
-		                        <select name="nota_{{ lq.id }}" style="width: auto;float: right; margin: 5px;">
+
+		                        <p style="width: 80%;float: left">{{ lq|get_free_response:user }}</p>
+		                        <select name="nota_{{ lq.id }}" style="width: auto;float: right; margin: 5px;" onchange="$(this).parent().find('label.observation').css('display', 'block');">
 		                        	<option value="">selecione</option>
 		                        	{% for i in lista %}
 		                        		{% if i|safe == forloop.parentloop.counter0|nota:notas %}
@@ -51,24 +51,31 @@
 		                        		{% endif %}
 		                        	{% endfor %}
 		                        </select>
+		                        <label class="observation" style="display: {% if forloop.counter0|nota:notas %}block{% else %}{{ check_list_obs|is_observation:lq.id }}{% endif %}">
+		                        	Fazer observação <input type="checkbox" {% if check_list_obs|is_observation:lq.id == 'block' %}checked="checked"{% endif %} name="observation_{{ lq.id }}" value="1" onchange="if($(this).is(':checked')){ $(this).parent().parent().find('div.text_observation').slideDown().find('textarea').focus(); } else { $(this).parent().parent().find('div.text_observation').slideUp().find('textarea').val(''); }" />
+		                        </label>
 		                        <div class="clear"></div>
-		                    
+		                        <div class="text_observation" style="display: {{ check_list_obs|is_observation:lq.id }}">
+		                        	<textarea name="text_observation_{{ lq.id }}">{{ check_list_obs|get_observation:lq.id }}</textarea>
+		                        </div>
+
 		                	</div>
-		                
+
 		                {% endif %}
-		
+
 		            {% endfor %}
-		            
+
 		            {% if error %}
+		            	<a name="msg"></a>
 		            	<p style="color: red; display: block">{{ error }}</p>
 		            {% endif %}
 
 		            <input type="submit" value="Avaliar" class="buttom" />
-		            
+
 		        </form>
-                    
+
                 </div>
-                    
+
             </div>
         </div>
 

@@ -1,0 +1,30 @@
+﻿{% load util %}
+
+<table cellpadding="0" cellspacing="0" border="0" width="100%">
+
+    <tr>
+        <td align="left">
+            <img src="{{ BASE_URL }}{% if rede.logo_log %}{{ rede.logo_log.url }}{% else %}{{ rede.logo.url }}{% endif %}" border="0" />
+        </td>
+    </tr>
+    <tr>
+        <td align="left">Olá, {{ category.parent.name }}</td>
+    </tr>
+    <tr><td>&nbsp;</td></tr>
+    <tr>
+        <td align="left">O cliente {{ user.get_full_name }} &lt;{{ user.email }}&gt; está enviando a seguinte mensagem:</td>
+    </tr>
+    <tr><td>&nbsp;</td></tr>
+    <tr>
+        <td align="left">
+            <fieldset>
+                <b>{{ msg }}</b>
+            </fieldset>
+        </td>
+    </tr>
+    <tr><td>&nbsp;</td></tr>
+    <tr>
+        <td align="left">Logo que for possível favor responder esse e-mail. Obrigado.</td>
+    </tr>
+
+</table>

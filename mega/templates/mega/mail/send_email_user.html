@@ -4,7 +4,7 @@
 
     <tr>
         <td align="left" valign="middle" colspan="3">
-            <img src="{{ BASE_URL }}{{ rede.logo.url }}" border="0" />
+            <img src="{{ BASE_URL }}{% if rede.logo_log %}{{ rede.logo_log.url }}{% else %}{{ rede.logo.url }}{% endif %}" border="0" />
         </td>
     </tr>
 

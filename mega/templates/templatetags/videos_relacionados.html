@@ -2,16 +2,32 @@
 
 {% if list_video %}
 
-    <div class="bar clear">Vídeo{{ list_video|pluralize }} Relacionado{{ list_video|pluralize }}</div>
+    <div class="bar clear">{% if rede.link|lower == 'carvalho' %}Produto{% else %}Vídeo{% endif %}{{ list_video|pluralize }} Relacionado{{ list_video|pluralize }}</div>
         <div class="related-videos">
 
             <ul>
                 {% for i in list_video %}
                     <li>
-                        <a href="{% url treinamento rede.link i.id %}">
-                            <img src="{{ i|get_image }}" border="0" />
-                            <h4>{{ i.name }}</h4>
-                        </a>
+                    	{% if i.tipo_t == 0 %}
+	                        <a href="{% url treinamento rede.link i.id %}" class="{{ i|video_relacionado:user }}">
+	                            <img src="{{ i|get_image }}" border="0" />
+	                            <h4>{{ i.name }}</h4>
+	                        </a>
+	                        <p class="msg_block" style="display: none;">Você não assistiu o vídeo {{ i|video_relacionado_name:user }}, assista primeiro para acessar esse vídeo.</p>
+                        {% endif %}
+                        {% if i.tipo_t == 1 %}
+	                        <a href="{% url elearning rede.link i.id %}" class="{% if forloop.last %}last{% endif %} {{ i|video_relacionado:user }}">
+	                            <img src="{{ i|get_image }}" border="0" />
+	                            <h4>{{ i.name }}</h4>
+	                        </a>
+	                        <p class="msg_block" style="display: none;">Você não assistiu o vídeo {{ i|video_relacionado_name:user }}, assista primeiro para acessar esse vídeo.</p>
+                        {% endif %}
+                        {% if i.tipo_t == 2 %}
+	                        <a href="{% url vitrine rede.link i.id %}" class="{{ i|video_relacionado:user }}">
+	                            <img src="{{ i|get_image }}" border="0" />
+	                            <h4>{{ i.name }}</h4>
+	                        </a>
+                        {% endif %}
                     </li>
                 {% endfor %}
             </ul>

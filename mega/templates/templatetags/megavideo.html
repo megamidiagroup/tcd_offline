@@ -2,34 +2,39 @@
 
 	var playermv  = Object();
 	var intervalo = 0;
-	
+
 	function onPlay(arg){
-		
-		$('.buttom').css('display', 'none');
-        /* insere no historico de videos assitidos */
-        $.post('{% url home %}{{ rede }}/action/',
+
+		if ( $("a.btn_overlay").length )
+		{
+			$("a.btn_overlay").css('opacity', .3).attr('href', 'javascript:void(0);').attr('title', 'Assista o vídeo até o fim');
+		} else {
+			$('.buttom').css('display', 'none');
+		}
+
+        $.post('{% url action rede %}',
                 {'video_id':'{{ id }}', 'action':'play', 'csrfmiddlewaretoken':'{{ csrf_token }}'},
-                function(data){
-                    //$('.mensagemSenha').html('<strong>'+data+'</strong>');
-                    //if(arg!=true) myPlayer.removeEvent('play', onPlay);
-                }
+                function(data){}
         );
-		
+
 	};
-	
+
 	function onComplete(){
-		
-		$('.buttom').css('display', 'inline-block');
-        /* insere no historico de videos assitidos até completado */
-        $.post('{% url home %}{{ rede }}/action/',
+
+		if ( $("a.btn_overlay").length )
+		{
+			$("a.btn_overlay").css('opacity', 1).attr('href', $("a.btn_overlay").attr('action')).attr('title', 'Clique Aqui');
+		} else {
+			$('.buttom').css('display', 'inline-block');
+		}
+
+        $.post('{% url action rede %}',
                 {'video_id':'{{ id }}', 'action':'complete', 'csrfmiddlewaretoken':'{{ csrf_token }}'},
-                function(data){
-                    //$('.mensagemSenha').html('<strong>'+data+'</strong>');
-                }
+                function(data){}
         );
-		
+
 	};
-	
+
 </script>
 
 <script type="text/javascript" src="{{ base_url }}api/video/embed.js?idContent={{ code }}&width={{ w }}&height={{ h }}&logo_url={{ logo_url }}&logo_link={{ logo_link }}"></script>
@@ -44,9 +49,9 @@
 			playermv.setPlayerSize(w, h);
 		}catch(e){}
 	}
-	
+
 	function updatePlayer(w, h) {
 		intervalo = setTimeout(function() { setsize(w, h); }, 10);
 	}
-	
+
 </script>

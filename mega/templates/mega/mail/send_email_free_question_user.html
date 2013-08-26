@@ -4,7 +4,7 @@
 
     <tr>
         <td align="left" valign="middle" colspan="3">
-            <img src="{{ BASE_URL }}{{ rede.logo.url }}" border="0" />
+            <img src="{{ BASE_URL }}{% if rede.logo_log %}{{ rede.logo_log.url }}{% else %}{{ rede.logo.url }}{% endif %}" border="0" />
         </td>
     </tr>
 
@@ -12,19 +12,47 @@
         <td align="left" valign="middle" colspan="3">Olá {{ usuario }},</td>
     </tr>
     <tr>
-    	{% if aprovado %}
-    		<h3>Parabéns!</h3>
-            <p>Você acertou <strong>{{ porcent }}%</strong> das respostas e a pontuação do teste foi atingida.</p>
-            <p>Com esse treinamento você conquistou mais um passo importante em sua carreira profissional.</p>
-            <p>Coloque os conhecimentos em prática e boa sorte!</p>
-    	{% else %}
-        	<h3>Desculpe...</h3>
-            <p>Infelizmente você acertou somente <strong>{{ porcent }}%</strong> das respostas e a pontuação do teste não foi atingida.</p>
-            <p>Mas não desista, tente novamente e boa sorte!</p>
-        {% endif %}
+    	<td colspan="3">
+	    	{% if aprovado %}
+	    		<h3>Parabéns!</h3>
+	            <p>Você acertou <strong>{{ porcent }}%</strong> das respostas e a pontuação do teste foi atingida.</p>
+	            <p>Com esse treinamento você conquistou mais um passo importante em sua carreira profissional.</p>
+	            <p>Coloque os conhecimentos em prática e boa sorte!</p>
+	    	{% else %}
+	        	<h3>Desculpe...</h3>
+	            <p>Infelizmente você acertou somente <strong>{{ porcent }}%</strong> das respostas e a pontuação do teste não foi atingida.</p>
+	            <p>Mas não desista, tente novamente e boa sorte!</p>
+	        {% endif %}
+	    </td>
     </tr>
+    {% if list_observation %}
+    	<tr>
+    		<td colspan="3"><b>Observe que seu tutor fez algumas observações, veja com atenção abaixo:</b></td>
+    	</tr>
+		{% for lo in list_observation %}
+			<tr>
+				<td colspan="3">
+					<b>Pergunta:</b> {{ lo.pergunta }}
+				</td>
+			</tr>
+			<tr>
+				<td colspan="2">
+					<b>Sua resposta:</b> {{ lo.resposta }}
+				</td>
+				<td>
+					<b>Sua nota:</b> {{ lo.nota }}
+				</td>
+			</tr>
+			<tr>
+				<td colspan="3">
+					<b>Observação:</b> {{ lo.obs }}
+				</td>
+			</tr>
+		{% endfor %}
+    {% endif %}
     <tr>
         <td align="left" valign="middle" colspan="3">
+        	<br />
         	{% if aprovado %}
             	Para visualizar seu pontos clique <a href="{{ link }}" target="_blank">aqui</a> ou copie e cole no seu navegador o link {{ link }}
             {% else %}

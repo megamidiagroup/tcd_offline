@@ -55,15 +55,29 @@
                             </button>
                         </div>
                     </form>
-                    <span class="sub_pesquisa">Pesquisa de vídeos</span>
+                    {% if rede.link|lower == 'carvalho' %}
+                    	<span class="sub_pesquisa">Pesquisa de Produtos</span>
+                    {% else %}
+                    	<span class="sub_pesquisa">Pesquisa de vídeos</span>
+                    {% endif %}
                 </div>
                 {% endif %}
             {% endfor %}
 
             <div id="menu">
                 <div class="user-button">
-                	{% aproveitamento_count_append list_aproveitamento_account user %}
+		    {% aproveitamento_count_append list_aproveitamento_account user %}
                 </div>
+		{% if grafico or enquete %}
+		    <div class="enquete">
+			{% if enquete %}
+			    <span class="jewelCount"><span>1</span></span>
+			{% endif %}
+		    </div>
+		{% endif %}
+		{% if technical %}
+		    <div class="technical" {% if not grafico and not enquete %}style="left: 38px;"{% endif %}></div>
+		{% endif %}
                 <div class="menu-button">MENU</div>
                 {% if list_menu|tipobusca %}<div class="search-button"></div>{% endif %}
                 <ul>
@@ -117,22 +131,13 @@
                     {% if sucesso %}
                         <div class="wrap">
                             <img src="{{ STATIC_URL }}{{ get_tipo_template }}/images/success.png" border="0" />
-			    {% if offline %}
-				<h3>Seu certificado será enviado para seu e-mail em 24 horas.</h3>
-			    {% else %}
-				<h3>Seu certificado foi enviado para seu e-mail com sucesso.</h3>
-			    {% endif %}
+                            <h3>Seu certificado foi enviado para seu email com sucesso.</h3>
                         </div>
                     {% else %}
                         <a class="buttom" href="javascript:void(0);" onclick="send_pdf(this);" action="{% url certificado rede.link %}?sucesso={% if list_certificado.count > 0 %}true{% endif %}" >Enviar meu extrato por e-mail</a>
-			
-			{% if offline %}
-			    <a class="buttom" href="javascript:void(0);" onclick="send_pdf(this);" action="{% url home %}{{ rede.link }}/certificado/pdf/" >Enviar por e-mail o certificado</a>
-			{% else %}			
-			    <a class="buttom" href="javascript:void(0);" onclick="send_pdf(this);" action="{% url home %}{{ rede.link }}/certificado/pdf/" >Download do extrato via PDF</a>
-			{% endif %}			
-			
                     {% endif %}
+
+                    <a class="buttom" href="javascript:void(0);" onclick="send_pdf(this);" action="{% url home %}{{ rede.link }}/certificado/pdf/" >Download do extrato via PDF</a>
 
                 </div>
             </div>

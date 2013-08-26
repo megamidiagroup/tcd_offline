@@ -1,15 +1,35 @@
 <a class="back" href="javascript:history.back();"><span>&laquo;</span>Voltar</a>
 
 {% for i in list_link %}
-    {% if i.id %}
-        <a class="navegador" href="{% url home %}{{ rede.link }}/category/{{ i.id }}/" title="Clique aqui">{{ i.name }}</a> <span class="spacer navegador">/</span>
-    {% else %}
-    <a class="navegador" href="{% url home %}{{ rede.link }}/" title="Clique aqui">{{ i.name }}</a> <span class="spacer navegador">/</span>
-    {% endif %}
+	{% if i.name %}
+	    {% if i.id %}
+	        <a class="navegador" href="{% url home %}{{ rede.link }}/category/{{ i.id }}/" title="Clique aqui">{{ i.name }}</a> <span class="spacer navegador">/</span>
+	    {% else %}
+	        <a class="navegador" href="{% url home %}{{ rede.link }}/" title="Clique aqui">{{ i.name }}</a> <span class="spacer navegador">/</span>
+	    {% endif %}
+	{% endif %}
 {% endfor %}
 
-{% if atual.get_name %}
-    <span class="navegador">{{ atual.get_name }}</span>
+{% if last_item == 1 or not last_item %}
+    {% if atual.get_name %}
+        <span class="navegador">{{ atual.get_name }}</span>
+    {% else %}
+        <span class="navegador">{{ atual.name }}</span>
+    {% endif %}
 {% else %}
-    <span class="navegador">{{ atual.name }}</span>
+    {% if last_item == 2 %}
+        {% if atual.get_name %}
+            {% if atual.tipo == 1 %}
+                <a class="navegador" href="{% url technical rede.link atual.id %}" title="Clique aqui">{{ atual.get_name }}</a> <span class="spacer navegador">/</span>
+            {% else %}
+                <a class="navegador" href="{% url category rede.link atual.id %}" title="Clique aqui">{{ atual.get_name }}</a> <span class="spacer navegador">/</span>
+            {% endif %}
+        {% else %}
+            {% if atual.tipo == 1 %}
+                <a class="navegador" href="{% url technical rede.link atual.id %}" title="Clique aqui">{{ atual.name }}</a> <span class="spacer navegador">/</span>
+            {% else %}
+                <a class="navegador" href="{% url category rede.link atual.id %}" title="Clique aqui">{{ atual.name }}</a> <span class="spacer navegador">/</span>
+            {% endif %}
+        {% endif %}
+    {% endif %}
 {% endif %}

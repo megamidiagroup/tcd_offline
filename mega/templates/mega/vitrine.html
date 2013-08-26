@@ -1,0 +1,237 @@
+﻿{% extends 'mega/main.html' %}
+
+{% load util keyboard %}
+
+{% block content %}
+
+	<script type="text/javascript">
+		function complete()
+		{
+			$('.buttom').css('display', 'block');
+		}
+	</script>
+
+    <div id="header">
+        <div class="container">
+            <div id="logo"><a href="{% url home %}{{ rede.link }}/"><img src="{{ rede|logo }}" border="0" /></a></div>
+            <div id="header-text">{% for i in list_menu %}{% if i.tipo == 'D' %}{{ i.name|safe }}{% endif %}{% endfor %}</div>
+
+            {% for i in list_menu %}
+                {% if i.tipo == 'S' %}
+                    <div id="search">
+                        <form method="get" id="search-form" action="{% url busca rede.link %}">
+                            <div class="form-item">
+                                <input type="text" value="{{ q|default:'' }}" name="q" class="busca" />
+                                {% set_keyboard_buttom get_tipo_template 'top:10px; right:36px;' %}
+                                <button id="search-submit">
+                                    <span>Buscar</span>
+                                </button>
+                            </div>
+                        </form>
+                        {% if rede.link|lower == 'carvalho' %}
+                        	<span class="sub_pesquisa">Pesquisa de Produtos</span>
+                        {% else %}
+                        	<span class="sub_pesquisa">Pesquisa de vídeos</span>
+                        {% endif %}
+                    </div>
+                {% endif %}
+            {% endfor %}
+
+            <div id="menu">
+                <div class="user-button">
+		    		{% aproveitamento_count_append list_aproveitamento_account user %}
+                </div>
+				{% if grafico or enquete %}
+				    <div class="enquete">
+					{% if enquete %}
+					    <span class="jewelCount"><span>1</span></span>
+					{% endif %}
+				    </div>
+				{% endif %}
+				{% if technical %}
+				    <div class="technical" {% if not grafico and not enquete %}style="left: 38px;"{% endif %}></div>
+				{% endif %}
+                <div class="menu-button">MENU</div>
+                {% if list_menu|tipobusca %}<div class="search-button"></div>{% endif %}
+                <ul>
+                    {% for i in list_menu %}
+                        {% if i.tipo == 'B' %}
+                        	{% if i.name|lower == 'sair' %}
+                            	<li><a class="btn_logout" href="{% url home %}{{ rede.link }}/{{ i.url }}">{{ i.name|upper }}</a></li>
+                            {% else %}
+                            	<li><a href="{% url home %}{{ rede.link }}/{{ i.url }}">{{ i.name|upper }}</a></li>
+                            {% endif %}
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+    {% if list_banner.count > 0 %}
+        <div id="highlights">
+            <div class="container">
+                <div class="full-banner">
+                    <div class="flexslider">
+                        <ul class="slides">
+                            {% for i in list_banner %}
+                                <li>
+                                    {% if i.url %}<a href="{{ i.url }}" title="Clique aqui para acessar o link" {% if i.blank %}target="_blank"{% endif %}>{% endif %}
+                                    <img src="{{ i|get_image }}" border="0" />
+                                    {% if i.url %}</a>{% endif %}
+                                    {% if i.legend %}
+                                    <p class="flex-caption">{{ i.name }}</p>
+                                    {% endif %}
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
+    {% block bloco %}
+
+        <div id="content">
+            <div class="container">
+
+                {% if list_video %}
+                    <div class="path">
+                        {% sub_menu_treinamento list_video rede %}
+                    </div>
+                {% endif %}
+
+                <div class="bar">{{ list_video.0.name }}</div>
+
+                <div class="video">
+                    <div class="vitrine path">
+
+						<div class="box">
+						
+	                    	<ul class="galeria">
+	                    		<li class="principal">
+	                    			{% if list_video.0.image1 %}
+	                    				<img src="{{ list_video.0.image1.url }}" border="0" />
+	                    			{% endif %}
+	                    		</li>
+	                    		<li class="foco">
+	                    			{% if list_video.0.image1 %}
+	                    				<img src="{{ list_video.0.image1.url }}" border="0" />
+	                    			{% endif %}
+	                    		</li>
+	                    		<li>
+	                    			{% if list_video.0.image2 %}
+	                    				<img src="{{ list_video.0.image2.url }}" border="0" />
+	                    			{% endif %}
+	                    		</li>
+	                    		<li>
+	                    			{% if list_video.0.image3 %}
+	                    				<img src="{{ list_video.0.image3.url }}" border="0" />
+	                    			{% endif %}
+	                    		</li>
+	                    		<li>
+	                    			{% if list_video.0.image4 %}
+	                    				<img src="{{ list_video.0.image4.url }}" border="0" />
+	                    			{% endif %}
+	                    		</li>
+	                    	</ul>
+                    	
+                    	</div>
+                    	
+                    	<script type="text/javascript">
+							$(function() {
+								
+								$('.galeria li').not('.principal').css('cursor', 'pointer').click(function(e){
+									$('.galeria li.principal img').attr('src', $(this).find('img').attr('src'));
+									$('.galeria li').not('.principal').css('opacity', .5);
+									$(this).css('opacity', 1);
+								}).not('.foco').css('opacity', .5);
+			
+							});
+						</script>
+                        	
+                    </div>
+                    <div class="description">
+                        <div>
+                            <h2 class="box-title">{{ list_video.0.name }}</h2>
+                            
+                            {% if list_video.0.preco %}
+                                <p class="red" style="font-weight: bold">{{ list_video.0.preco }}</p>
+                            {% else %}
+                            	<p class="red">Preço não informado</p>
+                            {% endif %}
+                            
+                            {% if list_video.0.datavalida %}
+                                <p class="red">Oferta válida até {{ list_video.0.datavalida|date:'d/m/Y' }}</p>
+                            {% endif %}
+                            
+                            <br />
+                            
+                            <p>{{ list_video.0.desc|safe }}</p>
+                            
+                            <br />
+
+                            {% if rede.is_suggestion %}
+
+	                            <!-- inicio do envio de sugestoes -->
+			                    <a id="show-sugestao" href="#">
+			                    	<img src="{{ STATIC_URL }}{{ get_tipo_template }}/images/duvidas.png" border="0" style="max-width: 80%;" />
+			                    </a>
+
+			                    <textarea id="sugestao" style="width:100%; height:70px; resize:none; margin-bottom:10px;display: none"></textarea>
+
+			                    <a id="envia-sugestao" class="buttom3" href="#" style="display: none" >ENVIAR</a>
+			                    <p id="mensagem" style="display:none;"></p>
+
+			                    <script type="text/javascript">
+									$(function() {
+										var msgVazia = "Digite aqui sua dúvida ou sugestão";
+										var enviaSugestao = function(e){
+											e.preventDefault();
+											if($('#sugestao').val() != "" && $('#sugestao').val() != msgVazia)
+											{
+												$(e.target).hide();
+												$('#mensagem').html("Enviando...").fadeIn();
+												$('#sugestao').attr('disabled', 'disabled');
+
+												$.post('{% url suggestion rede.link list_video.0.id %}', { mensagem: $('#sugestao').val(), csrfmiddlewaretoken: '{{ csrf_token }}' }, function(data){
+													$('#mensagem').html(data);
+												});
+											}
+											else
+											{
+												$('#sugestao').val(msgVazia).focus();;
+											}
+										};
+
+										$('#sugestao').hide();
+										$('#envia-sugestao').hide().bind('click', enviaSugestao);
+
+										$('#show-sugestao').attr('style', 'display: table;').click(function(e){
+											e.preventDefault();
+											$(this).hide();
+
+											$('#sugestao').fadeIn().focus();
+											$('#envia-sugestao').fadeIn();
+										});
+										
+									});
+								</script>
+			                    <!-- inicio do envio de sugestoes -->
+
+			                {% endif %}
+
+                        </div>
+                    </div>
+                </div>
+
+                {% faq list_video.0 %}
+
+                {% videos_relacionados list_video rede user %}
+
+            </div>
+        </div>
+
+    {% endblock bloco %}
+
+{% endblock content %}

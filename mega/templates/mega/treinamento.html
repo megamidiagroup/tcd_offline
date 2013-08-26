@@ -21,15 +21,29 @@
                                 </button>
                             </div>
                         </form>
-                        <span class="sub_pesquisa">Pesquisa de vídeos</span>
+                        {% if rede.link|lower == 'carvalho' %}
+                        	<span class="sub_pesquisa">Pesquisa de Produtos</span>
+                        {% else %}
+                        	<span class="sub_pesquisa">Pesquisa de vídeos</span>
+                        {% endif %}
                     </div>
                 {% endif %}
             {% endfor %}
 
             <div id="menu">
                 <div class="user-button">
-                	{% aproveitamento_count_append list_aproveitamento_account user %}
+		    		{% aproveitamento_count_append list_aproveitamento_account user %}
                 </div>
+				{% if grafico or enquete %}
+				    <div class="enquete">
+					{% if enquete %}
+					    <span class="jewelCount"><span>1</span></span>
+					{% endif %}
+				    </div>
+				{% endif %}
+				{% if technical %}
+				    <div class="technical" {% if not grafico and not enquete %}style="left: 38px;"{% endif %}></div>
+				{% endif %}
                 <div class="menu-button">MENU</div>
                 {% if list_menu|tipobusca %}<div class="search-button"></div>{% endif %}
                 <ul>
@@ -96,7 +110,7 @@
                         {% ifequal list_video.0.tipo 'M' %}
                         	{% if rede.link == 'boticario' or rede.link == 'oboticario' %}
                             	{% megavideo rede.link list_video.0.code list_video.0.id 640 360 'mega/images/logo_oi.png' 'http://www.oi.com.br' %}
-							{% else %}                            
+							{% else %}
                             	{% megavideo rede.link list_video.0.code list_video.0.id %}
                             {% endif %}
                         {% endifequal %}
@@ -111,12 +125,62 @@
                             {% endif %}
                             <br />
                             {% if elearning %}
-                                <a class="buttom" href="{% url elearning rede.link list_video.0.id %}" style="display: none;">IR PARA O E-LEARNING</a>
+                                <a class="buttom btn_overlay" action="{% url elearning rede.link list_video.0.id %}" href="javascript:void(0);" title="Assista o vídeo até o fim">IR PARA O E-LEARNING</a>
                             {% else %}
 	                            {% if list_video.0|is_question:user  %}
-	                                <a class="buttom" href="{% url questionario rede.link list_video.0.id %}" style="display: none;">IR PARA O TESTE</a>
+	                                <a class="buttom btn_overlay" action="{% url questionario rede.link list_video.0.id %}" href="javascript:void(0);" title="Assista o vídeo até o fim">IR PARA O TESTE</a>
 	                            {% endif %}
                             {% endif %}
+
+                            {% if rede.is_suggestion %}
+
+	                            <!-- inicio do envio de sugestoes -->
+			                    <a id="show-sugestao" href="#">
+			                    	<img src="{{ STATIC_URL }}{{ get_tipo_template }}/images/duvidas.png" border="0" style="max-width: 80%;" />
+			                    </a>
+
+			                    <textarea id="sugestao" style="width:100%; height:70px; resize:none; margin-bottom:10px;display: none"></textarea>
+
+			                    <a id="envia-sugestao" class="buttom3" href="#" style="display: none" >ENVIAR</a>
+			                    <p id="mensagem" style="display:none;"></p>
+
+			                    <script type="text/javascript">
+									$(function() {
+										var msgVazia = "Digite aqui sua dúvida ou sugestão";
+										var enviaSugestao = function(e){
+											e.preventDefault();
+											if($('#sugestao').val() != "" && $('#sugestao').val() != msgVazia)
+											{
+												$(e.target).hide();
+												$('#mensagem').html("Enviando...").fadeIn();
+												$('#sugestao').attr('disabled', 'disabled');
+
+												$.post('{% url suggestion rede.link list_video.0.id %}', { mensagem: $('#sugestao').val(), csrfmiddlewaretoken: '{{ csrf_token }}' }, function(data){
+													$('#mensagem').html(data);
+												});
+											}
+											else
+											{
+												$('#sugestao').val(msgVazia).focus();;
+											}
+										};
+
+										$('#sugestao').hide();
+										$('#envia-sugestao').hide().bind('click', enviaSugestao);
+
+										$('#show-sugestao').attr('style', 'display: table;').click(function(e){
+											e.preventDefault();
+											$(this).hide();
+
+											$('#sugestao').fadeIn().focus();
+											$('#envia-sugestao').fadeIn();
+										});
+									});
+								</script>
+			                    <!-- inicio do envio de sugestoes -->
+
+			                {% endif %}
+
                         </div>
                         {% if list_anexo %}
 	                        <div class="anexo" value="false">
@@ -135,10 +199,10 @@
                         {% endif %}
                     </div>
                 </div>
-                
+
                 {% faq list_video.0 %}
 
-                {% videos_relacionados list_video rede %}
+                {% videos_relacionados list_video rede user %}
 
             </div>
         </div>

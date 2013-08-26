@@ -1,0 +1,47 @@
+{% load util %}
+
+{% if list_technical %}
+
+    <div id="technical-widget" {% if count_enquete > 0 %}style="top: 400px"{% endif %}>
+
+        <a href="{% url technical rede.link %}" class="technical">
+        	<img src="{{ STATIC_URL }}{{ get_tipo_template }}/images/icon_technical.png" border="0" />
+        </a>
+
+        <!--
+        Comentado provisóriamente
+        <div id="technical">
+            <div class="shadow">
+
+				<h3>Pasta{{ list_technical_category|pluralize }} Técnica{{ list_technical_category|pluralize }}</h3>
+
+				<ul>
+
+				    {% for ltc in list_technical_category %}
+					{% for ltc0 in ltc %}
+					    <li class="nivel{{ forloop.counter0 }} {% if not forloop.first %}bloco{% endif %}" style="display: {{ ltc0.display }}">
+						{% if forloop.last %}
+						    - {{ ltc0.label }}
+						{% else %}
+						    {% if forloop.first %}
+							<span style="font-size: 13px">{{ ltc0.label }}</span>
+						    {% else %}
+							<a href="{% url category rede.link ltc0.id %}">
+							    {{ ltc0.label }}
+							</a>
+						    {% endif %}
+						{% endif %}
+					    </li>
+					{% endfor %}
+				    {% endfor %}
+
+				</ul>
+
+            </div>
+            <span class="arrow"></span>
+        </div>
+        -->
+
+    </div>
+
+{% endif %}

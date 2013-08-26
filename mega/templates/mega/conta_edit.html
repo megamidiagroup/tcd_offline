@@ -2,27 +2,56 @@
 
 {% load util keyboard %}
 
+{% block css %}
+
+	<link rel="stylesheet" href="{{ STATIC_URL }}{{ get_tipo_template }}/css/tip-yellowsimple.css" type="text/css" />
+
+{% endblock css %}
+
 {% block js %}
 
     <script src="{{ STATIC_URL }}{{ get_tipo_template }}/js/jquery.maskedinput-1.3.min.js" type="text/javascript"></script>
     <script src="{{ STATIC_URL }}{{ get_tipo_template }}/js/state.js" type="text/javascript"></script>
+    <script src="{{ STATIC_URL }}{{ get_tipo_template }}/js/jquery.poshytip.min.js" type="text/javascript"></script>
 
     <script type="text/javascript">
 
-        $(function(){
+        $(document).ready(function(){
+
             set_mask(true);
+
+            $("input[name='txt_newpass']").poshytip({
+				className: 'tip-yellowsimple',
+				showOn: 'focus',
+				alignTo: 'target',
+				alignX: 'center',
+				alignY: 'bottom',
+				offsetX: 5
+			});
+
+			$(".txt_newpass").poshytip({
+				className: 'tip-yellowsimple',
+				showOn: 'mouseover',
+				alignTo: 'target',
+				alignX: 'center',
+				alignY: 'bottom',
+				offsetX: 5
+			});
+
         });
-        
+
         function set_mask(yes)
         {
         	if ( yes )
         	{
 	            $("input[name='txt_cpf']").mask("999.999.999-99");
+		    $("input[name='txt_cnpj']").mask("99.999.999/9999-99");
 	            $("input[name='txt_cep']").mask("99.999-999");
 	            $("input[name='txt_fone_com']").mask("(99) 9999-9999");
 	            $("input[name='txt_fone_cel']").mask("(99) 99999999?9");
         	} else {
 	            $("input[name='txt_cpf']").unmask();
+		    $("input[name='txt_cnpj']").unmask();
 	            $("input[name='txt_cep']").unmask();
 	            $("input[name='txt_fone_com']").unmask();
 	            $("input[name='txt_fone_cel']").unmask();
@@ -54,15 +83,29 @@
                                 </button>
                             </div>
                         </form>
-                        <span class="sub_pesquisa">Pesquisa de vídeos</span>
+                        {% if rede.link|lower == 'carvalho' %}
+                        	<span class="sub_pesquisa">Pesquisa de Produtos</span>
+                        {% else %}
+                        	<span class="sub_pesquisa">Pesquisa de vídeos</span>
+                        {% endif %}
                     </div>
                 {% endif %}
             {% endfor %}
 
             <div id="menu">
                 <div class="user-button">
-                	{% aproveitamento_count_append list_aproveitamento_account user %}
+		    {% aproveitamento_count_append list_aproveitamento_account user %}
                 </div>
+		{% if grafico or enquete %}
+		    <div class="enquete">
+			{% if enquete %}
+			    <span class="jewelCount"><span>1</span></span>
+			{% endif %}
+		    </div>
+		{% endif %}
+		{% if technical %}
+		    <div class="technical" {% if not grafico and not enquete %}style="left: 38px;"{% endif %}></div>
+		{% endif %}
                 <div class="menu-button">MENU</div>
                 {% if list_menu|tipobusca %}<div class="search-button"></div>{% endif %}
                 <ul>
@@ -88,90 +131,131 @@
 	            <div class="bar">Meus dados</div>
 
 	            <div class="wrap">
-	            	
+
 	            	{% if edit == 'false' %}
-	            		<p style="display: block; color: red; font-size: 20px; margin: 15px 0;">Preencha todos os campos obrigatórios *: {{ msg }}</p>
+	            		<p style="display: block; color: red; font-size: 20px; margin: 15px 0;">{{ tipo_msg|default:'Preencha todos os campos obrigatórios *:' }} {{ msg }}</p>
 	            	{% endif %}
-	            	
+
 	            	{% if edit == 'first' %}
 	            		<p style="display: block; color: red; font-size: 20px; margin: 15px 0;">Seja bem vindo, este é seu primeiro acesso e os seus dados precisam ser preenchidos antes de utilizá-lo. Se a sua senha foi gerada automaticamente, aproveite e atualize.</p>
 	            	{% endif %}
-	            	
+
 	            	{% if btns_disabled %}
 	            		<script type="text/javascript">$(function() {$('a, button').attr('href', 'javascript:void(0);');$('#account-widget, #search, #enquete-widget').remove()});</script>
 	            	{% endif %}
-	
-	                <form name="form" action="./" method="post" enctype="multipart/form-data">
-	
-	                    {% csrf_token %}
 
-	                    <p><b>Nome Completo *: 	</b><input type="text" name="txt_name" value="{% if txt_name %}{{ txt_name }}{% else %}{{ user.get_full_name }}{% endif %}" style="width: 225px;" /></p>
-	                    {% set_keyboard_buttom get_tipo_template 'left:414px;' 'keyboard2' %}
-	                    <p><b>CPF *: 		   	</b><input type="text" name="txt_cpf" value="{% if txt_cpf %}{{ txt_cpf }}{% else %}{{ infouser.cpf }}{% endif %}" style="width: 200px;" /></p>
-	                    <p><b>E-mail *:      	</b><input type="text" name="txt_email" value="{% if txt_email %}{{ txt_email }}{% else %}{{ user.email }}{% endif %}" style="width: 225px;" /></p>
-	                    <p><b>Endereço:    		</b><input type="text" name="txt_endereco" value="{% if txt_endereco %}{{ txt_endereco }}{% else %}{% if infouser.endereco %}{{ infouser.endereco }}{% endif %}{% endif %}" style="width: 225px;" /></p>
-	                    <p><b>Bairro: 	   		</b><input type="text" name="txt_bairro" value="{% if txt_bairro %}{{ txt_bairro }}{% else %}{% if infouser.bairro %}{{ infouser.bairro }}{% endif %}{% endif %}" style="width: 225px;" /></p>
-	                    <p><b>CEP: 		   		</b><input type="text" name="txt_cep" value="{% if txt_cep %}{{ txt_cep }}{% else %}{{ infouser.cep }}{% endif %}" style="width: 200px;" /></p>
-	
-	                    <p><b>Estado: </b>
-	                        <select name="estado">
-	                        	<option value=""> -- Selecione -- </option>
-	                            {% for i in list_state %}
-		                            {% if estado %}
-		                                {% if estado|safe == i.id|safe %}
-		                                    <option value="{{ i.id }}" selected="selected">{{ i.name }}</option>
-		                                {% else %}
-		                                    <option value="{{ i.id }}">{{ i.name }}</option>
-		                                {% endif %}
-		                            {% else %}
-		                            	{% if i == infouser.estado %}
-		                                    <option value="{{ i.id }}" selected="selected">{{ i.name }}</option>
-		                                {% else %}
-		                                    <option value="{{ i.id }}">{{ i.name }}</option>
-		                                {% endif %}
-		                            {% endif %}
-	                            {% endfor %}
-	                        </select>
-	                    </p>
-	
-	                    <p><b>Cidade: </b>
-	                        <select name="cidade">
-	                            {% for i in list_city %}
-	                            	{% if cidade %}
-		                                {% if cidade|safe == i.id|safe %}
-		                                    <option value="{{ i.id }}" selected="selected">{{ i.name }}</option>
-		                                {% else %}
-		                                    <option value="{{ i.id }}">{{ i.name }}</option>
-		                                {% endif %}
-	                                {% else %}
-		                                {% if i == infouser.cidade %}
-		                                    <option value="{{ i.id }}" selected="selected">{{ i.name }}</option>
-		                                {% else %}
-		                                    <option value="{{ i.id }}">{{ i.name }}</option>
-		                                {% endif %}
-		                            {% endif %}
-	                            {% endfor %}
-	                        </select>
-	                    </p>
-	
-	                    <p><b>Telefone Comercial: </b><input type="text" name="txt_fone_com" value="{% if txt_fone_com %}{{ txt_fone_com }}{% else %}{{ infouser.fone_com }}{% endif %}" style="width: 200px;" /></p>
-	                    <p><b>Telefone Celular:   </b><input type="text" name="txt_fone_cel" value="{% if txt_fone_cel %}{{ txt_fone_cel }}{% else %}{{ infouser.fone_cel }}{% endif %}" style="width: 200px;" /></p>
-	                    <a style="font-size: 16px; text-decoration: underline" href="javascript:void(0);" onclick="$('.pass').slideToggle();">trocar senha</a>
-						<br /><br />
-	                    {% if is_pass %}
-	                        <p class="pass" style="display: none"><b>Senha atual: </b><input type="password" name="txt_pass" value="" style="width: 200px;" /></p>
-	                    {% endif %}
-	
-	                    <p class="pass" style="display: none"><b>Nova senha: </b><input type="password" name="txt_newpass" value="" style="width: 200px;" /></p>
-	                    <p class="pass" style="display: none"><b>Confirma: </b><input type="password" name="txt_confirm" value="" style="width: 200px;" /></p>
+	            	{% if edit == 'true' %}
 
-	                    <a class="buttom" href="javascript:void(0);" onclick="$('form').submit();">Salvar</a>
-	
-	                    <input type="hidden" name="user" value="{{ user.username }}" />
-	                    <input type="hidden" name="key" value="{{ key }}" />
-	
-	                </form>
-	                
+	                    <div class="wrap">
+	                        <img src="{{ STATIC_URL }}{{ get_tipo_template }}/images/success.png" border="0" />
+	                        <h3>Cadastro alterado com sucesso. Clique <a href="{% url home rede.link %}">aqui</a> e faça o login.</h3>
+	                    </div>
+
+                	{% else %}
+
+		                <form name="form" action="./" method="post" enctype="multipart/form-data">
+
+		                    {% csrf_token %}
+
+				    {% if rede.link == 'ipc' %}
+					<p><b>Loja *: 	</b><input type="text" name="txt_name" value="{% if txt_name %}{{ txt_name }}{% else %}{{ user.get_full_name }}{% endif %}" style="width: 225px;" /></p>
+					{% set_keyboard_buttom get_tipo_template 'left:414px;' 'keyboard2' %}
+					<p><b>CNPJ *: 		</b><input type="text" name="txt_cnpj" value="{% if txt_cnpj %}{{ txt_cnpj }}{% else %}{{ infouser.cnpj }}{% endif %}" style="width: 200px;" /></p>
+					<input type="hidden" name="is_cnpj" value="1" />
+				    {% else %}
+					<p><b>Nome Completo *: 	</b><input type="text" name="txt_name" value="{% if txt_name %}{{ txt_name }}{% else %}{{ user.get_full_name }}{% endif %}" style="width: 225px;" /></p>
+					{% set_keyboard_buttom get_tipo_template 'left:414px;' 'keyboard2' %}
+
+					{% if rede.link|lower == 'cencosud' %}
+						<p><b>Matricula: </b><input type="text" name="txt_matricul" value="{% if txt_matricul %}{{ txt_matricul }}{% else %}{{ infouser.matricul }}{% endif %}" style="width: 200px;" /></p>
+					{% endif %}
+
+					<p><b>CPF *: 		</b><input type="text" name="txt_cpf" value="{% if txt_cpf %}{{ txt_cpf }}{% else %}{{ infouser.cpf }}{% endif %}" style="width: 200px;" /></p>
+				    {% endif %}
+
+		                    <p><b>E-mail *:      	</b><input type="text" name="txt_email" value="{% if txt_email %}{{ txt_email }}{% else %}{{ user.email }}{% endif %}" style="width: 225px;" /></p>
+
+		                    {% if not rede.link|lower == 'agiplan' %}
+
+			                    <p><b>Endereço:    		</b><input type="text" name="txt_endereco" value="{% if txt_endereco %}{{ txt_endereco }}{% else %}{% if infouser.endereco %}{{ infouser.endereco }}{% endif %}{% endif %}" style="width: 225px;" /></p>
+			                    <p><b>Bairro: 	   		</b><input type="text" name="txt_bairro" value="{% if txt_bairro %}{{ txt_bairro }}{% else %}{% if infouser.bairro %}{{ infouser.bairro }}{% endif %}{% endif %}" style="width: 225px;" /></p>
+			                    <p><b>CEP: 		   		</b><input type="text" name="txt_cep" value="{% if txt_cep %}{{ txt_cep }}{% else %}{{ infouser.cep }}{% endif %}" style="width: 200px;" /></p>
+
+			                    <p><b>Estado: </b>
+			                        <select name="estado">
+			                        	<option value=""> -- Selecione -- </option>
+			                            {% for i in list_state %}
+				                            {% if estado %}
+				                                {% if estado|safe == i.id|safe %}
+				                                    <option value="{{ i.id }}" selected="selected">{{ i.name }}</option>
+				                                {% else %}
+				                                    <option value="{{ i.id }}">{{ i.name }}</option>
+				                                {% endif %}
+				                            {% else %}
+				                            	{% if i == infouser.estado %}
+				                                    <option value="{{ i.id }}" selected="selected">{{ i.name }}</option>
+				                                {% else %}
+				                                    <option value="{{ i.id }}">{{ i.name }}</option>
+				                                {% endif %}
+				                            {% endif %}
+			                            {% endfor %}
+			                        </select>
+			                    </p>
+
+			                    <p><b>Cidade: </b>
+			                        <select name="cidade">
+			                            {% for i in list_city %}
+			                            	{% if cidade %}
+				                                {% if cidade|safe == i.id|safe %}
+				                                    <option value="{{ i.id }}" selected="selected">{{ i.name }}</option>
+				                                {% else %}
+				                                    <option value="{{ i.id }}">{{ i.name }}</option>
+				                                {% endif %}
+			                                {% else %}
+				                                {% if i == infouser.cidade %}
+				                                    <option value="{{ i.id }}" selected="selected">{{ i.name }}</option>
+				                                {% else %}
+				                                    <option value="{{ i.id }}">{{ i.name }}</option>
+				                                {% endif %}
+				                            {% endif %}
+			                            {% endfor %}
+			                        </select>
+			                    </p>
+
+			                    <p><b>Telefone Comercial: </b><input type="text" name="txt_fone_com" value="{% if txt_fone_com %}{{ txt_fone_com }}{% else %}{{ infouser.fone_com }}{% endif %}" style="width: 200px;" /></p>
+			                    <p><b>Telefone Celular:   </b><input type="text" name="txt_fone_cel" value="{% if txt_fone_cel %}{{ txt_fone_cel }}{% else %}{{ infouser.fone_cel }}{% endif %}" style="width: 200px;" /></p>
+
+			                {% endif %}
+
+		                    {% if autopass %}
+			                    <a style="font-size: 16px; text-decoration: underline" href="javascript:void(0);" onclick="$('.pass').slideToggle();">trocar senha</a>
+								<br /><br />
+			                    {% if is_pass %}
+			                        <p class="pass" style="display: {{ pass_none }}">
+			                        	<b>Senha atual: </b>
+			                        	<input type="password" name="txt_pass" value="{{ txt_pass }}" style="width: 200px;" />
+			                        </p>
+			                    {% endif %}
+			                    <p class="pass" style="display: {{ pass_none }}">
+			                    	<b>Nova senha: </b>
+			                    	<input type="password" name="txt_newpass" value="{{ txt_newpass }}" title="<b>Nível da senha:</b><br />Use pelo menos oito caracteres. Não use uma senha de outro site ou algo muito óbvio, como o nome de seu animal de estimação." style="width: 200px;" />
+			                    	<img class="txt_newpass" src="{{ STATIC_URL }}{{ get_tipo_template }}/images/senha.png" border="0" width="30" title="<b>Nível da senha:</b><br />Use pelo menos oito caracteres. Não use uma senha de outro site ou algo muito óbvio, como o nome de seu animal de estimação." style="cursor: pointer" />
+			                    </p>
+			                    <p class="pass" style="display: {{ pass_none }}">
+			                    	<b>Confirme sua senha: </b>
+			                    	<input type="password" name="txt_confirm" value="" style="width: 200px;" />
+			                    </p>
+							{% endif %}
+
+		                    <a class="buttom" href="javascript:void(0);" onclick="$('form').submit();">Salvar</a>
+
+		                    <input type="hidden" name="user" value="{{ user.username }}" />
+		                    <input type="hidden" name="key" value="{{ key }}" />
+
+		                </form>
+
+		        	{% endif %}
+
 				</div>
             </div>
         </div>

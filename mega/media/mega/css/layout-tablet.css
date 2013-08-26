@@ -9,7 +9,9 @@
 #header #menu ul li a{float:none; -webkit-border-radius: 0;-moz-border-radius: 0; border-radius: 0; display:inline-block;}
 #header #menu ul li a:hover{background:#154F65; }
 
+#content .instrucao{width: 80%; margin: 5px 50px;}
 #content .video .player{width:590px; height:330px; margin:0 auto 10px; float:none;}
+#content .video div.vitrine{width:590px; margin:0 auto 10px; float:none;}
 #content .video .player object{width:590px; height:330px;}
 #content .video .description{width:100%; height:auto; margin-bottom:10px; float:none;}
 
@@ -17,5 +19,10 @@
 #content .video .descriptionlive{margin:0 auto 10px; float:none;}
 #content .video iframe.elearning{width: 90%}
 
+#content ul.category li p.msg_block{top: 40px}
+#technical-widget div.left{width: 60%}
+
 #footer {padding:20px 0;}
 .tia {display: none;}
+
+#content ul.satisfacao2 li img {width: 95%}

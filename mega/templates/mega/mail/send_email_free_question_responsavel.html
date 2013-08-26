@@ -4,7 +4,7 @@
 
     <tr>
         <td align="left" valign="middle" colspan="3">
-            <img src="{{ BASE_URL }}{{ rede.logo.url }}" border="0" />
+            <img src="{{ BASE_URL }}{% if rede.logo_log %}{{ rede.logo_log.url }}{% else %}{{ rede.logo.url }}{% endif %}" border="0" />
         </td>
     </tr>
 
@@ -16,21 +16,21 @@
     </tr>
     <tr>
     	<td colspan="3">
-		
+
 			{% for lq in list_question %}
-			
+
 				{% if not lq.get_list_response_order %}
-			
+
 	                <p>{{ forloop.counter }}. {{ lq.text|safe }}</p>
-	
-	                <div class="responses">   
+
+	                <div class="responses">
 	                	<p>Resposta: {{ lq.get_free_response.0.text }}</p>
 	                </div>
-	                
+
 	            {% endif %}
 
             {% endfor %}
-		
+
 		</td>
 	</tr>
     <tr>

@@ -1,0 +1,39 @@
+﻿{% extends 'mega/main.html' %}
+
+{% load util %}
+
+{% block content %}
+
+    <div id="header">
+        <div class="container">
+            <div id="logo">
+            	<a href="{% url home %}{{ rede.link }}/">
+            		<img src="{{ rede|logo }}" border="0" />
+            	</a>
+            </div>
+        </div>
+    </div>
+
+    {% block bloco %}
+
+        <div id="content">
+            <div class="container">
+
+                <div class="bar">Avaliação concluída</div>
+                
+                <div class="wrap">
+                    <img src="{{ STATIC_URL }}{{ get_tipo_template }}/images/success.png" border="0" />
+                    <br /><br />
+                    <h3>A avaliação já recebeu a pontuação no dia {{ date|date:"d/m/Y" }}. Obrigado.</h3>
+                </div>
+
+				<div class="wrap">
+                	<input type="button" value="Concluído" class="buttom" onclick="window.location='{% url home rede.link %}'" style="cursor: pointer;" />
+               	</div>
+                    
+            </div>
+        </div>
+
+    {% endblock bloco %}
+
+{% endblock content %}

@@ -21,20 +21,29 @@
                                 </button>
                             </div>
                         </form>
-                        <span class="sub_pesquisa">Pesquisa de vídeos</span>
+                        {% if rede.link|lower == 'carvalho' %}
+                        	<span class="sub_pesquisa">Pesquisa de Produtos</span>
+                        {% else %}
+                        	<span class="sub_pesquisa">Pesquisa de vídeos</span>
+                        {% endif %}
                     </div>
                 {% endif %}
             {% endfor %}
 
             <div id="menu">
                 <div class="user-button">
-                	{% aproveitamento_count_append list_aproveitamento_account user %}
+		    {% aproveitamento_count_append list_aproveitamento_account user %}
                 </div>
-                <div class="enquete">
-                	{% if not grafico %}
-                		<span class="jewelCount"><span>1</span></span>
-                	{% endif %}
-                </div>
+		{% if grafico or enquete %}
+		    <div class="enquete">
+			{% if enquete %}
+			    <span class="jewelCount"><span>1</span></span>
+			{% endif %}
+		    </div>
+		{% endif %}
+		{% if technical %}
+		    <div class="technical" {% if not grafico and not enquete %}style="left: 38px;"{% endif %}></div>
+		{% endif %}
                 <div class="menu-button">MENU</div>
                 {% if list_menu|tipobusca %}<div class="search-button"></div>{% endif %}
                 <ul>
@@ -81,109 +90,305 @@
 
                 {% if interno %}
                     <div class="path">
-                        {% sub_menu list_category rede list_treinamento %}
+
+			{% if tipo == 'documents' %}
+			    {% sub_menu list_category rede list_treinamento list_anexo 2 %}
+			    <span class="navegador">Documentos</span>
+			{% endif %}
+
+			{% if tipo == 'videos' %}
+			    {% sub_menu list_category rede list_treinamento list_anexo 2 %}
+			    <span class="navegador">Vídeos</span>
+			{% endif %}
+
+			{% if tipo %}
+
+			    <span class="right_btn_group">
+				{% if tipo == 'documents' %}
+				    <a href="javascript:void(0);" style="cursor: default">
+					<img src="{{ STATIC_URL }}{{ get_tipo_template }}/images/icon_group_document.png" border="0" height="50" />
+					documentos
+				    </a>
+				{% endif %}
+
+				{% if tipo == 'videos' %}
+				    <a href="javascript:void(0);" style="cursor: default">
+					<img src="{{ STATIC_URL }}{{ get_tipo_template }}/images/icon_group_video.png" border="0" height="50" />
+					&nbsp;vídeos
+				    </a>
+				{% endif %}
+			    </span>
+
+			    <div class="clearfix"></div>
+
+			{% else %}
+
+			    {% sub_menu list_category rede list_treinamento list_anexo %}
+
+			    {% if category.0.is_groupc or category.0.is_groupv %}
+
+				<span class="right_btn_group">
+				    {% if category.0.is_groupc %}
+					<a href="{% url category_documents rede.link category.0.id %}">
+					    <img src="{{ STATIC_URL }}{{ get_tipo_template }}/images/icon_group_document.png" border="0" height="50" />
+					    documentos
+					</a>
+				    {% endif %}
+				    {% if category.0.is_groupv %}
+					<a href="{% url category_videos rede.link category.0.id %}">
+					    <img src="{{ STATIC_URL }}{{ get_tipo_template }}/images/icon_group_video.png" border="0" height="50" />
+					    &nbsp;vídeos
+					</a>
+				    {% endif %}
+				</span>
+
+				<div class="clearfix"></div>
+
+			    {% endif %}
+
+			{% endif %}
+
                     </div>
                 {% endif %}
 
 		{% if category.0.is_desc_g %}
 		    <div class="path desc_geral">
-                        <img src="{{ category|get_image }}" border="0" width="200" />
-			<span>{{ category.0.desc_g|safe|striptags }}</span>
-			<div class="clearfix"></div>
-                    </div>
+		    	{% if category.0.is_image %}
+            		<img src="{{ category|get_image }}" border="0" width="200" />
+            	{% endif %}
+				<span>{% if category.0.desc_g|safe|striptags %}{{ category.0.desc_g|safe }}{% else %}{{ category.0.desc|safe }}{% endif %}</span>
+				{% for lt in list_technical %}
+				    <a class="technical" href="{% url technical rede.link lt.id %}" {% if lt.desc|length_title_desc > 0 %} title="{{ lt.desc|safe|striptags }}" {% endif %}>
+					<img src="{{ lt|get_image }}" border="0" width="50" />
+					{% if lt.is_name %}<h2>{{ lt.name }}</h2>{% endif %}
+				    </a>
+				{% endfor %}
+				<div class="clearfix"></div>
+        	</div>
 		{% endif %}
 
-                {% if list_treinamento.count > 1 %}
-                    <div class="bar">Selecione um dos {{ list_treinamento.count }} vídeos abaixo</div>
-                {% else %}
-                    {% if list_treinamento.count == 1 %}
-                        <div class="bar">Selecione o vídeo abaixo</div>
-                    {% else %}
-                        <div class="bar">
-                            {% if list_category.count > 1 %}
-                            	{{ get_template.title_d|filter_search:list_category.count|default:'SELECIONE UMA DAS %s CATEGORIAS ABAIXO'|filter_search:list_category.count }}
-                            {% else %}
-                                {{ get_template.title_ds|default:'SELECIONE A CATEGORIA ABAIXO' }}
-                            {% endif %}
-                        </div>
-                    {% endif %}
-                {% endif %}
+		{% if tipo == 'documents' or list_anexo.count > 0 and not category.0.is_groupc %}
 
-                {% if list_category %}
-                    <ul class="category clearfix">
-                        {% for i in list_category %}
-                            <li>
-                                <a href="{% url home %}{{ rede.link }}/category/{{ i.id }}/" {% if i.desc|length_title_desc > 0 %} title="{{ i.desc|safe|striptags }}" {% endif %}>
-                                    <div class="{{ i|css_hiraquia_cat }} {% if not i.is_name %}no-name-category{% endif %}"><img src="{{ i|get_image }}" border="0" /></div>
-                                    {% if i.is_name %}<h2 class="box-title">{{ i.name }}</h2>{% endif %}
-                                    {% if i.is_name %}{% if i.desc|length_title_desc > 0 %}<span>{{ i.desc|striptags|super_truncatewords:'100-105'|safe }}</span>{% endif %}{% endif %}
-                                </a>
-                            </li>
-                        {% endfor %}
-                    </ul>
-                {% else %}
-                	{% if not list_treinamento %}
-					    {% get_msg rede %}
+		    {% if list_anexo.count > 1 %}
+			<div class="bar">Clique em um dos {{ list_anexo.count }} arquivos abaixo e faça o download</div>
+		    {% else %}
+			<div class="bar">Clique no arquivo abaixo e faça o download</div>
+		    {% endif %}
+
+		    <div class="partner">
+			<ul>
+			    {% for la in list_anexo %}
+				<li>
+				    <a href="{% url download_anexo rede.link la.id %}" title="{{ la.desc|safe|striptags }}">
+					<img src="{{ STATIC_URL }}{{ get_tipo_template }}/images/{{ la|get_type_arquive }}" border="0" width="80" />
+					<span class="title">{{ la.name }}</span>
+					<span class="desc">{{ la.desc|safe|striptags|super_truncatewords:'40-82'|safe }}</span>
+				    </a>
+				</li>
+			    {% endfor %}
+			</ul>
+			<a id="prev" class="arrow prev" href="#"></a>
+			<a id="next" class="arrow next" href="#"></a>
+			<div class="clearfix"></div>
+		    </div>
+
+		    <script type="text/javascript" language="javascript">
+			$(function() {
+			    $('.partner ul').carouFredSel({
+				width : '100%',
+				auto  : false,
+				scroll: 1,
+				prev  : '#prev',
+				next  : '#next',
+				onResize: function(){
+				    $(".partner ul").trigger("configuration", ["items.visible", function( val ) {
+					$(this).trigger("configuration", ["align", ($('.partner ul li').length<=val)?"left":"center"]);
+				    }]);
+				},
+				onCreate: function(itens, sizes){
+				    $(".partner ul").trigger("configuration", ["items.visible", function( val ) {
+					$(this).trigger("configuration", ["align", ($('.partner ul li').length<=val)?"left":"center"]);
+				    }]);
+				}
+			    });
+			    $('.partner ul li').mouseover(function(e){
+				$(this).css('opacity', .7);
+			    }).mouseout(function(e){
+				$(this).css('opacity', 1);
+			    });
+			});
+		    </script>
+
+		{% endif %}
+
+		{% if tipo == 'documents' %}
+
+		    {% if not list_treinamento and not list_anexo %}
+			{% get_msg rede %}
+		    {% endif %}
+
+		{% else %}
+
+		    {% if list_treinamento %}
+
+			{% if list_treinamento.count > 1 %}
+				{% if rede.link|lower == 'carvalho' %}
+			    	<div class="bar">Selecione um dos {{ list_treinamento.count }} produtos abaixo</div>
+			    {% else %}
+			    	<div class="bar">Selecione um dos {{ list_treinamento.count }} vídeos abaixo</div>
+			    {% endif %}
+			{% else %}
+			    {% if list_treinamento.count == 1 %}
+			    	{% if rede.link|lower == 'carvalho' %}
+						<div class="bar">Selecione o produto abaixo</div>
+					{% else %}
+						<div class="bar">Selecione o vídeo abaixo</div>
 					{% endif %}
-                {% endif %}
+			    {% endif %}
+			{% endif %}
 
-                {% if list_treinamento %}
-                    <ul class="category clearfix videos">
-                        {% for i in list_treinamento %}
-                        	{% if i.tipo == 'L' %}
-                        		<li>
-		                            <a href="{% url live rede.link i.id %}" {% if i.desc|length_title_desc > 0 %} title="{{ i.desc|safe|striptags }}" {% endif %} class="{% if forloop.last %}last{% endif %}">
-		                                <div class="{{ i|css_hiraquia_video }}"><img src="{{ i|get_image }}" border="0" /></div>
-		                                <h2 class="box-title">{{ i.name }}</h2>
-		                                <span>{{ i.desc|striptags|super_truncatewords:'200-300'|safe }}</span>
-		                                <br /><br />
-		                                <span>Será exibido no dia {{ i.agendado|date:'d F à\s H:i' }} com duração de {{ i.time }}</span>
-		                            </a>
-		                        </li>
-                        	{% else %}
-		                        <li>
-		                            <a href="{% url home %}{{ rede.link }}/treinamento/{{ i.id }}/" {% if i.desc|length_title_desc > 0 %} title="{{ i.desc|safe|striptags }}" {% endif %} class="{% if forloop.last %}last{% endif %}">
-		                                <div class="{{ i|css_hiraquia_video }}"><img src="{{ i|get_image }}" border="0" /></div>
-		                                <h2 class="box-title">{{ i.name }}</h2>
-		                                <span>{{ i.desc|striptags|super_truncatewords:'200-300'|safe }}</span>
-		                                <br /><br />
-		                                <span><b>Duração: {{ i.time }}</b></span>
-		                            </a>
-		                        </li>
-	                        {% endif %}
-                        {% endfor %}
-                    </ul>
-                {% endif %}
+		    {% else %}
 
-                {% if list_parceiro %}
+				<div class="bar">
+				    {% if list_category.count > 1 %}
+						{{ get_template.title_d|filter_search:list_category.count|default:'SELECIONE UMA DAS %s CATEGORIAS ABAIXO'|filter_search:list_category.count }}
+				    {% else %}
+						{{ get_template.title_ds|default:'SELECIONE A CATEGORIA ABAIXO' }}
+				    {% endif %}
+				</div>
 
-                    <div class="bar clear barra_parceiros">{{ get_template.title_pd|default:'PARCEIROS' }}</div>
+		    {% endif %}
 
-                    <div class="bloco_parceiros">
-                    	<ul class="category clearfix parceiros">
-	                        {% for lp in list_parceiro %}
-	                        	{% if lp.link %}
-	                        		<li>
-		                                <a href="{{ lp.link }}" {% if lp.name|length_title_desc > 0 %} title="{{ lp.name }}" {% endif %}>
-		                                    <div class="{{ lp|css_hiraquia_cat }} no-name-category"><img src="{{ lp|get_image }}" border="0" /></div>
-		                                    {% if lp.is_name %}<h2 class="box-title" style="text-align: center;">{{ lp.name }}</h2>{% endif %}
-		                                </a>
-		                            </li>
-		                        {% else %}
-		                            <li>
-		                                <a href="javascript:void(0);" style="cursor: default;">
-		                                    <div class="{{ lp|css_hiraquia_cat }} no-name-category"><img src="{{ lp|get_image }}" border="0" /></div>
-		                                    {% if lp.is_name %}<h2 class="box-title" style="text-align: center;">{{ lp.name }}</h2>{% endif %}
-		                                </a>
-		                            </li>
-		                        {% endif %}
-	                        {% endfor %}
-	                    </ul>
+		    {% if list_category %}
+				<ul class="category clearfix {% if rede.link|lower == 'cencosud' and class == 'home' %}satisfacao1{% endif %}">
+				    {% for i in list_category %}
+						<li>
+						    <a href="{% url home %}{{ rede.link }}/category/{{ i.id }}/" class="{{ i|category_video_relacionado:user }}">
+								<div class="{{ i|css_hiraquia_cat }} {% if not i.is_name %}no-name-category{% endif %}"><img src="{{ i|get_image }}" border="0" /></div>
+								{% if i.is_name %}<h2 class="box-title">{{ i.name }}</h2>{% endif %}
+								{% if i.is_name %}{% if i.desc|length_title_desc > 0 %}<span>{{ i.desc|safe|striptags|super_truncatewords:'100-150'|safe }}</span>{% endif %}{% endif %}
+						    </a>
+						    <p class="msg_block" style="display: none;">Você não assistiu o vídeo {{ i|category_video_relacionado_name:user }}, assista primeiro para acessar essa categoria.</p>
+						</li>
+				    {% endfor %}
+				</ul>
+				{% if rede.link|lower == 'cencosud' and class == 'home' %}
+					<ul class="satisfacao2">
+						<li>
+							<img src="{{ STATIC_URL }}{{ get_tipo_template }}/images/satisfacao.png" border="0" />
+						</li>
+					</ul>
+				{% endif %}
+		    {% else %}
+			    {% if not list_treinamento and not list_anexo %}
+					{% get_msg rede %}
+			    {% endif %}
+		    {% endif %}
 
-                        <div class="clearfix"></div>
-                    </div>
+		    {% if list_treinamento %}
+				<ul class="category clearfix videos">
+				    {% for i in list_treinamento %}
+				    
+				    	{% if i.tipo_t == 0 %}
+						    {% if i.tipo == 'L' %}
+							    <li>
+									<a href="{% url live rede.link i.id %}" class="{% if forloop.last %}last{% endif %}">
+									    <div class="{{ i|css_hiraquia_video }}">
+									    	<img src="{{ i|get_image }}" border="0" />
+									    </div>
+									    <h2 class="box-title">{{ i.name }}</h2>
+									    <span>{{ i.get_desc|striptags|super_truncatewords:'200-300'|safe }}</span>
+									    <br /><br />
+									    <span>Será exibido no dia {{ i.agendado|date:'d F à\s H:i' }} com duração de {{ i.time }}</span>
+									</a>
+							    </li>
+						    {% else %}
+							    <li>
+									<a href="{% url home %}{{ rede.link }}/treinamento/{{ i.id }}/" class="{% if forloop.last %}last{% endif %} {{ i|video_relacionado:user }}">
+									    <div class="{{ i|css_hiraquia_video }}">
+									    	<img src="{{ i|get_image }}" border="0" />
+									    	{% if i.time|lenght > 1 %}
+									    		<span class="time">{{ i.time }}</span>
+									    	{% endif %}
+									    </div>
+									    <h2 class="box-title">{{ i.name }}</h2>
+									    <span>{{ i.get_desc|striptags|super_truncatewords:'200-300'|safe }}</span>
+									</a>
+									<p class="msg_block" style="display: none;">Você não assistiu o vídeo {{ i|video_relacionado_name:user }}, assista primeiro para acessar esse vídeo.</p>
+							    </li>
+						    {% endif %}
+						{% endif %}
+						
+						{% if i.tipo_t == 1 %}
+						    <li>
+								<a href="{% url elearning rede.link i.id %}" class="{% if forloop.last %}last{% endif %} {{ i|video_relacionado:user }}">
+								    <div class="{{ i|css_hiraquia_video }}">
+								    	<img src="{{ i|get_image }}" border="0" />
+								    	{% if i.time|lenght > 1 %}
+								    		<span class="time">{{ i.time }}</span>
+								    	{% endif %}
+								    </div>
+								    <h2 class="box-title">{{ i.name }}</h2>
+								    <span>{{ i.get_desc|striptags|super_truncatewords:'200-300'|safe }}</span>
+								</a>
+								<p class="msg_block" style="display: none;">Você não assistiu o vídeo {{ i|video_relacionado_name:user }}, assista primeiro para acessar esse vídeo.</p>
+						    </li>
+						{% endif %}
+						
+						{% if i.tipo_t == 2 %}
+						    <li>
+								<a href="{% url vitrine rede.link i.id %}" class="{% if forloop.last %}last{% endif %} {{ i|video_relacionado:user }}">
+								    <div class="{{ i|css_hiraquia_video }}">
+								    	<img src="{{ i|get_image }}" border="0" />
+								    	{% if i.time|lenght > 1 %}
+								    		<span class="time">{{ i.time }}</span>
+								    	{% endif %}
+								    </div>
+								    <h2 class="box-title">{{ i.name }}</h2>
+								    <span>{{ i.get_desc|striptags|super_truncatewords:'200-300'|safe }}</span>
+								</a>
+						    </li>
+						{% endif %}
+					
+				    {% endfor %}
+				</ul>
+		    {% endif %}
 
-                {% endif %}
+		    {% if list_parceiro %}
+
+			<div class="bar clear barra_parceiros">{{ get_template.title_pd|default:'PARCEIROS' }}</div>
+
+			<div class="bloco_parceiros">
+			    <ul class="category clearfix parceiros">
+				    {% for lp in list_parceiro %}
+					    {% if lp.link %}
+						    <li>
+							    <a href="{{ lp.link }}" {% if lp.name|length_title_desc > 0 %} title="{{ lp.name }}" {% endif %}>
+									<div class="{{ lp|css_hiraquia_cat }} no-name-category">
+										<img src="{{ lp|get_image }}" border="0" />
+									</div>
+									{% if lp.is_name %}<h2 class="box-title" style="text-align: center;">{{ lp.name }}</h2>{% endif %}
+							    </a>
+							</li>
+					    {% else %}
+							<li>
+							    <a href="javascript:void(0);" style="cursor: default;">
+									<div class="{{ lp|css_hiraquia_cat }} no-name-category">
+										<img src="{{ lp|get_image }}" border="0" />
+									</div>
+									{% if lp.is_name %}<h2 class="box-title" style="text-align: center;">{{ lp.name }}</h2>{% endif %}
+							    </a>
+							</li>
+					    {% endif %}
+				    {% endfor %}
+				</ul>
+
+			    <div class="clearfix"></div>
+			</div>
+
+		    {% endif %}
+
+		{% endif %}
 
             </div>
         </div>

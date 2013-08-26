@@ -1,0 +1,111 @@
+﻿{% load util %}
+
+<style type="text/css">
+    * {
+	font-family:Arial,Verdana,sans-serif;
+	font-size: 11px;
+    }
+</style>
+
+<table cellpadding="0" cellspacing="0" border="0" width="100%">
+
+    <tr>
+        <td align="left" valign="middle" colspan="3" style="font-family:Arial,Verdana,sans-serif;font-size: 11px;">
+            <img src="{{ BASE_URL }}{{ STATIC_URL }}mega/images/logo_mail_isae.jpg" border="0" />
+        </td>
+    </tr>
+
+    <tr>
+        <td align="left" valign="middle" colspan="3" style="font-family:Arial,Verdana,sans-serif;font-size: 11px;">Olá {{ this_user.get_full_name }},</td>
+    </tr>
+    <tr>
+        <td align="left" valign="middle" colspan="3" style="font-family:Arial,Verdana,sans-serif;font-size: 11px;">
+        	Seu cadastro foi criado ou modificado com sucesso!
+        	<br />
+        	Seu login é {{ this_user.username }} e sua senha pode ser criada ou modificada clicando no link abaixo:
+        </td>
+    </tr>
+    <tr><td colspan="3" style="font-family:Arial,Verdana,sans-serif;font-size: 11px;">&nbsp;</td></tr>
+    <tr>
+        <td align="left" valign="middle" colspan="3" style="font-family:Arial,Verdana,sans-serif;font-size: 11px;">
+            <a href="{{ link }}" target="_blank" style="font-family:Arial,Verdana,sans-serif;font-size: 11px;">{{ link }}</a>
+        </td>
+    </tr>
+    <tr><td colspan="3" style="font-family:Arial,Verdana,sans-serif;font-size: 11px;">&nbsp;</td></tr>
+    <tr>
+        <td align="left" valign="middle" colspan="3" style="font-family:Arial,Verdana,sans-serif;font-size: 11px;">
+        	Dados da sua inscrição:
+        </td>
+    </tr>
+    <tr>
+        <td align="left" valign="middle" colspan="3" style="font-family:Arial,Verdana,sans-serif;font-size: 11px;">
+        	Nome: {{ this_user.get_full_name|default:"&lt;pendente&gt;" }}
+        </td>
+    </tr>
+    <tr>
+        <td align="left" valign="middle" colspan="3" style="font-family:Arial,Verdana,sans-serif;font-size: 11px;">
+        	E-mail: {{ this_user.email|default:"&lt;pendente&gt;" }}
+        </td>
+    </tr>
+    <tr>
+        <td align="left" valign="middle" colspan="3" style="font-family:Arial,Verdana,sans-serif;font-size: 11px;">
+        	CPF: {% if this_user.infouser.cpf == '999.999.999-99' %}&lt;pendente&gt;{% else %}{{ this_user.infouser.cpf|default:"&lt;pendente&gt;" }}{% endif %}
+        </td>
+    </tr>
+    {% if this_user.infouser.fone_com %}
+	    <tr>
+	        <td align="left" valign="middle" colspan="3" style="font-family:Arial,Verdana,sans-serif;font-size: 11px;">
+	        	Fone Comercial: {{ this_user.infouser.fone_com|default:"&lt;pendente&gt;" }}
+	        </td>
+	    </tr>
+    {% endif %}
+    {% if this_user.infouser.fone_cel %}
+	    <tr>
+	        <td align="left" valign="middle" colspan="3" style="font-family:Arial,Verdana,sans-serif;font-size: 11px;">
+	        	Fone Celular: {{ this_user.infouser.fone_cel|default:"&lt;pendente&gt;" }}
+	        </td>
+	    </tr>
+    {% endif %}
+    {% if this_user.infouser.cidade and this_user.infouser.estado %}
+	    <tr>
+	        <td align="left" valign="middle" colspan="3" style="font-family:Arial,Verdana,sans-serif;font-size: 11px;">
+	        	Cidade / Estado: {{ this_user.infouser.cidade.name|default:"&lt;pendente&gt;" }} / {{ this_user.infouser.estado.name|default:"&lt;pendente&gt;" }}
+	        </td>
+	    </tr>
+    {% endif %}
+    <tr><td colspan="3" style="font-family:Arial,Verdana,sans-serif;font-size: 11px;">&nbsp;</td></tr>
+    <tr>
+        <td align="left" valign="middle" colspan="3" style="font-family:Arial,Verdana,sans-serif;font-size: 11px;">
+            Após a confirmação dos seus dados, você terá acesso ao Ambiente Virtual TCD 
+            onde poderá realizar seu curso. O TCD é a ferramenta utilizada pelo ISAE para 
+            gerenciar cursos online. Para acessá-la use o seguinte endereço:
+            <br />
+            <a href="https://www.treinandoequipes.com.br/isae/" target="_blank" style="font-family:Arial,Verdana,sans-serif;font-size: 11px;">www.treinandoequipes.com.br/isae/</a>
+            <br />
+            Em caso de dúvidas, acesse nosso hotsite de apoio:
+            <br />
+            <a href="www.eadisae.com.br" target="_blank" style="font-family:Arial,Verdana,sans-serif;font-size: 11px;">www.eadisae.com.br</a>
+            <br />
+            Bons estudos!
+        </td>
+    </tr>
+    
+    <tr>
+        <td align="left" valign="middle" colspan="3" style="font-family:Arial,Verdana,sans-serif;font-size: 11px;">
+            <img src="{{ BASE_URL }}{{ STATIC_URL }}mega/images/assinatura_mail_isae.jpg" border="0" />
+        </td>
+    </tr>
+    <tr><td colspan="3" style="font-family:Arial,Verdana,sans-serif;font-size: 11px;">&nbsp;</td></tr>
+    <tr>
+        <td align="left" valign="middle" colspan="3" style="font-family:Arial,Verdana,sans-serif;font-size: 11px;">
+            --
+            <br />
+            Esta mensagem foi enviada automaticamente pelo site TCD - Treinamento e Comunicação 
+            a Distância. 
+            <br />
+            Para mais informações, entre em contato pelo e-mail 
+            <a href="mailto:suporte@eadisae.com.br" target="_blank" style="font-family:Arial,Verdana,sans-serif;font-size: 11px;">suporte@eadisae.com.br</a>
+        </td>
+    </tr>
+
+</table>

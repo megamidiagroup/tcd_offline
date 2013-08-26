@@ -1,0 +1,161 @@
+﻿{% extends 'mega/main.html' %}
+
+{% load util keyboard %}
+
+{% block js %}
+
+    <script type="text/javascript" src="{{ STATIC_URL_TCD }}{{ get_tipo_template|default:'mega' }}/js/jquery.datatables.min.js"></script>
+    
+    <script type='text/javascript'>
+	$(document).ready(function() {
+
+	    var table = $('#lista_contatos').dataTable({
+		    "oLanguage": {
+		    "sLengthMenu": "Mostrar _MENU_ quantidade por página",
+		    "sZeroRecords": "Retornou nenhum resultado",
+		    "sInfo": "Mostrando _START_ até _END_ de _TOTAL_ total de registros",
+		    "sInfoEmpty": "Mostrando 0 até 0 de 0 total",
+		    "sInfoFiltered": "(filtrado de _MAX_ total de registros)",
+		    'sSearch': 'Filtro',
+		    'oPaginate': {
+				'sFirst':    'Primeiro',
+				'sPrevious': 'Anterior',
+				'sNext':     'Próximo',
+				'sLast':     'Último'
+			    }
+	       }
+	    });
+
+	    table.fnSort( [ [1, 'nome'] ] );
+
+	});
+    </script>
+
+{% endblock js %}
+
+{% block css %}
+
+    <link rel="stylesheet" href="{{ STATIC_URL_TCD }}{{ get_tipo_template|default:'mega' }}/css/jquery.datatables.css" type="text/css" />
+
+{% endblock css %}
+
+{% block content %}
+
+    <div id="header">
+        <div class="container">
+            <div id="logo"><a href="{% url home %}{{ rede.link }}/"><img src="{{ rede|logo }}" border="0" /></a></div>
+			<div id="header-text">{% for i in list_menu %}{% if i.tipo == 'D' %}{{ i.name|safe }}{% endif %}{% endfor %}</div>
+
+            {% for i in list_menu %}
+                {% if i.tipo == 'S' %}
+                    <div id="search">
+                        <form method="get" id="search-form" action="{% url busca rede.link %}">
+                            <div class="form-item">
+                                <input type="text" value="{{ q|default:'' }}" name="q" class="busca" />
+                                {% set_keyboard_buttom get_tipo_template 'top:10px; right:36px;' %}
+                                <button id="search-submit">
+                                    <span>Buscar</span>
+                                </button>
+                            </div>
+                        </form>
+                        {% if rede.link|lower == 'carvalho' %}
+                        	<span class="sub_pesquisa">Pesquisa de Produtos</span>
+                        {% else %}
+                        	<span class="sub_pesquisa">Pesquisa de vídeos</span>
+                        {% endif %}
+                    </div>
+                {% endif %}
+            {% endfor %}
+
+            <div id="menu">
+                <div class="user-button">
+		    {% aproveitamento_count_append list_aproveitamento_account user %}
+                </div>
+		{% if grafico or enquete %}
+		    <div class="enquete">
+			{% if enquete %}
+			    <span class="jewelCount"><span>1</span></span>
+			{% endif %}
+		    </div>
+		{% endif %}
+		{% if technical %}
+		    <div class="technical" {% if not grafico and not enquete %}style="left: 38px;"{% endif %}></div>
+		{% endif %}
+                <div class="menu-button">MENU</div>
+                {% if list_menu|tipobusca %}<div class="search-button"></div>{% endif %}
+                <ul>
+                    {% for i in list_menu %}
+                        {% if i.tipo == 'B' %}
+                        	{% if i.name|lower == 'sair' %}
+                            	<li><a class="btn_logout" href="{% url home %}{{ rede.link }}/{{ i.url }}">{{ i.name|upper }}</a></li>
+                            {% else %}
+                            	<li><a href="{% url home %}{{ rede.link }}/{{ i.url }}">{{ i.name|upper }}</a></li>
+                            {% endif %}
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    {% block bloco %}
+
+        <div id="content">
+            <div class="container {% if not list_treinamento and list_category.0|css_hiraquia_cat == 'custom-category0' %}home{% endif %}">
+
+                {% if interno %}
+                    <div class="path">
+                        {% sub_menu list_category rede list_treinamento list_anexo 2 %}
+			<span class="navegador">Contatos Comerciais</span>
+                    </div>
+                {% endif %}
+		
+		{% if category.0.parent.is_desc_g %}
+		    <div class="path desc_geral">
+                        <img src="{{ category.0.parent|get_image }}" border="0" width="200" />
+			{% if category.0.desc|safe %}
+			    <span>{{ category.0.desc|safe }}</span>
+			{% else %}			    
+			    <span>{{ category.0.parent.desc_g|safe }}</span>
+			{% endif %}
+			<img class="technical" src="{{ category|get_image }}" border="0" width="100" />
+			<div class="clearfix"></div>
+                    </div>
+		{% endif %}
+		
+		<div class="bar clear barra_parceiros">{{ category.0.get_name }}</div>
+		
+		<div class="desc_technical">
+		    <h3>Contatos Comerciais</h3>
+		    <br />
+		    <table width="100%" cellpadding="0" cellspacing="0" border="0" id="lista_contatos">
+			<thead>
+			    <tr>
+				<th>Região</th>
+				<th>Nome</th>
+				<th>E-mail</th>
+				<th>Fone 1</th>
+				<th>Fone 2</th>
+			    </tr>
+			</thead>
+			<tbody>
+			    {% for lc in list_contact %}
+				<tr class="grade{% cycle 'X' 'C' %}">
+				    <td>{{ lc.regiao }}</td>
+				    <td>{{ lc.nome }}</td>
+				    <td><a href="mailto:{{ lc.email }}">{{ lc.email }}</a></td>
+				    <td>{{ lc.fone1 }}</td>
+				    <td>{{ lc.fone2 }}</td>
+				</tr>
+			    {% endfor %}
+			</tbody>
+			<tfoot></tfoot>
+		    </table>
+		</div>
+		
+            </div>
+        </div>
+
+    {% endblock bloco %}
+
+{% endblock content %}

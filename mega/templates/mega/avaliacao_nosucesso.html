@@ -20,19 +20,19 @@
             <div class="container">
 
                 <div class="bar">Resultado da Avaliação</div>
-                
+
                 <div class="wrap">
                     <img src="{{ STATIC_URL }}{{ get_tipo_template }}/images/fail.png" border="0" />
                     <br /><br />
                     <h3>Reprovado!</h3>
                     <p>Infelizmente o usuário {{ user.get_full_name }} acertou somente <strong>{{ porcent }}%</strong> das respostas e a pontuação do teste não foi atingida.</p>
-                    <p>Não se preocupe, nós já enviamos um email para notificá-lo para ele tentar novamente!</p>
+                    <p>Não se preocupe, nós já enviamos um e-mail para notificá-lo para ele tentar novamente!</p>
                 </div>
 
 				<div class="wrap">
                 	<input type="button" value="Concluído" class="buttom" onclick="window.location='{% url home rede.link %}'" style="cursor: pointer;" />
                 </div>
-                    
+
             </div>
         </div>
 

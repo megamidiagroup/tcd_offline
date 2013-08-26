@@ -21,15 +21,29 @@
                                 </button>
                             </div>
                         </form>
-                        <span class="sub_pesquisa">Pesquisa de vídeos</span>
+                        {% if rede.link|lower == 'carvalho' %}
+                        	<span class="sub_pesquisa">Pesquisa de Produtos</span>
+                        {% else %}
+                        	<span class="sub_pesquisa">Pesquisa de vídeos</span>
+                        {% endif %}
                     </div>
                 {% endif %}
             {% endfor %}
 
             <div id="menu">
                 <div class="user-button">
-                	{% aproveitamento_count_append list_aproveitamento_account user %}
+		    {% aproveitamento_count_append list_aproveitamento_account user %}
                 </div>
+		{% if grafico or enquete %}
+		    <div class="enquete">
+			{% if enquete %}
+			    <span class="jewelCount"><span>1</span></span>
+			{% endif %}
+		    </div>
+		{% endif %}
+		{% if technical %}
+		    <div class="technical" {% if not grafico and not enquete %}style="left: 38px;"{% endif %}></div>
+		{% endif %}
                 <div class="menu-button">MENU</div>
                 {% if list_menu|tipobusca %}<div class="search-button"></div>{% endif %}
                 <ul>
@@ -54,9 +68,9 @@
             	<div class="bar">Meus pontos</div>
 		        <div class="wrap">
 		        	<h3><b>{{ pontos|default:0 }}</b> pontos</h3>
-		        	
+
 		        	{% if list_treinamento %}
-		        	
+
 			            <table>
 			            	<thead>
 			                    <tr>
@@ -75,7 +89,7 @@
 	                            {% endfor %}
 			                </tbody>
 			            </table>
-		            
+
 					{% else %}
 
                         <p>Nenhum registro encontrado!</p>
@@ -92,35 +106,61 @@
                     {% else %}
                         <a class="buttom" href="{% url conta rede.link %}?sucesso={% if list_treinamento.count > 0 %}true{% endif %}" >Enviar meus pontos por e-mail</a>
                     {% endif %}
-                    
+
 				</div>
-                    
+
                 <div class="bar">Meus dados</div>
 
                 {% if edit %}
+
                     <div class="wrap">
                         <img src="{{ STATIC_URL }}{{ get_tipo_template }}/images/success.png" border="0" />
-                        <h3>Cadastro salvo com sucesso.</h3>
+                        <h3>Cadastro alterado com sucesso.<br /><br />Clique <a href="{% url home rede.link %}">aqui</a> e realize seus treinamentos.</h3>
                     </div>
+
+                {% else %}
+
+	                <div class="wrap">
+
+				<p><b>Login:       			</b>{{ user.username }}</p>
+
+				{% if rede.link|lower == 'cencosud' %}
+					<p><b>Matricula: </b>{{ user.infouser.matricul }}</p>
+				{% endif %}
+
+	            {% if rede.link == 'ipc' %}
+				    <p><b>Loja:       			</b>{{ user.get_full_name }}</p>
+				    <p><b>CNPJ:        			</b>{% if infouser.cnpj %}{{ infouser.cnpj }}{% endif %}</p>
+				{% else %}
+				    <p><b>Nome:       			</b>{{ user.get_full_name }}</p>
+				    <p><b>CPF:        			</b>{% if infouser.cpf %}{{ infouser.cpf }}{% endif %}</p>
+				{% endif %}
+
+		                <p><b>E-mail:     			</b>{{ user.email }}</p>
+
+		                {% if not rede.link|lower == 'agiplan' %}
+
+			                <p><b>Endereço: 			</b>{% if infouser.endereco %}{{ infouser.endereco }}{% endif %}</p>
+			                <p><b>Bairro: 				</b>{% if infouser.bairro %}{{ infouser.bairro }}{% endif %}</p>
+			                <p><b>CEP: 				    </b>{% if infouser.cep %}{{ infouser.cep }}{% endif %}</p>
+			                <p><b>Estado: 			    </b>{% if infouser.estado %}{{ infouser.estado }}{% endif %}</p>
+			                <p><b>Cidade:				</b>{% if infouser.cidade %}{{ infouser.cidade }}{% endif %}</p>
+			                <p><b>Telefone Comercial: 	</b>{% if infouser.fone_com %}{{ infouser.fone_com }}{% endif %}</p>
+			                <p><b>Telefone Celular: 	</b>{% if infouser.fone_cel %}{{ infouser.fone_cel }}{% endif %}</p>
+
+			            {% endif %}
+
+			            {% if rede.link|lower == 'romera' %}
+			            	<p><b>Loja: 		</b>{% if infouser.filial %}{{ infouser.filial.name }}{% endif %}</p>
+							<p><b>Cargo: 		</b>{% if infouser.cargo %}{{ infouser.cargo }}{% endif %}</p>
+			                <p><b>Admitido em: 	</b>{% if infouser.admissao %}{{ infouser.admissao|date:"d/m/Y" }}{% endif %}</p>
+			            {% endif %}
+
+		                <a class="buttom" href="{% url home %}{{ rede.link }}/conta/edit/" >Editar conta</a>
+
+	                </div>
+
                 {% endif %}
-                
-                <div class="wrap">
-		
-			<p><b>Login:       			</b>{{ user.username }}</p>	
-                	<p><b>Nome:       			</b>{{ user.get_full_name }}</p>
-	                <p><b>CPF:        			</b>{% if infouser.cpf %}{{ infouser.cpf }}{% endif %}</p>
-	                <p><b>E-mail:     			</b>{{ user.email }}</p>
-	                <p><b>Endereço: 			</b>{% if infouser.endereco %}{{ infouser.endereco }}{% endif %}</p>
-	                <p><b>Bairro: 				</b>{% if infouser.bairro %}{{ infouser.bairro }}{% endif %}</p>
-	                <p><b>CEP: 				    </b>{% if infouser.cep %}{{ infouser.cep }}{% endif %}</p>
-	                <p><b>Estado: 			    </b>{% if infouser.estado %}{{ infouser.estado }}{% endif %}</p>
-	                <p><b>Cidade:				</b>{% if infouser.cidade %}{{ infouser.cidade }}{% endif %}</p>
-	                <p><b>Telefone Comercial: 	</b>{% if infouser.fone_com %}{{ infouser.fone_com }}{% endif %}</p>
-	                <p><b>Telefone Celular: 	</b>{% if infouser.fone_cel %}{{ infouser.fone_cel }}{% endif %}</p>
-
-	                <a class="buttom" href="{% url home %}{{ rede.link }}/conta/edit/" >Editar conta</a>
-
-                </div>
 
             </div>
         </div>

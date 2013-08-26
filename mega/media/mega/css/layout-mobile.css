@@ -1,6 +1,9 @@
 .container {width:100%; margin:0 auto; position:relative;}
 .buttom,.buttom2{padding:11px 20px 10px;}
 
+.path span.right_btn_group {width: 100%; margin-top: 10px;}
+.path span.right_btn_group a {}
+
 #header{ padding:0;}
 #header #header-text {margin: 2px 0;position: static;text-align: center;}
 #header #search{position:static; width:100%; top:0; right:0; display:none;}
@@ -14,6 +17,7 @@ border:0; position:absolute; right:0; display:block; top:0;-webkit-border-radius
 #header #menu .search-button{background:url("../images/icon-search.png") no-repeat scroll center center #1a4f64;width:30px; height:30px; position:absolute; overflow:hidden; top:2px; right:2px;}
 #header #menu .user-button{background:url("../images/icon-user.png") no-repeat scroll center center #1a4f64;width:30px; height:30px; position:absolute; overflow:hidden; top:2px; left:2px;}
 #header #menu .enquete{background:url("../images/icon_enquete_thumb.png") no-repeat scroll center center;width:30px; height:30px; position:absolute; overflow:hidden; top:2px; left:38px;}
+#header #menu .technical{background:url("../images/icon_technical_thumb.png") no-repeat scroll center center;width:30px; height:30px; position:absolute; overflow:hidden; top:2px; left:70px;}
 #header #menu ul{display:none;}
 #header #menu ul li{display:block;}
 #header #menu ul li a{filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#005c3d', endColorstr='#003b24');background: -webkit-gradient(linear, left top, left bottom, from(#005c3d), to(#003b24)); background: -moz-linear-gradient(top,  #1a5267,  #063547);float:none; display:block;-webkit-border-radius: 0;-moz-border-radius: 0; border-radius: 0;}
@@ -22,6 +26,15 @@ border:0; position:absolute; right:0; display:block; top:0;-webkit-border-radius
 
 #content div.desc_geral img {float: none; text-align: center; width: 85%; margin: 2% 8%}
 #content div.desc_geral span {float: right; display: block; width: 100%; text-align: center; margin: 0; font-size: 13px;}
+#content div.desc_geral a.technical,
+#content div.desc_geral img.technical {display: block; position: relative; left: 0px}
+#content div.desc_geral a.technical img,
+#content div.desc_geral img.technical {width: 100px}
+
+#content div.desc_technical div.right {width: 100%}
+#content div.desc_technical div.right textarea {width: 100%}
+#content div.desc_technical div.left {width: 100%}
+#content div.desc_technical table {font-size: 11px}
 
 #content ul.category li,
 #content ul.category2 li{display:block; width:100%; float:none;}
@@ -33,9 +46,12 @@ border:0; position:absolute; right:0; display:block; top:0;-webkit-border-radius
 #content ul.category li h2,
 #content ul.category2 li h2{font-size:1.6em; margin-bottom:5px;text-align: left;}
 #content ul.category li span,
-#content ul.category2 li span{font-size:1.2em;}
+#content ul.category2 li span{font-size:1.2em;min-height: auto}
+
+#content ul.videos li p.msg_block{top: 10px}
 
 #content .video .player{width:320px; height:180px; margin:0 auto 10px; float:none;}
+#content .video div.vitrine{width:260px; margin:0 auto 10px; float:none;}
 #content .video .playerlive{width:320px; height:180px; margin:0 auto 10px; float:none;}
 #content .video .player object{width:320px; height:180px;}
 #content .video .description{width:100%; height:auto; margin-bottom:10px; float:none;}
@@ -45,6 +61,8 @@ border:0; position:absolute; right:0; display:block; top:0;-webkit-border-radius
 #content .video .descriptionlive .ocultos .input textarea{border: 1px solid #ccc;width: 100%;}
 #content .video iframe.elearning{width: 95%}
 
+#content .instrucao{width: 75%; margin: 5px 30px;}
+#content .instrucao span.aspas{margin-left: -40px}
 #content #questions .number{font-size:2.4em;}
 #content #questions .question{font-size:1.6em;}
 
@@ -62,11 +80,23 @@ border:0; position:absolute; right:0; display:block; top:0;-webkit-border-radius
 #enquete-widget #enquete > div{ background:none repeat scroll 0 0 #fff; height:auto; min-height:50px; border: none;-webkit-border-radius: 0;-moz-border-radius:0;border-radius: 0;box-shadow:none;}
 #enquete-widget #enquete .arrow{display:none;}
 
+#technical-widget{position:static; top:0; right:0;box-shadow:none; border:none;}
+#technical-widget .technical{margin:0; display:none;}
+#technical-widget #technical{width:100%; display:block;position:static; top:0; right:0; padding:0; border:none;}
+#technical-widget #technical > div{ background:none repeat scroll 0 0 #fff; height:auto; min-height:50px; border: none;-webkit-border-radius: 0;-moz-border-radius:0;border-radius: 0;box-shadow:none;}
+#technical-widget #technical .arrow{display:none;}
+#technical-widget #technical input{width:100%}
+
 #login {height:auto; margin:0px; position:static; width:100%; }
 #login form{padding:20px 20px; margin:10px;}
 #login form input.buttom{width:50%; padding:11px 20px 10px;}
+#content ul.category li p.msg_block{top: 15px}
 #content ul.category li div.no-name-category,
 #content ul.category2 li div.no-name-category {text-align: center;width: 100%;}
 .tia {display: none;}
 #account-widget .jewelCount, #enquete-widget .jewelCount {display: none;}
 #menu .user-button .jewelCount, #menu .enquete .jewelCount{display: block;right: 0px;left: auto;}
+
+#content ul.satisfacao1 {width: 100%}
+
+#content ul.satisfacao2 {display: none}

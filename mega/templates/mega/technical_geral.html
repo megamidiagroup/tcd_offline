@@ -1,0 +1,179 @@
+﻿{% extends 'mega/main.html' %}
+
+{% load util keyboard %}
+
+{% block content %}
+
+	{% set_keyboard get_tipo_template "input[name='qt']|input" 0 'keyboard2' %}
+
+    <div id="header">
+        <div class="container">
+            <div id="logo"><a href="{% url home %}{{ rede.link }}/"><img src="{{ rede|logo }}" border="0" /></a></div>
+			<div id="header-text">{% for i in list_menu %}{% if i.tipo == 'D' %}{{ i.name|safe }}{% endif %}{% endfor %}</div>
+
+            {% for i in list_menu %}
+                {% if i.tipo == 'S' %}
+                    <div id="search">
+                        <form method="get" id="search-form" action="{% url busca rede.link %}">
+                            <div class="form-item">
+                                <input type="text" value="{{ q|default:'' }}" name="q" class="busca" />
+                                {% set_keyboard_buttom get_tipo_template 'top:10px; right:36px;' %}
+                                <button id="search-submit">
+                                    <span>Buscar</span>
+                                </button>
+                            </div>
+                        </form>
+                        {% if rede.link|lower == 'carvalho' %}
+                        	<span class="sub_pesquisa">Pesquisa de Produtos</span>
+                        {% else %}
+                        	<span class="sub_pesquisa">Pesquisa de vídeos</span>
+                        {% endif %}
+                    </div>
+                {% endif %}
+            {% endfor %}
+
+            <div id="menu">
+                <div class="user-button">
+		    {% aproveitamento_count_append list_aproveitamento_account user %}
+                </div>
+		{% if grafico or enquete %}
+		    <div class="enquete">
+			{% if enquete %}
+			    <span class="jewelCount"><span>1</span></span>
+			{% endif %}
+		    </div>
+		{% endif %}
+		{% if technical %}
+		    <div class="technical" {% if not grafico and not enquete %}style="left: 38px;"{% endif %}></div>
+		{% endif %}
+                <div class="menu-button">MENU</div>
+                {% if list_menu|tipobusca %}<div class="search-button"></div>{% endif %}
+                <ul>
+                    {% for i in list_menu %}
+                        {% if i.tipo == 'B' %}
+                        	{% if i.name|lower == 'sair' %}
+                            	<li><a class="btn_logout" href="{% url home %}{{ rede.link }}/{{ i.url }}">{{ i.name|upper }}</a></li>
+                            {% else %}
+                            	<li><a href="{% url home %}{{ rede.link }}/{{ i.url }}">{{ i.name|upper }}</a></li>
+                            {% endif %}
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    {% block bloco %}
+
+        <div id="content">
+            <div class="container {% if not list_treinamento and list_category.0|css_hiraquia_cat == 'custom-category0' %}home{% endif %}">
+
+                {% if interno %}
+                    <div class="path">
+                        {% sub_menu list_category rede list_treinamento list_anexo 1 %}
+						<span class="navegador">Informações Gerais</span>
+                    </div>
+                {% endif %}
+
+				<div class="bar clear barra_parceiros">Pasta técnica virtual</div>
+
+				<div class="desc_technical" id="technical-widget" style="top: 0; z-index: 1000">
+					<div class="left">
+
+				    	{% if qt and list_technical.count > 1 %}
+							<p>A busca retornou mais de um resultado, favor selecionar uma opção ao lado.</p>
+				    	{% else %}
+						    {% if list_technical.count == 1 and list_technical.0.text|striptags|length < 10 %}
+								<p>A busca retornou uma {{ list_technical.0.tipo_categoria }} vazia.</p>
+						    {% else %}
+						    	{% if not qt or list_technical.count == 1 %}
+
+						    	{% else %}
+							    	{% if category %}
+										<p>A busca não retornou resultado.</p>
+							    	{% endif %}
+							    {% endif %}
+						    {% endif %}
+					    {% endif %}
+
+					    {% if list_technical.count == 1 and list_technical.0.text|striptags|length < 10 %}
+
+					    {% else %}
+					    	{% if list_technical.count == 1 %}
+								{{ list_technical.0.text|safe }}
+					    	{% else %}
+							    {% if list_technical.count == 0 %}
+									<p class="border">Faça novamente uma busca ou navegue nas categorias.</p>
+							    {% else %}
+							    	{% if qt and list_technical.count > 1 %}
+
+								    {% else %}
+									    {% if category.0.text|striptags|length > 10 %}
+											{{ category.0.text|safe }}
+									    {% else %}
+									    	{% if category %}
+										    	{% if category.0.text|striptags == 'None' or category.0.text|striptags == '' %}
+										    		<p class="border">Sem conteúdo</p>
+										    	{% endif %}
+										    {% else %}
+												{{ list_technical.0.text|safe }}
+										   	{% endif %}
+										{% endif %}
+									{% endif %}
+								{% endif %}
+							{% endif %}
+						{% endif %}
+				    </div>
+
+					<div id="technical">
+			            <div class="shadow" style="padding: 0">
+
+							<ul>
+
+								<li>
+									<form action="./" id="search-form" method="get">
+			                            <div class="form-item">
+			                                <input type="text" class="busca_technical" name="qt" value="{{ qt }}">
+			                                {% set_keyboard_buttom get_tipo_template 'top:10px; right:36px;' 'keyboard2' %}
+			                                <button id="search-submit">
+			                                    <span>Buscar</span>
+			                                </button>
+			                            </div>
+			                        </form>
+								</li>
+
+							    {% for ltc in list_technical_category %}
+									{% for ltc0 in ltc %}
+									    <li class="nivel{{ forloop.counter0 }} {% if not forloop.first %}bloco{% endif %}" style="display: {{ ltc0.display }}">
+											{% if forloop.last %}
+												- <a href="{% url technical_geral rede.link ltc0.id|get_technical_id %}{{ ltc0.label|slugify }}">{{ ltc0.label }}</a>
+											{% else %}
+											    {% if forloop.first %}
+													<span style="font-size: 13px">{{ ltc0.label }}</span>
+											    {% else %}
+													{{ ltc0.label }}
+											    {% endif %}
+											{% endif %}
+									    </li>
+									{% endfor %}
+								{% empty %}
+									<li class="nivel0">Sem resultado</li>
+							    {% endfor %}
+
+							</ul>
+
+			            </div>
+			        </div>
+
+				</div>
+
+				<div class="clear"></div>
+
+				<div class="bar clear barra_mais" style="">Quer saber mais? Então, acesse o ambiente de cada fornecedor na Plataforma</div>
+
+            </div>
+        </div>
+
+    {% endblock bloco %}
+
+{% endblock content %}

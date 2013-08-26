@@ -1,69 +1,100 @@
 var initial = false;
 
 $(function() {
-	
+
 	// para proteger ie6
 	if ($.browser.msie == true && $.browser.version <= 6){
 		var url = $(".no-ie6").attr("url");
 		$(".no-ie6").load(url + "noie6/");
 	}
-	
+
 	var viewportWidth = $(window).width();
-	
+
 	$(".menu-button").click(function(){
 		$("#header #menu ul").slideToggle("slow");
 	});
 	
+	if ($('.nops-user-button').length )$('.user-button').css('display', 'none');
+
 	$(".search-button").click(function(){
 		$("#search").slideToggle();
 	});
-	
+
 	$("#menu .user-button").click(function(){
 		$("#account").slideToggle();
 		$("#enquete").slideUp();
 	});
-	
+
 	$("#menu .enquete").click(function(){
 		$("#enquete").slideToggle();
 		$("#account").slideUp();
 	});
-	
+
+	$("#menu .technical").click(function(){
+		window.location = $('a.technical').attr('href');
+	});
+
 	$(".certified h5 a").click(function(e){
 		e.preventDefault();
 		$(this).parent().parent().find(".courses").slideToggle();
 	});
-	
+
 	$("#account-widget .user-account").click(function(e){
 		e.preventDefault();
 		e.stopPropagation();
 		$("#account").toggle();
 		$('#enquete').hide();
 	});
-	
+
 	$("#enquete-widget .enquete").click(function(e){
 		e.preventDefault();
 		e.stopPropagation();
 		$("#enquete").toggle();
 		$('#account').hide();
 	});
-	
+
+	/*
+	$("#technical-widget .technical").click(function(e){
+		e.preventDefault();
+		e.stopPropagation();
+		$("#technical").toggle();
+		$('#account, #enquete').hide();
+	});
+	*/
+
 	$(document).click(function(event)
 	{
-		if(!$('#account-widget .user-account').is(':visible')){return;};
-		if($('#account').is(':visible') && $(event.target).parents("#account").length == 0)
+		if ( $('#account-widget').length )
 		{
-			$('#account').hide();
+			if(!$('#account-widget .user-account').is(':visible')){return;};
+			if($('#account').is(':visible') && $(event.target).parents("#account").length == 0)
+			{
+				$('#account').hide();
+			}
 		}
-		if(!$('#enquete-widget .enquete').is(':visible')){return;};
-		if($('#enquete').is(':visible') && $(event.target).parents("#enquete").length == 0)
+		if ( $('#enquete-widget').length )
 		{
-			$('#enquete').hide();
+			if(!$('#enquete-widget .enquete').is(':visible')){return;};
+			if($('#enquete').is(':visible') && $(event.target).parents("#enquete").length == 0)
+			{
+				$('#enquete').hide();
+			}
 		}
-	}); 
-	
+		/*
+		if ( $('#technical-widget').length )
+		{
+			if(!$('#technical-widget .technical').is(':visible')){return;};
+			if($('#technical').is(':visible') && $(event.target).parents("#technical").length == 0)
+			{
+				$('#technical').hide();
+			}
+		}
+		*/
+	});
+
 	$('#enquete-widget #enquete input[type=radio]').click(function(e){
 		$('.btn').css('display', 'block');
-	});      
+	});
 
 	$(window).resize(function() {
 		var w = $(window).width();
@@ -72,18 +103,18 @@ $(function() {
 			$("#header #menu ul").show();
 			$("#search").show();
 		}
-		
+
 		if(viewportWidth != w)
 		{
 			viewportWidth = w;
 			if($(".player").length)updatePlayer($(".player").width(), $(".player").height());
 		}
-		
+
 		$('#content').css('height', 'auto');
-		
+
 		ajustaRodape();
 	});
-	
+
 	function ajustaRodape()
 	{
 		var bodyHeight = $('body').outerHeight();
@@ -94,34 +125,46 @@ $(function() {
 			$('#content').css('min-height', newHeight);
 		}
 	}
-	
-	var count_total = 0;
-    var count_load  = 0;
-         
-    $('#content img').each(function(e){
-    	count_total++;
-        $(this).css({'display' : 'none'});
-    });
-   
-	$("#content img").one('load', function() {
-         count_load++;
-         $(this).fadeIn(1000);
-         if (count_total == count_load){setTimeout(ajustaRodape, 10);}
-    }).each(function() {
-         if(this.complete) $(this).load();
-    }) 
-    
-    if (count_total == 0){setTimeout(ajustaRodape, 10);}
+
+	$('#content img').each(function(e){
+    	var src        = $(this).attr('src');
+    	var static_url = $('.static_url').attr('media');
+    	$(this).attr('src', static_url + 'images/grey.gif');
+    	$(this).attr('data-original', src);
+	});
+
+	$("#content img").lazyload({
+		effect : "fadeIn",
+		appear : function(elements_left, settings) {
+			//console.log(this, elements_left, settings);
+			ajustaRodape();
+		}
+	});
+
+	setTimeout(ajustaRodape, 10);
+
+	$('#content ul.videos li a.disabled, ' +
+		'#content .related-videos li a.disabled, ' +
+			'#account-widget #account .courses li a.disabled, ' +
+				'#content ul.category li a.disabled'
+	).each(function(e){
+		$(this).css('opacity', .3).attr('href', 'javascript:void(0);').attr('onclick', '$(this).parent().find("p.msg_block").fadeIn().delay(3000).fadeOut(200)');
+	});
 
     $('.flexslider').flexslider();
-	
+
+    if ( $("a.btn_overlay").length )
+	{
+		$("a.btn_overlay").css('opacity', .3);
+	}
+
 	var buttom = $('.btn_logout');
-	
+
 	buttom.attr('onclick', 'if (confirm("Deseja sair do sistema?")){window.location="' + buttom.attr('href') + '";}');
 	buttom.attr('href', 'javascript:void(0);');
-	
+
 	if($(".player").length)updatePlayer($(".player").width(), $(".player").height());
-	
+
 });
 
 function open_anexo(obj)
@@ -194,7 +237,7 @@ function open_send_faq_initial(obj)
 
 function send_faq(obj, url, token)
 {
-	
+
 	var box = $(obj).parent().parent();
 
 	if ( box.find('textarea').val().length == 0 )
@@ -207,19 +250,19 @@ function send_faq(obj, url, token)
 			box.find(".error").html('<span style="color: red">A pergunta está muito curta, digite com mais números de caracteres.</span>');
 			box.find('textarea').focus();
 		} else {
-			
+
 			$(obj).val('Aguarde...').attr('disabled', true);
-	    	
+
 	    	$.ajax({
 				url: url,
 				type: 'POST',
 				data: { csrfmiddlewaretoken : token, msg : box.find('textarea').val() },
 				dataType: 'script',
 				success: function(r) {
-					
+
 				}
 			});
-			
+
 		}
 	}
 }
@@ -233,7 +276,7 @@ function _clear_send_faq()
 {
 
 	var obj = $('.faq_video fieldset');
-	
+
 	if ( obj.attr('value') == 'true' )
 	{
 		obj.find('ul.send_faq').slideUp("slow");
@@ -248,7 +291,48 @@ function _clear_send_faq()
 		obj.find(".error").html('');
 		obj.find("input[name=send_faq]").val('Enviar').attr('disabled', false);
 	}
-	
+
+}
+
+function send_ajax_etechnical($this, textarea, error, token)
+{
+	var text = $('textarea[name=' + textarea + ']');
+	var btn  = $($this);
+
+	$('span.' + error).css("color", "red");
+
+	if ( btn.html() == 'Enviar' )
+	{
+
+		if ( text.val().length == 0 )
+		{
+			$('span.' + error).html('* Preencha o campo com sua mensagem.').fadeIn();
+			text.focus();
+		} else {
+			if ( text.val().length < 8 )
+			{
+				$('span.' + error).html('* Sua mensagem está muito curta.').fadeIn();
+				text.focus();
+			} else {
+				$('span.' + error).html('').fadeOut(100);
+				btn.html('ENVIANDO...').css('opacity', .5);
+				text.attr('disabled', true);
+
+				$.ajax({
+					url: btn.attr('action'),
+					type: 'POST',
+					data: { csrfmiddlewaretoken : token, msg : text.val() },
+					dataType: 'script',
+					success: function(r) {
+
+					}
+				});
+
+			}
+		}
+
+	}
+
 }
 
 function set_mask(yes){}

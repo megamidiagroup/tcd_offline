@@ -253,6 +253,8 @@ def category(request, rede=None, cat_id=None):
     p = _prepare_vars(request, rede)
 
     p['class'] = ''
+    
+    p['list_anexo'] = None
 
     if not p['rede']:
         return HttpResponseRedirect('/login/')
@@ -287,13 +289,121 @@ def category(request, rede=None, cat_id=None):
 
 @login_required
 @cache_page(settings.CACHES['default']['TIMEOUT'])
+def technical(request, rede=None, cat_id=None):
+
+    p = _prepare_vars(request, rede)
+
+    p['class'] = ''
+
+    if not p['rede']:
+        return HttpResponseRedirect('/login/')
+
+    list_category      = Category.objects.filter( Q(rede = p['rede']) & Q(visible=True) & Q(tipo = 1) ).order_by('order', 'name')
+
+    p['category']      = list_category.filter(id = int(cat_id))
+    p['list_category'] = Category.objects.filter( Q(rede = p['rede']) & Q(visible=True) & Q(tipo = 0) & Q(parent__id = int(cat_id)) ).order_by('order', 'name')
+    p['list_banner']   = Banner.objects.filter( Q(rede = p['rede']) & Q(visible=True) & Q(category__id = int(cat_id)) ).order_by('order', 'name')
+    p['list_parceiro'] = Parceiro.objects.filter( Q(rede = p['rede']) & Q(category__id = int(cat_id)) & Q(visible=True) ).order_by('order', 'name')
+
+    # regras para usuário restrito
+    if not p['is_access']:
+        p['list_category'] = p['list_category'].filter( Q(access = p['is_access']) ).order_by('order', 'name')
+        if not list_category.filter( Q(id = int(cat_id)) & Q(access = p['is_access']) ):
+            return HttpResponseRedirect('/%s/' % p['rede'].link)
+
+    # regras para quem está em uma filial
+    if p['is_filial']:
+        p['list_category'] = p['list_category'].filter( Q(filial__isnull = True) | Q(filial = p['is_filial']) ).order_by('order', 'name')
+        if not list_category.filter( Q(id = int(cat_id)) & ( Q(filial__isnull = True) | Q(filial = p['is_filial']) ) ):
+            return HttpResponseRedirect('/%s/' % p['rede'].link)
+
+    p['url_logo'] = p['rede'].logo.url
+    p['interno']  = True
+
+    if not p['list_category']:
+        p['list_treinamento'] = Treinamento.objects.filter( Q(rede = p['rede']) & Q(visible=True) & Q(category__id = int(cat_id)) ).order_by('order', 'name')
+
+    if p['category'].count() > 0:
+        #p['list_anexo']   = Anexo.objects.filter( Q(visible = True) & Q(rede = p['rede']) & Q(category = p['category'][0]) ).order_by('-date', 'name')
+        p['list_contact'] = ContatoComercial.objects.filter( Q(visible = True) & Q(rede = p['rede']) & Q(category = p['category'][0]) ).order_by('nome')
+
+    return render_to_response('%s/technical.html' % p['get_tipo_template'], p, context_instance=RequestContext(request))
+
+
+@login_required
+@cache_page(settings.CACHES['default']['TIMEOUT'])
+def technical_detail(request, rede=None, cat_id=None):
+
+    p = _prepare_vars(request, rede)
+
+    p['class'] = ''
+
+    if not p['rede']:
+        return HttpResponseRedirect('/login/')
+
+    list_category      = Category.objects.filter( Q(rede = p['rede']) & Q(visible=True) & Q(tipo = 1) ).order_by('order', 'name')
+
+    p['category']      = list_category.filter(id = int(cat_id))
+    p['list_category'] = Category.objects.filter( Q(rede = p['rede']) & Q(visible=True) & Q(tipo = 0) & Q(parent__id = int(cat_id)) ).order_by('order', 'name')
+
+    # regras para usuário restrito
+    if not p['is_access']:
+        p['list_category'] = p['list_category'].filter( Q(access = p['is_access']) ).order_by('order', 'name')
+        if not list_category.filter( Q(id = int(cat_id)) & Q(access = p['is_access']) ):
+            return HttpResponseRedirect('/%s/' % p['rede'].link)
+
+    # regras para quem está em uma filial
+    if p['is_filial']:
+        p['list_category'] = p['list_category'].filter( Q(filial__isnull = True) | Q(filial = p['is_filial']) ).order_by('order', 'name')
+        if not list_category.filter( Q(id = int(cat_id)) & ( Q(filial__isnull = True) | Q(filial = p['is_filial']) ) ):
+            return HttpResponseRedirect('/%s/' % p['rede'].link)
+
+    p['url_logo'] = p['rede'].logo.url
+    p['interno']  = True
+
+    if not p['list_category']:
+        p['list_treinamento'] = Treinamento.objects.filter( Q(rede = p['rede']) & Q(visible=True) & Q(category__id = int(cat_id)) ).order_by('order', 'name')
+
+    if p['category'].count() > 0:
+        #p['list_anexo']   = Anexo.objects.filter( Q(visible = True) & Q(rede = p['rede']) & Q(category = p['category'][0]) ).order_by('-date', 'name')
+        p['list_contact'] = ContatoComercial.objects.filter( Q(visible = True) & Q(rede = p['rede']) & Q(category = p['category'][0]) ).order_by('nome')
+
+    return render_to_response('%s/technical_detail.html' % p['get_tipo_template'], p, context_instance=RequestContext(request))
+
+
+@login_required
+@cache_page(settings.CACHES['default']['TIMEOUT'])
+def technical_geral(request, rede=None, cat_id=0):
+
+    p = _prepare_vars(request, rede)
+
+    p['qt'] = request.REQUEST.get('qt', '')
+
+    p['category']       = None
+    p['interno']        = True
+    p['list_technical'] = None
+
+    util_technical(p, rede=p['rede'])
+
+    if int(cat_id) > 0:
+        p['category'] = Category.objects.filter( Q(visible = True) & Q(id = int(cat_id)) )
+
+    if 'qt' in p and len(p['qt']) > 0:
+        p['list_technical'] = Category.objects.filter( Q(rede = p['rede']) & Q(visible=True) & Q(tipo = 1) & (Q(text__icontains = p['qt']) | Q(name__icontains = p['qt'])) ).order_by('name', 'order')
+
+    return render_to_response('%s/technical_geral.html' % p['get_tipo_template'], p, context_instance=RequestContext(request))
+
+
+
+@login_required
+@cache_page(settings.CACHES['default']['TIMEOUT'])
 def treinamento(request, rede=None, video_id=None):
 
     p = _prepare_vars(request, rede)
 
     p['class'] = ''
 
-    p['list_anexo'] = None
+    #p['list_anexo'] = None
 
     if not p['rede']:
         return HttpResponseRedirect('/login/')
@@ -316,7 +426,7 @@ def treinamento(request, rede=None, video_id=None):
         if video_relacionado(video, p['user']) == 'disabled':
             return HttpResponseRedirect(reverse('category', args=(p['rede'].link, video.category.id,)))
 
-        p['list_anexo'] = Anexo.objects.filter( Q(visible = True) & Q(rede = p['rede']) & Q(treinamento = video) ).order_by('name')
+        #p['list_anexo'] = Anexo.objects.filter( Q(visible = True) & Q(rede = p['rede']) & Q(treinamento = video) ).order_by('name')
         if is_not_video(video) == 'elearning':
             return HttpResponseRedirect('/%s/elearning/%s/' % (p['rede'].link, video.id) )
 
@@ -431,6 +541,31 @@ def elearning(request, rede=None, video_id=None):
         return HttpResponseRedirect('/%s/' % p['rede'].link)
 
     return render_to_response('%s/elearning.html' % p['get_tipo_template'], p, context_instance=RequestContext(request))
+
+
+@login_required
+@cache_page(settings.CACHES['default']['TIMEOUT'])
+def vitrine(request, rede=None, video_id=None):
+
+    p = _prepare_vars(request, rede)
+
+    if not p['rede']:
+        return HttpResponseRedirect('/login/')
+
+    p['url_logo']   = p['rede'].logo.url
+    p['list_video'] = Treinamento.objects.filter( Q(rede = p['rede']) & Q(visible=True) & Q(id = int(video_id)) & Q(tipo_t = 2) ).order_by('order', 'name')
+
+    # regras para usuário restrito
+    if not p['is_access']:
+        if p['list_video'] and not p['list_video'].filter( Q(category__access = p['is_access']) ):
+            return HttpResponseRedirect('/%s/' % p['rede'].link)
+
+    # regras para quem está em uma filial
+    if p['is_filial']:
+        if p['list_video'] and not p['list_video'].filter( Q(category__filial__isnull = True) | Q(category__filial = p['is_filial']) ):
+            return HttpResponseRedirect('/%s/' % p['rede'].link)
+
+    return render_to_response('%s/vitrine.html' % p['get_tipo_template'], p, context_instance=RequestContext(request))
 
 
 @login_required
@@ -1987,6 +2122,28 @@ def retornopagamento(request, rede=None):
     return HttpResponse('ok')
 
 
+def docs(request, rede=None, category_id=0):
+
+    p = _prepare_vars(request, rede)
+
+    p['list_category'] = Category.objects.filter( Q(visible = True) & Q(name = u'DOCS') )
+
+    if category_id and int(category_id) > 0 and p['list_category'].count() > 0:
+        p['list_category'] = p['list_category'][0].category_set.filter( Q(visible = True) & Q(id = int(category_id)) ).order_by('order', 'name')
+
+    ane = Anexo.objects.filter(visible = True)
+
+    if p['list_category'].count() > 0:
+        if ane.filter(category = p['list_category'][0]).count() > 0:
+            p['list_treinamento'] = ane.filter(category = p['list_category'][0])
+            p['list_category']    = []
+        else:
+            p['list_category']    = p['list_category'][0].category_set.filter(visible = True).order_by('order', 'name')
+            p['list_treinamento'] = []
+
+    return render_to_response('%s/docs.html' % p['get_tipo_template'], p, context_instance=RequestContext(request))
+
+
 def widget_video(request, rede=None, video_id=0):
 
     p = _prepare_vars(request, rede)
@@ -2007,6 +2164,47 @@ def ajax_check_mail(request, rede=None):
     if _is_valid_email(p['email']):
         r = UserAdmin.objects.filter( Q(username__exact=p['email']) ).count()
     _user_delete
+    return HttpResponse(r)
+
+
+@login_required
+def ajax_etechnical(request, rede=None, cat_id=0):
+
+    p = _prepare_vars(request, rede)
+
+    p['msg'] = request.REQUEST.get('msg', '')
+
+    category = Category.objects.get(id = int(cat_id))
+
+    if category.is_email and len(category.email) > 0:
+        if not _send_email_etechnical(category, p, request):
+            return HttpResponse('$("a.buttom").html("Enviar").css("opacity", 1);$("span.error").css("color", "red").html("Erro, não foi possível enviar.").fadeIn();$("textarea[name=txt_msg]").attr("disabled", false);')
+    else:
+        return HttpResponse('$("a.buttom").html("Enviar").css("opacity", 1);$("span.error").css("color", "red").html("Erro, nenhum e-mail cadastrado.").fadeIn();$("textarea[name=txt_msg]").attr("disabled", false);')
+
+    sleep(1)
+
+    return HttpResponse('$("a.buttom").html("Enviar").css("opacity", 1);$("span.error").css("color", "green").html("Mensagem enviada com sucesso.").fadeIn().delay(3000).fadeOut(200).html('');$("textarea[name=txt_msg]").val("").attr("disabled", false);')
+
+
+def ajax_aviso(request, rede=None, id=0):
+
+    p = _prepare_vars(request, rede)
+
+    p['is_not'] = request.REQUEST.get('is_not', 0)
+
+    try:
+        aviso = Aviso.objects.get( id = int(id) )
+        if p['is_not'] == 'true':
+            aviso.is_not_view.add(request.user)
+        else:
+            aviso.is_not_view.remove(request.user)
+        aviso.save()
+    except:
+        r = 'alert("%s");' % 'Houve um erro no servidor'
+
+    r = ''
+
     return HttpResponse(r)
 
 

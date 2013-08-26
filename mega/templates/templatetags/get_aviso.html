@@ -1,0 +1,77 @@
+{% load util %}
+
+{% if aviso %}
+
+    <div class="class_modal_aviso" id="modal" style="display:none;width: {{ aviso.0.image.width }}px;">
+        <p>
+		    {% if aviso.0.is_video and aviso.0.code %}
+			<a class="btn_link" href="javascript:void(0);" onclick="$(this).css('display', 'none');$('.box_video').css('display', 'block');$.modal2.resize();">
+			    <img src="{{ aviso|get_image }}" border="0" />
+			</a>
+			<p class="box_video" style="display: none">
+			    {% megavideo rede.link aviso.0.code 0 aviso.0.image.width %}
+			</p>
+		    {% else %}
+			<a class="btn_link" href="{{ aviso.0.link }}">
+			    <img src="{{ aviso|get_image }}" border="0" />
+			</a>
+		    {% endif %}
+		</p>
+	{% if aviso.0.is_persistent %}
+	    <p>
+			<label>
+			    <input name="is_not" value="1" type="checkbox" /> Não desejo mais visualizar essa mensagem.
+			</label>
+	    </p>
+	{% endif %}
+
+    </div>
+
+    <script type="text/javascript">
+
+    	function set_resize_aviso()
+    	{
+    		$('div.class_modal_aviso').css('margin-left', '-' + (($('div.class_modal_aviso').width() / 2) + 15) + 'px')
+			if($(document).width() < ({{ aviso.0.image.width }} + 50 ))
+	    	{
+	    		$('div.class_modal_aviso').css('width', '90%').find('p a img').css('width', '100%');
+	    	} else {
+	    		$('div.class_modal_aviso').css('width', '{{ aviso.0.image.width }}px').find('p a img').css('width', '100%');
+	    	}
+	    	$.modal2.resize();
+    	}
+
+    	$(window).resize(function() {
+			set_resize_aviso();
+		});
+		set_resize_aviso();
+
+        if ( $('#modal').length )
+		{
+		    $('#modal').modal2({
+				escapeClose: false,
+				clickClose: false,
+				showClose: true,
+				zIndex: 10001
+		    });
+		    $.modal2.resize();
+		    if ( $('input[name=is_not]').length )
+		    {
+				$('input[name=is_not]').change(function(e){
+				    var input = $('input[name=is_not]').is(':checked');
+				    $.ajax({
+					    url: '{% url ajax_aviso rede.link aviso.0.id %}',
+					    type: 'POST',
+					    data: { csrfmiddlewaretoken : '{{ csrf_token }}', is_not : input },
+					    dataType: 'script',
+					    success: function(r) {
+
+					    }
+				    });
+				});
+			}
+		}
+
+    </script>
+
+{% endif %}
