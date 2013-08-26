@@ -34,7 +34,7 @@ from django.core.mail import send_mail, BadHeaderError
 from models import *
 from datetime import datetime
 from time import sleep
-from templatetags.util import list_id_certificado, encode_object, decode_object, is_not_video
+from templatetags.util import list_id_certificado, encode_object, decode_object, is_not_video, video_relacionado
 from state.models import City, State
 from mobile import get_mobile
 from dlog import LOGGER
@@ -313,11 +313,12 @@ def treinamento(request, rede=None, video_id=None):
 
     if p['list_video'] and p['list_video'].count() > 0:
         video = p['list_video'][0]
+        if video_relacionado(video, p['user']) == 'disabled':
+            return HttpResponseRedirect(reverse('category', args=(p['rede'].link, video.category.id,)))
+
         p['list_anexo'] = Anexo.objects.filter( Q(visible = True) & Q(rede = p['rede']) & Q(treinamento = video) ).order_by('name')
         if is_not_video(video) == 'elearning':
             return HttpResponseRedirect('/%s/elearning/%s/' % (p['rede'].link, video.id) )
-
-    p['elearning'] = Elearning.objects.filter( Q(rede = p['rede']) & Q(visible=True) & Q(treinamento__in = p['list_video']) ).count() > 0
 
     return render_to_response('%s/treinamento.html' % p['get_tipo_template'], p, context_instance=RequestContext(request))
 
@@ -409,9 +410,9 @@ def elearning(request, rede=None, video_id=None):
         if p['list_video'] and not p['list_video'].filter( Q(category__filial__isnull = True) | Q(category__filial = p['is_filial']) ):
             return HttpResponseRedirect('/%s/' % p['rede'].link)
 
-    dir   = settings.MEDIA_ROOT + settings.UPLOAD_STORAGE_DIR + 'uploads/elearning/'
+    dir   = settings.STORAGE + 'uploads/elearning/'
 
-    elear = Elearning.objects.filter( Q(rede = p['rede']) & Q(visible=True) & Q(treinamento__in = p['list_video']) )
+    elear = p['list_video']
 
     if elear.count() > 0:
         elear   = elear[0]
