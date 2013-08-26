@@ -45,12 +45,14 @@ except:
 
 # Create your models here.
 
-CHOICE_SEXO     = (('M', u'Masculino'), ('F', u'Feminino'),)
-CHOICE_TIPO     = (('B', u'Botão'), ('S', u'Busca'), ('D', u'Destaque'),)
-CHOICE_SERVER   = (('M', u'MegaVideo'), ('B', u'brightcove.com'), ('K', u'kaltura.org'), ('L', u'Live'),)
-CHOICE_RESEND   = (('I', u'Imediato'), ('U', u'Uma vez'), ('D', u'Diário'), ('S', u'Semanal'), ('M', u'Mensal'), ('A', u'Anual'),)
+CHOICE_SEXO         = (('M', u'Masculino'), ('F', u'Feminino'),)
+CHOICE_TIPO         = (('B', u'Botão'), ('S', u'Busca'), ('D', u'Destaque'),)
+CHOICE_SERVER       = (('M', u'MegaVideo'), ('B', u'brightcove.com'), ('K', u'kaltura.org'),) ## ('L', u'Live'),)
+CHOICE_RESEND       = (('I', u'Imediato'), ('U', u'Uma vez'), ('D', u'Diário'), ('S', u'Semanal'), ('M', u'Mensal'), ('A', u'Anual'),)
+CHOICE_CATEGORY     = ((0, u'Padrão'), (1, u'Pasta Técnica'),)
+CHOICE_TREINAMENTO  = ((0, u'Vídeo'), (1, u'Página Genérica'), (2, u'Vitrine Virtual'),)
 
-default_mes     = {1:u'Janeiro', 2:u'Fevereiro', 3:u'Março', 4:u'Abril', 5:u'Maio', 6:u'Junho', 7:u'Julho', 8:u'Agosto',
+default_mes         = {1:u'Janeiro', 2:u'Fevereiro', 3:u'Março', 4:u'Abril', 5:u'Maio', 6:u'Junho', 7:u'Julho', 8:u'Agosto',
                         9:u'Setembro', 10:u'Outubro', 11:u'Novembro', 12:u'Dezembro'}
 
 
@@ -66,6 +68,7 @@ class Rede(models.Model):
     name      = models.CharField(max_length = 255, verbose_name='Nome')
     link      = models.CharField(max_length = 255, verbose_name='URL')
     logo      = models.ImageField(upload_to = upload_file, max_length=255, help_text='A imagem deverá ser gerada em png com tamanho máximo de 370x100px ', verbose_name='Logo')
+    logo_log  = models.ImageField(upload_to = upload_file, max_length=255, null = True, blank = True, help_text='Caso queira que a logo do login seja diferente, tamanho máximo de 370x100px ', verbose_name='Logo do Login')
     visible   = models.BooleanField(default = True, verbose_name='Habilitado')
     is_faq    = models.BooleanField(default = False, blank = True, verbose_name='Faq treinamento', help_text='Habilita Faq dos treinamentos, tanto para envio quanto para visualização')
     is_login  = models.BooleanField(default = True, verbose_name='Área de login', help_text='Habilita área de login da rede')
@@ -77,15 +80,24 @@ class Rede(models.Model):
 
     def __unicode__(self):
         return self.name
-    
+
     def filter_not_filial(self, redes):
         r = [i.rede.id for i in Filial.objects.filter(rede__in = redes)]
         return Rede.objects.filter().exclude(id__in = r)
-    
+
     def filter_in_filial(self, id):
         r = [i.rede.id for i in Filial.objects.filter(id = id)]
         return Rede.objects.filter(id__in = r)
-    
+
+    def imagem_mensagem(self):
+
+        if not self.image:
+            return u'Não'
+
+        if len(self.image.path) > 0:
+            return u'Sim'
+        return u'Não'
+
     def get_rede(self):
         cm = CrequestMiddleware.get_request()
         try:
@@ -95,7 +107,7 @@ class Rede(models.Model):
         if user and user.infouser.filial:
             return '%s - %s' % (self.name, user.infouser.filial.name)
         return self.name
-    
+
     def is_suggestion(self):
         if self.resend and len(self.email) > 0:
             if self.email.count(',') > 0:
@@ -103,7 +115,7 @@ class Rede(models.Model):
                     if not _is_valid_email(e):
                         return False
                 return True
-            elif _is_valid_email(self.email):  
+            elif _is_valid_email(self.email):
                 return True
         return False
 
@@ -111,7 +123,7 @@ class Rede(models.Model):
         verbose_name = u'Rede'
         ordering     = ['name']
 
-        
+
 ### Tabela para as Filiais
 class Filial(models.Model):
     rede    = models.ForeignKey(Rede, related_name='+', verbose_name='Rede')
@@ -128,44 +140,59 @@ class Filial(models.Model):
         verbose_name_plural = u'Filiais'
         ordering            = ['name']
 
-        
+
 ### Tabela para as Categorias de Redes
 class Category(models.Model):
     rede      = models.ForeignKey(Rede, related_name='+', verbose_name='Rede')
+    tipo      = models.IntegerField(max_length=1, default=0, choices=CHOICE_CATEGORY, verbose_name='Tipo de categoria')
     filial    = models.ManyToManyField(Filial, blank=True, null=True, related_name='+', help_text='Filial que aparecerá a categoria. Segure CTRL e clique para selecionar mais de uma opção.')
     parent    = models.ForeignKey('self', null=True, blank=True, verbose_name='Categoria')
     name      = models.CharField(max_length = 255, verbose_name='Nome')
     is_name   = models.BooleanField(default = True, verbose_name='Mostrar Título', help_text='Mostra o título abaixo da categoria')
     visible   = models.BooleanField(default = True, verbose_name='Habilitado')
+    is_groupc = models.BooleanField(default = False, verbose_name='Agrupar Anexos', help_text='Caso a categoria possuir anexos, pode ser agrupados em uma página em particular.')
+    is_groupv = models.BooleanField(default = False, verbose_name='Agrupar Vídeos', help_text='Caso a categoria possuir vídeos, pode ser agrupados em uma página em particular.')
     home      = models.BooleanField(default = True, verbose_name='Visível na Home', help_text='Selecione para mostrar a categoria na home caso tenha selecionado que não seja um parceiro')
     order     = models.IntegerField(default = 0, verbose_name='Posição', help_text='posição do campo no menu ex: 4. Se todos os campos estiverem com valor "0" será ordena pelo nome')
     image     = models.ImageField(upload_to = upload_file, blank=True, max_length=255, help_text='As imagens seram ajustadas para melhor visualização no site, tamanho padrão é de: 276 x 153 pixels', verbose_name='Imagem')
     desc      = RichTextField(verbose_name='Descrição', null=True, blank=True)
     is_desc_g = models.BooleanField(default = False, verbose_name='Habilitado descrição Geral')
     desc_g    = RichTextField(verbose_name='Descrição Geral', null=True, blank=True)
+    is_text   = models.BooleanField(default = False, verbose_name='Habilitado conteúdo de texto')
+    text      = RichTextField(verbose_name='Conteúdo texto', null=True, blank=True)
+    is_image  = models.BooleanField(default = True, verbose_name='Habilitado imagem', help_text='Habilitar caso queira que a imagem apareça do lado da descrição geral')
+    is_email  = models.BooleanField(default = False, verbose_name='Habilitado envio de mensagem (e-mail) pela categoria')
+    email     = models.CharField(max_length = 255, verbose_name='E-mail de destino', null=True, blank=True, help_text='Somente adicione o e-mail caso o comercial deseje receber as mensagens realizadas no site, caso deseje mais de um e-mail, favor adicionar os e-mails separados por vírgula.')
     access    = models.BooleanField(default = False, verbose_name='Acesso Restrito', help_text='Bloqueia o acesso aos usuários que não possuem permissão para acessar as categorias restritas.')
     date      = models.DateTimeField(auto_now_add=True, verbose_name='Data')
 
     def __unicode__(self):
         return '%s - %s' % (self.rede.name, self.name)
-    
+
     def categoria(self):
         return self.parent.name
-    
+
     def get_name(self):
         return self.name
-    
+
     def Redes(self):
         return default_join(self.rede.filter(visible = True), ', ') or u'(Nenhum)'
-    
+
     def Filiais(self):
         return default_join(self.filial.filter(visible = True), ', ') or u'(Nenhum)'
-    
+
+    def tipo_categoria(self):
+        cc = dict((indice, value) for indice, value in CHOICE_CATEGORY)
+        return cc[int(self.tipo)]
+
+    def treinamento_set(self):
+        return Treinamento.objects.filter(category = self)
+
     class Meta:
         verbose_name        = u'Categoria'
-        ordering            = ['name']
-        
-        
+        ordering            = ['order', 'name']
+
+
 ### Tabela para os planos
 class Plano(models.Model):
     rede     = models.ForeignKey(Rede, related_name='+', verbose_name='Rede')
@@ -182,7 +209,7 @@ class Plano(models.Model):
 
     def __unicode__(self):
         return self.name
-    
+
     def duracao(self):
         if self.duration == 0:
             return u'Indeterminado'
@@ -191,26 +218,39 @@ class Plano(models.Model):
     class Meta:
         verbose_name = u'Plano'
         ordering     = ['name']
-        
-        
+
+
 ### Tabela para os Treinamentos
 class Treinamento(models.Model):
-    rede     = models.ForeignKey(Rede, related_name='+', verbose_name='Rede', help_text='Selecione a rede para filtrar os treinamentos.')
-    category = models.ForeignKey(Category, related_name='+', verbose_name='Categoria')
-    name     = models.CharField(max_length = 255, verbose_name='Nome')
-    author   = models.CharField(max_length = 255, null = True, blank = True, verbose_name='Autor')
-    visible  = models.BooleanField(default = True, verbose_name='Habilitado')
-    destaq   = models.BooleanField(default = False, verbose_name='Destaque', help_text='Sim, se marcado poderá aparecer em "Novos Vídeos"')
-    tipo     = models.CharField(max_length=1, default='M', choices=CHOICE_SERVER, verbose_name='Servidor de vídeo')
-    code     = models.CharField(max_length = 255, blank = True, verbose_name='Código do Vídeo', help_text='Ex.: 1638442624001')
-    image    = models.ImageField(upload_to = upload_file, blank=True, max_length=255, help_text='As imagens seram ajustadas para melhor visualização no site, tamanho padrão é de: 184 x 175 pixels', verbose_name='Imagem do Vídeo')
-    time     = models.CharField(max_length = 255, verbose_name='Duração', help_text='Ex.: 4:48 min')
-    order    = models.IntegerField(default = 0, verbose_name='Posição', help_text='posição do campo no menu ex: 4. Se todos os campos estiverem com valor "0" será ordena pelo nome')
-    desc     = RichTextField(verbose_name='Descrição')
-    agendado = models.DateTimeField(null = True, blank = True, verbose_name='Data de agendamento', help_text='Data de agendamento do live (AO VIVO), caso não seja, favor não preencher.')
-    required = models.ManyToManyField('self', blank=True, null=True, verbose_name='Treinamento obrigátorio', related_name='+', help_text='Selecione o(s) treinamento(s) que serão obrigatório(s) para assistir (introdução). Segure CTRL e clique para selecionar mais de uma opção.')
-    plano    = models.ForeignKey(Plano, null = True, blank = True, verbose_name='Plano', help_text='Selecione o plano de pagamento para o treinamento, caso contrário, não selecione nenhum para ser grátis.')
-    date     = models.DateTimeField(auto_now_add=True, verbose_name='Data')
+    tipo_t      = models.IntegerField(max_length=1, default=0, choices=CHOICE_TREINAMENTO, verbose_name='Tipo de treinamento')
+    rede        = models.ForeignKey(Rede, related_name='+', verbose_name='Rede', help_text='Selecione a rede para filtrar os treinamentos.')
+    category    = models.ForeignKey(Category, null = True, blank = True, related_name='+', verbose_name='Categoria')
+    treinamento = models.ForeignKey('self', null = True, blank = True, verbose_name='Treinamento', related_name='Treinamento')
+    name        = models.CharField(max_length = 255, verbose_name='Título')
+    author      = models.CharField(max_length = 255, null = True, blank = True, verbose_name='Autor')
+    visible     = models.BooleanField(default = True, verbose_name='Habilitado')
+    destaq      = models.BooleanField(default = False, verbose_name='Destaque', help_text='Sim, se marcado poderá aparecer em "Novos Vídeos"')
+    tipo        = models.CharField(max_length=1, default='M', choices=CHOICE_SERVER, verbose_name='Servidor de vídeo')
+    code        = models.CharField(max_length = 255, blank = True, verbose_name='Código do Vídeo', help_text='Ex.: 1638442624001')
+    image       = models.ImageField(upload_to = upload_file, blank=True, max_length=255, help_text='As imagens seram ajustadas para melhor visualização no site, tamanho padrão é de: 184 x 175 pixels', verbose_name='Imagem do Vídeo')
+    time        = models.CharField(max_length = 255, blank = True, null = True, verbose_name='Duração', help_text='Ex.: 4:48 min')
+    order       = models.IntegerField(default = 0, verbose_name='Posição', help_text='posição do campo no menu ex: 4. Se todos os campos estiverem com valor "0" será ordena pelo nome')
+    desc        = RichTextField(verbose_name='Descrição')
+    desc_l      = RichTextField(default = '', blank = True, verbose_name='Resumo da Descrição', help_text='Caso queira um resumo da descrição quando é listado, preencher esse campo, caso contrário, deixe em branco para mostrar a descrição padrão.')
+    agendado    = models.DateTimeField(null = True, blank = True, verbose_name='Data de agendamento', help_text='Data de agendamento do live (AO VIVO), caso não seja, favor não preencher.')
+    required    = models.ManyToManyField('self', symmetrical = False, blank=True, null=True, verbose_name='Treinamento obrigátorio', related_name='+', help_text='Selecione o(s) treinamento(s) que serão obrigatório(s) para assistir (introdução). Segure CTRL e clique para selecionar mais de uma opção.')
+    ## elearning
+    file        = models.FileField(upload_to = upload_file, max_length=255, blank=True, null=True, help_text='Enviar um arquivo zipado (.zip) contendo o index.html e demais swf\'s', verbose_name='Arquivo zip')
+    dir         = models.CharField(max_length = 20, blank=True, null=True, editable=False, verbose_name='Diretório')
+    ## vitrine virtual
+    idproduto   = models.CharField(max_length = 20, blank=True, null=True, verbose_name='ID Produto', help_text='ID do produto do cliente, caso exista.')
+    preco       = models.CharField(max_length = 20, blank=True, null=True, verbose_name='Preço', help_text='Exemplo: R$ 3.150,00.')
+    datavalida  = models.DateField(null = True, blank = True, verbose_name='Oferta válida até', help_text='Caso exista validade na oferta, caso contrário, deixe em branco.')
+    image1      = models.ImageField(upload_to = upload_file, blank=True, null = True, max_length=255, help_text='As imagens seram ajustadas para melhor visualização no site, tamanho padrão é de: w x h pixels', verbose_name='Imagem 1')
+    image2      = models.ImageField(upload_to = upload_file, blank=True, null = True, max_length=255, help_text='As imagens seram ajustadas para melhor visualização no site, tamanho padrão é de: w x h pixels', verbose_name='Imagem 2')
+    image3      = models.ImageField(upload_to = upload_file, blank=True, null = True, max_length=255, help_text='As imagens seram ajustadas para melhor visualização no site, tamanho padrão é de: w x h pixels', verbose_name='Imagem 3')
+    image4      = models.ImageField(upload_to = upload_file, blank=True, null = True, max_length=255, help_text='As imagens seram ajustadas para melhor visualização no site, tamanho padrão é de: w x h pixels', verbose_name='Imagem 4')
+    date        = models.DateTimeField(auto_now_add=True, verbose_name='Data')
 
     def __unicode__(self):
         return '%s : %s' % (self.rede.name, self.name)
@@ -218,96 +258,68 @@ class Treinamento(models.Model):
     def get_name(self):
         return self.name
     
+    def get_desc(self):
+        if len( strip_tags(self.desc_l) ) > 1:
+            return self.desc_l
+        return self.desc
+
     def categoria(self):
         return self.category.name
-    
+
     def get_list_suggestion(self, enviado=None):
         if enviado is None:
             return self.suggestion_set.all().order_by('date')
         return self.suggestion_set.filter(enviado = enviado).order_by('date')
-    
+
     def numero_sugestao(self):
         return self.suggestion_set.filter(enviado = False).count()
-    
+
     def quant_faqs(self):
         return Faq.objects.filter(treinamento = self).count()
-    
+
     def save(self, *args, **kwargs):
         
+        if self.file:
+
+            super(Treinamento, self).save(*args, **kwargs)
+    
+            diretorio = settings.MEDIA_ROOT + settings.UPLOAD_STORAGE_DIR + 'uploads/elearning/'
+    
+            b64 = base64.b64encode( str(self.id) )
+    
+            self.dir = b64.lower()
+    
+            paste = diretorio + b64.lower()
+    
+            if os.path.isdir(paste):
+                shutil.rmtree(paste)
+    
+            os.mkdir(paste)
+    
+            zip = ZipFile(self.file)
+    
+            zip.extractall(paste)
+
         super(Treinamento, self).save(*args, **kwargs)
-        
-        if self.tipo == 'L':
-            self.code = '%s_%s_%s' % (self.rede.link, self.category.id, self.id)
-            l = Live.objects.filter( Q(rede = self.rede), Q(live = self) )
-            if l.count() > 0:
-                l = l[0]
-            else:
-                l = Live()
-            l.rede = self.rede
-            l.live = self
-            l.save()
-            
-        super(Treinamento, self).save(*args, **kwargs)
+
+
+    def delete(self, *args, **kwargs):
+
+        if self.dir:
+            diretorio = settings.UPLOAD_STORAGE_DIR + 'uploads/elearning/'
+            paste     = diretorio + self.dir
+    
+            if os.path.isdir(paste):
+                shutil.rmtree(paste)
+            if self.file and self.file.path and os.path.exists(self.file.path):
+                os.remove(self.file.path)
+
+        super(Treinamento, self).delete(*args, **kwargs)
 
 
     class Meta:
         verbose_name = u'Treinamento'
         ordering     = ['category']
-
-        
-### Tabela para os Elearning
-class Elearning(models.Model):
-    rede        = models.ForeignKey(Rede, related_name='+', verbose_name='Rede', help_text='Selecione a rede para filtrar os elearning\'s.')
-    treinamento = models.ForeignKey(Treinamento, related_name='+', verbose_name='Treinamento')
-    name        = models.CharField(max_length = 255, verbose_name='Nome')
-    visible     = models.BooleanField(default = True, verbose_name='Habilitado')
-    not_video   = models.BooleanField(default = False, verbose_name='Somente E-leaning', help_text='Caso não queira o video treinamento, marque essa opção, porém terá que ter um video treinamento tipo vinheta.')
-    file        = models.FileField(upload_to = upload_file, max_length=255, help_text='Enviar um arquivo zipado (.zip) contendo o index.html e demais swf\'s', verbose_name='Arquivo zip')
-    dir         = models.CharField(max_length = 20, editable=False, verbose_name='Diretório')
-    date        = models.DateTimeField(auto_now_add=True, verbose_name='Data')
-
-    def __unicode__(self):
-        return '%s : %s' % (self.rede.name, self.name)
-    
-    def save(self, *args, **kwargs):
-        
-        super(Elearning, self).save(*args, **kwargs)
-        
-        diretorio = settings.MEDIA_ROOT + settings.UPLOAD_STORAGE_DIR + 'uploads/elearning/'
-        
-        b64 = base64.b64encode( str(self.id) )
-        
-        self.dir = b64.lower()
-        
-        paste = diretorio + b64.lower()
-        
-        if os.path.isdir(paste):
-            shutil.rmtree(paste)
-        
-        os.mkdir(paste)
-        
-        zip = ZipFile(self.file)
-        
-        zip.extractall(paste)
-            
-        super(Elearning, self).save(*args, **kwargs)
-        
-        
-    def delete(self, *args, **kwargs):
-        
-        diretorio = settings.UPLOAD_STORAGE_DIR + 'uploads/elearning/'
-        
-        paste = diretorio + self.dir
-            
-        if os.path.isdir(paste):
-            shutil.rmtree(paste)
-            
-        super(Elearning, self).delete(*args, **kwargs)
-
-
-    class Meta:
-        verbose_name = u'E-learning'
-        ordering     = ['treinamento']
 
 
 ### Tabela para os Certificados
@@ -330,8 +342,8 @@ class Certificado(models.Model):
     class Meta:
         verbose_name = u'Certificado'
         ordering     = ['rede']
-        
-        
+
+
 ### Tabela para as transações
 class Transation(models.Model):
     rede    = models.ForeignKey(Rede, related_name='+', verbose_name='Rede')
@@ -373,17 +385,17 @@ class Question(models.Model):
 
     def get_list_response_order(self):
         return Response.objects.filter( Q(question = self), Q(rede = self.rede) ).order_by('id')
-    
+
     def get_free_response(self, user=None):
 
         if not user:
             cm = CrequestMiddleware.get_request()
-            
+
             try:
                 user = cm.user
             except:
                 user = None
-        
+
         return FreeResponse.objects.filter( Q(rede = self.rede) & Q(question = self) & Q(user = user) )
 
     class Meta:
@@ -446,7 +458,7 @@ class Banner(models.Model):
 
     def __unicode__(self):
         return self.name
-    
+
     def Categorias(self):
         return default_join(self.category.filter(visible = True), ', ') or u'(Nenhum)'
 
@@ -470,10 +482,10 @@ class Faq(models.Model):
 
     def __unicode__(self):
         return self.pergunta
-    
+
     def Filiais(self):
         return default_join(self.filial.filter(visible = True), ', ') or u'(Nenhum)'
-    
+
     def quant_treinamentos(self):
         return self.treinamento.filter(visible = True).count()
 
@@ -501,13 +513,14 @@ class InfoUser(models.Model):
     cep      = models.CharField(blank = True, null = True, max_length=10, verbose_name='CEP')
     estado   = models.ForeignKey(State, blank = True, null = True, verbose_name='Estado')
     cidade   = models.ForeignKey(City, blank = True, null = True, verbose_name='Cidade')
+    cargo    = models.CharField(max_length=255, blank = True, null = True, verbose_name='Cargo')
+    admissao = models.DateField(verbose_name='Data de admissão', blank = True, null = True, help_text='exemplo: 10/12/2011')
     fone_com = models.CharField(max_length=50, blank=True, null=True, verbose_name='Telefone Comercial')
     fone_res = models.CharField(max_length=50, blank=True, null=True, verbose_name='Telefone Residencial')
     fone_cel = models.CharField(max_length=50, blank=True, null=True, verbose_name='Telefone Celular')
     receber  = models.BooleanField(default = True, verbose_name='Aceita receber mensagens')
     access   = models.BooleanField(default = False, verbose_name='Acesso Restrito', help_text='Liberá o acesso do usuario as categorias restritas.')
     envia    = models.BooleanField(default = False, verbose_name='Envia e-mail', help_text='Se marcado e o status for igual a ativo envia o email de confirmação para o usuário.')
-    matricul = models.CharField(max_length=60, verbose_name='Matricula')
     offline  = models.BooleanField(default = False, verbose_name='OffLine', help_text='Se marcado o usuário só pode acessar offline.')
     pontos   = models.IntegerField(editable=False, default=0, verbose_name='Pontos', help_text='Somente números')
     date     = models.DateTimeField(auto_now_add=True, verbose_name='Data')
@@ -520,12 +533,12 @@ class InfoUser(models.Model):
             return '%s %s' % (self.user.first_name, self.user.last_name)
         else:
             return self.user.username
-        
+
     def humanize_nasc(self):
         return default_date(self.nasc, 'd/m/Y')
-    
+
     def humanize_sexo(self):
-        return ['Feminino', 'Masculino'][self.sexo == 'M'] 
+        return ['Feminino', 'Masculino'][self.sexo == 'M']
 
     class Meta:
         verbose_name        = u'Informação de Usuário'
@@ -545,12 +558,12 @@ class Menu(models.Model):
 
     def __unicode__(self):
         return strip_tags(self.name)
-    
+
     def get_name(self):
         if self.tipo == 'D':
             return u'Destaque: %s' % strip_tags(self.name)
         return self.name
-    
+
     def Redes(self):
         return default_join(self.rede.filter(visible = True), ', ') or u'(Nenhum)'
 
@@ -559,7 +572,7 @@ class Menu(models.Model):
         verbose_name_plural = u'Menu'
         ordering            = ['order']
 
-        
+
 ### Tabela para os relatorio de play e complete
 class RelatorioAcoes(models.Model):
     rede     = models.ForeignKey(Rede, verbose_name='Rede', help_text='Selecione a rede para filtrar o Relatório.')
@@ -699,9 +712,9 @@ class Template(models.Model):
     def __unicode__(self):
 
         return self.name
-    
+
     def save(self, *args, **kwargs):
-        
+
         f = open('%s/mega/media/%s/css/template/%s.css' % (settings.MODPATH, self.tipo.name, self.rede.link), 'w+')
 
         f.write('/* template do %s */\n\n' % self.rede.link)
@@ -717,7 +730,7 @@ class Template(models.Model):
         fm.write(get_style_template_mobile(self))
 
         fm.close()
-        
+
         ft = open('%s/mega/media/%s/css/template/%s-tablet.css' % (settings.MODPATH, self.tipo.name, self.rede.link), 'w+')
 
         ft.write('/* template do %s tablet */\n\n' % self.rede.link)
@@ -752,8 +765,8 @@ class WebChat(models.Model):
         verbose_name        = u'Mensagem Web Chat'
         verbose_name_plural = u'Mensagens Web Chat'
         ordering            = ['-date']
-        
-        
+
+
 ### Tabela para as lista de videoconfere do cliente administrador
 class Live(models.Model):
     rede           = models.ForeignKey(Rede, verbose_name='Rede', help_text='Selecione a rede para filtrar o Ao Vivo.')
@@ -766,7 +779,7 @@ class Live(models.Model):
 
     def __unicode__(self):
         return self.live.name
-    
+
     def Data_de_agendamento(self):
         return default_date(self.live.agendado, 'd/m/Y á\s G:i')
 
@@ -774,8 +787,8 @@ class Live(models.Model):
         verbose_name        = u'Ao Vivo'
         verbose_name_plural = u'Ao Vivo'
         ordering            = ['-date']
-        
-        
+
+
 ### Tabela para as lista de as sugestões, criticas e opniões sobre os treinamentos
 class Suggestion(models.Model):
     rede        = models.ForeignKey(Rede, verbose_name='Rede', help_text='Selecione a rede para filtrar as sugestões.')
@@ -789,7 +802,7 @@ class Suggestion(models.Model):
 
     def __unicode__(self):
         return self.rede.name
-    
+
     def Data_de_envio(self):
         return default_date(self.data_send, 'd/m/Y á\s G:i')
 
@@ -797,8 +810,8 @@ class Suggestion(models.Model):
         verbose_name        = u'Sugestão'
         verbose_name_plural = u'Sugestões'
         ordering            = ['-date']
-        
-        
+
+
 ### Tabela para as lista de Anexos para downloads
 class Anexo(models.Model):
     rede        = models.ForeignKey(Rede, verbose_name='Rede', help_text='Selecione a rede para filtrar os anexos.')
@@ -812,16 +825,17 @@ class Anexo(models.Model):
 
     def __unicode__(self):
         return self.name
-    
+
     class Meta:
         verbose_name = u'Anexo'
         ordering     = ['-date']
-        
-        
+
+
 ### Tabela para as lista de Perguntas e Respostas com nível de aprovação
 class Quiz(models.Model):
     rede          = models.ForeignKey(Rede, verbose_name='Rede', help_text='Selecione a rede para filtrar os quiz.')
     treinamento   = models.ForeignKey(Treinamento, verbose_name='Treinamento')
+    instrucao     = models.TextField(null = True, blank = True, verbose_name='Instruções')
     list_question = models.ManyToManyField(Question, related_name='Lista de Perguntas', verbose_name='Lista de Perguntas', help_text='Segure CTRL e clique para selecionar mais de uma opção.')
     list_response = models.ManyToManyField(Response, related_name='Lista de Respostas', verbose_name='Lista de Respostas', help_text='Segure CTRL e clique para selecionar mais de uma opção.')
     porcent       = models.IntegerField(default = 100, verbose_name='Porcentagem de acerto para aprovação', help_text='Valor númerico sem a %')
@@ -831,38 +845,38 @@ class Quiz(models.Model):
 
     def __unicode__(self):
         return self.treinamento.name
-    
+
     def primeira_pergunta(self):
         list = self.list_question.filter(visible=True).order_by('id')
         if list.count() > 0:
             return list[0].text
         return u'(Nenhuma pergunta habilitada)'
-    
+
     def porcentagem_acerto(self):
         return str(self.porcent) + '%'
-    
+
     def email_responsavel(self):
         try:
             return self.responsavel.all()[0].email
         except:
             pass
         return self.email_respon
-    
+
     def quant_perguntas(self):
         return len(self.list_question.filter(visible=True))
-    
+
     class Meta:
         verbose_name        = u'Quiz'
         verbose_name_plural = u'Quiz'
         ordering            = ['-date']
-        
+
 ## regras para deletar as perguntas e respostas
 @receiver(pre_delete, sender=Quiz)
 def _quiz_delete(sender, instance, **kwargs):
     ## limpa questões
     Question.objects.filter( treinamento = instance.treinamento ).delete()
-    
-    
+
+
 ### Tabela para os relatorio de pontos e avaliações
 class RelatorioAvalicao(models.Model):
     rede     = models.ForeignKey(Rede, verbose_name='Rede', help_text='Selecione a rede para filtrar o Relatório.')
@@ -878,8 +892,8 @@ class RelatorioAvalicao(models.Model):
         verbose_name        = u'Relatório de Avaliação'
         verbose_name_plural = u'Relatório de Avaliações'
         ordering            = ['-date']
-        
-        
+
+
 ### Tabela para as livres respostas das questões
 class FreeResponse(models.Model):
     rede     = models.ForeignKey(Rede, verbose_name='Rede', help_text='Selecione a rede para filtrar as respostas livres.')
@@ -892,13 +906,13 @@ class FreeResponse(models.Model):
 
     def __unicode__(self):
         return self.question.text
-    
+
     class Meta:
         verbose_name        = u'Resposta Livre'
         verbose_name_plural = u'Respostas Livre'
         ordering            = ['-date']
-        
-        
+
+
 ### Tabela para as Enquetes
 class Enquete(models.Model):
     rede     = models.ForeignKey(Rede, verbose_name='Rede', help_text='Selecione a rede para filtrar as enquetes.')
@@ -921,7 +935,7 @@ class Enquete(models.Model):
 
     def __unicode__(self):
         return self.title
-    
+
     def quant_votos(self):
         return self.users.all().count()
 
@@ -941,7 +955,7 @@ class Url(models.Model):
     active = models.BooleanField(default = True, verbose_name='Ativo')
     date_v = models.DateTimeField(blank = True, null = True, verbose_name='Data e hora visualização')
     date   = models.DateTimeField(auto_now_add=True, verbose_name='Data')
-    
+
     def __unicode__(self):
         return self.type
 
@@ -950,3 +964,58 @@ class Url(models.Model):
         verbose_name_plural = u'Url\'s'
         ordering            = ['-date']
 
+
+### Tabela para os Contatos comerciais
+class ContatoComercial(models.Model):
+    rede     = models.ForeignKey(Rede, verbose_name='Rede', help_text='Selecione a rede para filtrar os contatos comerciais.')
+    category = models.ForeignKey(Category, verbose_name='Categoria')
+    nome     = models.CharField(max_length = 255, verbose_name='Nome')
+    email    = models.EmailField(max_length = 255, verbose_name='E-mail')
+    regiao   = models.CharField(max_length = 100, blank = True, null = True, verbose_name='Região', help_text="Região geográfica de atendimento (ou nome da empresa)")
+    fone1    = models.CharField(max_length = 50, verbose_name='Fone 1')
+    fone2    = models.CharField(max_length = 50, blank = True, null = True, verbose_name='Fone 2')
+    visible  = models.BooleanField(default = True, verbose_name='Habilitado')
+    date     = models.DateTimeField(auto_now_add=True, verbose_name='Data')
+
+    def __unicode__(self):
+        return self.nome
+
+    class Meta:
+        verbose_name        = u'Contato Comercial'
+        verbose_name_plural = u'Contatos Comerciais'
+        ordering            = ['nome']
+
+
+### Tabela para os Avisos e notificações
+class Aviso(models.Model):
+    rede          = models.ForeignKey(Rede, related_name='+', verbose_name='Rede', help_text='Selecione a rede para filtrar os avisos.')
+    name          = models.CharField(max_length = 255, verbose_name='Título')
+    image         = models.ImageField(upload_to = upload_file, max_length=255, help_text='A imagem para ser mostrada poderá ser de qualquer tamanho, respeitando sempre a largura máxima para mobile.', verbose_name='Imagem')
+    is_video      = models.BooleanField(default = False, verbose_name='Vídeo?')
+    link          = models.CharField(max_length = 255, null = True, blank = True, verbose_name='Link')
+    code          = models.CharField(max_length = 50, null = True, blank = True, verbose_name='Código MegaVideo')
+    is_not_view   = models.ManyToManyField(UserAdmin, related_name='Usuários não quer mais visualizar', blank = True, help_text='Usuários que não desejam mais ver a mensagem.')
+    is_persistent = models.BooleanField(default = True, verbose_name='Persistente?')
+    is_full_user  = models.BooleanField(default = True, verbose_name='Todos os usuários vão ver?')
+    is_user_view  = models.ManyToManyField(UserAdmin, related_name='Usuários que vão visualizar', verbose_name='Usuários que vão visualizar', blank = True, help_text='Somente os usuários que vão ver a mensagem.')
+    visible       = models.BooleanField(default = True, verbose_name='Habilitado')
+    date          = models.DateTimeField(auto_now_add=True, verbose_name='Data')
+    date_init     = models.DateTimeField(null = True, blank = True, verbose_name='Data inicia demonstração')
+    date_end      = models.DateTimeField(null = True, blank = True, verbose_name='Data termina demonstração')
+
+    def __unicode__(self):
+        return self.name
+
+    def Data_inicia(self):
+        if not self.date_init:
+            return u'Imediato'
+        return default_date(self.date_init, 'd/m/Y á\s G:i')
+
+    def Data_termina(self):
+        if not self.date_end:
+            return u'Indefinido'
+        return default_date(self.date_end, 'd/m/Y á\s G:i')
+
+    class Meta:
+        verbose_name = u'Aviso'
+        ordering     = ['rede']

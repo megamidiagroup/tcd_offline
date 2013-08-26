@@ -22,11 +22,11 @@ from django.conf.urls.defaults import include, patterns, url
 from django.contrib.admin.widgets import FilteredSelectMultiple
 from models import Rede, Filial, Category, Treinamento, Certificado, Question, Response, Parceiro, Banner, \
                         Faq, InfoUser, Menu, RelatorioAcoes, RelatorioAvalicao, RelatorioTentativa, \
-                            TipoTemplate, Template, WebChat, Live, Elearning, Anexo, Quiz, FreeResponse, \
-                                Plano, Transation, Enquete, Url
+                            TipoTemplate, Template, WebChat, Live, Anexo, Quiz, FreeResponse, \
+                                Plano, Transation, Enquete, Url, ContatoComercial, Aviso
 
 from crequest.middleware import CrequestMiddleware
-                                        
+
 from django.conf import settings
 
 from mail import _send_email_user, _is_valid_email
@@ -38,46 +38,48 @@ csrf_protect_m = method_decorator(csrf_protect)
 
 
 class RedeForm(ModelForm):
-    
+
     def __init__(self, *args, **kwargs):
         super(RedeForm, self).__init__(*args, **kwargs)
-        
+
         cm = CrequestMiddleware.get_request()
-    
+
         try:
             rede = cm.rede
         except:
             rede = None
-            
+
         qsu = User.objects.all()
-        
+
         if rede:
             qsu = qsu.filter( infouser__rede = rede )
-        
+
         self.fields['user'].widget   = FilteredSelectMultiple(_(u'usuários'), False)
         self.fields['user'].queryset = qsu.order_by('username')
-    
+
     class Meta:
         model = Rede
 
 
 class RedeAdmin(admin.ModelAdmin):
-    list_display  = ('name', 'link', 'visible', 'is_faq',)
+    list_display  = ('name', 'link', 'visible', 'is_faq', 'imagem_mensagem')
     list_filter   = ('visible',)
     search_fields = ['name']
-    
+
     fieldsets = (
         (None, {
-            'fields': ('name', 'link', 'logo', 'visible', 'user', 'is_faq', 'is_login',)
+            'fields': ('name', 'link', 'logo', 'logo_log', 'visible', 'user', 'is_faq', 'is_login',)
+        }),
+        ('Imagem de fundo da mensagem de "Esta categoria não tem conteúdo cadastrado. "', {
+            'fields' : ('image',)
         }),
         ('Agendamento de envio de Sugestões ou Dúvidas', {
-            #'classes': ('collapse',),
             'fields' : ('email', 'date_send', 'resend',)
         }),
     )
-    
+
     filter_horizontal = ('user',)
-    
+
     form = RedeForm
 
     ## para limitar a lista por nivel de usuário
@@ -111,7 +113,7 @@ class FilialAdmin(admin.ModelAdmin):
         else:
             self.fields = ['rede', 'name', 'visible', 'code']
         return super(FilialAdmin, self).get_form(request, obj=None, **kwargs)
-    
+
     ## para salvar automaticamente a rede que está na session
     def save_model(self, request, obj, form, change):
         try:
@@ -125,24 +127,24 @@ admin.site.register(Filial, FilialAdmin)
 
 
 class CategoryForm(ModelForm):
-    
+
     def __init__(self, *args, **kwargs):
         super(CategoryForm, self).__init__(*args, **kwargs)
 
         cm = CrequestMiddleware.get_request()
-    
+
         try:
             rede = cm.rede
         except:
             rede = None
-            
+
         qsc = Category.objects.all()
         qsf = Filial.objects.all()
-        
+
         if rede:
             qsc = qsc.filter( rede = rede )
             qsf = qsf.filter( rede = rede )
-        
+
         self.fields['parent'].queryset = qsc.order_by('name')
         self.fields['filial'].queryset = qsf.order_by('name')
 
@@ -151,11 +153,11 @@ class CategoryForm(ModelForm):
 
 
 class CategoryAdmin(admin.ModelAdmin):
-    list_display = ('name', 'categoria', 'rede', 'Filiais', 'visible', 'access', 'order', 'is_desc_g')
-    list_filter  = ('visible',)
-    
+    list_display = ('name', 'tipo_categoria', 'categoria', 'rede', 'Filiais', 'visible', 'access', 'order', 'is_desc_g', 'is_text', 'is_email', 'is_groupc', 'is_groupv')
+    list_filter  = ('visible', 'tipo', 'access', 'is_desc_g', 'is_text', 'is_email', 'is_groupc', 'is_groupv')
+
     filter_horizontal = ('filial',)
-    
+
     def queryset(self, request):
         qs = super(CategoryAdmin, self).queryset(request)
         if request.user.is_superuser:
@@ -167,12 +169,32 @@ class CategoryAdmin(admin.ModelAdmin):
     ## para limitar os combo das redes
     def get_form(self, request, obj=None, **kwargs):
         if request.rede:
-            self.fields = ['parent', 'name', 'is_name', 'home', 'visible', 'order', 'image', 'desc', 'is_desc_g', 'desc_g', 'access', 'filial']
+            self.fieldsets = (
+                    (None, {
+                        'fields': ('tipo', 'parent', 'name', 'is_name', 'home', 'visible',)
+                    }),
+                    ('Agrupamento de informação', {
+                        'fields' : ('is_groupc', 'is_groupv',)
+                    }),
+                    (None, {
+                        'fields' : ('order', 'image', 'desc', 'is_desc_g', 'is_text', 'text', 'desc_g', 'is_image', 'is_email', 'email', 'access', 'filial',)
+                    }),
+                )
         else:
-            self.fields = ['rede', 'parent', 'name', 'is_name', 'home', 'visible', 'order', 'image', 'desc', 'is_desc_g', 'desc_g', 'access', 'filial']
+            self.fieldsets = (
+                    (None, {
+                        'fields': ('rede', 'tipo', 'parent', 'name', 'is_name', 'home', 'visible',)
+                    }),
+                    ('Agrupamento de informação', {
+                        'fields' : ('is_groupc', 'is_groupv',)
+                    }),
+                    (None, {
+                        'fields' : ('order', 'image', 'desc', 'is_desc_g', 'desc_g', 'is_text', 'text', 'is_image', 'is_email', 'email', 'access', 'filial',)
+                    }),
+                )
         self.form       = CategoryForm
         return super(CategoryAdmin, self).get_form(request, obj=None, **kwargs)
-    
+
     ## para salvar automaticamente a rede que está na session
     def save_model(self, request, obj, form, change):
         try:
@@ -183,37 +205,43 @@ class CategoryAdmin(admin.ModelAdmin):
 
         if not obj.is_desc_g:
             obj.desc_g = ''
-            
+
+        if not obj.is_email:
+            obj.email  = ''
+
         obj.save()
-        
+
     class Media:
-            js = ('mega/js/category_admin.js',)    
+            js = ('mega/js/category_admin.js',)
 
 
 admin.site.register(Category, CategoryAdmin)
 
 
 class TreinamentoForm(ModelForm):
-    
+
     def __init__(self, *args, **kwargs):
         super(TreinamentoForm, self).__init__(*args, **kwargs)
 
         cm = CrequestMiddleware.get_request()
-    
+
         try:
             rede = cm.rede
         except:
             rede = None
-            
+
         qsc = Category.objects.all()
         qst = Treinamento.objects.all()
-        
+
         if rede:
             qsc = qsc.filter( rede = rede )
             qst = qst.filter( rede = rede )
-        
-        self.fields['category'].queryset = qsc.order_by('name')
-        
+            if 'instance' in kwargs and getattr(kwargs['instance'], 'id', False):
+                qst = qst.exclude(id = kwargs['instance'].id)
+
+        self.fields['category'].queryset    = qsc.order_by('name')
+        self.fields['treinamento'].queryset = qst.order_by('name')
+
         self.fields['required'].widget   = FilteredSelectMultiple(_(u'Treinamentos'), False)
         self.fields['required'].queryset = qst.order_by('name')
 
@@ -222,11 +250,12 @@ class TreinamentoForm(ModelForm):
 
 
 class TreinamentoAdmin(admin.ModelAdmin):
-    list_display = ('name', 'categoria', 'tipo', 'rede', 'visible', 'destaq', 'numero_sugestao', 'plano', 'quant_faqs',)
-    list_filter  = ('visible',)
-    
+    list_display  = ('name', 'tipo_t', 'categoria', 'treinamento', 'tipo', 'rede', 'visible', 'destaq', 'numero_sugestao', 'quant_faqs',)
+    list_filter   = ('visible', 'tipo_t', 'destaq',)
+    search_fields = ['name', 'category__name']
+
     filter_horizontal = ('required',)
-    
+
     def queryset(self, request):
         qs = super(TreinamentoAdmin, self).queryset(request)
         if request.user.is_superuser:
@@ -238,12 +267,12 @@ class TreinamentoAdmin(admin.ModelAdmin):
     ## para limitar os combo das redes
     def get_form(self, request, obj=None, **kwargs):
         if request.rede:
-            self.fields = ['category', 'name', 'visible', 'destaq', 'tipo', 'code', 'image', 'agendado', 'time', 'author', 'order', 'desc', 'required', 'plano']
+            self.fields = ['tipo_t', 'category', 'treinamento', 'name', 'visible', 'destaq', 'tipo', 'code', 'image', 'image1', 'image2', 'image3', 'image4', 'file', 'agendado', 'time', 'author', 'order', 'desc', 'desc_l', 'required', 'idproduto', 'preco', 'datavalida']
         else:
-            self.fields = ['rede', 'category', 'name', 'visible', 'destaq', 'tipo', 'code', 'image', 'agendado', 'time', 'author', 'order', 'desc', 'required', 'plano']
+            self.fields = ['rede', 'tipo_t', 'category', 'treinamento', 'name', 'visible', 'destaq', 'tipo', 'code', 'image', 'image1', 'image2', 'image3', 'image4', 'file', 'agendado', 'time', 'author', 'order', 'desc', 'desc_l', 'required', 'idproduto', 'preco', 'datavalida']
         self.form       = TreinamentoForm
         return super(TreinamentoAdmin, self).get_form(request, obj=None, **kwargs)
-    
+
     ## para salvar automaticamente a rede que está na session
     def save_model(self, request, obj, form, change):
         try:
@@ -252,7 +281,7 @@ class TreinamentoAdmin(admin.ModelAdmin):
         except:
             pass
         obj.save()
-        
+
     class Media:
         js = ('ckeditor/ckeditor/ckeditor.js', 'mega/js/combo_admin.js',)
 
@@ -260,80 +289,23 @@ class TreinamentoAdmin(admin.ModelAdmin):
 admin.site.register(Treinamento, TreinamentoAdmin)
 
 
-class ElearningForm(ModelForm):
-    
-    def __init__(self, *args, **kwargs):
-        super(ElearningForm, self).__init__(*args, **kwargs)
-
-        cm = CrequestMiddleware.get_request()
-    
-        try:
-            rede = cm.rede
-        except:
-            rede = None
-            
-        qst = Treinamento.objects.all()
-        
-        if rede:
-            qst = qst.filter( rede = rede )
-        
-        self.fields['treinamento'].queryset = qst.order_by('name')
-
-    class Meta:
-        model = Elearning
-
-
-class ElearningAdmin(admin.ModelAdmin):
-    list_display = ('name', 'treinamento', 'rede', 'visible', 'not_video')
-    list_filter  = ('visible',)
-    
-    def queryset(self, request):
-        qs = super(ElearningAdmin, self).queryset(request)
-        if request.user.is_superuser:
-            if request.rede:
-                return qs.filter(rede = request.rede)
-            return qs.all()
-        return qs.filter(rede__user = request.user)
-
-    ## para limitar os combo das redes
-    def get_form(self, request, obj=None, **kwargs):
-        if request.rede:
-            self.fields = ['treinamento', 'name', 'visible', 'not_video', 'file']
-        else:
-            self.fields = ['rede', 'treinamento', 'name', 'visible', 'not_video', 'file']
-        self.form       = ElearningForm
-        return super(ElearningAdmin, self).get_form(request, obj=None, **kwargs)
-    
-    ## para salvar automaticamente a rede que está na session
-    def save_model(self, request, obj, form, change):
-        try:
-            rede     = request.rede
-            obj.rede = rede
-        except:
-            pass
-        obj.save()
-        
-
-admin.site.register(Elearning, ElearningAdmin)
-
-
 class CertificadoForm(ModelForm):
-    
+
     def __init__(self, *args, **kwargs):
         super(CertificadoForm, self).__init__(*args, **kwargs)
 
         cm = CrequestMiddleware.get_request()
-    
+
         try:
             rede = cm.rede
         except:
             rede = None
-            
+
         qst = Treinamento.objects.all()
-        
+
         if rede:
             qst = qst.filter( rede = rede )
-        
+
         self.fields['treinamento'].widget   = FilteredSelectMultiple(_(u'treinamentos'), False)
         self.fields['treinamento'].queryset = qst.order_by('name')
 
@@ -344,9 +316,9 @@ class CertificadoForm(ModelForm):
 class CertificadoAdmin(admin.ModelAdmin):
     list_display = ('name', 'rede', 'visible')
     list_filter  = ('visible',)
-    
+
     filter_horizontal = ('treinamento',)
-    
+
     def queryset(self, request):
         qs = super(CertificadoAdmin, self).queryset(request)
         if request.user.is_superuser:
@@ -363,7 +335,7 @@ class CertificadoAdmin(admin.ModelAdmin):
             self.fields  = ['rede', 'name', 'treinamento', 'image', 'visible']
         self.form        = CertificadoForm
         return super(CertificadoAdmin, self).get_form(request, obj=None, **kwargs)
-    
+
     ## para salvar automaticamente a rede que está na session
     def save_model(self, request, obj, form, change):
         try:
@@ -378,19 +350,19 @@ admin.site.register(Certificado, CertificadoAdmin)
 
 
 class QuestionForm(ModelForm):
-    
+
     def __init__(self, *args, **kwargs):
         super(QuestionForm, self).__init__(*args, **kwargs)
 
         cm = CrequestMiddleware.get_request()
-    
+
         try:
             rede = cm.rede
         except:
             rede = None
-            
+
         qst = Treinamento.objects.all()
-        
+
         if rede:
             qst = qst.filter( rede = rede )
 
@@ -398,12 +370,12 @@ class QuestionForm(ModelForm):
 
     class Meta:
         model = Question
-        
+
 
 class QuestionAdmin(admin.ModelAdmin):
     list_display = ('__unicode__', 'treinamento', 'rede', 'pontos', 'visible')
     list_filter  = ('visible',)
-    
+
     def queryset(self, request):
         qs = super(QuestionAdmin, self).queryset(request)
         if request.user.is_superuser:
@@ -420,7 +392,7 @@ class QuestionAdmin(admin.ModelAdmin):
             self.fields = ['rede', 'treinamento', 'text', 'pontos', 'visible']
         self.form       = QuestionForm
         return super(QuestionAdmin, self).get_form(request, obj=None, **kwargs)
-    
+
     ## para salvar automaticamente a rede que está na session
     def save_model(self, request, obj, form, change):
         try:
@@ -435,19 +407,19 @@ class QuestionAdmin(admin.ModelAdmin):
 
 
 class ResponseForm(ModelForm):
-    
+
     def __init__(self, *args, **kwargs):
         super(ResponseForm, self).__init__(*args, **kwargs)
 
         cm = CrequestMiddleware.get_request()
-    
+
         try:
             rede = cm.rede
         except:
             rede = None
-            
+
         qsq = Question.objects.all()
-        
+
         if rede:
             qsq = qsq.filter( rede = rede )
 
@@ -455,12 +427,12 @@ class ResponseForm(ModelForm):
 
     class Meta:
         model = Response
-        
+
 
 class ResponseAdmin(admin.ModelAdmin):
     list_display = ('text', 'question', 'rede', 'correta')
     list_filter  = ('correta',)
-    
+
     def queryset(self, request):
         qs = super(ResponseAdmin, self).queryset(request)
         if request.user.is_superuser:
@@ -477,7 +449,7 @@ class ResponseAdmin(admin.ModelAdmin):
             self.fields = ['rede', 'question', 'text', 'correta']
         self.form       = ResponseForm
         return super(ResponseAdmin, self).get_form(request, obj=None, **kwargs)
-    
+
     ## para salvar automaticamente a rede que está na session
     def save_model(self, request, obj, form, change):
         try:
@@ -492,19 +464,19 @@ class ResponseAdmin(admin.ModelAdmin):
 
 
 class ParceiroForm(ModelForm):
-    
+
     def __init__(self, *args, **kwargs):
         super(ParceiroForm, self).__init__(*args, **kwargs)
 
         cm = CrequestMiddleware.get_request()
-    
+
         try:
             rede = cm.rede
         except:
             rede = None
-            
+
         qsc = Category.objects.all()
-        
+
         if rede:
             qsc = qsc.filter( rede = rede )
 
@@ -513,14 +485,14 @@ class ParceiroForm(ModelForm):
 
     class Meta:
         model = Parceiro
-        
+
 
 class ParceiroAdmin(admin.ModelAdmin):
     list_display = ('name', 'rede', 'Categorias', 'visible', 'home')
     list_filter  = ('visible',)
-    
+
     filter_horizontal = ('category',)
-    
+
     def queryset(self, request):
         qs = super(ParceiroAdmin, self).queryset(request)
         if request.user.is_superuser:
@@ -537,7 +509,7 @@ class ParceiroAdmin(admin.ModelAdmin):
             self.fields = ['rede', 'name', 'is_name', 'category', 'image', 'home', 'link', 'order', 'visible']
         self.form       = ParceiroForm
         return super(ParceiroAdmin, self).get_form(request, obj=None, **kwargs)
-    
+
     ## para salvar automaticamente a rede que está na session
     def save_model(self, request, obj, form, change):
         try:
@@ -552,19 +524,19 @@ admin.site.register(Parceiro, ParceiroAdmin)
 
 
 class BannerForm(ModelForm):
-    
+
     def __init__(self, *args, **kwargs):
         super(BannerForm, self).__init__(*args, **kwargs)
 
         cm = CrequestMiddleware.get_request()
-    
+
         try:
             rede = cm.rede
         except:
             rede = None
-            
+
         qsc = Category.objects.all()
-        
+
         if rede:
             qsc = qsc.filter( rede = rede )
 
@@ -573,14 +545,14 @@ class BannerForm(ModelForm):
 
     class Meta:
         model = Banner
-        
+
 
 class BannerAdmin(admin.ModelAdmin):
     list_display = ('name', 'rede', 'Categorias', 'visible', 'home', 'order')
     list_filter  = ('visible',)
-    
+
     filter_horizontal = ('category',)
-    
+
     def queryset(self, request):
         qs = super(BannerAdmin, self).queryset(request)
         if request.user.is_superuser:
@@ -597,7 +569,7 @@ class BannerAdmin(admin.ModelAdmin):
             self.fields = ['rede', 'name', 'category', 'image', 'visible', 'legend', 'home', 'order', 'url', 'blank']
         self.form       = BannerForm
         return super(BannerAdmin, self).get_form(request, obj=None, **kwargs)
-    
+
     ## para salvar automaticamente a rede que está na session
     def save_model(self, request, obj, form, change):
         try:
@@ -612,20 +584,20 @@ admin.site.register(Banner, BannerAdmin)
 
 
 class FaqForm(ModelForm):
-    
+
     def __init__(self, *args, **kwargs):
         super(FaqForm, self).__init__(*args, **kwargs)
 
         cm = CrequestMiddleware.get_request()
-    
+
         try:
             rede = cm.rede
         except:
             rede = None
-            
+
         qsf = Filial.objects.all()
         qst = Treinamento.objects.all()
-        
+
         if rede:
             qsf = qsf.filter( rede = rede )
             qst = qst.filter( rede = rede )
@@ -642,9 +614,9 @@ class FaqForm(ModelForm):
 class FaqAdmin(admin.ModelAdmin):
     list_display = ('pergunta', 'rede', 'Filiais', 'order', 'visible', 'menu_all', 'quant_treinamentos',)
     list_filter  = ('visible', 'menu_all',)
-    
+
     filter_horizontal = ('filial', 'treinamento',)
-    
+
     def queryset(self, request):
         qs = super(FaqAdmin, self).queryset(request)
         if request.user.is_superuser:
@@ -661,7 +633,7 @@ class FaqAdmin(admin.ModelAdmin):
             self.fields = ['rede', 'pergunta', 'resposta', 'filial', 'visible', 'order', 'access', 'menu_all', 'treinamento']
         self.form       = FaqForm
         return super(FaqAdmin, self).get_form(request, obj=None, **kwargs)
-    
+
     ## para salvar automaticamente a rede que está na session
     def save_model(self, request, obj, form, change):
         try:
@@ -676,19 +648,19 @@ admin.site.register(Faq, FaqAdmin)
 
 
 class InfoUserAdminForm(ModelForm):
-    
+
     def __init__(self, *args, **kwargs):
         super(InfoUserAdminForm, self).__init__(*args, **kwargs)
 
         cm = CrequestMiddleware.get_request()
-    
+
         try:
             rede = cm.rede
         except:
             rede = None
-            
+
         qsf = Filial.objects.all()
-        
+
         if rede:
             qsf = qsf.filter( rede = rede )
 
@@ -696,22 +668,22 @@ class InfoUserAdminForm(ModelForm):
 
     class Meta:
         model = InfoUser
-        
-        
+
+
 class InfoUserForm(ModelForm):
-    
+
     def __init__(self, *args, **kwargs):
         super(InfoUserForm, self).__init__(*args, **kwargs)
 
         cm = CrequestMiddleware.get_request()
-    
+
         try:
             rede = cm.user.rede_set.filter(visible = True)
         except:
             rede = []
-            
+
         qsf = Filial.objects.filter( Q(visible=True), Q(rede__in = rede) )
-        
+
         if rede:
             qsf = qsf.filter( rede = rede )
 
@@ -722,31 +694,31 @@ class InfoUserForm(ModelForm):
 
 
 class InfoUserAdmin(admin.ModelAdmin):
-    list_display  = ('nome', 'user', 'rede', 'filial', 'visible', 'pontos')
-    list_filter   = ('visible',)
-    search_fields = ('user__username', 'user__first_name', 'user__last_name')
+    list_display  = ('nome', 'user', 'rede', 'filial', 'visible', 'pontos', 'offline', 'access',)
+    list_filter   = ('visible', 'offline', 'access',)
+    search_fields = ('user__username', 'user__first_name', 'user__last_name',)
 
     ## para limitar a lista por nivel de usuário
     def queryset(self, request, *args, **kwargs):
         qs   = super(InfoUserAdmin, self).queryset(request)
-        
+
         rede = request.user.rede_set.filter( Q(visible=True) )
-            
+
         if request.user.is_superuser and request.rede:
-            self.list_display = ('nome', 'user', 'filial', 'visible', 'pontos')
+            self.list_display = ('nome', 'user', 'filial', 'visible', 'pontos', 'offline')
 
         if request.user.is_superuser:
-            if request.rede:  
+            if request.rede:
                 return qs.filter(rede = request.rede)
             return qs.all()
-        
+
         ca = qs.filter( Q(user__is_superuser = False) & Q(rede__in = rede) )
         if request.user.infouser.filial:
-            self.list_display = ('nome', 'user', 'visible', 'pontos')
+            self.list_display = ('nome', 'user', 'visible', 'pontos', 'offline')
             ca = ca.filter(filial = request.user.infouser.filial)
 
         return ca
-    
+
     ### end custom
 
     ## para limitar os combo das redes
@@ -754,20 +726,20 @@ class InfoUserAdmin(admin.ModelAdmin):
         if request.user.is_superuser:
             if request.rede:
                 self.fields = ['filial', 'visible', 'nasc', 'sexo', 'rg', 'cpf', 'endereco', \
-                                    'numero', 'complem', 'bairro', 'cep', 'estado', 'cidade', 'fone_com', \
-                                            'fone_res', 'fone_cel', 'access', 'matricul']
+                                    'numero', 'complem', 'bairro', 'cep', 'estado', 'cidade', 'cargo', 'admissao', 'fone_com', \
+                                            'fone_res', 'fone_cel', 'access', 'offline']
             else:
                 self.fields = ['rede', 'filial', 'visible', 'nasc', 'sexo', 'rg', 'cpf', 'endereco', \
-                                    'numero', 'complem', 'bairro', 'cep', 'estado', 'cidade', 'fone_com', \
-                                            'fone_res', 'fone_cel', 'access', 'matricul']
+                                    'numero', 'complem', 'bairro', 'cep', 'estado', 'cidade', 'cargo', 'admissao', 'fone_com', \
+                                            'fone_res', 'fone_cel', 'access', 'offline']
             self.form   = InfoUserAdminForm
         else:
             self.fields = ['filial', 'visible', 'nasc', 'sexo', 'rg', 'cpf', 'endereco', \
-                                    'numero', 'complem', 'bairro', 'cep', 'estado', 'cidade', 'fone_com', \
-                                            'fone_res', 'fone_cel', 'access', 'matricul']
+                                    'numero', 'complem', 'bairro', 'cep', 'estado', 'cidade', 'cargo', 'admissao', 'fone_com', \
+                                            'fone_res', 'fone_cel', 'access', 'offline']
             self.form   = InfoUserForm
         return super(InfoUserAdmin, self).get_form(request, obj=None, **kwargs)
-    
+
     ## para salvar automaticamente a rede que está na session
     def save_model(self, request, obj, form, change):
         try:
@@ -776,7 +748,7 @@ class InfoUserAdmin(admin.ModelAdmin):
         except:
             pass
         obj.save()
-    
+
     class Media:
         js = ('mega/js/state_admin.js',)
 
@@ -787,9 +759,9 @@ admin.site.register(InfoUser, InfoUserAdmin)
 class MenuAdmin(admin.ModelAdmin):
     list_display = ('get_name', 'Redes', 'tipo', 'order', 'visible')
     list_filter  = ('visible',)
-    
+
     filter_horizontal = ('rede',)
-    
+
     def queryset(self, request):
         qs = super(MenuAdmin, self).queryset(request)
         if request.user.is_superuser:
@@ -805,7 +777,7 @@ class MenuAdmin(admin.ModelAdmin):
         else:
             self.fields = ['rede', 'name', 'visible', 'url', 'tipo', 'order']
         return super(MenuAdmin, self).get_form(request, obj=None, **kwargs)
-    
+
     class Media:
         js = (
                 'ckeditor/ckeditor/ckeditor.js',
@@ -862,7 +834,7 @@ class TemplateAdmin(admin.ModelAdmin):
             'fields': ('custom',)
         }),
     )
-    
+
     def queryset(self, request):
         qs = super(TemplateAdmin, self).queryset(request)
         if request.user.is_superuser:
@@ -883,7 +855,7 @@ class TemplateAdmin(admin.ModelAdmin):
                 tmp.remove('rede')
                 self.fieldsets[0][1]['fields'] = tuple(tmp)
         return super(TemplateAdmin, self).get_form(request, obj=None, **kwargs)
-    
+
     ## para salvar automaticamente a rede que está na session
     def save_model(self, request, obj, form, change):
         try:
@@ -892,7 +864,7 @@ class TemplateAdmin(admin.ModelAdmin):
         except:
             pass
         obj.save()
-        
+
     class Media:
         js = ('mega/js/combo_admin.js',)
 
@@ -921,14 +893,14 @@ class UserAdminCustom(admin.ModelAdmin):
         (_('Important dates'), {'fields': ('last_login', 'date_joined')}),
         (_('Groups'), {'fields': ('groups',)}),
         )
-    
+
     add_fieldsets = (
                         (None, {
                             'classes': ('wide',),
                             'fields': ('username', 'password1', 'password2')}
                             ),
                     )
-    
+
     form = UserChangeForm
     add_form = UserCreationForm
     change_password_form = AdminPasswordChangeForm
@@ -967,9 +939,9 @@ class UserAdminCustom(admin.ModelAdmin):
             iu.cpf      = '999.999.999-99'
             iu.matricul = 'XXXYYYZZZ'
             iu.save()
-            
+
         #username = obj.username.replace('_', '')
-        
+
         #if not _cpf(username).isValid() and not _is_valid_email(username) and username.isdigit():
         #    obj.username = username
         #    obj.save()
@@ -984,7 +956,7 @@ class UserAdminCustom(admin.ModelAdmin):
 
             p['link']       = '%slogin/?user=%s&action=%s&key=%s' % (settings.LIST_VARS.get('base_url', ''), obj.username, '/conta/edit/', obj.password)
             p['this_user']  = obj
-            
+
             p['STATIC_URL'] = getattr(settings, 'STATIC_URL', '')
 
             r = _send_email_user(p, request)
@@ -999,7 +971,7 @@ class UserAdminCustom(admin.ModelAdmin):
                 return qs.filter(infouser__rede = request.rede)
             return qs.all()
         ca = qs.filter( (Q(is_superuser = False) & Q(username = request.user.username)) | (Q(is_superuser = False) & Q(infouser__rede__in = rede)) )
-        
+
         if request.user.infouser.filial:
             ca = ca.filter(infouser__filial = request.user.infouser.filial)
         return ca
@@ -1014,7 +986,7 @@ class UserAdminCustom(admin.ModelAdmin):
         """
         Use special form during user creation
         """
-        
+
         cm = CrequestMiddleware.get_request()
 
         try:
@@ -1035,7 +1007,7 @@ class UserAdminCustom(admin.ModelAdmin):
             rede = None
             self.add_fieldsets = ()
             self.add_form_template = 'mega/admin/mensagem_user.html'
-     
+
         defaults = {}
         if obj is None:
             defaults.update({
@@ -1143,9 +1115,9 @@ admin.site.register(User, UserAdminCustom)
 class LiveAdmin(admin.ModelAdmin):
 
     list_display = ('rede', 'live', 'Data_de_agendamento',)
-    
+
     exclude = ['rede', 'live', 'user_not_chat', 'user_not_video', 'user_not_audio', 'user_not_all']
-    
+
     def queryset(self, request):
         qs = super(LiveAdmin, self).queryset(request)
         if request.user.is_superuser:
@@ -1153,10 +1125,10 @@ class LiveAdmin(admin.ModelAdmin):
                 return qs.filter(rede = request.rede)
             return qs.all()
         return qs.filter(rede__user = request.user)
-    
-    
+
+
     def get_form(self, request, obj=None, **kwargs):
-        
+
         return super(LiveAdmin, self).get_form(request, obj=None, **kwargs)
 
     def get_urls(self):
@@ -1167,28 +1139,28 @@ class LiveAdmin(admin.ModelAdmin):
         return my_urls + urls
 
 
-admin.site.register(Live, LiveAdmin)
+#admin.site.register(Live, LiveAdmin)
 
 
 class AnexoForm(ModelForm):
-    
+
     def __init__(self, *args, **kwargs):
         super(AnexoForm, self).__init__(*args, **kwargs)
 
         cm = CrequestMiddleware.get_request()
-    
+
         try:
             rede = cm.rede
         except:
             rede = None
-            
+
         qst = Treinamento.objects.all()
         qsc = Category.objects.all()
-        
+
         if rede:
             qst = qst.filter( rede = rede )
             qsc = qsc.filter( rede = rede )
-        
+
         self.fields['treinamento'].queryset = qst.order_by('name')
         self.fields['category'].queryset    = qsc.order_by('name')
 
@@ -1199,7 +1171,7 @@ class AnexoForm(ModelForm):
 class AnexoAdmin(admin.ModelAdmin):
 
     list_display = ('name', 'rede', 'treinamento', 'category', 'visible',)
-    
+
     def queryset(self, request):
         qs = super(AnexoAdmin, self).queryset(request)
         if request.user.is_superuser:
@@ -1216,7 +1188,7 @@ class AnexoAdmin(admin.ModelAdmin):
             self.fields = ['rede', 'category', 'treinamento', 'name', 'visible', 'file', 'desc']
         self.form = AnexoForm
         return super(AnexoAdmin, self).get_form(request, obj=None, **kwargs)
-    
+
     ## para salvar automaticamente a rede que está na session
     def save_model(self, request, obj, form, change):
         try:
@@ -1231,7 +1203,7 @@ admin.site.register(Anexo, AnexoAdmin)
 
 
 class QuizAdmin(admin.ModelAdmin):
-    
+
     list_display  = ('primeira_pergunta', 'rede', 'treinamento', 'porcentagem_acerto', 'email_responsavel', 'quant_perguntas',)
     search_fields = ['treinamento']
 
@@ -1243,7 +1215,7 @@ class QuizAdmin(admin.ModelAdmin):
             (r'^(?P<quiz_id>\d+)/'        , admin.site.admin_view(_quiz)),
         )
         return my_urls + urls
-    
+
     def queryset(self, request):
         qs = super(QuizAdmin, self).queryset(request)
         if request.user.is_superuser:
@@ -1256,7 +1228,7 @@ admin.site.register(Quiz, QuizAdmin)
 
 
 class PlanoAdmin(admin.ModelAdmin):
-    
+
     list_display = ('name', 'rede', 'valor', 'visible', 'duracao',)
 
     def queryset(self, request):
@@ -1274,7 +1246,7 @@ class PlanoAdmin(admin.ModelAdmin):
         else:
             self.fields = ['rede', 'name', 'valor', 'desc', 'visible', 'duration', 'q_videos', 'q_badges', 'quiz', 'tutor']
         return super(PlanoAdmin, self).get_form(request, obj=None, **kwargs)
-    
+
     ## para salvar automaticamente a rede que está na session
     def save_model(self, request, obj, form, change):
         try:
@@ -1285,13 +1257,13 @@ class PlanoAdmin(admin.ModelAdmin):
         obj.save()
 
 
-admin.site.register(Plano, PlanoAdmin)
+#admin.site.register(Plano, PlanoAdmin)
 
 #admin.site.register(Transation)
 
 
 class EnqueteAdmin(admin.ModelAdmin):
-    
+
     list_display = ('title', 'rede', 'visible', 'quant_votos',)
 
     def queryset(self, request):
@@ -1309,7 +1281,7 @@ class EnqueteAdmin(admin.ModelAdmin):
         else:
             self.fields = ['rede', 'title', 'visible', 'opcao1', 'opcao2', 'opcao3', 'opcao4', 'opcao5', 'opcao6']
         return super(EnqueteAdmin, self).get_form(request, obj=None, **kwargs)
-    
+
     ## para salvar automaticamente a rede que está na session
     def save_model(self, request, obj, form, change):
         try:
@@ -1324,7 +1296,7 @@ admin.site.register(Enquete, EnqueteAdmin)
 
 
 class UrlAdmin(admin.ModelAdmin):
-    
+
     list_display = ('rede', 'type', 'active', 'key', 'date_v',)
 
     def queryset(self, request):
@@ -1342,7 +1314,7 @@ class UrlAdmin(admin.ModelAdmin):
         else:
             self.fields = ['rede', 'type', 'key', 'link', 'mto', 'mfrom', 'active', 'date_v']
         return super(UrlAdmin, self).get_form(request, obj=None, **kwargs)
-    
+
     ## para salvar automaticamente a rede que está na session
     def save_model(self, request, obj, form, change):
         try:
@@ -1353,6 +1325,124 @@ class UrlAdmin(admin.ModelAdmin):
         obj.save()
 
 
-admin.site.register(Url, UrlAdmin)
+#admin.site.register(Url, UrlAdmin)
 
 
+class ContatoComercialForm(ModelForm):
+
+    def __init__(self, *args, **kwargs):
+        super(ContatoComercialForm, self).__init__(*args, **kwargs)
+
+        cm = CrequestMiddleware.get_request()
+
+        try:
+            rede = cm.rede
+        except:
+            rede = None
+
+        qsc = Category.objects.all()
+
+        if rede:
+            qsc = qsc.filter( rede = rede )
+
+        self.fields['category'].queryset = qsc.order_by('name')
+
+    class Meta:
+        model = ContatoComercial
+
+
+class ContatoComercialAdmin(admin.ModelAdmin):
+
+    list_display  = ('nome', 'regiao', 'rede', 'category', 'visible', 'fone1')
+    search_fields = ['nome', 'regiao']
+    list_filter   = ('visible',)
+
+    def queryset(self, request):
+        qs = super(ContatoComercialAdmin, self).queryset(request)
+        if request.user.is_superuser:
+            if request.rede:
+                return qs.filter(rede = request.rede)
+            return qs.all()
+        return qs.filter(rede__user = request.user)
+
+    ## para limitar os combo das redes
+    def get_form(self, request, obj=None, **kwargs):
+        if request.rede:
+            self.fields = ['category', 'nome', 'visible', 'email', 'regiao', 'fone1', 'fone2']
+        else:
+            self.fields = ['rede', 'category', 'nome', 'visible', 'email', 'regiao', 'fone1', 'fone2']
+        self.form = ContatoComercialForm
+        return super(ContatoComercialAdmin, self).get_form(request, obj=None, **kwargs)
+
+    ## para salvar automaticamente a rede que está na session
+    def save_model(self, request, obj, form, change):
+        try:
+            rede     = request.rede
+            obj.rede = rede
+        except:
+            pass
+        obj.save()
+
+
+admin.site.register(ContatoComercial, ContatoComercialAdmin)
+
+
+class AvisoForm(ModelForm):
+
+    def __init__(self, *args, **kwargs):
+        super(AvisoForm, self).__init__(*args, **kwargs)
+
+        cm = CrequestMiddleware.get_request()
+
+        try:
+            rede = cm.rede
+        except:
+            rede = None
+
+        qsu = User.objects.all()
+
+        if rede:
+            qsu = qsu.filter( infouser__rede = rede )
+
+        self.fields['is_user_view'].widget   = FilteredSelectMultiple(_(u'usuários'), False)
+        self.fields['is_user_view'].queryset = qsu.order_by('username')
+
+    class Meta:
+        model = Aviso
+
+
+class AvisoAdmin(admin.ModelAdmin):
+
+    list_display = ('rede', 'name', 'visible', 'is_video', 'is_persistent', 'is_full_user', 'Data_inicia', 'Data_termina',)
+
+    def queryset(self, request):
+        qs = super(AvisoAdmin, self).queryset(request)
+        if request.user.is_superuser:
+            if request.rede:
+                return qs.filter(rede = request.rede)
+            return qs.all()
+        return qs.filter(rede__user = request.user)
+
+    ## para limitar os combo das redes
+    def get_form(self, request, obj=None, **kwargs):
+        if request.rede:
+            self.fields = ['name', 'image', 'is_video', 'link', 'code', 'is_persistent', 'is_full_user', 'is_user_view', 'visible', 'date_init', 'date_end']
+        else:
+            self.fields = ['rede', 'name', 'image', 'is_video', 'link', 'code', 'is_persistent', 'is_full_user', 'is_user_view', 'visible', 'date_init', 'date_end']
+        self.form = AvisoForm
+        return super(AvisoAdmin, self).get_form(request, obj=None, **kwargs)
+
+    ## para salvar automaticamente a rede que está na session
+    def save_model(self, request, obj, form, change):
+        try:
+            rede     = request.rede
+            obj.rede = rede
+        except:
+            pass
+        obj.save()
+
+    class Media:
+        js = ('mega/js/aviso_admin.js',)
+
+
+admin.site.register(Aviso, AvisoAdmin)

@@ -145,7 +145,6 @@ def _prepare_vars(request, rede=None, p={}):
     p['is_filial']        = None
     p['is_access']        = False
     p['q']                = None
-    #p['user']            = None
 
     p['base_url']         = settings.LIST_VARS.get('base_url', '')
 

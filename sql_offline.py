@@ -47,8 +47,11 @@ def set_sql(*args):
 
 
 def set_mail(to='', subject='', text=''):
+    
+    mail = ''
 
-    mail = base64.b64encode( json.JSONEncoder().encode({'to' : to, 'subject' : subject, 'text' : text}) )
+    if not settings.DEBUG:
+        mail = base64.b64encode( json.JSONEncoder().encode({'to' : to, 'subject' : subject, 'text' : text}) )
         
     os.system("echo '%s;' >> /var/www/mail.config" % mail)    
         
