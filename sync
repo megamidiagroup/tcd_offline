@@ -3,7 +3,7 @@
 ## 4 horas de janela
 set timeout 14400
 
-spawn /bin/sh -c "rsync -azv --temp-dir=/tmp --timeout=14400 --copy-links --delete-after rsync://radiob@server2.megamidia.com.br:/tcdoffline/<rede>/ /var/www/"
+spawn /bin/sh -c "rsync -azv --temp-dir=/tmp --timeout=14400 --copy-links rsync://radiob@server2.megamidia.com.br:/tcdoffline/<rede>/ /var/www/"
 expect {
     timeout {
         exit 1
