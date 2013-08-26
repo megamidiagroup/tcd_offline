@@ -19,7 +19,7 @@ expect {
         exp_continue
         exit 0
     }
-    -re "radiob@server2.megamidia.com.br's password:" {
+    -re "Password:" {
         send "radiob\r"
         exp_continue
         exit 0
