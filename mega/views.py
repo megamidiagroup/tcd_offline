@@ -283,6 +283,13 @@ def category(request, rede=None, cat_id=None):
 
     if not p['list_category']:
         p['list_treinamento'] = Treinamento.objects.filter( Q(rede = p['rede']) & Q(visible=True) & Q(category__id = int(cat_id)) ).order_by('order', 'name')
+        
+    ## start $1 verifica se é elearning e se tem somente um treinamento e redireciona direto para o mesmo
+    if p['category'].count() > 0:
+        trein = Treinamento.objects.filter( Q(rede = p['rede']) & Q(visible=True) & Q(category = p['category'][0]) & Q(tipo_t = 1) )
+        if trein.count() == 1:
+            return HttpResponseRedirect(reverse('elearning', args=(p['rede'].link, trein[0].id,)))
+    ## end $1
 
     return render_to_response('%s/home.html' % p['get_tipo_template'], p, context_instance=RequestContext(request))
 
@@ -403,7 +410,7 @@ def treinamento(request, rede=None, video_id=None):
 
     p['class'] = ''
 
-    #p['list_anexo'] = None
+    p['elearning']  = None
 
     if not p['rede']:
         return HttpResponseRedirect('/login/')
@@ -426,9 +433,10 @@ def treinamento(request, rede=None, video_id=None):
         if video_relacionado(video, p['user']) == 'disabled':
             return HttpResponseRedirect(reverse('category', args=(p['rede'].link, video.category.id,)))
 
-        #p['list_anexo'] = Anexo.objects.filter( Q(visible = True) & Q(rede = p['rede']) & Q(treinamento = video) ).order_by('name')
         if is_not_video(video) == 'elearning':
             return HttpResponseRedirect('/%s/elearning/%s/' % (p['rede'].link, video.id) )
+        
+        p['elearning'] = Treinamento.objects.filter( Q(rede = p['rede']) & Q(visible=True) & Q(treinamento = video) & Q(tipo_t = 1) ).order_by('order', 'name')
 
     return render_to_response('%s/treinamento.html' % p['get_tipo_template'], p, context_instance=RequestContext(request))
 
@@ -513,7 +521,8 @@ def elearning(request, rede=None, video_id=None):
     # regras para usuário restrito
     if not p['is_access']:
         if p['list_video'] and not p['list_video'].filter( Q(category__access = p['is_access']) ):
-            return HttpResponseRedirect('/%s/' % p['rede'].link)
+            if p['list_video'].filter( Q(category__isnull = False) ):
+                return HttpResponseRedirect('/%s/' % p['rede'].link)
 
     # regras para quem está em uma filial
     if p['is_filial']:

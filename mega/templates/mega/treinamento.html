@@ -125,7 +125,7 @@
                             {% endif %}
                             <br />
                             {% if elearning %}
-                                <a class="buttom btn_overlay" action="{% url elearning rede.link list_video.0.id %}" href="javascript:void(0);" title="Assista o vídeo até o fim">IR PARA O E-LEARNING</a>
+                                <a class="buttom btn_overlay" action="{% url elearning rede.link elearning.0.id %}" href="javascript:void(0);" title="Assista o vídeo até o fim">IR PARA O E-LEARNING</a>
                             {% else %}
 	                            {% if list_video.0|is_question:user  %}
 	                                <a class="buttom btn_overlay" action="{% url questionario rede.link list_video.0.id %}" href="javascript:void(0);" title="Assista o vídeo até o fim">IR PARA O TESTE</a>
