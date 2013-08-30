@@ -167,7 +167,13 @@ class Category(models.Model):
     date      = models.DateTimeField(auto_now_add=True, verbose_name='Data')
 
     def __unicode__(self):
-        return '%s - %s' % (self.rede.name, self.name)
+        category_name = '[' + self.rede.name + '] - ' + self.name
+
+        while self.parent:
+            category_name = category_name + ' -> ' + self.parent.name
+            self = self.parent
+
+        return category_name
 
     def categoria(self):
         return self.parent.name
@@ -1019,3 +1025,30 @@ class Aviso(models.Model):
     class Meta:
         verbose_name = u'Aviso'
         ordering     = ['rede']
+
+
+class Host(models.Model):
+    rede    = models.ForeignKey(Rede, verbose_name='Rede')
+    visible = models.BooleanField(default = True, verbose_name='Habilitado')
+    ip      = models.CharField(max_length=128, verbose_name='IP')
+    date    = models.DateTimeField(auto_now_add=True)
+
+    def __unicode__(self):
+        return self.ip
+
+    class Meta:
+        ordering = ['ip']
+                
+        
+class Router(models.Model):
+    rede    = models.ForeignKey(Rede, verbose_name='Rede')
+    host    = models.ForeignKey(Host, verbose_name='Host')
+    visible = models.BooleanField(default = True, verbose_name='Habilitado')
+    ip      = models.CharField(max_length=128, verbose_name='IP', help_text='Use o IP do usuário, ou IP rotas, tipo 10.0.1, não use ponto no final.')
+
+    def __unicode__(self):
+        return self.ip
+
+    class Meta:
+        ordering = ['ip']        
+

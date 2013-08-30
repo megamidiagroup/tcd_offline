@@ -16,6 +16,7 @@ except:
 from megavideo.common.dlog import LOGGER
 from megavideo.common.create_url import get_thumb_url
 from megavideo.video.models import *
+from mega.models import Router, Host
 from megavideo.common.categories import *
 from megavideo.common.channel import *
 
@@ -96,12 +97,13 @@ def api_get_cat_tree(cat_id, l, list_selected):
             
     return childs
 
-def prepare_content(content, t = 'A'):
+def prepare_content(content, t = 'A', ip='localhost'):
     """ prepara os programas para serem retornados """
 
     r         = {}
     r['id']   = content.id
     r['type'] = t
+    r['url_relative'] = ip
     r['meta'] = {}
     for i in ['name', 'description', 'author']:
         r['meta'][i] = content.get_meta(i)
@@ -265,14 +267,39 @@ def selectContentByTag(request, tag,  from_to = []):
 
 def getContent(request, key):
 
-    video_id = Video().deserialize( key )
+    video_id    = Video().deserialize( key )
+    
+    ip_redirect = 'localhost'
+    ip          = ''
+
+    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+    if x_forwarded_for:
+        ip = x_forwarded_for.split(',')[0]
+    else:
+        ip = request.META.get('REMOTE_ADDR')
 
     try:
         v = Video.objects.using('megavideo').get(id = int(video_id))
     except:
         return api_response(-1, [], 0)
 
-    return api_response(0, [prepare_content(v)], 1)
+    channel = v.channel_set.all()[0]
+
+    r = Router.objects.using('default').filter( Q(rede__link = channel.name) & Q(visible = True) & Q(host__visible = True) )
+    if r.count() > 0:
+        if r.filter(ip__iexact = ip).count() == 1:
+            ip_redirect  = r.filter(ip__iexact = ip)[0].host.ip
+        elif r.filter(ip__iexact = '.'.join(ip.split('.')[0:-1])).count() == 1:
+            ip_redirect  = r.filter(ip__iexact = '.'.join(ip.split('.')[0:-1]))[0].host.ip
+        elif r.filter(ip__iexact = '.'.join(ip.split('.')[0:-2])).count() == 1:
+            ip_redirect  = r.filter(ip__iexact = '.'.join(ip.split('.')[0:-2]))[0].host.ip
+        elif r.filter(ip__iexact = '.'.join(ip.split('.')[0:-3])).count() == 1:
+            ip_redirect  = r.filter(ip__iexact = '.'.join(ip.split('.')[0:-3]))[0].host.ip
+
+    LOGGER.debug('IP: ' + str(ip))
+    LOGGER.debug('Redirect: ' + str(ip_redirect))
+
+    return api_response(0, [prepare_content(v, ip=ip_redirect)], 1)
 
 def getCategory(request, category_id):
     c = Category.objects.using('megavideo').get(pk = int(category_id))
