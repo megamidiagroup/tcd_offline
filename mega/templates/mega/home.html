@@ -260,11 +260,11 @@
 		    {% endif %}
 
 		    {% if list_category %}
-				<ul class="category clearfix {% if rede.link|lower == 'cencosud' and class == 'home' %}satisfacao1{% endif %}">
-				    {% for i in list_category %}
+                <ul class="category clearfix">
+                    {% for i in list_category %}
 						<li>
-						    <a href="{% url home %}{{ rede.link }}/category/{{ i.id }}/" class="{{ i|category_video_relacionado:user }}">
-								<div class="{{ i|css_hiraquia_cat }} {% if not i.is_name %}no-name-category{% endif %}"><img src="{{ i|get_image }}" border="0" /></div>
+						    <a href="{% url home %}{{ rede.link }}/category/{{ i.id }}/" class="{{ i|category_video_relacionado:user }}" {% if rede.is_hit_cat %}title="{{ i.desc|compress_html:0|safe }}"{% endif %}>
+								<div class="{{ i|css_hiraquia_cat }} {% if not i.is_name %}no-name-category{% endif %}">{% if i|get_image %}<img src="{{ i|get_image }}" border="0" />{% endif %}</div>
 								{% if i.is_name %}<h2 class="box-title">{{ i.name }}</h2>{% endif %}
 								{% if i.is_name %}{% if i.desc|length_title_desc > 0 %}<span>{{ i.desc|safe|striptags|super_truncatewords:'100-150'|safe }}</span>{% endif %}{% endif %}
 						    </a>
@@ -272,13 +272,6 @@
 						</li>
 				    {% endfor %}
 				</ul>
-				{% if rede.link|lower == 'cencosud' and class == 'home' %}
-					<ul class="satisfacao2">
-						<li>
-							<img src="{{ STATIC_URL }}{{ get_tipo_template }}/images/satisfacao.png" border="0" />
-						</li>
-					</ul>
-				{% endif %}
 		    {% else %}
 			    {% if not list_treinamento and not list_anexo %}
 					{% get_msg rede %}
@@ -292,9 +285,9 @@
 				    	{% if i.tipo_t == 0 %}
 						    {% if i.tipo == 'L' %}
 							    <li>
-									<a href="{% url live rede.link i.id %}" class="{% if forloop.last %}last{% endif %}">
+									<a href="{% url live rede.link i.id %}" class="{% if forloop.last %}last{% endif %}" {% if rede.is_hit_tre %}title="{{ i.get_desc|compress_html:0|safe }}"{% endif %}>
 									    <div class="{{ i|css_hiraquia_video }}">
-									    	<img src="{{ i|get_image }}" border="0" />
+									    	{% if i|get_image %}<img src="{{ i|get_image }}" border="0" />{% endif %}
 									    </div>
 									    <h2 class="box-title">{{ i.name }}</h2>
 									    <span>{{ i.get_desc|striptags|super_truncatewords:'200-300'|safe }}</span>
@@ -304,9 +297,9 @@
 							    </li>
 						    {% else %}
 							    <li>
-									<a href="{% url home %}{{ rede.link }}/treinamento/{{ i.id }}/" class="{% if forloop.last %}last{% endif %} {{ i|video_relacionado:user }}">
+									<a href="{% url home %}{{ rede.link }}/treinamento/{{ i.id }}/" class="{% if forloop.last %}last{% endif %} {{ i|video_relacionado:user }}" {% if rede.is_hit_tre %}title="{{ i.get_desc|compress_html:0|safe }}"{% endif %}>
 									    <div class="{{ i|css_hiraquia_video }}">
-									    	<img src="{{ i|get_image }}" border="0" />
+									    	{% if i|get_image %}<img src="{{ i|get_image }}" border="0" />{% endif %}
 									    	{% if i.time|lenght > 1 %}
 									    		<span class="time">{{ i.time }}</span>
 									    	{% endif %}
@@ -321,9 +314,9 @@
 						
 						{% if i.tipo_t == 1 %}
 						    <li>
-								<a href="{% url elearning rede.link i.id %}" class="{% if forloop.last %}last{% endif %} {{ i|video_relacionado:user }}">
+								<a href="{% url elearning rede.link i.id %}" class="{% if forloop.last %}last{% endif %} {{ i|video_relacionado:user }}" {% if rede.is_hit_tre %}title="{{ i.get_desc|compress_html:0|safe }}"{% endif %}>
 								    <div class="{{ i|css_hiraquia_video }}">
-								    	<img src="{{ i|get_image }}" border="0" />
+								    	{% if i|get_image %}<img src="{{ i|get_image }}" border="0" />{% endif %}
 								    	{% if i.time|lenght > 1 %}
 								    		<span class="time">{{ i.time }}</span>
 								    	{% endif %}
@@ -337,9 +330,9 @@
 						
 						{% if i.tipo_t == 2 %}
 						    <li>
-								<a href="{% url vitrine rede.link i.id %}" class="{% if forloop.last %}last{% endif %} {{ i|video_relacionado:user }}">
+								<a href="{% url vitrine rede.link i.id %}" class="{% if forloop.last %}last{% endif %} {{ i|video_relacionado:user }}" {% if rede.is_hit_tre %}title="{{ i.get_desc|compress_html:0|safe }}"{% endif %}>
 								    <div class="{{ i|css_hiraquia_video }}">
-								    	<img src="{{ i|get_image }}" border="0" />
+								    	{% if i|get_image %}<img src="{{ i|get_image }}" border="0" />{% endif %}
 								    	{% if i.time|lenght > 1 %}
 								    		<span class="time">{{ i.time }}</span>
 								    	{% endif %}
@@ -365,7 +358,7 @@
 						    <li>
 							    <a href="{{ lp.link }}" {% if lp.name|length_title_desc > 0 %} title="{{ lp.name }}" {% endif %}>
 									<div class="{{ lp|css_hiraquia_cat }} no-name-category">
-										<img src="{{ lp|get_image }}" border="0" />
+										{% if lp|get_image %}<img src="{{ lp|get_image }}" border="0" />{% endif %}
 									</div>
 									{% if lp.is_name %}<h2 class="box-title" style="text-align: center;">{{ lp.name }}</h2>{% endif %}
 							    </a>
@@ -374,7 +367,7 @@
 							<li>
 							    <a href="javascript:void(0);" style="cursor: default;">
 									<div class="{{ lp|css_hiraquia_cat }} no-name-category">
-										<img src="{{ lp|get_image }}" border="0" />
+										{% if lp|get_image %}<img src="{{ lp|get_image }}" border="0" />{% endif %}
 									</div>
 									{% if lp.is_name %}<h2 class="box-title" style="text-align: center;">{{ lp.name }}</h2>{% endif %}
 							    </a>

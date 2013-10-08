@@ -8,6 +8,7 @@ from django.db.models import Q, Sum
 from django.utils.safestring import mark_safe
 from django.utils.safestring import SafeString
 from django.template.defaultfilters import striptags, stringfilter
+from django.utils.html import strip_spaces_between_tags
 
 try:
     from django.core.validators import email_re
@@ -23,6 +24,9 @@ import base64
 import pickle
 import os
 import re
+
+RE_MULTISPACE = re.compile(r"\s{2,}")
+RE_NEWLINE = re.compile(r"\n")
 
 register  = Library()
 
@@ -40,17 +44,31 @@ def trim(value):
 
 
 @register.filter()
+@stringfilter
+def compress_html(value, html=1):
+    ssbt = strip_spaces_between_tags(value.strip())
+    ssbt = RE_MULTISPACE.sub(" ", ssbt)
+    ssbt = RE_NEWLINE.sub("", ssbt)
+    if html == 0:
+        ssbt = striptags( ssbt )
+    return ssbt
+
+
+@register.filter()
 def get_image(obj):
     ''' Get image para testes '''
 
     try:
-        return '%s../%s' % (settings.STATIC_URL, str(obj[0].image))
+        if obj[0].image:
+            return '%s../%s' % (settings.STATIC_URL, str(obj[0].image))
     except:
         try:
-            return '%s../%s' % (settings.STATIC_URL, str(obj.image))
+            if obj.image:
+                return '%s../%s' % (settings.STATIC_URL, str(obj.image))
         except:
-            return ''
-        return ''
+            pass
+    
+    return ''
 
 
 @register.filter()
@@ -253,8 +271,8 @@ def kaltura(rede, code, id, w='640', h='360'):
     return {'rede' : rede, 'code' : code, 'id' : id, 'w' : w, 'h' : h}
 
 
-@register.inclusion_tag('templatetags/megavideo.html')
-def megavideo(rede, code, id, w='640', h='360', logo_url='', logo_link=''):
+@register.inclusion_tag('templatetags/megavideo.html', takes_context = True)
+def megavideo(context, rede, code, id, w='640', h='360', logo_url='', logo_link=''):
 
     base_url = [settings.MEGAVIDEO_CONF.get('base_url', ''), 'https://www.treinandoequipes.com.br/megavideo/'][settings.DEBUG]
 

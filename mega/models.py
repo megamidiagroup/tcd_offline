@@ -64,19 +64,21 @@ def upload_file(self, filename):
 
 ### Tabela para as Redes
 class Rede(models.Model):
-    user      = models.ManyToManyField(UserAdmin, verbose_name='Cliente Responsável', help_text='Usuários que poderão visualizar a sua rede. Segure CTRL e clique para selecionar mais de uma opção.', blank = True)
-    name      = models.CharField(max_length = 255, verbose_name='Nome')
-    link      = models.CharField(max_length = 255, verbose_name='URL')
-    logo      = models.ImageField(upload_to = upload_file, max_length=255, help_text='A imagem deverá ser gerada em png com tamanho máximo de 370x100px ', verbose_name='Logo')
-    logo_log  = models.ImageField(upload_to = upload_file, max_length=255, null = True, blank = True, help_text='Caso queira que a logo do login seja diferente, tamanho máximo de 370x100px ', verbose_name='Logo do Login')
-    visible   = models.BooleanField(default = True, verbose_name='Habilitado')
-    is_faq    = models.BooleanField(default = False, blank = True, verbose_name='Faq treinamento', help_text='Habilita Faq dos treinamentos, tanto para envio quanto para visualização')
-    is_login  = models.BooleanField(default = True, verbose_name='Área de login', help_text='Habilita área de login da rede')
-    image     = models.ImageField(upload_to = upload_file, max_length=255, null = True, blank = True, help_text='A imagem deverá ser gerada em png com cantos arredondados com tamanho de 540x198px, caso contrário, deixe o campo vazio.', verbose_name='Imagem de fundo')
-    email     = models.CharField(max_length = 255, verbose_name='E-mail responsável', null = True, blank = True, help_text='Somente adicione o e-mail caso o cliente deseje receber as sugestões ou dúvidas, caso deseje mais de um e-mail, favor adicionar os e-mails separados por vírgula.')
-    date_send = models.DateField(verbose_name='Apartir da data', null = True, blank = True, help_text='Caso for diário, semanal, mensal ou anual, favor inserir a data para inicio do processo.')
-    resend    = models.CharField(max_length = 1, choices = CHOICE_RESEND, null = True, blank = True, verbose_name='Envio acontece', help_text='O envio acontece todos os dias à meia-noite, caso for imediato, a sugestão ou dúvida é registrada e enviada imediatamente para o cliente, caso contrário, é enviado a opção selecionada.')
-    date      = models.DateTimeField(auto_now_add=True, verbose_name='Data')
+    user       = models.ManyToManyField(UserAdmin, verbose_name='Cliente Responsável', help_text='Usuários que poderão visualizar a sua rede. Segure CTRL e clique para selecionar mais de uma opção.', blank = True)
+    name       = models.CharField(max_length = 255, verbose_name='Nome')
+    link       = models.CharField(max_length = 255, verbose_name='URL')
+    logo       = models.ImageField(upload_to = upload_file, max_length=255, help_text='A imagem deverá ser gerada em png com tamanho máximo de 370x100px ', verbose_name='Logo')
+    logo_log   = models.ImageField(upload_to = upload_file, max_length=255, null = True, blank = True, help_text='Caso queira que a logo do login seja diferente, tamanho máximo de 370x100px ', verbose_name='Logo do Login')
+    visible    = models.BooleanField(default = True, verbose_name='Habilitado')
+    is_faq     = models.BooleanField(default = False, blank = True, verbose_name='Faq treinamento', help_text='Habilita Faq dos treinamentos, tanto para envio quanto para visualização')
+    is_hit_cat = models.BooleanField(default = False, blank = True, verbose_name='Hit Categorias', help_text='Habilita hit das categorias, com o mouse encima da lista de categorias, mostra a descrição')
+    is_hit_tre = models.BooleanField(default = False, blank = True, verbose_name='Hit Treinamentos', help_text='Habilita hit dos treinamentos, com o mouse encima da lista de vídeos, mostra a descrição')
+    is_login   = models.BooleanField(default = True, verbose_name='Área de login', help_text='Habilita área de login da rede')
+    image      = models.ImageField(upload_to = upload_file, max_length=255, null = True, blank = True, help_text='A imagem deverá ser gerada em png com cantos arredondados com tamanho de 540x198px, caso contrário, deixe o campo vazio.', verbose_name='Imagem de fundo')
+    email      = models.CharField(max_length = 255, verbose_name='E-mail responsável', null = True, blank = True, help_text='Somente adicione o e-mail caso o cliente deseje receber as sugestões ou dúvidas, caso deseje mais de um e-mail, favor adicionar os e-mails separados por vírgula.')
+    date_send  = models.DateField(verbose_name='Apartir da data', null = True, blank = True, help_text='Caso for diário, semanal, mensal ou anual, favor inserir a data para inicio do processo.')
+    resend     = models.CharField(max_length = 1, choices = CHOICE_RESEND, null = True, blank = True, verbose_name='Envio acontece', help_text='O envio acontece todos os dias à meia-noite, caso for imediato, a sugestão ou dúvida é registrada e enviada imediatamente para o cliente, caso contrário, é enviado a opção selecionada.')
+    date       = models.DateTimeField(auto_now_add=True, verbose_name='Data')
 
     def __unicode__(self):
         return self.name
