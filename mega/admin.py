@@ -23,7 +23,8 @@ from django.contrib.admin.widgets import FilteredSelectMultiple
 from models import Rede, Filial, Category, Treinamento, Certificado, Question, Response, Parceiro, Banner, \
                         Faq, InfoUser, Menu, RelatorioAcoes, RelatorioAvalicao, RelatorioTentativa, \
                             TipoTemplate, Template, WebChat, Live, Anexo, Quiz, FreeResponse, \
-                                Plano, Transation, Enquete, Url, ContatoComercial, Aviso
+                                Plano, Transation, Enquete, Url, ContatoComercial, Aviso, \
+                                    Host, Router, ScreenSaver
 
 from crequest.middleware import CrequestMiddleware
 
@@ -62,13 +63,16 @@ class RedeForm(ModelForm):
 
 
 class RedeAdmin(admin.ModelAdmin):
-    list_display  = ('name', 'link', 'visible', 'is_faq', 'imagem_mensagem')
-    list_filter   = ('visible',)
+    list_display  = ('name', 'link', 'visible', 'is_faq', 'is_hit_cat', 'is_hit_tre', 'imagem_mensagem')
+    list_filter   = ('visible', 'is_faq', 'is_hit_cat', 'is_hit_tre',)
     search_fields = ['name']
 
     fieldsets = (
         (None, {
             'fields': ('name', 'link', 'logo', 'logo_log', 'visible', 'user', 'is_faq', 'is_login',)
+        }),
+        ('Hit, mouseover. "', {
+            'fields' : ('is_hit_cat', 'is_hit_tre',)
         }),
         ('Imagem de fundo da mensagem de "Esta categoria não tem conteúdo cadastrado. "', {
             'fields' : ('image',)
@@ -1446,3 +1450,105 @@ class AvisoAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Aviso, AvisoAdmin)
+
+## video host + router
+
+class HostAdmin(admin.ModelAdmin):
+
+    list_display = ('rede', 'ip', 'visible',)
+
+    def queryset(self, request):
+        qs = super(HostAdmin, self).queryset(request)
+        if request.user.is_superuser:
+            if request.rede:
+                return qs.filter(rede = request.rede)
+            return qs.all()
+        return qs.filter()
+
+    ## para limitar os combo das redes
+    def get_form(self, request, obj=None, **kwargs):
+        if request.rede:
+            self.fields = ['ip', 'visible']
+        else:
+            self.fields = ['rede', 'ip', 'visible']
+        return super(HostAdmin, self).get_form(request, obj=None, **kwargs)
+
+    ## para salvar automaticamente a rede que está na session
+    def save_model(self, request, obj, form, change):
+        try:
+            rede     = request.rede
+            obj.rede = rede
+        except:
+            pass
+        obj.save()
+
+
+admin.site.register(Host, HostAdmin)
+
+
+class AdminRouter(admin.ModelAdmin):
+
+    list_display = ('rede', 'host', 'ip', 'visible',)
+
+    def queryset(self, request):
+        qs = super(AdminRouter, self).queryset(request)
+        if request.user.is_superuser:
+            if request.rede:
+                return qs.filter(rede = request.rede)
+            return qs.all()
+        return qs.filter()
+
+    ## para limitar os combo das redes
+    def get_form(self, request, obj=None, **kwargs):
+        if request.rede:
+            self.fields = ['host', 'ip', 'visible']
+        else:
+            self.fields = ['rede', 'host', 'ip', 'visible']
+        return super(AdminRouter, self).get_form(request, obj=None, **kwargs)
+
+    ## para salvar automaticamente a rede que está na session
+    def save_model(self, request, obj, form, change):
+        try:
+            rede     = request.rede
+            obj.rede = rede
+        except:
+            pass
+        obj.save()
+
+
+admin.site.register(Router, AdminRouter)
+
+
+class AdminScreenSaver(admin.ModelAdmin):
+
+    list_display = ('rede', 'is_offline', 'is_online', 'list_video', 'time_login', 'time_full', 'visible', )
+
+    def queryset(self, request):
+        qs = super(AdminScreenSaver, self).queryset(request)
+        if request.user.is_superuser:
+            if request.rede:
+                return qs.filter(rede = request.rede)
+            return qs.all()
+        return qs.filter()
+
+    ## para limitar os combo das redes
+    def get_form(self, request, obj=None, **kwargs):
+        if request.rede:
+            self.fields = ['list_video', 'is_offline', 'is_online', 'time_login', 'time_full', 'visible']
+        else:
+            self.fields = ['rede', 'list_video', 'is_offline', 'is_online', 'time_login', 'time_full', 'visible']
+        return super(AdminScreenSaver, self).get_form(request, obj=None, **kwargs)
+
+    ## para salvar automaticamente a rede que está na session
+    def save_model(self, request, obj, form, change):
+        try:
+            rede     = request.rede
+            obj.rede = rede
+        except:
+            pass
+        obj.save()
+
+
+admin.site.register(ScreenSaver, AdminScreenSaver)
+
+

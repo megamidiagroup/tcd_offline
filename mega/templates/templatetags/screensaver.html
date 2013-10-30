@@ -1,0 +1,27 @@
+{% if screensaver %}
+
+	<script type="text/javascript" language="javascript">
+		
+		{% if is_login %}
+			var delay = ( 1000 * parseInt('{{ screensaver.time_login }}') );
+		{% else %}
+			var delay = ( 1000 * parseInt('{{ screensaver.time_full }}') );
+		{% endif %}
+		var timer     = setTimeout(onTimer, delay);
+		
+		function resetDelay()
+		{
+			clearTimeout(timer);
+			timer = setTimeout(onTimer, delay);
+		}
+		
+		function onTimer()
+		{
+			window.location = "{% url screensaver rede.link %}?next={{ next }}";
+		}
+		
+		window.onmousemove = window.onclick = function(){resetDelay();}
+		
+	</script>
+
+{% endif %}

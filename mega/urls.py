@@ -56,6 +56,7 @@ urlpatterns = patterns('%smega.views' % settings.PROJECT_URL,
     url(r'^(?P<rede>\w+)/ajax_etechnical/(?P<cat_id>\d+)/$'  , 'ajax_etechnical', name='ajax_etechnical'),
     url(r'^(?P<rede>\w+)/ajax_aviso/(?P<id>\d+)/$'           , 'ajax_aviso', name='ajax_aviso'),
 
+    url(r'^(?P<rede>\w+)/screensaver'                        , 'screensaver', name='screensaver'),
     url(r'^(?P<rede>\w+)/home/$'                             , 'home', name='home'),
     url(r'^(?P<rede>\w+)$'                                   , 'home', name='home'),
     url(r'^(?P<rede>\w+)/$'                                  , 'home', name='home'),

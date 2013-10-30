@@ -2217,6 +2217,28 @@ def ajax_aviso(request, rede=None, id=0):
     return HttpResponse(r)
 
 
+def screensaver(request, rede=None):
+    
+    p = _prepare_vars(request, rede)
+    
+    p['next']        = request.REQUEST.get('next', '')
+
+    p['screensaver'] = None
+    p['MV_TVDOMAIN'] = getattr(settings, 'MV_TVDOMAIN', '')
+    
+    ss = ScreenSaver.objects.filter( Q(visible = True) & Q(rede = p['rede']) ).order_by('-date')
+    
+    if ss.count() > 0:
+        p['screensaver'] = ss[0]
+        
+    if request.is_secure():
+        p['ssl'] = 'https://'
+    else:
+        p['ssl'] = 'http://'
+    
+    return render_to_response('%s/screensaver.html' % p['get_tipo_template'], p, context_instance=RequestContext(request))
+
+
 @cache_page(settings.CACHES['default']['TIMEOUT'])
 def noie6(request):
 

@@ -1052,5 +1052,33 @@ class Router(models.Model):
         return self.ip
 
     class Meta:
-        ordering = ['ip']        
+        ordering = ['ip'] 
+        
+        
+class ScreenSaver(models.Model):
+    rede       = models.ForeignKey(Rede, verbose_name='Rede')
+    is_offline = models.BooleanField(default = True, verbose_name='Ambiente OffLine')
+    is_online  = models.BooleanField(default = False, verbose_name='Ambiente OnLine')
+    list_video = models.CharField(max_length=255, verbose_name='Código Vídeo(s)', help_text='Caso mais que um código do MegaVideo, separar com ponto-e-vírgula. Ex: _XLXL456; _KFKF523')
+    time_login = models.IntegerField(default = 60, verbose_name='Tempo do login', help_text='Em segundos, o tempo ocioso da área do login.')
+    time_full  = models.IntegerField(default = (60*15), verbose_name='Tempo demais páginas', help_text='Em segundos, o tempo ocioso das demais páginas internas.')
+    visible    = models.BooleanField(default = True, verbose_name='Habilitado')
+    date       = models.DateTimeField(auto_now_add=True)
+
+    def __unicode__(self):
+        return self.rede.name
+    
+    def get_videos(self):
+        
+        lista = []
+        for lv in self.list_video.split(';'):
+            lista.append(lv.strip())
+            
+        return lista
+        
+    class Meta:
+        verbose_name        = u'Protetor de tela'
+        verbose_name_plural = u'Protetores de tela'
+        ordering            = ['visible']
+               
 
