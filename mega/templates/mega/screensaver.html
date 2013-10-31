@@ -34,6 +34,7 @@
 			playlist.push('{{ gv }}');
 		{% endfor %}
 		var listIndex  = 0;
+		var active     = false;
 
 		var player_url = '{{ ssl }}{{ MV_TVDOMAIN }}/static/portal/swf/megaplayer.swf';
 		var base_url   = '{{ ssl }}{{ MV_TVDOMAIN }}/';
@@ -44,6 +45,8 @@
 
 		function onPlay(arg) {
 		};
+		
+		setTimeout(function(){active = true;}, 2000);
 
 		function onActivity() {
 			{% if next %}
@@ -54,7 +57,7 @@
 		};
 
 		function onComplete() {
-			playVideo();
+			if (active==true)playVideo();
 		};
 
 		function onError() {
@@ -92,7 +95,7 @@
 		}
 		
 	</script>
-	<body onload="onComplete();">
+	<body onload="playVideo();">
 
 		<div id="player"></div>
 
