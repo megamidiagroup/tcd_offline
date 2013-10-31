@@ -20,7 +20,7 @@
 			window.location = "{% url screensaver rede.link %}?next={{ next }}";
 		}
 		
-		window.onmousemove = window.onclick = function(){resetDelay();}
+		window.onmousemove = window.onclick = window.onkeydown = function(){resetDelay();}
 		
 	</script>
 
