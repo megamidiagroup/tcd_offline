@@ -283,6 +283,7 @@ if sys.argv.count('--block') == 1:
     
 if sys.argv.count('--finish') == 1:
     
+    os.system('/etc/init.d/mysql restart')
     os.system('echo "" > /etc/udev/rules.d/70-persistent-net.rules')
     os.system('echo "" > /var/log/mysql/mysql.log')
     os.system('echo "" > /var/log/tcd/log.debug')
