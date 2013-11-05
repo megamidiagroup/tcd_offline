@@ -133,13 +133,17 @@ $(function() {
     	$(this).attr('data-original', src);
 	});
 
-	$("#content img").lazyload({
-		effect : "fadeIn",
-		appear : function(elements_left, settings) {
-			//console.log(this, elements_left, settings);
-			ajustaRodape();
-		}
-	});
+	$("#content img").not('.related-videos img').lazyload({
+        effect : "fadeIn",
+        appear : function(elements_left, settings) {
+            //console.log(this, elements_left, settings);
+            ajustaRodape();
+        }
+    });
+
+    $('#content .related-videos img').each(function(e){
+    	$(this).attr('src', $(this).attr('data-original'));
+    });
 
 	setTimeout(ajustaRodape, 10);
 
