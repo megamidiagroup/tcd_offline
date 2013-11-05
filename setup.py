@@ -12,6 +12,7 @@ import urllib
 
 from subprocess import Popen, PIPE
 from datetime import datetime as dt
+from time import sleep
 
 MODPATH  = os.path.abspath(os.path.dirname(__file__))
 
@@ -284,6 +285,7 @@ if sys.argv.count('--block') == 1:
 if sys.argv.count('--finish') == 1:
     
     os.system('/etc/init.d/mysql restart')
+    sleep(3)
     os.system('echo "" > /etc/udev/rules.d/70-persistent-net.rules')
     os.system('echo "" > /var/log/mysql/mysql.log')
     os.system('echo "" > /var/log/tcd/log.debug')
