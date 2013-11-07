@@ -88,7 +88,7 @@
         <div id="content">
             <div class="container {% if not list_treinamento and list_category.0|css_hiraquia_cat == 'custom-category0' %}home{% endif %}">
 
-                {% if interno %}
+                {% if not interno %}
                     <div class="path">
                         {% sub_menu list_category rede list_treinamento %}
                     </div>
@@ -124,8 +124,8 @@
                     </ul>
                 {% else %}
                 	{% if not list_treinamento %}
-			    {% get_msg rede %}
-			{% endif %}
+					    {% get_msg rede %}
+					{% endif %}
                 {% endif %}
 
                 {% if list_treinamento %}
@@ -137,8 +137,14 @@
                                 </div>
                                 <h2 class="box-title">{{ i.name }}</h2>
                                 <span style="height:auto">{{ i.desc|safe|truncatewords_html:8 }}</span>
-				<br /><br />
-                                <input type="button" value="Download" class="buttom" onclick="window.location='{% url download_anexo rede.link i.id %}';" />
+								<br /><br />
+								{% if not is_offline %}
+                                	<input type="button" value="Download" class="buttom" style="margin-left:10px" onclick="window.location='{% url download_anexo rede.link i.id %}';" />
+                                {% endif %}
+                                {% if i|is_anexo_pdf %}
+                                	<input type="button" value="Visualisar" class="buttom" style="margin-left:10px" onclick="window.location='{% url viewpdf rede.link i.id %}{{ i.name|slugify }}';" />
+                                {% endif %}
+                                <br /><br />
 	                        </li>
                         {% endfor %}
                     </ul>

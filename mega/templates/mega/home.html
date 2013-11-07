@@ -262,8 +262,12 @@
 		    {% if list_category %}
                 <ul class="category clearfix">
                     {% for i in list_category %}
-						<li>
-						    <a href="{% url home %}{{ rede.link }}/category/{{ i.id }}/" class="{{ i|category_video_relacionado:user }}" {% if rede.is_hit_cat %}title="{{ i.desc|compress_html:0|safe }}"{% endif %}>
+						<li class="class_category_{{ forloop.counter }}">
+						    {% if i.link == None or i.link|trim == '' %}
+						    	<a href="{% url home %}{{ rede.link }}/category/{{ i.id }}/" class="{{ i|category_video_relacionado:user }}" {% if rede.is_hit_cat %}title="{{ i.desc|compress_html:0|safe }}"{% endif %}>
+						    {% else %}
+						    	<a href="{{ i.link }}" class="{{ i|category_video_relacionado:user }}" {% if rede.is_hit_cat %}title="{{ i.desc|compress_html:0|safe }}"{% endif %}>
+						    {% endif %}
 								<div class="{{ i|css_hiraquia_cat }} {% if not i.is_name %}no-name-category{% endif %}">{% if i|get_image %}<img src="{{ i|get_image }}" border="0" />{% endif %}</div>
 								{% if i.is_name %}<h2 class="box-title">{{ i.name }}</h2>{% endif %}
 								{% if i.is_name %}{% if i.desc|length_title_desc > 0 %}<span>{{ i.desc|safe|striptags|super_truncatewords:'100-150'|safe }}</span>{% endif %}{% endif %}

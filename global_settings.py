@@ -11,6 +11,8 @@ TEMPLATE_DEBUG = DEBUG
 
 OFFLINE = True
 
+LOCALHOST = 'localhost'
+
 ADMINS = (
     ('Rafael', 'rafael.feijo@megamidia.com.br'),
 )
@@ -42,7 +44,7 @@ SITE_ID = 1
 USE_I18N = True
 
 MEDIA_ROOT = '/var/www/media/'
-MEDIA_URL = 'http://localhost/media/'
+MEDIA_URL = 'http://%s/media/' % LOCALHOST
 MEDIA_STATIC = MEDIA_URL
 ADMIN_MEDIA_PREFIX = MEDIA_URL + 'admin/'
 STATIC_URL = MEDIA_URL + 'tcd/'
@@ -117,7 +119,7 @@ INSTALLED_APPS = (
 )
 
 LIST_VARS = {
-    'base_url'     : 'http://localhost/',
+    'base_url'     : 'http://%s/' % LOCALHOST,
     'from_email'   : 'rafael.feijo@megamidia.com.br',
     'log'          : '/var/www/logging/tcd_dev.log',
     'log_start'    : True,
@@ -206,7 +208,7 @@ STORAGE     = '/var/www/media/tcd/storage/'
 ### MEGAVIDEO CONFIGURACOES
 
 MV_TVNAME   = 'megavideo'
-MV_TVDOMAIN = 'localhost/megavideo'
+MV_TVDOMAIN = '%s/megavideo' % LOCALHOST
 TV_NAME     = 'Megavideo - TCD'
 
 APPEND_SLASH = True

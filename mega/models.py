@@ -30,18 +30,13 @@ from crequest.middleware import CrequestMiddleware
 from rules import get_style_template
 from rules_mobile import get_style_template as get_style_template_mobile
 from rules_tablet import get_style_template as get_style_template_tablet
+from command import Sh
 
 import datetime
 import os
 import HTMLParser
 import base64
 import shutil
-
-
-try:
-    from django.utils import uuid
-except:
-    import uuid
 
 # Create your models here.
 
@@ -149,6 +144,7 @@ class Category(models.Model):
     tipo      = models.IntegerField(max_length=1, default=0, choices=CHOICE_CATEGORY, verbose_name='Tipo de categoria')
     filial    = models.ManyToManyField(Filial, blank=True, null=True, related_name='+', help_text='Filial que aparecerá a categoria. Segure CTRL e clique para selecionar mais de uma opção.')
     parent    = models.ForeignKey('self', null=True, blank=True, verbose_name='Categoria')
+    link      = models.CharField(max_length = 255, null=True, blank=True, verbose_name='Link', help_text='Não usar caminho absoluto. Ex: (Não usar) https://www.treinandoequipes.com.br... Usar, Ex: /burgerking/docs/')
     name      = models.CharField(max_length = 255, verbose_name='Nome')
     is_name   = models.BooleanField(default = True, verbose_name='Mostrar Título', help_text='Mostra o título abaixo da categoria')
     visible   = models.BooleanField(default = True, verbose_name='Habilitado')
@@ -831,12 +827,37 @@ class Anexo(models.Model):
     file        = models.FileField(upload_to = upload_file, verbose_name='Arquivo', max_length=255, help_text='Pode enviar qualquer tipo de arquivo, contanto que tenha extensão e se for vários arquivos, tente diminuir o conteudo usando compressão zip. Evite arquivos com extensão .exe ou .bin.')
     date        = models.DateTimeField(auto_now_add = True, verbose_name='Data')
 
+    def save(self, *args, **kwargs):
+        
+        super(Anexo, self).save(*args, **kwargs)
+        
+        if '.pdf' in self.file.path.lower():
+            sh  = Sh()
+            if settings.DEBUG:
+                sh.python( '%sbin/pdf_to_images.py %s --quiet' % (getattr(settings, 'MEGA_LIB', ''), self.id) )
+            else:
+                sh.pythonvirtualenv( '%s %sbin/pdf_to_images.py %s --quiet' % ('tcd', getattr(settings, 'MEGA_LIB', ''), self.id) )
+
     def __unicode__(self):
         return self.name
 
     class Meta:
         verbose_name = u'Anexo'
         ordering     = ['-date']
+        
+
+### Tabela para as ListImageAnexo
+class ListImageAnexo(models.Model):
+    rede     = models.ForeignKey(Rede, related_name='+', verbose_name='Rede')
+    image    = models.ImageField(upload_to = upload_file, max_length=255, verbose_name='Imagem')
+    anexo    = models.ForeignKey(Anexo, related_name='+', verbose_name='Anexo')
+
+    def __unicode__(self):
+        return self.image.name
+
+    class Meta:
+        verbose_name = u'Lista de Imagens Anexo'
+        ordering     = ['image']
 
 
 ### Tabela para as lista de Perguntas e Respostas com nível de aprovação

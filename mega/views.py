@@ -162,7 +162,7 @@ def _prepare_vars(request, rede=None, p={}):
 
     p['list_menu']     = Menu.objects.filter( Q(rede = p['rede']) & Q(visible=True) ).order_by('order', 'name')
 
-    if offline:
+    if offline and ListImageAnexo.objects.filter(rede = p['rede']).count() == 0:
         p['list_menu'] = p['list_menu'].exclude( url__icontains = 'docs' )
 
     p['STATIC_URL']    = settings.STATIC_URL
@@ -1519,6 +1519,17 @@ def download_anexo(request, rede=None, anexo_id=0):
     return response
 
 
+@login_required
+@cache_page(settings.CACHES['default']['TIMEOUT'])
+def viewpdf(request, rede=None, anexo_id=0):
+
+    p = _prepare_vars(request, rede)
+    
+    p['list_image_anexo'] = ListImageAnexo.objects.filter( Q(rede = p['rede']) & Q(anexo__id = int(anexo_id)) ).order_by('id')
+
+    return render_to_response('%s/viewpdf.html' % p['get_tipo_template'], p, context_instance=RequestContext(request))
+
+
 def teaser(request, rede=None):
 
     p      = _prepare_vars(request, rede)
@@ -2136,6 +2147,7 @@ def docs(request, rede=None, category_id=0):
     p = _prepare_vars(request, rede)
 
     p['list_category'] = Category.objects.filter( Q(visible = True) & Q(name = u'DOCS') )
+    p['is_offline']    = False
 
     if category_id and int(category_id) > 0 and p['list_category'].count() > 0:
         p['list_category'] = p['list_category'][0].category_set.filter( Q(visible = True) & Q(id = int(category_id)) ).order_by('order', 'name')
@@ -2143,12 +2155,16 @@ def docs(request, rede=None, category_id=0):
     ane = Anexo.objects.filter(visible = True)
 
     if p['list_category'].count() > 0:
-        if ane.filter(category = p['list_category'][0]).count() > 0:
-            p['list_treinamento'] = ane.filter(category = p['list_category'][0])
-            p['list_category']    = []
+        if ane.filter(category        = p['list_category'][0]).count() > 0:
+            if settings.OFFLINE:
+                p['list_treinamento'] = Anexo.filter_custom(category = p['list_category'][0])
+                p['is_offline']       = True
+            else:
+                p['list_treinamento'] = ane.filter(category = p['list_category'][0])
+            p['list_category']        = []
         else:
-            p['list_category']    = p['list_category'][0].category_set.filter(visible = True).order_by('order', 'name')
-            p['list_treinamento'] = []
+            p['list_category']        = p['list_category'][0].category_set.filter(visible = True).order_by('order', 'name')
+            p['list_treinamento']     = []
 
     return render_to_response('%s/docs.html' % p['get_tipo_template'], p, context_instance=RequestContext(request))
 

@@ -19,6 +19,7 @@ from mega.models import *
 
 from datetime import datetime, timedelta
 from math import ceil
+from PIL import Image
 
 import base64
 import pickle
@@ -65,6 +66,32 @@ def get_image(obj):
         try:
             if obj.image:
                 return '%s../%s' % (settings.STATIC_URL, str(obj.image))
+        except:
+            pass
+    
+    return ''
+
+
+@register.filter()
+def get_image_size(obj, position='w'):
+
+    try:
+        if obj[0].image:
+            try:
+                img  = obj[0].image.path
+            except:
+                img  = '%s../%s' % (settings.MEDIA_ROOT, str(obj[0].image))
+            size     = Image.open(img).size
+            return [size[1], size[0]][position == 'w']
+    except:
+        try:
+            if obj.image:
+                try:
+                    img  = obj.image.path
+                except:
+                    img  = '%s../%s' % (settings.MEDIA_ROOT, str(obj.image))
+                size     = Image.open(img).size
+                return [size[1], size[0]][position == 'w']
         except:
             pass
     
@@ -187,12 +214,12 @@ def sub_menu(list_category, rede, list_treinamento=None, list_anexo=None, last_i
 
     list_link = []
 
-    if list_category and list_category.count() > 0:
+    if list_category and (type(list_category) != 'list' or list_category.count() > 0):
         reverse_category(list_category, list_link)
         if len(list_link) > 0:
             p['atual'] = list_category[0].parent
         list_link = list_link[1:]
-    elif list_treinamento and list_treinamento.count() > 0:
+    elif list_treinamento and (type(list_treinamento) != 'list' or list_treinamento.count() > 0):
         reverse_category(list_treinamento[0].category, list_link)
         if len(list_link) > 0:
             p['atual'] = list_treinamento[0].category
@@ -349,6 +376,18 @@ def base64decode(value):
     bs = base64.urlsafe_b64decode(str(bs))
 
     return bs
+
+
+@register.filter()
+def b64encode(value):
+
+    return base64.b64encode(value)
+
+
+@register.filter()
+def b64decode(value):
+
+    return base64.b64decode(value)
 
 
 def list_id_certificado(key):
@@ -1012,9 +1051,12 @@ def is_menu_certificate(rede):
 
 
 @register.inclusion_tag('templatetags/get_aviso.html', takes_context=True)
-def get_aviso(context, rede=None, user=None):
+def get_aviso(context, rede=None, user=None, novisible1=False, novisible2=False, edit=''):
+    
+    if novisible1 or novisible2 or edit == 'first' or edit == 'false' or edit == 'true':
+        return context
 
-    context['aviso'] = Aviso.objects.filter( Q(rede = rede) & Q(visible = True) )
+    context['aviso'] = Aviso.objects.filter( Q(rede = rede) & Q(visible = True) ).exclude(is_not_view = user).order_by('date_init')
     context['rede']  = rede
     context['user']  = user
 
@@ -1030,9 +1072,6 @@ def get_aviso(context, rede=None, user=None):
             context['aviso'] = context['aviso'].filter( Q(date_init__lte = datetime.now()) )
         if aviso.date_end:
             context['aviso'] = context['aviso'].filter( Q(date_end__gte = datetime.now()) )
-        if not aviso.is_persistent:
-            aviso.is_not_view.add(user)
-            aviso.save()
 
     return context
 
@@ -1126,6 +1165,12 @@ def medidor_porcent(number, value):
     v = float(number) / 100
 
     return int( round(v * value) )
+
+
+@register.filter()
+def is_anexo_pdf(obj):
+
+    return ListImageAnexo.objects.filter(anexo = obj).count() > 0
 
 
 

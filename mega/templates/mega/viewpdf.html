@@ -1,0 +1,186 @@
+﻿{% extends 'mega/main.html' %}
+
+{% load util keyboard %}
+
+{% block content %}
+
+	<script type="text/javascript">
+	
+		var index    = parseInt('{{ list_image_anexo.count }}');
+        var position = 0;
+	
+		function complete()
+		{
+			$('.buttom').css('display', 'block');
+		}
+		
+		var list_img = new Array();
+		
+		{% for lia in list_image_anexo %}
+			list_img.push('{{ lia|get_image }}');
+		{% endfor %}
+		
+		function fproximo()
+		{
+			if (position < (index - 1))
+			{
+				position += 1;
+				$('span.contador b').html(position + 1);
+				$('img.target_img').attr('src', list_img[position]);
+				$("a.btn_anterior").css('opacity', 1).css('cursor', 'pointer');
+				if (position >= (index - 1))
+				{
+					$("a.btn_proximo").css('opacity', .3).css('cursor', 'default');
+				}
+			}
+		}
+		
+		function fanterior()
+		{
+			if (position > 0)
+			{
+				position -= 1;
+				$('span.contador b').html(position + 1);
+				$('img.target_img').attr('src', list_img[position]);
+				$("a.btn_proximo").css('opacity', 1).css('cursor', 'pointer');
+				if (position <= 0)
+				{
+					$("a.btn_anterior").css('opacity', .3).css('cursor', 'default');
+				}
+			}
+		}
+		
+		$(function() {
+			$("a.btn_anterior").css('opacity', .3).css('cursor', 'default');
+			window.onkeypress = function(e){
+				if(e.keyCode==37){fanterior()}
+				if(e.keyCode==39){fproximo()}
+			}
+			var y_fixo = 0;
+			y_fixo = $(".cursor").offset().top
+			$(window).scroll(function() {
+				var contentH = ( $("#header").height() + $("#content").height() );
+				var menuH    = $(".cursor").height();
+				var scrollY  = $(window).scrollTop();
+				if ( (scrollY + $(window).height()) > contentH ) {
+					console.log('fixed');
+					$(".cursor").css('position', 'relative').css('bottom', '50px');
+				} else {
+					console.log('static');
+					$(".cursor").css('position', 'fixed').css('bottom', '0');
+				}
+			});
+		});
+
+	</script>
+
+    <div id="header">
+        <div class="container">
+            <div id="logo"><a href="{% url home %}{{ rede.link }}/"><img src="{{ rede|logo }}" border="0" /></a></div>
+            <div id="header-text">{% for i in list_menu %}{% if i.tipo == 'D' %}{{ i.name|safe }}{% endif %}{% endfor %}</div>
+
+            {% for i in list_menu %}
+                {% if i.tipo == 'S' %}
+                    <div id="search">
+                        <form method="get" id="search-form" action="{% url busca rede.link %}">
+                            <div class="form-item">
+                                <input type="text" value="{{ q|default:'' }}" name="q" class="busca" />
+                                {% set_keyboard_buttom get_tipo_template 'top:10px; right:36px;' %}
+                                <button id="search-submit">
+                                    <span>Buscar</span>
+                                </button>
+                            </div>
+                        </form>
+                        {% if rede.link|lower == 'carvalho' %}
+                        	<span class="sub_pesquisa">Pesquisa de Produtos</span>
+                        {% else %}
+                        	<span class="sub_pesquisa">Pesquisa de vídeos</span>
+                        {% endif %}
+                    </div>
+                {% endif %}
+            {% endfor %}
+
+            <div id="menu">
+                <div class="user-button">
+		    {% aproveitamento_count_append list_aproveitamento_account user %}
+                </div>
+		{% if grafico or enquete %}
+		    <div class="enquete">
+			{% if enquete %}
+			    <span class="jewelCount"><span>1</span></span>
+			{% endif %}
+		    </div>
+		{% endif %}
+		{% if technical %}
+		    <div class="technical" {% if not grafico and not enquete %}style="left: 38px;"{% endif %}></div>
+		{% endif %}
+                <div class="menu-button">MENU</div>
+                {% if list_menu|tipobusca %}<div class="search-button"></div>{% endif %}
+                <ul>
+                    {% for i in list_menu %}
+                        {% if i.tipo == 'B' %}
+                        	{% if i.name|lower == 'sair' %}
+                            	<li><a class="btn_logout" href="{% url home %}{{ rede.link }}/{{ i.url }}">{{ i.name|upper }}</a></li>
+                            {% else %}
+                            	<li><a href="{% url home %}{{ rede.link }}/{{ i.url }}">{{ i.name|upper }}</a></li>
+                            {% endif %}
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+    {% if list_banner.count > 0 %}
+        <div id="highlights">
+            <div class="container">
+                <div class="full-banner">
+                    <div class="flexslider">
+                        <ul class="slides">
+                            {% for i in list_banner %}
+                                <li>
+                                    {% if i.url %}<a href="{{ i.url }}" title="Clique aqui para acessar o link" {% if i.blank %}target="_blank"{% endif %}>{% endif %}
+                                    <img src="{{ i|get_image }}" border="0" />
+                                    {% if i.url %}</a>{% endif %}
+                                    {% if i.legend %}
+                                    <p class="flex-caption">{{ i.name }}</p>
+                                    {% endif %}
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
+    {% block bloco %}
+
+        <div id="content">
+            <div class="container">
+            	
+            	{% if not interno %}
+                    <div class="path">
+                        <a class="back" href="javascript:history.back();"><span>&laquo;</span>Voltar</a>
+                    </div>
+                {% endif %}
+
+                <div class="bar">{{ list_image_anexo.0.anexo.name }}</div>
+
+                <div class="video">
+
+                    <img src="{{ list_image_anexo|get_image }}" class="target_img" border="0" onclick="fproximo();" style="cursor:pointer" />
+                    
+                    <div class="cursor" style="width:250px;left:-125px;margin-left:50%;position:fixed;bottom:0 ">
+	                    <a class="buttom btn_proximo" href="javascript:void(0);" style="float:right" onclick="fproximo();">Próximo</a>
+	                    <span class="contador" style="float:right;font-size:1.2em;margin:0 10px 10px 0;padding:2px;text-align:center;background:#ccc;border-radius:5px;width:35px;text-align:center"><b>1</b><br />{{ list_image_anexo.count }}</span>
+	                	<a class="buttom btn_anterior" href="javascript:void(0);" style="float:left" onclick="fanterior();">Anterior</a>
+                	</div>
+                        
+                </div>
+
+            </div>
+        </div>
+
+    {% endblock bloco %}
+
+{% endblock content %}

@@ -3,7 +3,11 @@
 {% for i in list_link %}
 	{% if i.name %}
 	    {% if i.id %}
-	        <a class="navegador" href="{% url home %}{{ rede.link }}/category/{{ i.id }}/" title="Clique aqui">{{ i.name }}</a> <span class="spacer navegador">/</span>
+	        {% if i.name|lower == 'docs' %}
+	        	<a class="navegador" href="{% url docs rede.link %}" title="Clique aqui">{{ i.name }}</a> <span class="spacer navegador">/</span>
+	        {% else %}
+	        	<a class="navegador" href="{% url home %}{{ rede.link }}/category/{{ i.id }}/" title="Clique aqui">{{ i.name }}</a> <span class="spacer navegador">/</span>
+	        {% endif %}
 	    {% else %}
 	        <a class="navegador" href="{% url home %}{{ rede.link }}/" title="Clique aqui">{{ i.name }}</a> <span class="spacer navegador">/</span>
 	    {% endif %}
