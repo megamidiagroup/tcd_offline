@@ -2,14 +2,14 @@
 
 {% if aviso %}
 
-    <div class="class_modal_aviso" id="modal" style="display:none;width: {{ aviso.0.image.width }}px;">
+    <div class="class_modal_aviso" id="modal" style="display:none;width: {{ aviso|get_image_size:'w' }}px;">
         <p>
 		    {% if aviso.0.is_video and aviso.0.code %}
 			<a class="btn_link" href="javascript:void(0);" onclick="$(this).css('display', 'none');$('.box_video').css('display', 'block');$.modal2.resize();">
 			    <img src="{{ aviso|get_image }}" border="0" />
 			</a>
 			<p class="box_video" style="display: none">
-			    {% megavideo rede.link aviso.0.code 0 aviso.0.image.width %}
+			    {% megavideo rede.link aviso.0.code 0 aviso|get_image_size:'w' %}
 			</p>
 		    {% else %}
 			<a class="btn_link" href="{{ aviso.0.link }}">
@@ -32,11 +32,11 @@
     	function set_resize_aviso()
     	{
     		$('div.class_modal_aviso').css('margin-left', '-' + (($('div.class_modal_aviso').width() / 2) + 15) + 'px')
-			if($(document).width() < ({{ aviso.0.image.width }} + 50 ))
+			if($(document).width() < ({{ aviso|get_image_size:'w' }} + 50 ))
 	    	{
 	    		$('div.class_modal_aviso').css('width', '90%').find('p a img').css('width', '100%');
 	    	} else {
-	    		$('div.class_modal_aviso').css('width', '{{ aviso.0.image.width }}px').find('p a img').css('width', '100%');
+	    		$('div.class_modal_aviso').css('width', '{{ aviso|get_image_size:'w' }}px').find('p a img').css('width', '100%');
 	    	}
 	    	$.modal2.resize();
     	}
