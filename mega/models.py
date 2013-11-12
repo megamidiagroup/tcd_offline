@@ -837,6 +837,17 @@ class Anexo(models.Model):
                 sh.python( '%sbin/pdf_to_images.py %s --quiet' % (getattr(settings, 'MEGA_LIB', ''), self.id) )
             else:
                 sh.pythonvirtualenv( '%s %sbin/pdf_to_images.py %s --quiet' % ('tcd', getattr(settings, 'MEGA_LIB', ''), self.id) )
+            
+    @staticmethod    
+    def filter_custom(category):
+        
+        array = []
+
+        for lia in ListImageAnexo.objects.filter( Q(anexo__category = category) ):
+            if not array.count(lia.anexo) > 0:
+                array.append(lia.anexo)
+        
+        return array
 
     def __unicode__(self):
         return self.name

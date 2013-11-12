@@ -262,8 +262,8 @@
 		    {% if list_category %}
                 <ul class="category clearfix">
                     {% for i in list_category %}
-						<li class="class_category_{{ forloop.counter }}">
-						    {% if i.link == None or i.link|trim == '' %}
+						<li class="{{ i|css_hiraquia_cat }}_{{ forloop.counter }} class_category_{{ forloop.counter }}">
+							{% if i.link == None or i.link|trim == '' %}
 						    	<a href="{% url home %}{{ rede.link }}/category/{{ i.id }}/" class="{{ i|category_video_relacionado:user }}" {% if rede.is_hit_cat %}title="{{ i.desc|compress_html:0|safe }}"{% endif %}>
 						    {% else %}
 						    	<a href="{{ i.link }}" class="{{ i|category_video_relacionado:user }}" {% if rede.is_hit_cat %}title="{{ i.desc|compress_html:0|safe }}"{% endif %}>
