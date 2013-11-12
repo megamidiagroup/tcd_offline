@@ -1223,6 +1223,9 @@ def conta_edit(request, rede=None):
 
     if request.user.username and _cpf(request.user.username).isValid():
         p['first_cpf'] = True
+        
+    p['autopass']  = True
+    p['pass_none'] = 'none'
 
     return render_to_response('%s/conta_edit.html' % p['get_tipo_template'], p, context_instance=RequestContext(request))
 

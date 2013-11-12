@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="{{ STATIC_URL }}{{ get_tipo_template }}/css/no-ie6.css" type="text/css" />
 
     <link rel="stylesheet" href="{{ STATIC_URL }}{{ get_tipo_template }}/css/flexslider.css" type="text/css" media="screen" />
+    <link rel="stylesheet" href="{{ STATIC_URL }}{{ get_tipo_template }}/css/tip-yellowsimple.css" type="text/css" />
     <link rel="stylesheet" href="{{ STATIC_URL }}{{ get_tipo_template }}/css/layout.css" type="text/css" />
 
     {% if get_template.rede %}
@@ -25,6 +26,7 @@
     <script src="{{ STATIC_URL }}{{ get_tipo_template }}/js/jquery-1.7.2.js"></script>
     <script src="{{ STATIC_URL }}{{ get_tipo_template }}/js/jquery.flexslider-min.js"></script>
     <script src="{{ STATIC_URL }}{{ get_tipo_template }}/js/jquery.lazyload.js?v=1.8.3" type="text/javascript"></script>
+    <script src="{{ STATIC_URL }}{{ get_tipo_template }}/js/jquery.poshytip.min.js" type="text/javascript"></script>
 
     <script src="{{ STATIC_URL }}{{ get_tipo_template }}/js/scripts.js" type="text/javascript"></script>
 
@@ -77,6 +79,11 @@
                 {% csrf_token %}
 
                 <label for="user">Login:</label>
+                
+                {% if rede.link|lower == 'burgerking' %}
+                	<img class="info" src="{{ STATIC_URL }}{{ get_tipo_template }}/images/info.png" border="0" title="<b>Olá, seja bem-vindo à Rede BK!</b><br /><br /><b>Este é seu primeiro acesso?</b><br />Então seu login, é seu número de CPF, apenas os números, sem traços ou pontos, e sua senha é <b>1234</b>.<br /><br />Ao acessar pela primeira vez o portal, você vai atualizar seu cadastro, incluir um e-mail de contato e aletarar sua senha pessoal. É importante que este e-mail seja válido, pois ele é utilizado em casos de recuperação de senha.<br /><br /><b>Caso este não seja seu primeiro acesso</b>, seu login é o e-mail que você cadastrou durante o primeiro acesso.<br /><br />Não lembra da sua senha? Digite seu login, e clique no botão Esqueci minha senha. As informações para recuperação de senha serão enviadas para seu e-mail pessoal em 24 horas." style="position:absolute;right:10px;top:10px;cursor:pointer" />
+                {% endif %}
+                
                 <input type="text" name="user" id="user" />
 
                 {% set_keyboard_buttom get_tipo_template %}
@@ -107,6 +114,23 @@
     {% endblock aviso %}
 
     <script src="{{ STATIC_URL }}{{ get_tipo_template }}/js/ios-orientationchange-fix.js" type="text/javascript"></script>
+    
+    <script type="text/javascript">
+
+        $(document).ready(function(){
+
+			$(".info").poshytip({
+				className: 'tip-yellowsimple',
+				showOn: 'mouseover',
+				alignTo: 'target',
+				alignX: 'center',
+				alignY: 'bottom',
+				offsetX: 5
+			});
+
+        });
+
+    </script>
 
 </body>
 
