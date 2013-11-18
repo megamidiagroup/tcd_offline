@@ -29,6 +29,8 @@ except:
     
 try:
     loja = sys.argv[2]
+    if '--block' in loja:
+        loja = 'matriz'
 except:
     loja = 'matriz'
 
@@ -221,7 +223,7 @@ if sys.argv.count('--block') == 1:
         
     if not os.path.exists('/etc/tcd.update'):
         sh.cp('/var/www/tcd_offline/tcd.update', '/etc/tcd.update')
-        os.system('chmod 775 /etc/tcd.update')
+        os.system('chmod 600 /etc/tcd.update')
         
     if not os.path.exists('/etc/X11/xorg.conf'):
         sh.cp('/var/www/tcd_offline/xorg.conf', '/etc/X11/xorg.conf')
