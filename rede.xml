@@ -1,6 +1,28 @@
 <redes>
     <rede label="burgerking">
-        <loja>Voluntarios</loja>
+        <loja ip="10.18.59.240" netmask="255.255.255.0" gateway="10.18.59.17">shop_aricanduva</loja>
+        <loja ip="10.21.23.240" netmask="255.255.255.0" gateway="10.21.23.253">plaza_shop_niteroi</loja>
+        <loja ip="10.89.59.240" netmask="255.255.255.0" gateway="10.89.59.17">alphaville_drive</loja>
+        <loja ip="10.198.59.240" netmask="255.255.255.0" gateway="10.198.59.17">radial_leste_drive</loja>
+        <loja ip="10.32.59.240" netmask="255.255.255.0" gateway="10.32.59.17">shop_tambore</loja>
+        <loja ip="10.11.13.0" netmask="255.255.255.0" gateway="10.11.13.253">shop_metro_tatuape_2</loja>
+        <loja ip="10.238.59.240" netmask="255.255.255.0" gateway="10.238.59.17">shop_valesul</loja>
+        <loja ip="10.16.4.240" netmask="255.255.255.0" gateway="10.16.4.253">av_portugal_drive</loja>
+        <loja ip="10.165.59.240" netmask="255.255.255.0" gateway="10.165.59.17">campinas_brasil_drive</loja>
+        <loja ip="10.11.22.240" netmask="255.255.255.0" gateway="10.11.22.253">faria_lima_2</loja>
+        <loja ip="10.21.14.240" netmask="255.255.255.0" gateway="10.21.14.253">jd_guadalupe_shop</loja>
+        <loja ip="10.152.59.240" netmask="255.255.255.0" gateway="10.152.59.17">litoral_plaza_shop</loja>
+        <loja ip="10.138.59.240" netmask="255.255.255.0" gateway="10.138.59.17">sorocaba_drive</loja>
+        <loja ip="10.99.59.240" netmask="255.255.255.0" gateway="10.99.59.17">santana_parque</loja>
+        <loja ip="10.11.12.240" netmask="255.255.255.0" gateway="10.11.12.253">sao_caetano</loja>
+        <loja ip="10.11.59.240" netmask="255.255.255.0" gateway="10.11.59.17">shop_ibirapuera</loja>
+        <loja ip="10.11.4.240" netmask="255.255.255.0" gateway="10.11.4.253">shop_campo_limpo</loja>
+        <loja ip="10.21.6.240" netmask="255.255.255.0" gateway="10.21.6.253">voluntarios</loja>
+        <loja ip="10.11.24.240" netmask="255.255.255.0" gateway="10.11.24.253">jacu_pessego_drive</loja>
+        <loja ip="10.82.59.240" netmask="255.255.255.0" gateway="10.82.59.17">joaquim_floriano</loja>
+        <loja ip="10.225.59.240" netmask="255.255.255.0" gateway="10.225.59.17">maxi_shop</loja>
+        <loja ip="10.21.19.240" netmask="255.255.255.0" gateway="10.21.19.253">park_shop_campo_grande</loja>
+        <loja ip="10.118.59.240" netmask="255.255.255.0" gateway="10.118.59.17">shop_dom_pedro_2</loja>
     </rede>
     <rede label="carvalho"></rede>
     <rede label="cencosud"></rede>
