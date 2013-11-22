@@ -86,7 +86,7 @@ iptables -A INPUT -s 224.0.0.0/3 -i eth0 -j DROP
 iptables -A INPUT -p tcp --dport 22 -s 200.195.168.2/32 -i eth0 -j ACCEPT
 iptables -A INPUT -p tcp --dport 22 -s 10.0.1.81/32 -i eth0 -j ACCEPT
 iptables -A INPUT -p tcp --dport 22 -s 10.0.1.95/32 -i eth0 -j ACCEPT
-
+iptables -A INPUT -p tcp --dport 22 -s 10.0.1.133/32 -i eth0 -j ACCEPT
 
 # Acessa o RSYNC *.megamidia.com.br
 iptables -A OUTPUT -p tcp --dport 873 -d 10.0.1.226/32 -o eth0 -j ACCEPT
@@ -95,6 +95,7 @@ iptables -A OUTPUT -p tcp --dport 873 -d 200.195.168.2/32 -o eth0 -j ACCEPT
 
 # Recusa pacotes para a porta 80 - http
 iptables -A OUTPUT -p tcp --dport 80 -d 64.251.30.49 -o eth0 -j ACCEPT
+iptables -A OUTPUT -p tcp --dport 80 -d 10.0.1.133 -o eth0 -j ACCEPT
 iptables -A OUTPUT -p tcp --dport 443 -d 64.251.30.49 -o eth0 -j ACCEPT
 iptables -A OUTPUT -p tcp --dport 80 -o eth0 -j DROP
 iptables -A OUTPUT -p tcp --dport 443 -o eth0 -j DROP
