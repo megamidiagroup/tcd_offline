@@ -324,7 +324,18 @@ if os.path.exists('/var/www/tcd.config'):
     sh.find('/var/www/tcd.config -type f -exec sed -i "s/&#39;/\'/g" {} \;')
     os.system("mysql -u root -p%s %s < %s" % (password, project, '/var/www/tcd.config'))
     os.system('echo "" > /var/log/mysql/mysql.log')
-    hash = '%s_%s' % ( dt.strftime(dt.now(), '%Y%m%d_%H%M'), ''.join(random.sample((string.ascii_uppercase + string.digits)*8,8)) )
+
+    if os.path.exists('/etc/servermm.conf'):
+        try:
+            loja = open('/etc/servermm.conf', 'r').read().split('loja=')[1].split('\ndatacenter')[0]
+        except:
+            pass
+    
+    if loja == 'matriz':   
+        hash = '%s_%s_%s' % ( rede, dt.strftime(dt.now(), '%Y%m%d_%H%M'), ''.join(random.sample((string.ascii_uppercase + string.digits)*8,8)) )
+    else:
+        hash = '%s_%s_%s_%s' % ( rede, loja, dt.strftime(dt.now(), '%Y%m%d_%H%M'), ''.join(random.sample((string.ascii_uppercase + string.digits)*8,8)) )
+      
     mail = '0'
     arquivo_mail = ''
     if os.path.exists('/var/www/mail.config'):
