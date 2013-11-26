@@ -69,7 +69,7 @@ class RedeAdmin(admin.ModelAdmin):
 
     fieldsets = (
         (None, {
-            'fields': ('name', 'link', 'logo', 'logo_log', 'visible', 'user', 'is_faq', 'is_login',)
+            'fields': ('name', 'link', 'logo', 'logo_log', 'visible', 'user', 'is_faq', 'is_login', 'text_log',)
         }),
         ('Hit, mouseover. "', {
             'fields' : ('is_hit_cat', 'is_hit_tre',)
@@ -175,7 +175,7 @@ class CategoryAdmin(admin.ModelAdmin):
         if request.rede:
             self.fieldsets = (
                     (None, {
-                        'fields': ('tipo', 'parent', 'name', 'is_name', 'home', 'visible',)
+                        'fields': ('tipo', 'parent', 'link', 'name', 'is_name', 'home', 'visible',)
                     }),
                     ('Agrupamento de informação', {
                         'fields' : ('is_groupc', 'is_groupv',)
@@ -187,7 +187,7 @@ class CategoryAdmin(admin.ModelAdmin):
         else:
             self.fieldsets = (
                     (None, {
-                        'fields': ('rede', 'tipo', 'parent', 'name', 'is_name', 'home', 'visible',)
+                        'fields': ('rede', 'tipo', 'parent', 'link', 'name', 'is_name', 'home', 'visible',)
                     }),
                     ('Agrupamento de informação', {
                         'fields' : ('is_groupc', 'is_groupv',)
@@ -216,7 +216,8 @@ class CategoryAdmin(admin.ModelAdmin):
         obj.save()
 
     class Media:
-            js = ('mega/js/category_admin.js',)
+        #js = ('mega/js/category_admin.js', 'mega/js/jquery-1.7.2.js', 'mega/js/jquery.ui.sortable.js','mega/js/sortable.admin.js')
+        js = ('mega/js/category_admin.js', )
 
 
 admin.site.register(Category, CategoryAdmin)
@@ -831,6 +832,9 @@ class TemplateAdmin(admin.ModelAdmin):
         ('Demais Botões', {
             'fields': ('cor27', 'cor28', 'cor29', 'cor30',)
         }),
+        ('Definições para botão de dica no login', {
+            'fields': ('image8', 'cor41', 'cor42', 'cor43',)
+        }),
         ('Imagem Favicon', {
             'fields': ('image6',)
         }),
@@ -1157,6 +1161,11 @@ class AnexoForm(ModelForm):
             rede = cm.rede
         except:
             rede = None
+            
+        try:
+            user = cm.user
+        except:
+            user = None
 
         qst = Treinamento.objects.all()
         qsc = Category.objects.all()
@@ -1164,9 +1173,15 @@ class AnexoForm(ModelForm):
         if rede:
             qst = qst.filter( rede = rede )
             qsc = qsc.filter( rede = rede )
-
-        self.fields['treinamento'].queryset = qst.order_by('name')
-        self.fields['category'].queryset    = qsc.order_by('name')
+            
+        try:
+            self.fields['treinamento'].queryset = qst.order_by('name')
+        except:
+            pass
+        if user and not user.is_superuser:
+            qsc = qsc.filter( Q(home = False) & Q(name__icontains = 'DOCS') | Q(parent__name__icontains = 'DOCS') | Q(parent__parent__name__icontains = 'DOCS') )
+        qsc     = qsc.order_by('name')
+        self.fields['category'].queryset = qsc.distinct()
 
     class Meta:
         model = Anexo
@@ -1175,6 +1190,11 @@ class AnexoForm(ModelForm):
 class AnexoAdmin(admin.ModelAdmin):
 
     list_display = ('name', 'rede', 'treinamento', 'category', 'visible',)
+    
+    def changelist_view(self, request, extra_context=None):
+        if not request.user.is_superuser:
+            self.list_display = ('name', 'category', 'visible',)
+        return super(AnexoAdmin, self).changelist_view(request, extra_context)
 
     def queryset(self, request):
         qs = super(AnexoAdmin, self).queryset(request)
@@ -1186,10 +1206,13 @@ class AnexoAdmin(admin.ModelAdmin):
 
     ## para limitar os combo das redes
     def get_form(self, request, obj=None, **kwargs):
-        if request.rede:
-            self.fields = ['category', 'treinamento', 'name', 'visible', 'file', 'desc']
+        if not request.user.is_superuser:
+            self.fields = ['category', 'name', 'visible', 'file', 'desc']
         else:
-            self.fields = ['rede', 'category', 'treinamento', 'name', 'visible', 'file', 'desc']
+            if request.rede:
+                self.fields = ['category', 'treinamento', 'name', 'visible', 'file', 'desc']
+            else:
+                self.fields = ['rede', 'category', 'treinamento', 'name', 'visible', 'file', 'desc']
         self.form = AnexoForm
         return super(AnexoAdmin, self).get_form(request, obj=None, **kwargs)
 

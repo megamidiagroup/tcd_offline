@@ -71,6 +71,7 @@ class Rede(models.Model):
     is_login   = models.BooleanField(default = True, verbose_name='Área de login', help_text='Habilita área de login da rede')
     image      = models.ImageField(upload_to = upload_file, max_length=255, null = True, blank = True, help_text='A imagem deverá ser gerada em png com cantos arredondados com tamanho de 540x198px, caso contrário, deixe o campo vazio.', verbose_name='Imagem de fundo')
     email      = models.CharField(max_length = 255, verbose_name='E-mail responsável', null = True, blank = True, help_text='Somente adicione o e-mail caso o cliente deseje receber as sugestões ou dúvidas, caso deseje mais de um e-mail, favor adicionar os e-mails separados por vírgula.')
+    text_log   = RichTextField(null = True, blank = True, verbose_name='Texto do ícone', help_text='Texto que se aplica no icone de ajuda do login, caso não queira, deixe esse campo vazio.') 
     date_send  = models.DateField(verbose_name='Apartir da data', null = True, blank = True, help_text='Caso for diário, semanal, mensal ou anual, favor inserir a data para inicio do processo.')
     resend     = models.CharField(max_length = 1, choices = CHOICE_RESEND, null = True, blank = True, verbose_name='Envio acontece', help_text='O envio acontece todos os dias à meia-noite, caso for imediato, a sugestão ou dúvida é registrada e enviada imediatamente para o cliente, caso contrário, é enviado a opção selecionada.')
     date       = models.DateTimeField(auto_now_add=True, verbose_name='Data')
@@ -164,17 +165,22 @@ class Category(models.Model):
     access    = models.BooleanField(default = False, verbose_name='Acesso Restrito', help_text='Bloqueia o acesso aos usuários que não possuem permissão para acessar as categorias restritas.')
     date      = models.DateTimeField(auto_now_add=True, verbose_name='Data')
 
-    def __unicode__(self):
-        category_name = '[' + self.rede.name + '] - ' + self.name
+    def categoria(self):
+        array = []
+        array.append(self.name)
 
         while self.parent:
-            category_name = category_name + ' -> ' + self.parent.name
+            array.append(self.parent.name)
             self = self.parent
-
-        return category_name
-
-    def categoria(self):
-        return self.parent.name
+            
+        array.append(self.rede.name)
+        
+        array.reverse()
+        
+        return '[' + self.rede.name + '] - ' + ' -> '.join(array[1:])
+    
+    def __unicode__(self):
+        return self.categoria()
 
     def get_name(self):
         return self.name
@@ -268,7 +274,7 @@ class Treinamento(models.Model):
         return self.desc
 
     def categoria(self):
-        return self.category.name
+        return self.category.categoria()
 
     def get_list_suggestion(self, enviado=None):
         if enviado is None:
@@ -706,6 +712,11 @@ class Template(models.Model):
     cor28    = ColorField(max_length = 30, blank = True, default='ffffff', verbose_name='Cor do texto')
     cor29    = ColorField(max_length = 30, blank = True, default='ffffff', verbose_name='Cor do fundo ativo')
     cor30    = ColorField(max_length = 30, blank = True, default='ffffff', verbose_name='Cor do texto ativo')
+    ## Mensagem dica login
+    image8   = models.ImageField(blank=True, null=True, upload_to = upload_file, verbose_name='Imagem botão dica login', max_length=255, help_text='As imagens seram ajustadas para melhor visualização no site. Fundo transparente. PNG ou GIF.')
+    cor41    = ColorField(max_length = 30, verbose_name='Cor do texto', null = True, blank = True, help_text='Selecione a cor desejada, caso não queira deixe em branco.')
+    cor42    = ColorField(max_length = 30, verbose_name='Cor da borda', null = True, blank = True, help_text='Selecione a cor desejada, caso não queira deixe em branco.')
+    cor43    = ColorField(max_length = 30, verbose_name='Cor de fundo', null = True, blank = True, help_text='Selecione a cor desejada, caso não queira deixe em branco.')
     ## Favicon
     image6   = models.ImageField(blank=True, null=True, upload_to = upload_file, verbose_name='Imagem ico', max_length=255, help_text='Imagem deve ser .ico e ter proporções 48x48 pixels.')
     ## custom css
@@ -837,17 +848,6 @@ class Anexo(models.Model):
                 sh.python( '%sbin/pdf_to_images.py %s --quiet' % (getattr(settings, 'MEGA_LIB', ''), self.id) )
             else:
                 sh.pythonvirtualenv( '%s %sbin/pdf_to_images.py %s --quiet' % ('tcd', getattr(settings, 'MEGA_LIB', ''), self.id) )
-            
-    @staticmethod    
-    def filter_custom(category):
-        
-        array = []
-
-        for lia in ListImageAnexo.objects.filter( Q(anexo__category = category) ):
-            if not array.count(lia.anexo) > 0:
-                array.append(lia.anexo)
-        
-        return array
 
     def __unicode__(self):
         return self.name

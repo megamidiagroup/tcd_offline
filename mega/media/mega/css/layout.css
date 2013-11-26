@@ -304,6 +304,7 @@ cursor:pointer;}
 #login form label{display:block; margin:0 0 5px -5px; font-size:2em; font-weight:bold; color:#0d3e51;}
 #login form input{ width:100%; padding:5px; margin:0 0 10px -5px;}
 #login form input.buttom{width:50%; margin-top:5px;}
+#login .info {position:absolute;right:10px;top:10px;cursor:pointer}
 .busca {color: #999;}
 .tia {cursor: pointer;margin: 0;position: absolute;right: 24px;}
 

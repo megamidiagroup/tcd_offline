@@ -4,13 +4,13 @@
 def get_style_template(t):
 
     s = ''
-    
+
     if t.tipo.name != 'mega':
         if len(t.custom) > 0:
             s += '\n\n'
             s += '%s' % t.custom
         return s
-    
+
     namefont = None
 
     ## aplicar fontes
@@ -55,7 +55,7 @@ def get_style_template(t):
         s += 'none'
     s += ';'
     s += '}'
-    
+
     s += '#header {'
     s += 'background: '
     if t.image2:
@@ -104,14 +104,14 @@ def get_style_template(t):
         s += 'none'
     s += ';'
     s += '}'
-    
+
     s += '#header #search input {'
     if t.larg11 > 0:
         s += 'border: %dpx solid #%s;' % (t.larg11, t.cor39)
     else:
         s += 'border: 0 none;'
     s += '}'
-    
+
     s += '#header .sub_pesquisa {'
     if len(t.cor40) > 0:
         s += 'color: #%s;' % t.cor40
@@ -175,7 +175,7 @@ def get_style_template(t):
     if len(t.cor6) > 0:
         s += 'background-color: #%s;' % t.cor6
     s += '}'
-    
+
     s += '#content .barra_parceiros {'
     if len(t.cor38) > 0:
         s += 'color: #%s;' % t.cor38
@@ -220,14 +220,14 @@ def get_style_template(t):
         s += 'color: #%s;' % t.cor13
     s += '}'
 
-    s += '.buttom {'
+    s += '.buttom, .buttom3 {'
     if len(t.cor27) > 0:
         s += 'background-color: #%s;' % t.cor27
     if len(t.cor28) > 0:
         s += 'color: #%s;' % t.cor28
     s += '}'
 
-    s += '.buttom:hover {'
+    s += '.buttom:hover, .buttom3:hover {'
     if len(t.cor29) > 0:
         s += 'background-color: #%s;' % t.cor29
     if len(t.cor30) > 0:
@@ -257,6 +257,15 @@ def get_style_template(t):
     s += '.path a, .path {'
     if len(t.cor6) > 0:
         s += 'color: #%s;' % t.cor6
+    s += '}'
+    
+    s += '.tip-yellowsimple {'
+    if len(t.cor41) > 0:
+        s += 'color: #%s;' % t.cor41
+    if len(t.cor42) > 0:
+        s += 'border:1px solid #%s;' % t.cor42
+    if len(t.cor43) > 0:
+        s += 'background-color: #%s;' % t.cor43
     s += '}'
 
     if len(t.custom) > 0:
