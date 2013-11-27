@@ -23,6 +23,7 @@
         <loja ip="10.225.59.240" netmask="255.255.255.0" gateway="10.225.59.17">maxi_shop</loja>
         <loja ip="10.21.19.240" netmask="255.255.255.0" gateway="10.21.19.253">park_shop_campo_grande</loja>
         <loja ip="10.118.59.240" netmask="255.255.255.0" gateway="10.118.59.17">shop_dom_pedro_2</loja>
+        <loja ip="10.0.9.255" netmask="255.255.255.0" gateway="10.0.1.85">teste</loja>
     </rede>
     <rede label="carvalho"></rede>
     <rede label="cencosud"></rede>
