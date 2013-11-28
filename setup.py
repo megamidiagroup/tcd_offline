@@ -320,6 +320,9 @@ print 'sync db megavideo.sql'
 
 os.system('chmod 771 /var/www -R')
 
+os.system('echo "" > /var/log/mysql/mysql.log')
+os.system('echo "" > /var/log/tcd/log.debug')
+
 if os.path.exists('/var/www/tcd.config'):
     sh.find('/var/www/tcd.config -type f -exec sed -i "s/&#39;/\'/g" {} \;')
     os.system("mysql -u root -p%s %s < %s" % (password, project, '/var/www/tcd.config'))

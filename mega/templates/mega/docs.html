@@ -142,7 +142,7 @@
                                 	<input type="button" value="Download" class="buttom" style="margin-left:10px" onclick="window.location='{% url download_anexo rede.link i.id %}';" />
                                 {% endif %}
                                 {% if i|is_anexo_pdf %}
-                                	<input type="button" value="Visualisar" class="buttom" style="margin-left:10px" onclick="window.location='{% url viewpdf rede.link i.id %}{{ i.name|slugify }}';" />
+                                	<input type="button" value="Visualizar" class="buttom" style="margin-left:10px" onclick="window.location='{% url viewpdf rede.link i.id %}{{ i.name|slugify }}';" />
                                 {% endif %}
                                 <br /><br />
 	                        </li>
