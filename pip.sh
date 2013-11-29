@@ -1,11 +1,19 @@
 #!/bin/bash
 
+export WORKON_HOME=/var/www/tcd_offline/.virtualenvs
+
+source /usr/local/bin/virtualenvwrapper.sh
+
+mkvirtualenv tcd
+
+workon tcd
+
 URL='10.0.1.133'
 PASS='deploy'
 
 cd /tmp
 /usr/bin/expect <<EOD
-    spawn /bin/sh -c "git clone ssh://deploy@$URL/var/django/tcd_offline/dependences/virtualenvwrapper.git"
+    spawn /bin/sh -c "git clone ssh://deploy@$URL/var/django/tcd_offline/dependences/yolk.git"
     expect {
         timeout {
             exit 1
@@ -30,11 +38,11 @@ cd /tmp
 EOD
 
 if [ $? == 1 ]; then
-echo "erro, vamos tentar pela rede interna"
+echo "erro, vamos tentar pela rede externa"
 URL='200.195.168.7'
 /usr/bin/expect <<EOD
 	set timeout 120
-    spawn /bin/sh -c "git clone ssh://deploy@$URL/var/django/tcd_offline/dependences/virtualenvwrapper.git"
+    spawn /bin/sh -c "git clone ssh://deploy@$URL/var/django/tcd_offline/dependences/yolk.git"
     expect {
         timeout {
             exit 1
@@ -58,50 +66,6 @@ URL='200.195.168.7'
     }
 EOD
 fi
-
-cd virtualenvwrapper
-python setup.py install
-
-echo ">>>>>>>>>>>>>>>>>>>>>>"
-
-python -c 'import virtualenvwrapper'
-echo "virtualenvwrapper >> ok"
-
-echo "<<<<<<<<<<<<<<<<<<<<<<"
-
-### pip install virtualenvwrapper
-
-
-export WORKON_HOME=/var/www/tcd_offline/.virtualenvs
-
-source /usr/local/bin/virtualenvwrapper.sh
-
-mkvirtualenv tcd
-
-workon tcd
-
-
-cd /tmp
-/usr/bin/expect <<EOD
-	set timeout 600
-    spawn /bin/sh -c "git clone ssh://deploy@$URL/var/django/tcd_offline/dependences/yolk.git"
-    expect {
-        timeout {
-            exit 1
-        }
-        -re "lost" {
-            exit 1
-        }
-        -re "No route to host" {
-            exit 1
-        }
-        -re "deploy@$URL's password:" {
-            send "$PASS\r"
-            exp_continue
-            exit 0
-        }
-    }
-EOD
 
 cd yolk
 python setup.py install
@@ -792,4 +756,37 @@ echo "admin_tools >> ok"
 echo "<<<<<<<<<<<<<<<<<<<<<<"
 
 ### pip install django-admin-tools
+
+cd /tmp
+/usr/bin/expect <<EOD
+	set timeout 600
+    spawn /bin/sh -c "git clone ssh://deploy@$URL/var/django/tcd_offline/dependences/six.git"
+    expect {
+        timeout {
+            exit 1
+        }
+        -re "lost" {
+            exit 1
+        }
+        -re "No route to host" {
+            exit 1
+        }
+        -re "deploy@$URL's password:" {
+            send "$PASS\r"
+            exp_continue
+            exit 0
+        }
+    }
+EOD
+
+cd six
+python setup.py install
+
+echo ">>>>>>>>>>>>>>>>>>>>>>"
+
+python -c 'import six'
+echo "six >> ok"
+
+echo "<<<<<<<<<<<<<<<<<<<<<<"
+
 
