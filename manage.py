@@ -1,5 +1,15 @@
 #!/usr/bin/env python
+
+import sys
+
+try:
+    from PIL import Image
+    sys.modules['Image'] = Image
+except:
+    pass
+
 from django.core.management import execute_manager
+
 try:
     import settings # Assumed to be in the same directory.
 except ImportError:
