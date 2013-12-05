@@ -1,6 +1,6 @@
 {% load util %}
 
-{% if aviso %}
+{% if aviso.0 %}
 
     <div class="class_modal_aviso" id="modal" style="display:none;width: {{ aviso|get_image_size:'w' }}px;">
         <p>
@@ -12,18 +12,22 @@
 			    {% megavideo rede.link aviso.0.code 0 aviso|get_image_size:'w' %}
 			</p>
 		    {% else %}
-			<a class="btn_link" href="{{ aviso.0.link }}">
-			    <img src="{{ aviso|get_image }}" border="0" />
-			</a>
+			    {% if aviso.0.link|lenght > 2 %}
+					<a class="btn_link" href="{{ aviso.0.link }}">
+					    <img src="{{ aviso|get_image }}" border="0" style="width: 100%" />
+					</a>
+				{% else %}
+					<img src="{{ aviso|get_image }}" border="0" style="width: 100%" />
+				{% endif %}
 		    {% endif %}
 		</p>
-	{% if aviso.0.is_persistent %}
-	    <p>
-			<label>
-			    <input name="is_not" value="1" type="checkbox" /> Não desejo mais visualizar essa mensagem.
-			</label>
-	    </p>
-	{% endif %}
+		{% if aviso.0.is_persistent %}
+		    <p>
+				<label>
+				    <input name="is_not" value="1" type="checkbox" /> Não desejo mais visualizar essa mensagem.
+				</label>
+		    </p>
+		{% endif %}
 
     </div>
 
@@ -41,35 +45,49 @@
 	    	$.modal2.resize();
     	}
 
-    	$(window).resize(function() {
+    	$(function() {
 			set_resize_aviso();
-		});
-		set_resize_aviso();
-
-        if ( $('#modal').length )
-		{
-		    $('#modal').modal2({
-				escapeClose: false,
-				clickClose: false,
-				showClose: true,
-				zIndex: 10001
-		    });
-		    $.modal2.resize();
-		    if ( $('input[name=is_not]').length )
-		    {
-				$('input[name=is_not]').change(function(e){
-				    var input = $('input[name=is_not]').is(':checked');
-				    $.ajax({
-					    url: '{% url ajax_aviso rede.link aviso.0.id %}',
-					    type: 'POST',
-					    data: { csrfmiddlewaretoken : '{{ csrf_token }}', is_not : input },
-					    dataType: 'script',
-					    success: function(r) {
-
-					    }
-				    });
-				});
+			$("#modal img").lazyload({
+				effect : "fadeIn",
+				appear : function(elements_left, settings) {
+					set_resize_aviso();
+				}
+			});
+			set_resize_aviso();
+			
+			if ( $('#modal').length )
+			{
+			    $('#modal').modal2({
+					escapeClose: false,
+					clickClose: false,
+					showClose: true,
+					zIndex: 10001
+			    });
+			    {% if not aviso.0.is_persistent %}
+			    	$('.close-modal').click(function(e){set_ajax_close(true)});
+			    {% endif %}
+			    $.modal2.resize();
+			    if ( $('input[name=is_not]').length )
+			    {
+					$('input[name=is_not]').change(function(e){
+					    var input = $('input[name=is_not]').is(':checked');
+					    set_ajax_close(input);
+					});
+				}
 			}
+		});
+
+		function set_ajax_close(input)
+		{
+			$.ajax({
+            	url: '{% url ajax_aviso rede.link aviso.0.id %}',
+                    type: 'POST',
+                    data: { csrfmiddlewaretoken : '{{ csrf_token }}', is_not : input },
+                    dataType: 'script',
+                    success: function(r) {
+
+                    }
+            });
 		}
 
     </script>
