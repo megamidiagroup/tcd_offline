@@ -114,10 +114,10 @@
                     <ul class="category clearfix">
                         {% for i in list_category %}
                             <li>
-                                <a href="{% url docs rede.link i.id %}{{ i.name|slugify }}" title="{{ i.desc|safe|striptags }}">
-                                    <div class="{{ i|css_hiraquia_cat }} {% if not i.is_name %}no-name-category{% endif %}"><img src="{{ i|get_image }}" border="0" /></div>
+                                <a href="{% url docs rede.link i.id %}{{ i.name|slugify }}" title="{{ i.desc|safe|striptags|trim }}">
+                                    {% if i|get_image %}<div class="{{ i|css_hiraquia_cat }} {% if not i.is_name %}no-name-category{% endif %}"><img src="{{ i|get_image }}" border="0" /></div>{% endif %}
                                     {% if i.is_name %}<h2 class="box-title">{{ i.name }}</h2>{% endif %}
-                                    {% if i.is_name %}<span>{{ i.desc|safe|truncatewords_html:8 }}</span>{% endif %}
+                                    {% if i.is_name and i.desc|striptags|trim|length > 2 %}<span>{{ i.desc|safe|truncatewords_html:8 }}</span>{% endif %}
                                 </a>
                             </li>
                         {% endfor %}
@@ -138,7 +138,7 @@
                                 <h2 class="box-title">{{ i.name }}</h2>
                                 <span style="height:auto">{{ i.desc|safe|truncatewords_html:8 }}</span>
 								<br /><br />
-								{% if not is_offline %}
+                                {% if not is_offline %}
                                 	<input type="button" value="Download" class="buttom" style="margin-left:10px" onclick="window.location='{% url download_anexo rede.link i.id %}';" />
                                 {% endif %}
                                 {% if i|is_anexo_pdf %}

@@ -2145,15 +2145,16 @@ def retornopagamento(request, rede=None):
     return HttpResponse('ok')
 
 
+@login_required
 def docs(request, rede=None, category_id=0):
 
     p = _prepare_vars(request, rede)
 
-    p['list_category'] = Category.objects.filter( Q(visible = True) & Q(name = u'DOCS') )
+    p['list_category'] = Category.objects.filter( Q(visible = True) & (Q(name = u'DOCS') | Q(parent__name = u'DOCS') | Q(parent__parent__name = u'DOCS') | Q(parent__parent__parent__name = u'DOCS')) )
     p['is_offline']    = False
 
     if category_id and int(category_id) > 0 and p['list_category'].count() > 0:
-        p['list_category'] = p['list_category'][0].category_set.filter( Q(visible = True) & Q(id = int(category_id)) ).order_by('order', 'name')
+        p['list_category'] = p['list_category'].filter( Q(visible = True) & Q(id = int(category_id)) ).order_by('order', 'name')
 
     ane = Anexo.objects.filter(visible = True)
 
