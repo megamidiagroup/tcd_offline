@@ -262,6 +262,10 @@ def category(request, rede=None, cat_id=None):
     list_category      = Category.objects.filter( Q(rede = p['rede']) & Q(visible=True) ).order_by('order', 'name')
 
     p['category']      = list_category.filter(id = int(cat_id))
+    
+    if p['category'].count() == 0:
+        return HttpResponseRedirect( reverse('home', args=(p['rede'].link,)) )
+    
     p['list_category'] = list_category.filter( Q(parent__id = int(cat_id)) ).order_by('order', 'name')
     p['list_banner']   = Banner.objects.filter( Q(rede = p['rede']) & Q(visible=True) & Q(category__id = int(cat_id)) ).order_by('order', 'name')
     p['list_parceiro'] = Parceiro.objects.filter( Q(rede = p['rede']) & Q(category__id = int(cat_id)) & Q(visible=True) ).order_by('order', 'name')
@@ -417,6 +421,9 @@ def treinamento(request, rede=None, video_id=None):
 
     p['url_logo']     = p['rede'].logo.url
     p['list_video']   = Treinamento.objects.filter( Q(rede = p['rede']) & Q(visible=True) & Q(id = int(video_id)) ).order_by('order', 'name')
+    
+    if p['list_video'].count() == 0:
+        return HttpResponseRedirect( reverse('home', args=(p['rede'].link,)) )
 
     # regras para usuário restrito
     if not p['is_access']:
