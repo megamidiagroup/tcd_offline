@@ -1749,7 +1749,7 @@ def login(request, rede=None):
                 p['name']    = user.get_full_name()
                 p['link']    = '%slogin/?user=%s&action=%s&key=%s' % (settings.LIST_VARS.get('base_url', ''), user.username, '/conta/edit/', user.password)
                 if _send_email_user(p, request) == 'offline':
-                    p['error'] = u'Em 24 horas, verifique seu email, uma requisição de nova senha foi enviado.'
+                    p['error'] = u'Em 24 horas, verifique seu email, uma requisição de nova senha foi enviada.'
                 elif _send_email_user(p, request):
                     p['error'] = u'Verifique seu email, uma requisição de nova senha foi enviado.'
                 else:
@@ -2157,7 +2157,7 @@ def docs(request, rede=None, category_id=0):
 
     p = _prepare_vars(request, rede)
 
-    p['list_category'] = Category.objects.filter( Q(visible = True) & (Q(name = u'DOCS') | Q(parent__name = u'DOCS') | Q(parent__parent__name = u'DOCS') | Q(parent__parent__parent__name = u'DOCS')) )
+    p['list_category'] = Category.objects.filter( Q(visible = True) & (Q(name = u'DOCS') | Q(parent__name = u'DOCS') | Q(parent__parent__name = u'DOCS') | Q(parent__parent__parent__name = u'DOCS')) ).distinct().order_by('parent')
     p['is_offline']    = False
 
     if category_id and int(category_id) > 0 and p['list_category'].count() > 0:
