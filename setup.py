@@ -122,7 +122,8 @@ if sys.argv.count('--install') == 1 or sys.argv.count('--upgrade') == 1:
     os.system('/etc/init.d/nginx restart')
     
     sh.cp('%s/sync /var/www/tcd_offline/sync.sh' % MODPATH)
-    sh.cp('%s/ftp /var/www/tcd_offline/ftp.sh' % MODPATH)
+    #-#sh.cp('%s/ftp /var/www/tcd_offline/ftp.sh' % MODPATH)
+    sh.cp('%s/cmd_rsync /var/www/tcd_offline/cmd_rsync.sh' % MODPATH)
     
     sh.find('/var/www/tcd_offline/sync.sh -type f -exec sed -i "s/<user>/%s/g" {} \;' % user)
     sh.find('/var/www/tcd_offline/sync.sh -type f -exec sed -i "s/<project>/%s/g" {} \;' % project)
@@ -174,7 +175,8 @@ if sys.argv.count('--pull') == 1:
     sh.cp('%s/tcd /etc/init.d/tcd' % MODPATH)
 
     sh.cp('%s/sync /var/www/tcd_offline/sync.sh' % MODPATH)
-    sh.cp('%s/ftp /var/www/tcd_offline/ftp.sh' % MODPATH)
+    #-#sh.cp('%s/ftp /var/www/tcd_offline/ftp.sh' % MODPATH)
+    sh.cp('%s/cmd_rsync /var/www/tcd_offline/cmd_rsync.sh' % MODPATH)
     
     sh.find('/var/www/tcd_offline/sync.sh -type f -exec sed -i "s/<user>/%s/g" {} \;' % user)
     sh.find('/var/www/tcd_offline/sync.sh -type f -exec sed -i "s/<project>/%s/g" {} \;' % project)
@@ -344,7 +346,8 @@ if os.path.exists('/var/www/tcd.config'):
     if os.path.exists('/var/www/mail.config'):
         mail = '1'
         arquivo_mail = '%s_mail.config' % hash
-    os.system('/var/www/tcd_offline/ftp.sh %s %s %s' % (rede, mail, hash))
+    #-#os.system('/var/www/tcd_offline/ftp.sh %s %s %s' % (rede, mail, hash))
+    os.system('/var/www/tcd_offline/cmd_rsync.sh %s %s %s' % (rede, mail, hash))
     params  = urllib.urlencode({'sql_config': '%s_tcd.config' % hash, 'mail_config': arquivo_mail})
     r1      = urllib.urlopen("https://%s/%s/sync?%s" % (url, rede, params))
     if r1.read() == rede:
